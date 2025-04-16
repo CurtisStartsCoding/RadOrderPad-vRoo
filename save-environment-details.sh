@@ -13,7 +13,7 @@ echo "The following files were open in VSCode at the time of snapshot:" >> $OUTP
 echo "" >> $OUTPUT_FILE
 
 find . -type f \( -name "*.ts" -o -name "*.js" -o -name "*.md" -o -name "*.json" -o -name "*.bat" -o -name "*.sh" -o -name "*.sql" -o -name "*.html" -o -name "*.css" -o -name "*.yml" -o -name "*.yaml" \) 2>/dev/null | while read file; do
-    echo "- $file" >> $OUTPUT_FILE
+    echo "  $file" >> $OUTPUT_FILE
 done
 
 echo "" >> $OUTPUT_FILE

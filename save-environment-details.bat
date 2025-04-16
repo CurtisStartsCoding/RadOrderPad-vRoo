@@ -12,7 +12,7 @@ echo The following files were open in VSCode at the time of snapshot: >> %OUTPUT
 echo. >> %OUTPUT_FILE%
 
 for /f "tokens=*" %%a in ('dir /b /s *.ts *.js *.md *.json *.bat *.sh *.sql *.html *.css *.yml *.yaml 2^>nul') do (
-    echo - %%a >> %OUTPUT_FILE%
+    echo   %%a >> %OUTPUT_FILE%
 )
 
 echo. >> %OUTPUT_FILE%
