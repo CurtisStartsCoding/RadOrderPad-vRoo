@@ -1,0 +1,99 @@
+{
+  "testCase": {
+    "id": "C1",
+    "description": "Clear headache with neurological symptoms",
+    "prompt": "Generate a radiology order dictation for a patient with clear headache and neurological symptoms that would warrant a brain MRI without contrast.",
+    "expectedResult": "validated",
+    "expectedCPT": "70551",
+    "expectedICD10": [
+      "G44",
+      "R51"
+    ]
+  },
+  "startTime": "2025-04-15T00:54:44.550Z",
+  "steps": [
+    {
+      "step": "generate_dictation",
+      "model": "grok",
+      "timestamp": "2025-04-15T00:54:50.904Z",
+      "output": "**Radiology Order Dictation**\n\n\"Dictating physician: Dr. John Smith  \nDate: October 10, 2023  \nPatient Name: Jane Doe  \nMedical Record Number: 1234567  \nDate of Birth: 05/15/1985  \nOrdering Department: Neurology Clinic  \nStudy Requested: MRI Brain without contrast  \nClinical History: This is a 38-year-old female presenting with a 2-week history of persistent headaches, described as severe and located primarily in the frontal region. The patient also reports associated neurological symptoms, including intermittent dizziness, blurred vision, and mild confusion. There is no history of recent trauma or known intracranial pathology. No prior imaging has been performed for this complaint. The purpose of this study is to evaluate for potential intracranial abnormalities such as mass lesions, ischemic changes, or other structural causes of the patient’s symptoms.  \nSpecial Instructions: Please perform the MRI brain without contrast due to the patient’s reported history of mild renal impairment and to minimize risk of gadolinium-related complications. If there are any concerning findings or if contrast is deemed necessary for further evaluation, please contact me directly at 555-0123 for discussion.  \nUrgency: Routine, but please expedite results if possible due to the severity of symptoms.  \nThank you.\""
+    },
+    {
+      "step": "validate_dictation",
+      "model": "anthropic",
+      "timestamp": "2025-04-15T00:54:59.226Z",
+      "output": {
+        "success": true,
+        "orderId": 201,
+        "validationResult": {
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "feedback": "The requested MRI brain without contrast is appropriate for this 38-year-old patient with new onset persistent headaches accompanied by concerning neurological symptoms (dizziness, blurred vision, and mild confusion). These symptoms warrant neuroimaging to evaluate for structural abnormalities, and MRI without contrast is the preferred initial study, especially given the patient's reported renal impairment. The American College of Radiology and American Headache Society guidelines support neuroimaging for new headaches with associated neurological symptoms. The decision to avoid contrast is also appropriate given the stated renal impairment and is consistent with the principles of ALARA (As Low As Reasonably Achievable) for contrast exposure.",
+          "suggestedICD10Codes": [
+            {
+              "code": "R51.9",
+              "description": "Headache, unspecified"
+            },
+            {
+              "code": "R42",
+              "description": "Dizziness and giddiness"
+            },
+            {
+              "code": "H53.8",
+              "description": "Other visual disturbances"
+            },
+            {
+              "code": "R41.0",
+              "description": "Disorientation, unspecified"
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "70551",
+              "description": "MRI brain without contrast"
+            }
+          ],
+          "internalReasoning": "The clinical presentation includes several red flags that justify neuroimaging: (1) new onset severe headaches in an adult, (2) associated neurological symptoms including dizziness, blurred vision, and confusion. According to ACR Appropriateness Criteria for Headache, MRI is the preferred modality for evaluating intracranial pathologies in this context. The absence of contrast is justified by the patient's renal impairment history. The patient has no prior imaging, making this an appropriate first-line study. The request aligns with choosing wisely recommendations to avoid unnecessary contrast when possible. The urgency level (routine with request for expedited results) is appropriate given the symptoms without acute emergency features that would necessitate emergency imaging."
+        }
+      }
+    }
+  ],
+  "dictation": "**Radiology Order Dictation**\n\n\"Dictating physician: Dr. John Smith  \nDate: October 10, 2023  \nPatient Name: Jane Doe  \nMedical Record Number: 1234567  \nDate of Birth: 05/15/1985  \nOrdering Department: Neurology Clinic  \nStudy Requested: MRI Brain without contrast  \nClinical History: This is a 38-year-old female presenting with a 2-week history of persistent headaches, described as severe and located primarily in the frontal region. The patient also reports associated neurological symptoms, including intermittent dizziness, blurred vision, and mild confusion. There is no history of recent trauma or known intracranial pathology. No prior imaging has been performed for this complaint. The purpose of this study is to evaluate for potential intracranial abnormalities such as mass lesions, ischemic changes, or other structural causes of the patient’s symptoms.  \nSpecial Instructions: Please perform the MRI brain without contrast due to the patient’s reported history of mild renal impairment and to minimize risk of gadolinium-related complications. If there are any concerning findings or if contrast is deemed necessary for further evaluation, please contact me directly at 555-0123 for discussion.  \nUrgency: Routine, but please expedite results if possible due to the severity of symptoms.  \nThank you.\"",
+  "initialValidation": {
+    "success": true,
+    "orderId": 201,
+    "validationResult": {
+      "validationStatus": "appropriate",
+      "complianceScore": 8,
+      "feedback": "The requested MRI brain without contrast is appropriate for this 38-year-old patient with new onset persistent headaches accompanied by concerning neurological symptoms (dizziness, blurred vision, and mild confusion). These symptoms warrant neuroimaging to evaluate for structural abnormalities, and MRI without contrast is the preferred initial study, especially given the patient's reported renal impairment. The American College of Radiology and American Headache Society guidelines support neuroimaging for new headaches with associated neurological symptoms. The decision to avoid contrast is also appropriate given the stated renal impairment and is consistent with the principles of ALARA (As Low As Reasonably Achievable) for contrast exposure.",
+      "suggestedICD10Codes": [
+        {
+          "code": "R51.9",
+          "description": "Headache, unspecified"
+        },
+        {
+          "code": "R42",
+          "description": "Dizziness and giddiness"
+        },
+        {
+          "code": "H53.8",
+          "description": "Other visual disturbances"
+        },
+        {
+          "code": "R41.0",
+          "description": "Disorientation, unspecified"
+        }
+      ],
+      "suggestedCPTCodes": [
+        {
+          "code": "70551",
+          "description": "MRI brain without contrast"
+        }
+      ],
+      "internalReasoning": "The clinical presentation includes several red flags that justify neuroimaging: (1) new onset severe headaches in an adult, (2) associated neurological symptoms including dizziness, blurred vision, and confusion. According to ACR Appropriateness Criteria for Headache, MRI is the preferred modality for evaluating intracranial pathologies in this context. The absence of contrast is justified by the patient's renal impairment history. The patient has no prior imaging, making this an appropriate first-line study. The request aligns with choosing wisely recommendations to avoid unnecessary contrast when possible. The urgency level (routine with request for expedited results) is appropriate given the symptoms without acute emergency features that would necessitate emergency imaging."
+    }
+  },
+  "success": false,
+  "endTime": "2025-04-15T00:54:59.226Z",
+  "duration": 14.676
+}

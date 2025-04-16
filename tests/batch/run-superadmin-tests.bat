@@ -1,0 +1,3 @@
+@echo off
+echo Running Super Admin API Tests...
+.\test-superadmin-api.bat

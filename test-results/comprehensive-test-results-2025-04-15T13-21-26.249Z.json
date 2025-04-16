@@ -1,0 +1,12 @@
+[
+  {
+    "success": false,
+    "testCase": "Insufficient Clinical Information with Physician Override",
+    "error": "Primary ICD-10 code mismatch. Expected: R51, Got: R10.31"
+  },
+  {
+    "success": false,
+    "testCase": "Inappropriate Modality Selection with Physician Override",
+    "error": "Primary ICD-10 code mismatch. Expected: M54.5, Got: R10.31"
+  }
+]

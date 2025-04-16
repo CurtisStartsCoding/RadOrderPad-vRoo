@@ -1,0 +1,96 @@
+{
+  "testCase": {
+    "id": "missing_duration",
+    "description": "Missing duration",
+    "prompt": "Generate a radiology order that includes symptoms but omits the duration of those symptoms.",
+    "expectedResult": "needs_clarification",
+    "expectedFeedback": "Missing duration of symptoms"
+  },
+  "startTime": "2025-04-15T01:33:07.282Z",
+  "steps": [
+    {
+      "step": "generate_dictation",
+      "model": "grok",
+      "timestamp": "2025-04-15T01:33:07.932Z",
+      "output": "45/Male. Chest X-ray. Cough and shortness of breath."
+    },
+    {
+      "step": "validate_dictation",
+      "model": "anthropic",
+      "timestamp": "2025-04-15T01:33:16.223Z",
+      "output": {
+        "success": true,
+        "orderId": 223,
+        "validationResult": {
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "feedback": "A chest X-ray is an appropriate first-line imaging study for evaluating cough and shortness of breath in a 45-year-old male. This imaging can help identify potential pulmonary conditions such as pneumonia, pulmonary edema, COPD exacerbation, or malignancy. For more comprehensive clinical assessment, please consider including additional details in future requests, such as duration of symptoms, smoking history, fever, or other relevant clinical findings. If the chest X-ray is negative but symptoms persist, further imaging like chest CT may be warranted.",
+          "suggestedICD10Codes": [
+            {
+              "code": "R05",
+              "description": "Cough"
+            },
+            {
+              "code": "R06.02",
+              "description": "Shortness of breath"
+            },
+            {
+              "code": "J98.9",
+              "description": "Respiratory disorder, unspecified"
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "71045",
+              "description": "Radiologic examination, chest; single view"
+            },
+            {
+              "code": "71046",
+              "description": "Radiologic examination, chest; 2 views"
+            }
+          ],
+          "internalReasoning": "According to ACR Appropriateness Criteria, chest radiography is the recommended initial imaging study for patients presenting with respiratory symptoms such as cough and shortness of breath. This is a high-yield, low-cost examination with minimal radiation exposure that can detect many common pulmonary conditions. The clinical indications provided (cough and shortness of breath) are classic presentations that warrant chest X-ray as a first imaging step. Without additional clinical information suggesting a more specific condition or higher-risk factors, a chest X-ray represents the appropriate starting point for this 45-year-old male patient."
+        }
+      }
+    }
+  ],
+  "dictation": "45/Male. Chest X-ray. Cough and shortness of breath.",
+  "initialValidation": {
+    "success": true,
+    "orderId": 223,
+    "validationResult": {
+      "validationStatus": "appropriate",
+      "complianceScore": 8,
+      "feedback": "A chest X-ray is an appropriate first-line imaging study for evaluating cough and shortness of breath in a 45-year-old male. This imaging can help identify potential pulmonary conditions such as pneumonia, pulmonary edema, COPD exacerbation, or malignancy. For more comprehensive clinical assessment, please consider including additional details in future requests, such as duration of symptoms, smoking history, fever, or other relevant clinical findings. If the chest X-ray is negative but symptoms persist, further imaging like chest CT may be warranted.",
+      "suggestedICD10Codes": [
+        {
+          "code": "R05",
+          "description": "Cough"
+        },
+        {
+          "code": "R06.02",
+          "description": "Shortness of breath"
+        },
+        {
+          "code": "J98.9",
+          "description": "Respiratory disorder, unspecified"
+        }
+      ],
+      "suggestedCPTCodes": [
+        {
+          "code": "71045",
+          "description": "Radiologic examination, chest; single view"
+        },
+        {
+          "code": "71046",
+          "description": "Radiologic examination, chest; 2 views"
+        }
+      ],
+      "internalReasoning": "According to ACR Appropriateness Criteria, chest radiography is the recommended initial imaging study for patients presenting with respiratory symptoms such as cough and shortness of breath. This is a high-yield, low-cost examination with minimal radiation exposure that can detect many common pulmonary conditions. The clinical indications provided (cough and shortness of breath) are classic presentations that warrant chest X-ray as a first imaging step. Without additional clinical information suggesting a more specific condition or higher-risk factors, a chest X-ray represents the appropriate starting point for this 45-year-old male patient."
+    }
+  },
+  "finalValidationStatus": "appropriate",
+  "success": false,
+  "endTime": "2025-04-15T01:33:16.223Z",
+  "duration": 8.941
+}

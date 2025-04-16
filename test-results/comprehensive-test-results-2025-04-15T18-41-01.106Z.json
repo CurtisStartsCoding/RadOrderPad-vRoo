@@ -1,0 +1,12 @@
+[
+  {
+    "success": false,
+    "testCase": "Insufficient Clinical Information with Physician Override",
+    "error": "Validation status mismatch. Expected: needs_clarification, Got: needs clarification"
+  },
+  {
+    "success": false,
+    "testCase": "Inappropriate Modality Selection with Physician Override",
+    "error": "No primary ICD-10 code found in the validation result"
+  }
+]

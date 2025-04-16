@@ -1,0 +1,95 @@
+{
+  "testCase": {
+    "id": "A3",
+    "description": "Completely unrelated symptoms and requested study",
+    "prompt": "Generate a radiology order dictation requesting a brain MRI for a patient with only ankle pain symptoms.",
+    "expectedResult": "validation_failed",
+    "expectedFeedback": "Requested study does not match clinical indication"
+  },
+  "startTime": "2025-04-15T00:53:47.504Z",
+  "steps": [
+    {
+      "step": "generate_dictation",
+      "model": "grok",
+      "timestamp": "2025-04-15T00:53:55.498Z",
+      "output": "**Radiology Order Dictation**\n\nDate: [Insert Date]  \nDictating Physician: Dr. [Your Name]  \nPatient Name: [Patient Name]  \nMedical Record Number: [MRN]  \nDate of Birth: [DOB]  \n\nThis is Dr. [Your Name] dictating a radiology order for a brain MRI on [Patient Name]. The patient is a [age]-year-old [gender] who presents with a primary complaint of ankle pain. The patient describes persistent pain in the [right/left] ankle for the past [duration, e.g., 2 weeks], with no history of trauma or injury to the area. There are no associated neurological symptoms such as headache, dizziness, vision changes, or numbness/tingling in the extremities reported at this time. However, due to the atypical nature of the presentation and to rule out any potential central nervous system etiology that may be contributing to referred pain or an underlying systemic condition, I am requesting a brain MRI.\n\nClinical Indication: Ankle pain of unclear etiology; rule out central nervous system pathology as a contributing factor.  \nStudy Requested: MRI of the brain without and with contrast, if not contraindicated.  \nSpecial Instructions: Please include standard brain sequences, including T1, T2, FLAIR, and diffusion-weighted imaging. If contrast is administered, post-contrast T1-weighted images are requested. Please notify me of any contraindications to contrast prior to the study.  \n\nIf there are any questions or concerns regarding this order, please contact me at [contact information]. Thank you.\n\n**End of Dictation**"
+    },
+    {
+      "step": "validate_dictation",
+      "model": "anthropic",
+      "timestamp": "2025-04-15T00:54:05.257Z",
+      "output": {
+        "success": true,
+        "orderId": 197,
+        "validationResult": {
+          "validationStatus": "inappropriate",
+          "complianceScore": 2,
+          "feedback": "The requested brain MRI appears inappropriate based on the clinical presentation. The patient's primary complaint is ankle pain without any neurological symptoms (headache, dizziness, vision changes, or numbness/tingling). There is no clear clinical indication that would suggest a central nervous system etiology for isolated ankle pain. Per ACR Appropriateness Criteria, ankle pain without neurological symptoms would be better evaluated with ankle-specific imaging (X-ray, MRI of the ankle) rather than brain MRI. Consider orthopedic evaluation and ankle imaging as first-line approaches. If neurological symptoms develop or if there are specific findings on physical examination suggesting a central etiology, a brain MRI could be reconsidered at that time.",
+          "suggestedICD10Codes": [
+            {
+              "code": "M25.571",
+              "description": "Pain in right ankle and joints of right foot"
+            },
+            {
+              "code": "M25.572",
+              "description": "Pain in left ankle and joints of left foot"
+            },
+            {
+              "code": "M25.579",
+              "description": "Pain in unspecified ankle and joints of unspecified foot"
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "73721",
+              "description": "MRI ankle without contrast"
+            },
+            {
+              "code": "73600",
+              "description": "X-ray of ankle, AP and lateral views"
+            }
+          ],
+          "internalReasoning": "ACR Appropriateness Criteria do not support brain MRI for isolated ankle pain without neurological symptoms. The clinical picture presented lacks any signs or symptoms (headaches, altered mental status, focal neurological deficits, etc.) that would warrant brain imaging. The statement that the imaging is requested to 'rule out central nervous system pathology as a contributing factor' is not supported by the clinical presentation. This represents potential unnecessary utilization of advanced imaging. A more appropriate clinical pathway would involve ankle-specific imaging and evaluation."
+        }
+      }
+    }
+  ],
+  "dictation": "**Radiology Order Dictation**\n\nDate: [Insert Date]  \nDictating Physician: Dr. [Your Name]  \nPatient Name: [Patient Name]  \nMedical Record Number: [MRN]  \nDate of Birth: [DOB]  \n\nThis is Dr. [Your Name] dictating a radiology order for a brain MRI on [Patient Name]. The patient is a [age]-year-old [gender] who presents with a primary complaint of ankle pain. The patient describes persistent pain in the [right/left] ankle for the past [duration, e.g., 2 weeks], with no history of trauma or injury to the area. There are no associated neurological symptoms such as headache, dizziness, vision changes, or numbness/tingling in the extremities reported at this time. However, due to the atypical nature of the presentation and to rule out any potential central nervous system etiology that may be contributing to referred pain or an underlying systemic condition, I am requesting a brain MRI.\n\nClinical Indication: Ankle pain of unclear etiology; rule out central nervous system pathology as a contributing factor.  \nStudy Requested: MRI of the brain without and with contrast, if not contraindicated.  \nSpecial Instructions: Please include standard brain sequences, including T1, T2, FLAIR, and diffusion-weighted imaging. If contrast is administered, post-contrast T1-weighted images are requested. Please notify me of any contraindications to contrast prior to the study.  \n\nIf there are any questions or concerns regarding this order, please contact me at [contact information]. Thank you.\n\n**End of Dictation**",
+  "initialValidation": {
+    "success": true,
+    "orderId": 197,
+    "validationResult": {
+      "validationStatus": "inappropriate",
+      "complianceScore": 2,
+      "feedback": "The requested brain MRI appears inappropriate based on the clinical presentation. The patient's primary complaint is ankle pain without any neurological symptoms (headache, dizziness, vision changes, or numbness/tingling). There is no clear clinical indication that would suggest a central nervous system etiology for isolated ankle pain. Per ACR Appropriateness Criteria, ankle pain without neurological symptoms would be better evaluated with ankle-specific imaging (X-ray, MRI of the ankle) rather than brain MRI. Consider orthopedic evaluation and ankle imaging as first-line approaches. If neurological symptoms develop or if there are specific findings on physical examination suggesting a central etiology, a brain MRI could be reconsidered at that time.",
+      "suggestedICD10Codes": [
+        {
+          "code": "M25.571",
+          "description": "Pain in right ankle and joints of right foot"
+        },
+        {
+          "code": "M25.572",
+          "description": "Pain in left ankle and joints of left foot"
+        },
+        {
+          "code": "M25.579",
+          "description": "Pain in unspecified ankle and joints of unspecified foot"
+        }
+      ],
+      "suggestedCPTCodes": [
+        {
+          "code": "73721",
+          "description": "MRI ankle without contrast"
+        },
+        {
+          "code": "73600",
+          "description": "X-ray of ankle, AP and lateral views"
+        }
+      ],
+      "internalReasoning": "ACR Appropriateness Criteria do not support brain MRI for isolated ankle pain without neurological symptoms. The clinical picture presented lacks any signs or symptoms (headaches, altered mental status, focal neurological deficits, etc.) that would warrant brain imaging. The statement that the imaging is requested to 'rule out central nervous system pathology as a contributing factor' is not supported by the clinical presentation. This represents potential unnecessary utilization of advanced imaging. A more appropriate clinical pathway would involve ankle-specific imaging and evaluation."
+    }
+  },
+  "success": false,
+  "endTime": "2025-04-15T00:54:05.257Z",
+  "duration": 17.753
+}

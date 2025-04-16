@@ -1,0 +1,88 @@
+{
+  "testCase": {
+    "id": "vague_symptoms",
+    "description": "Vague symptoms",
+    "prompt": "Generate a radiology order with vague symptoms that lack specificity (e.g., \"pain\" without location, duration, or severity).",
+    "expectedResult": "needs_clarification",
+    "expectedFeedback": "Need more specific information"
+  },
+  "startTime": "2025-04-15T01:33:16.224Z",
+  "steps": [
+    {
+      "step": "generate_dictation",
+      "model": "grok",
+      "timestamp": "2025-04-15T01:33:16.825Z",
+      "output": "45/Male. Chest X-ray. Chest pain."
+    },
+    {
+      "step": "validate_dictation",
+      "model": "anthropic",
+      "timestamp": "2025-04-15T01:33:24.799Z",
+      "output": {
+        "success": true,
+        "orderId": 224,
+        "validationResult": {
+          "validationStatus": "needs_clarification",
+          "complianceScore": 5,
+          "feedback": "While a chest X-ray is often an appropriate first-line imaging study for chest pain, the clinical information provided is too limited for a definitive determination. Additional details would be helpful, such as: duration and quality of chest pain, associated symptoms (dyspnea, fever, cough, trauma history), risk factors for cardiac disease, vital signs, and physical examination findings. For acute chest pain with suspected cardiac origin, an ECG and cardiac biomarkers would typically be initial tests. Chest X-ray is appropriate for evaluating non-cardiac causes like pneumonia, pneumothorax, or traumatic injury.",
+          "suggestedICD10Codes": [
+            {
+              "code": "R07.9",
+              "description": "Chest pain, unspecified"
+            },
+            {
+              "code": "R07.89",
+              "description": "Other chest pain"
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "71045",
+              "description": "Radiologic examination, chest; single view"
+            },
+            {
+              "code": "71046",
+              "description": "Radiologic examination, chest; 2 views"
+            }
+          ],
+          "internalReasoning": "The request includes minimal clinical information ('chest pain') which is insufficient to fully validate the appropriateness of a chest X-ray. Chest X-ray is often reasonable for evaluating chest pain to rule out conditions like pneumonia, pneumothorax, or rib fractures, but without knowing the character of pain, associated symptoms, or risk factors, it's difficult to determine if this is the most appropriate initial study. American College of Radiology guidelines typically recommend more specific clinical context for optimal imaging selection. The generic nature of the clinical information warrants a middle compliance score and request for clarification."
+        }
+      }
+    }
+  ],
+  "dictation": "45/Male. Chest X-ray. Chest pain.",
+  "initialValidation": {
+    "success": true,
+    "orderId": 224,
+    "validationResult": {
+      "validationStatus": "needs_clarification",
+      "complianceScore": 5,
+      "feedback": "While a chest X-ray is often an appropriate first-line imaging study for chest pain, the clinical information provided is too limited for a definitive determination. Additional details would be helpful, such as: duration and quality of chest pain, associated symptoms (dyspnea, fever, cough, trauma history), risk factors for cardiac disease, vital signs, and physical examination findings. For acute chest pain with suspected cardiac origin, an ECG and cardiac biomarkers would typically be initial tests. Chest X-ray is appropriate for evaluating non-cardiac causes like pneumonia, pneumothorax, or traumatic injury.",
+      "suggestedICD10Codes": [
+        {
+          "code": "R07.9",
+          "description": "Chest pain, unspecified"
+        },
+        {
+          "code": "R07.89",
+          "description": "Other chest pain"
+        }
+      ],
+      "suggestedCPTCodes": [
+        {
+          "code": "71045",
+          "description": "Radiologic examination, chest; single view"
+        },
+        {
+          "code": "71046",
+          "description": "Radiologic examination, chest; 2 views"
+        }
+      ],
+      "internalReasoning": "The request includes minimal clinical information ('chest pain') which is insufficient to fully validate the appropriateness of a chest X-ray. Chest X-ray is often reasonable for evaluating chest pain to rule out conditions like pneumonia, pneumothorax, or rib fractures, but without knowing the character of pain, associated symptoms, or risk factors, it's difficult to determine if this is the most appropriate initial study. American College of Radiology guidelines typically recommend more specific clinical context for optimal imaging selection. The generic nature of the clinical information warrants a middle compliance score and request for clarification."
+    }
+  },
+  "finalValidationStatus": "needs_clarification",
+  "success": true,
+  "endTime": "2025-04-15T01:33:24.799Z",
+  "duration": 8.575
+}

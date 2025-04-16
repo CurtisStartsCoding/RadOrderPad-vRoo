@@ -1,0 +1,274 @@
+
+}
+ICD-10 query params: [ '%brain%', '%mri%' ]
+Found 0 relevant ICD-10 codes
+CPT query params: [ '%brain%', '%mri%' ]
+Found 0 relevant CPT codes
+Mapping query params: [ '%brain%', '%mri%' ]
+Found 0 relevant mappings
+Markdown query params: [ '%brain%', '%mri%' ]
+Found 0 relevant markdown docs
+Generated database context
+User specialty: Not found, will use default
+Using word count: 30
+Constructed prompt
+Calling Anthropic Claude API...
+Using model: claude-3-7-sonnet-20250219
+LLM call successful using anthropic (claude-3-7-sonnet-20250219)
+Tokens used: 1457, Latency: 10177ms
+Processing LLM response: ```json
+{
+  "validationStatus": "needs_clarification",
+  "complianceScore": 3,
+  "feedback": "MRI br...
+Processed LLM response
+Logged validation attempt to PHI database
+JWT Secret: 79e...
+Token: eyJhbGciOi...
+Decoded token: {
+  userId: 1,
+  orgId: 1,
+  role: 'physician',
+  email: 'test.physician@example.com',
+  specialty: 'General Radiology',
+  iat: 1744757969,
+  exp: 1744844369
+}
+User role: physician
+Required roles: [ 'physician' ]
+Starting validation process...
+PHI stripped from text
+Extracted keywords: [ 'brain', 'mri' ]
+Looking for active default prompt template
+Prompt template query result: [
+  {
+    id: 10,
+    name: 'Hybrid Validation Prompt',
+    type: 'default',
+    version: '1.0',
+    content_template: 'You are a medical validation assistant. Your task is to evaluate the appropriateness of a requested imaging study based on the clinical indications provided.\r\n' +
+      '\r\n' +
+      'DATABASE CONTEXT:\r\n' +
+      '{{DATABASE_CONTEXT}}\r\n' +
+      '\r\n' +
+      'DICTATION TEXT:\r\n' +
+      '{{DICTATION_TEXT}}\r\n' +
+      '\r\n' +
+      'INSTRUCTIONS:\r\n' +
+      '1. Analyze the dictation text and determine if the requested imaging study is appropriate based on clinical guidelines.\r\n' +
+      "2. Consider the patient's symptoms, history, and any relevant medical context.\r\n" +
+      '3. Provide a compliance score from 1-9 (1 = completely inappropriate, 9 = completely appropriate).\r\n' +
+      '4. Suggest relevant ICD-10 diagnosis codes and CPT procedure codes.\r\n' +
+      '5. Limit your feedback to {{WORD_LIMIT}} words.\r\n' +
+      '\r\n' +
+      'RESPONSE FORMAT:\n' +
+      'Provide your response in JSON format with the following fields:\n' +
+      '- validationStatus: "appropriate", "inappropriate", or "needs_clarification"\n' +
+      '- complianceScore: numeric score from 1-9\n' +
+      '- feedback: educational note for the physician\n' +
+      '- suggestedICD10Codes: array of objects with code, description, and isPrimary flag (EXACTLY ONE code must have isPrimary set to true)\n' +
+      '- suggestedCPTCodes: array of objects with code and description\n' +
+      '- internalReasoning: explanation of your reasoning process\r\n' +
+      '- validationStatus: "appropriate", "inappropriate", or "needs_clarification"\r\n' +
+      '- complianceScore: numeric score from 1-9\r\n' +
+      '- feedback: educational note for the physician\r\n' +
+      '- suggestedICD10Codes: array of objects with code and description\r\n' +
+      '- suggestedCPTCodes: array of objects with code and description\r\n' +
+      '- internalReasoning: explanation of your reasoning process\n' +
+      '\n' +
+      'Example response format:\n' +
+      '```json\n' +
+      '{\n' +
+      '  "validationStatus": "appropriate", \n' +
+      '  "complianceScore": 85,\n' +
+      '  "feedback": "CT abdomen/pelvis with contrast is appropriate for RLQ pain with elevated WBC and prior inconclusive ultrasound. Clinical presentation suggests appendicitis or ovarian pathology, both well-evaluated by contrast-enhanced CT.",\n' +
+      '  "suggestedICD10Codes": [\n' +
+      '    {"code": "R10.31", "description": "Right lower quadrant pain", "isPrimary": true},\n' +
+      '    {"code": "R10.83", "description": "Colic abdominal pain", "isPrimary": false},\n' +
+      '    {"code": "N83.20", "description": "Unspecified ovarian cysts", "isPrimary": false},\n' +
+      '    {"code": "K35.80", "description": "Unspecified acute appendicitis", "isPrimary": false}\n' +
+      '  ],\n' +
+      '  "suggestedCPTCodes": [\n' +
+      '    {"code": "74177", "description": "CT abdomen and pelvis with contrast"}\n' +
+      '  ],\n' +
+      '  "internalReasoning": "This 45-year-old female presents with persistent RLQ pain for 3 weeks with characteristics concerning for appendicitis (RLQ tenderness, guarding, elevated WBC) or gynecological pathology (history of ovarian cysts). The prior ultrasound was inconclusive, which is an appropriate first-line imaging study, but due to continued symptoms and lack of diagnosis, advancing to CT is justified. CT abdomen/pelvis with contrast is the preferred modality for evaluating appendicitis and can also assess for gynecological pathology, inflammatory bowel disease, and other etiologies of RLQ pain. The use of IV contrast is important to evaluate for inflammatory changes and vascular structures. This request aligns with ACR Appropriateness Criteria for acute abdominal pain, particularly when appendicitis or gynecological pathology is suspected after an inconclusive ultrasound."\n' +
+      '}\n' +
+      '```\n' +
+      '\n' +
+      'CRITICAL REQUIREMENTS:\n' +
+      '\n' +
+      '1. The "validationStatus" field MUST be exactly one of these three values:\n' +
+      '   - "appropriate" (for orders that meet all criteria)\n' +
+      '   - "needs_clarification" (with underscore, not space - for orders needing more information)\n' +
+      '   - "inappropriate" (for orders that should not be performed)\n' +
+      '\n' +
+      '2. ALWAYS generate a MINIMUM of 3-4 ICD-10 codes for each case.\n' +
+      '\n' +
+      '3. Each ICD-10 code object MUST include the "isPrimary" property set to either true or false.\n' +
+      '\n' +
+      '4. EXACTLY ONE ICD-10 code must have "isPrimary" set to true. All others must be false.\n' +
+      '\n' +
+      '5. Do not include any explanatory text outside the JSON structure.\n' +
+      '\n' +
+      'Failure to follow these requirements will result in system errors.',
+    word_limit: null,
+    active: true,
+    created_at: 2025-04-16T02:42:08.123Z,
+    updated_at: 2025-04-16T02:42:08.130Z
+  }
+]
+Using prompt template: Hybrid Validation Prompt
+Generating database context with keywords: [ 'brain', 'mri' ]
+Categorized keywords: {
+  anatomyTerms: [ 'brain' ],
+  modalities: [ 'mri' ],
+  symptoms: [],
+  codes: []
+}
+ICD-10 query params: [ '%brain%', '%mri%' ]
+Found 0 relevant ICD-10 codes
+CPT query params: [ '%brain%', '%mri%' ]
+Found 0 relevant CPT codes
+Mapping query params: [ '%brain%', '%mri%' ]
+Found 0 relevant mappings
+Markdown query params: [ '%brain%', '%mri%' ]
+Found 0 relevant markdown docs
+Generated database context
+User specialty: Not found, will use default
+Using word count: 30
+Constructed prompt
+Calling Anthropic Claude API...
+Using model: claude-3-7-sonnet-20250219
+LLM call successful using anthropic (claude-3-7-sonnet-20250219)
+Tokens used: 1481, Latency: 9348ms
+Processing LLM response: ```json
+{
+  "validationStatus": "needs_clarification",
+  "complianceScore": 3,
+  "feedback": "MRI br...
+Processed LLM response
+Logged validation attempt to PHI database
+JWT Secret: 79e...
+Token: eyJhbGciOi...
+Decoded token: {
+  userId: 1,
+  orgId: 1,
+  role: 'physician',
+  email: 'test.physician@example.com',
+  iat: 1744757969,
+  exp: 1744844369
+}
+User role: physician
+Required roles: [ 'physician' ]
+Starting validation process...
+PHI stripped from text
+Extracted keywords: [ 'brain', 'mri' ]
+Looking for active default prompt template
+Prompt template query result: [
+  {
+    id: 10,
+    name: 'Hybrid Validation Prompt',
+    type: 'default',
+    version: '1.0',
+    content_template: 'You are a medical validation assistant. Your task is to evaluate the appropriateness of a requested imaging study based on the clinical indications provided.\r\n' +
+      '\r\n' +
+      'DATABASE CONTEXT:\r\n' +
+      '{{DATABASE_CONTEXT}}\r\n' +
+      '\r\n' +
+      'DICTATION TEXT:\r\n' +
+      '{{DICTATION_TEXT}}\r\n' +
+      '\r\n' +
+      'INSTRUCTIONS:\r\n' +
+      '1. Analyze the dictation text and determine if the requested imaging study is appropriate based on clinical guidelines.\r\n' +
+      "2. Consider the patient's symptoms, history, and any relevant medical context.\r\n" +
+      '3. Provide a compliance score from 1-9 (1 = completely inappropriate, 9 = completely appropriate).\r\n' +
+      '4. Suggest relevant ICD-10 diagnosis codes and CPT procedure codes.\r\n' +
+      '5. Limit your feedback to {{WORD_LIMIT}} words.\r\n' +
+      '\r\n' +
+      'RESPONSE FORMAT:\n' +
+      'Provide your response in JSON format with the following fields:\n' +
+      '- validationStatus: "appropriate", "inappropriate", or "needs_clarification"\n' +
+      '- complianceScore: numeric score from 1-9\n' +
+      '- feedback: educational note for the physician\n' +
+      '- suggestedICD10Codes: array of objects with code, description, and isPrimary flag (EXACTLY ONE code must have isPrimary set to true)\n' +
+      '- suggestedCPTCodes: array of objects with code and description\n' +
+      '- internalReasoning: explanation of your reasoning process\r\n' +
+      '- validationStatus: "appropriate", "inappropriate", or "needs_clarification"\r\n' +
+      '- complianceScore: numeric score from 1-9\r\n' +
+      '- feedback: educational note for the physician\r\n' +
+      '- suggestedICD10Codes: array of objects with code and description\r\n' +
+      '- suggestedCPTCodes: array of objects with code and description\r\n' +
+      '- internalReasoning: explanation of your reasoning process\n' +
+      '\n' +
+      'Example response format:\n' +
+      '```json\n' +
+      '{\n' +
+      '  "validationStatus": "appropriate", \n' +
+      '  "complianceScore": 85,\n' +
+      '  "feedback": "CT abdomen/pelvis with contrast is appropriate for RLQ pain with elevated WBC and prior inconclusive ultrasound. Clinical presentation suggests appendicitis or ovarian pathology, both well-evaluated by contrast-enhanced CT.",\n' +
+      '  "suggestedICD10Codes": [\n' +
+      '    {"code": "R10.31", "description": "Right lower quadrant pain", "isPrimary": true},\n' +
+      '    {"code": "R10.83", "description": "Colic abdominal pain", "isPrimary": false},\n' +
+      '    {"code": "N83.20", "description": "Unspecified ovarian cysts", "isPrimary": false},\n' +
+      '    {"code": "K35.80", "description": "Unspecified acute appendicitis", "isPrimary": false}\n' +
+      '  ],\n' +
+      '  "suggestedCPTCodes": [\n' +
+      '    {"code": "74177", "description": "CT abdomen and pelvis with contrast"}\n' +
+      '  ],\n' +
+      '  "internalReasoning": "This 45-year-old female presents with persistent RLQ pain for 3 weeks with characteristics concerning for appendicitis (RLQ tenderness, guarding, elevated WBC) or gynecological pathology (history of ovarian cysts). The prior ultrasound was inconclusive, which is an appropriate first-line imaging study, but due to continued symptoms and lack of diagnosis, advancing to CT is justified. CT abdomen/pelvis with contrast is the preferred modality for evaluating appendicitis and can also assess for gynecological pathology, inflammatory bowel disease, and other etiologies of RLQ pain. The use of IV contrast is important to evaluate for inflammatory changes and vascular structures. This request aligns with ACR Appropriateness Criteria for acute abdominal pain, particularly when appendicitis or gynecological pathology is suspected after an inconclusive ultrasound."\n' +
+      '}\n' +
+      '```\n' +
+      '\n' +
+      'CRITICAL REQUIREMENTS:\n' +
+      '\n' +
+      '1. The "validationStatus" field MUST be exactly one of these three values:\n' +
+      '   - "appropriate" (for orders that meet all criteria)\n' +
+      '   - "needs_clarification" (with underscore, not space - for orders needing more information)\n' +
+      '   - "inappropriate" (for orders that should not be performed)\n' +
+      '\n' +
+      '2. ALWAYS generate a MINIMUM of 3-4 ICD-10 codes for each case.\n' +
+      '\n' +
+      '3. Each ICD-10 code object MUST include the "isPrimary" property set to either true or false.\n' +
+      '\n' +
+      '4. EXACTLY ONE ICD-10 code must have "isPrimary" set to true. All others must be false.\n' +
+      '\n' +
+      '5. Do not include any explanatory text outside the JSON structure.\n' +
+      '\n' +
+      'Failure to follow these requirements will result in system errors.',
+    word_limit: null,
+    active: true,
+    created_at: 2025-04-16T02:42:08.123Z,
+    updated_at: 2025-04-16T02:42:08.130Z
+  }
+]
+Using prompt template: Hybrid Validation Prompt
+Generating database context with keywords: [ 'brain', 'mri' ]
+Categorized keywords: {
+  anatomyTerms: [ 'brain' ],
+  modalities: [ 'mri' ],
+  symptoms: [],
+  codes: []
+}
+ICD-10 query params: [ '%brain%', '%mri%' ]
+Found 0 relevant ICD-10 codes
+CPT query params: [ '%brain%', '%mri%' ]
+Found 0 relevant CPT codes
+Mapping query params: [ '%brain%', '%mri%' ]
+Found 0 relevant mappings
+Markdown query params: [ '%brain%', '%mri%' ]
+Found 0 relevant markdown docs
+Generated database context
+User specialty: Not found, will use default
+Using word count: 30
+Constructed prompt
+Calling Anthropic Claude API...
+Using model: claude-3-7-sonnet-20250219
+LLM call successful using anthropic (claude-3-7-sonnet-20250219)
+Tokens used: 1470, Latency: 9019ms
+Processing LLM response: ```json
+{
+  "validationStatus": "needs_clarification",
+  "complianceScore": 3,
+  "feedback": "MRI br...
+Processed LLM response
+Logged validation attempt to PHI database

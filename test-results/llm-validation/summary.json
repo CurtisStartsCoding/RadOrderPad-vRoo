@@ -1,0 +1,73 @@
+{
+  "startTime": "2025-04-15T01:32:35.745Z",
+  "categories": {
+    "A": {
+      "total": 3,
+      "passed": 1,
+      "failed": 2
+    },
+    "B": {
+      "total": 3,
+      "passed": 2,
+      "failed": 1
+    },
+    "C": {
+      "total": 3,
+      "passed": 2,
+      "failed": 1
+    }
+  },
+  "results": [
+    {
+      "id": "wrong_wrong_wrong",
+      "description": "Multiple validation failures",
+      "success": true
+    },
+    {
+      "id": "missing_duration",
+      "description": "Missing duration",
+      "success": false
+    },
+    {
+      "id": "missing_indication",
+      "description": "Missing clinical indication",
+      "success": false
+    },
+    {
+      "id": "missing_duration",
+      "description": "Missing duration",
+      "success": false
+    },
+    {
+      "id": "vague_symptoms",
+      "description": "Vague symptoms",
+      "success": true
+    },
+    {
+      "id": "incomplete_history",
+      "description": "Incomplete medical history",
+      "success": true
+    },
+    {
+      "id": "incomplete_history",
+      "description": "Incomplete medical history",
+      "success": true
+    },
+    {
+      "id": "wrong_wrong_wrong",
+      "description": "Multiple validation failures",
+      "success": false
+    },
+    {
+      "id": "appropriate_msk",
+      "description": "Appropriate musculoskeletal case",
+      "success": true
+    }
+  ],
+  "endTime": "2025-04-15T01:34:25.994Z",
+  "duration": 110.249,
+  "totalTests": 9,
+  "totalPassed": 5,
+  "totalFailed": 4,
+  "successRate": 55.55555555555556
+}

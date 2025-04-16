@@ -1,0 +1,71 @@
+{
+  "testCase": {
+    "id": "A1",
+    "description": "Missing clinical indication",
+    "prompt": "Generate a radiology order dictation with no clinical indication or symptoms.",
+    "expectedResult": "validation_failed",
+    "expectedFeedback": "Missing clinical indication"
+  },
+  "startTime": "2025-04-15T00:53:23.218Z",
+  "steps": [
+    {
+      "step": "generate_dictation",
+      "model": "grok",
+      "timestamp": "2025-04-15T00:53:25.676Z",
+      "output": "**Dictation for Radiology Order**\n\n\"This is Dr. [Your Name] from [Department/Clinic Name], ordering a radiology study for patient [Patient Name], medical record number [MRN]. The study requested is a [specific imaging modality, e.g., chest X-ray, CT scan of the abdomen, etc.] to be performed at the earliest convenience. Please ensure the images are uploaded to the PACS system for review. If there are any questions or concerns regarding this order, please contact me at [contact number or pager]. Thank you.\"\n\n**End of dictation.**"
+    },
+    {
+      "step": "validate_dictation",
+      "model": "anthropic",
+      "timestamp": "2025-04-15T00:53:33.436Z",
+      "output": {
+        "success": true,
+        "orderId": 195,
+        "validationResult": {
+          "validationStatus": "needs_clarification",
+          "complianceScore": 3,
+          "feedback": "The dictation lacks specific clinical indications, diagnosis, or symptoms that would justify the imaging study. Without this information, it's not possible to determine if the requested study adheres to appropriate use criteria or clinical guidelines. Please provide: 1) Specific signs/symptoms or working diagnosis, 2) Relevant medical history, 3) Results of previous imaging or tests if applicable, 4) Treatment attempts if relevant. Including this information will help ensure the study is medically necessary and compliant with evidence-based guidelines.",
+          "suggestedICD10Codes": [
+            {
+              "code": "R69",
+              "description": "Illness, unspecified"
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "N/A",
+              "description": "Cannot suggest CPT code without knowing the specific imaging modality"
+            }
+          ],
+          "internalReasoning": "The dictation is a template that lacks any specific clinical information. There is no mention of the patient's symptoms, diagnosis, or clinical history that would justify any imaging study. The imaging modality itself is not specified (indicated by placeholder text). Without these critical details, it's impossible to evaluate the medical necessity or appropriateness of the requested study against any clinical guidelines or appropriate use criteria. The validation status is therefore 'needs_clarification' with a low compliance score, as the dictation provides no clinical justification for the study."
+        }
+      }
+    }
+  ],
+  "dictation": "**Dictation for Radiology Order**\n\n\"This is Dr. [Your Name] from [Department/Clinic Name], ordering a radiology study for patient [Patient Name], medical record number [MRN]. The study requested is a [specific imaging modality, e.g., chest X-ray, CT scan of the abdomen, etc.] to be performed at the earliest convenience. Please ensure the images are uploaded to the PACS system for review. If there are any questions or concerns regarding this order, please contact me at [contact number or pager]. Thank you.\"\n\n**End of dictation.**",
+  "initialValidation": {
+    "success": true,
+    "orderId": 195,
+    "validationResult": {
+      "validationStatus": "needs_clarification",
+      "complianceScore": 3,
+      "feedback": "The dictation lacks specific clinical indications, diagnosis, or symptoms that would justify the imaging study. Without this information, it's not possible to determine if the requested study adheres to appropriate use criteria or clinical guidelines. Please provide: 1) Specific signs/symptoms or working diagnosis, 2) Relevant medical history, 3) Results of previous imaging or tests if applicable, 4) Treatment attempts if relevant. Including this information will help ensure the study is medically necessary and compliant with evidence-based guidelines.",
+      "suggestedICD10Codes": [
+        {
+          "code": "R69",
+          "description": "Illness, unspecified"
+        }
+      ],
+      "suggestedCPTCodes": [
+        {
+          "code": "N/A",
+          "description": "Cannot suggest CPT code without knowing the specific imaging modality"
+        }
+      ],
+      "internalReasoning": "The dictation is a template that lacks any specific clinical information. There is no mention of the patient's symptoms, diagnosis, or clinical history that would justify any imaging study. The imaging modality itself is not specified (indicated by placeholder text). Without these critical details, it's impossible to evaluate the medical necessity or appropriateness of the requested study against any clinical guidelines or appropriate use criteria. The validation status is therefore 'needs_clarification' with a low compliance score, as the dictation provides no clinical justification for the study."
+    }
+  },
+  "success": false,
+  "endTime": "2025-04-15T00:53:33.436Z",
+  "duration": 10.218
+}

@@ -1,0 +1,6 @@
+{
+  "orderId": "order_pxmbd250",
+  "adminToken": "mock_token_ivt8pnsio7l",
+  "finalStatus": "pending_radiology",
+  "sentToRadiology": true
+}

@@ -1,0 +1,32 @@
+{
+  "orgId": "org_1pv0t3ri",
+  "adminId": "user_bryras6q",
+  "adminToken": "mock_token_ukvoajfj2xs",
+  "physicianId": "user_74zzhzz9",
+  "physicianToken": "mock_token_1sr8gapt8r9",
+  "orderId": "order_pxmbd250",
+  "validationStatus": "validated",
+  "cptCode": "72148",
+  "icd10Codes": [
+    "M54.5",
+    "M51.36"
+  ],
+  "finalStatus": "pending_admin",
+  "referring": {
+    "orgName": "Test Referring Practice A",
+    "orgType": "referring",
+    "admin": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "admin-ref-a@example.com",
+      "password": "Password123!"
+    },
+    "physician": {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "physician-a@example.com",
+      "password": "Password123!",
+      "npi": "1234567890"
+    }
+  }
+}

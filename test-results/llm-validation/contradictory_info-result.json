@@ -1,0 +1,103 @@
+{
+  "testCase": {
+    "id": "contradictory_info",
+    "description": "Contradictory information",
+    "prompt": "Generate a radiology order with contradictory clinical information (e.g., symptoms both improving and worsening at the same time).",
+    "expectedResult": "validation_failed",
+    "expectedFeedback": "Contradictory clinical information"
+  },
+  "startTime": "2025-04-15T01:24:52.895Z",
+  "steps": [
+    {
+      "step": "generate_dictation",
+      "model": "grok",
+      "timestamp": "2025-04-15T01:24:53.649Z",
+      "output": "45/Male. Chest X-ray. Persistent cough with improving shortness of breath but worsening chest pain."
+    },
+    {
+      "step": "validate_dictation",
+      "model": "anthropic",
+      "timestamp": "2025-04-15T01:25:02.650Z",
+      "output": {
+        "success": true,
+        "orderId": 215,
+        "validationResult": {
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "feedback": "A chest X-ray is an appropriate first-line imaging study for a patient with persistent cough, worsening chest pain, and history of shortness of breath (even if improving). The American College of Radiology and American College of Chest Physicians guidelines support chest radiography as the initial imaging modality for these symptoms to evaluate for pneumonia, pleural effusion, pneumothorax, or other thoracic pathology. The presence of chest pain warrants investigation to rule out cardiac or pulmonary etiologies. If the chest X-ray is negative but symptoms persist, further imaging such as CT chest might be considered as a next step.",
+          "suggestedICD10Codes": [
+            {
+              "code": "R05",
+              "description": "Cough"
+            },
+            {
+              "code": "R07.9",
+              "description": "Chest pain, unspecified"
+            },
+            {
+              "code": "R06.02",
+              "description": "Shortness of breath"
+            },
+            {
+              "code": "J98.9",
+              "description": "Respiratory disorder, unspecified"
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "71045",
+              "description": "Chest X-ray, single view"
+            },
+            {
+              "code": "71046",
+              "description": "Chest X-ray, 2 views"
+            }
+          ],
+          "internalReasoning": "For a 45-year-old male with persistent cough, improving dyspnea, and worsening chest pain, a chest X-ray represents a high-value, appropriate initial imaging study. This follows ACR Appropriateness Criteria for patients with respiratory symptoms and chest pain. The chest X-ray can detect many common causes of these symptoms including pneumonia, pleural effusion, pneumothorax, pulmonary nodules, or cardiomegaly. The improvement in shortness of breath suggests a potentially resolving process, but the worsening chest pain warrants investigation. The relatively low radiation dose and cost of chest X-ray make it an appropriate first step before considering advanced imaging. I've recommended both single and two-view chest X-ray codes, as the specific view count wasn't specified in the request."
+        }
+      }
+    }
+  ],
+  "dictation": "45/Male. Chest X-ray. Persistent cough with improving shortness of breath but worsening chest pain.",
+  "initialValidation": {
+    "success": true,
+    "orderId": 215,
+    "validationResult": {
+      "validationStatus": "appropriate",
+      "complianceScore": 8,
+      "feedback": "A chest X-ray is an appropriate first-line imaging study for a patient with persistent cough, worsening chest pain, and history of shortness of breath (even if improving). The American College of Radiology and American College of Chest Physicians guidelines support chest radiography as the initial imaging modality for these symptoms to evaluate for pneumonia, pleural effusion, pneumothorax, or other thoracic pathology. The presence of chest pain warrants investigation to rule out cardiac or pulmonary etiologies. If the chest X-ray is negative but symptoms persist, further imaging such as CT chest might be considered as a next step.",
+      "suggestedICD10Codes": [
+        {
+          "code": "R05",
+          "description": "Cough"
+        },
+        {
+          "code": "R07.9",
+          "description": "Chest pain, unspecified"
+        },
+        {
+          "code": "R06.02",
+          "description": "Shortness of breath"
+        },
+        {
+          "code": "J98.9",
+          "description": "Respiratory disorder, unspecified"
+        }
+      ],
+      "suggestedCPTCodes": [
+        {
+          "code": "71045",
+          "description": "Chest X-ray, single view"
+        },
+        {
+          "code": "71046",
+          "description": "Chest X-ray, 2 views"
+        }
+      ],
+      "internalReasoning": "For a 45-year-old male with persistent cough, improving dyspnea, and worsening chest pain, a chest X-ray represents a high-value, appropriate initial imaging study. This follows ACR Appropriateness Criteria for patients with respiratory symptoms and chest pain. The chest X-ray can detect many common causes of these symptoms including pneumonia, pleural effusion, pneumothorax, pulmonary nodules, or cardiomegaly. The improvement in shortness of breath suggests a potentially resolving process, but the worsening chest pain warrants investigation. The relatively low radiation dose and cost of chest X-ray make it an appropriate first step before considering advanced imaging. I've recommended both single and two-view chest X-ray codes, as the specific view count wasn't specified in the request."
+    }
+  },
+  "success": false,
+  "endTime": "2025-04-15T01:25:02.650Z",
+  "duration": 9.755
+}

@@ -1,0 +1,3 @@
+@echo off
+echo Requesting elevated privileges...
+powershell -Command "Start-Process cmd -ArgumentList '/c cd /d %cd% && node debug-scripts/restart-server.js' -Verb RunAs"

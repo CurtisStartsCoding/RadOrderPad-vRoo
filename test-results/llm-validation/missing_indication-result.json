@@ -1,0 +1,96 @@
+{
+  "testCase": {
+    "id": "missing_indication",
+    "description": "Missing clinical indication",
+    "prompt": "Generate a radiology order with patient age, gender, and requested modality, but DO NOT include any clinical indication or symptoms.",
+    "expectedResult": "validation_failed",
+    "expectedFeedback": "Missing clinical indication"
+  },
+  "startTime": "2025-04-15T01:32:56.598Z",
+  "steps": [
+    {
+      "step": "generate_dictation",
+      "model": "grok",
+      "timestamp": "2025-04-15T01:32:57.201Z",
+      "output": "45/Male. Chest X-ray."
+    },
+    {
+      "step": "validate_dictation",
+      "model": "anthropic",
+      "timestamp": "2025-04-15T01:33:07.281Z",
+      "output": {
+        "success": true,
+        "orderId": 222,
+        "validationResult": {
+          "validationStatus": "needs_clarification",
+          "complianceScore": 3,
+          "feedback": "The request for a chest X-ray lacks sufficient clinical information to determine appropriateness. For proper validation, please provide relevant clinical indications such as: presenting symptoms (cough, chest pain, dyspnea, fever), relevant history (smoking, prior lung disease, occupational exposures), and any specific clinical concerns (suspected pneumonia, lung mass, COPD exacerbation, tuberculosis screening, pre-operative evaluation, etc.). Without this information, the clinical necessity of the study cannot be properly assessed.",
+          "suggestedICD10Codes": [
+            {
+              "code": "R07.9",
+              "description": "Chest pain, unspecified"
+            },
+            {
+              "code": "R05",
+              "description": "Cough"
+            },
+            {
+              "code": "Z13.83",
+              "description": "Encounter for screening for respiratory disorder NEC"
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "71045",
+              "description": "X-ray examination of chest, single view"
+            },
+            {
+              "code": "71046",
+              "description": "X-ray examination of chest, 2 views"
+            }
+          ],
+          "internalReasoning": "The dictation provides only demographic information (45-year-old male) and the requested study (chest X-ray) without any clinical indications. While chest X-rays are common and relatively low-risk imaging studies, ACR Appropriateness Criteria still require specific clinical indications to determine medical necessity. Without knowing symptoms, history, or the clinical question being addressed, it's impossible to determine if this is an appropriate use of imaging resources or if another approach would be more suitable. The suggested ICD-10 and CPT codes represent common indications and procedures, but proper code selection requires specific clinical information."
+        }
+      }
+    }
+  ],
+  "dictation": "45/Male. Chest X-ray.",
+  "initialValidation": {
+    "success": true,
+    "orderId": 222,
+    "validationResult": {
+      "validationStatus": "needs_clarification",
+      "complianceScore": 3,
+      "feedback": "The request for a chest X-ray lacks sufficient clinical information to determine appropriateness. For proper validation, please provide relevant clinical indications such as: presenting symptoms (cough, chest pain, dyspnea, fever), relevant history (smoking, prior lung disease, occupational exposures), and any specific clinical concerns (suspected pneumonia, lung mass, COPD exacerbation, tuberculosis screening, pre-operative evaluation, etc.). Without this information, the clinical necessity of the study cannot be properly assessed.",
+      "suggestedICD10Codes": [
+        {
+          "code": "R07.9",
+          "description": "Chest pain, unspecified"
+        },
+        {
+          "code": "R05",
+          "description": "Cough"
+        },
+        {
+          "code": "Z13.83",
+          "description": "Encounter for screening for respiratory disorder NEC"
+        }
+      ],
+      "suggestedCPTCodes": [
+        {
+          "code": "71045",
+          "description": "X-ray examination of chest, single view"
+        },
+        {
+          "code": "71046",
+          "description": "X-ray examination of chest, 2 views"
+        }
+      ],
+      "internalReasoning": "The dictation provides only demographic information (45-year-old male) and the requested study (chest X-ray) without any clinical indications. While chest X-rays are common and relatively low-risk imaging studies, ACR Appropriateness Criteria still require specific clinical indications to determine medical necessity. Without knowing symptoms, history, or the clinical question being addressed, it's impossible to determine if this is an appropriate use of imaging resources or if another approach would be more suitable. The suggested ICD-10 and CPT codes represent common indications and procedures, but proper code selection requires specific clinical information."
+    }
+  },
+  "finalValidationStatus": "needs_clarification",
+  "success": false,
+  "endTime": "2025-04-15T01:33:07.281Z",
+  "duration": 10.683
+}

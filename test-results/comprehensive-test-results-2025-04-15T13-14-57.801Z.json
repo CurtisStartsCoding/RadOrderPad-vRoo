@@ -1,0 +1,12 @@
+[
+  {
+    "success": false,
+    "testCase": "Insufficient Clinical Information with Physician Override",
+    "error": "connect ECONNREFUSED ::1:3000"
+  },
+  {
+    "success": false,
+    "testCase": "Inappropriate Modality Selection with Physician Override",
+    "error": "connect ECONNREFUSED ::1:3000"
+  }
+]

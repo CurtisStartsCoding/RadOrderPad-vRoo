@@ -1,0 +1,103 @@
+{
+  "testCase": {
+    "id": "B2",
+    "description": "Missing duration of symptoms",
+    "prompt": "Generate a radiology order dictation missing the duration of symptoms for a condition where duration is important for determining appropriateness.",
+    "expectedResult": "needs_clarification",
+    "expectedFeedback": "Missing duration of symptoms"
+  },
+  "startTime": "2025-04-15T00:54:17.877Z",
+  "steps": [
+    {
+      "step": "generate_dictation",
+      "model": "grok",
+      "timestamp": "2025-04-15T00:54:21.414Z",
+      "output": "**Radiology Order Dictation**\n\n\"Radiology, this is Dr. Smith dictating an order for a patient, Mr. John Doe, date of birth 05/15/1975, medical record number 123456. I am requesting a CT scan of the abdomen and pelvis with contrast for evaluation of suspected appendicitis. The patient is a 48-year-old male presenting with right lower quadrant pain, nausea, and fever. His white blood cell count is elevated at 14,000. Please perform the study as soon as possible due to the clinical suspicion of an acute process. If there are any questions or concerns regarding this order, please contact me at extension 2345. Thank you.\"\n\n**Note:** In this dictation, the duration of symptoms (e.g., onset of pain) is missing. For suspected appendicitis, the duration of symptoms is critical to determine the urgency and appropriateness of imaging, as it helps differentiate acute appendicitis from other conditions or complications such as perforation."
+    },
+    {
+      "step": "validate_dictation",
+      "model": "anthropic",
+      "timestamp": "2025-04-15T00:54:30.194Z",
+      "output": {
+        "success": true,
+        "orderId": 199,
+        "validationResult": {
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "feedback": "The requested CT abdomen and pelvis with contrast is appropriate for suspected appendicitis in this 48-year-old male with right lower quadrant pain, nausea, fever, and elevated WBC count (14,000). These clinical findings align with ACR Appropriateness Criteria for suspected appendicitis. While the duration of symptoms is missing from the dictation, the presence of fever and elevated WBC suggests acute inflammation. Duration information would be helpful to better assess the urgency and risk of complications. CT with contrast is considered the first-line imaging study for suspected appendicitis in adults due to its high sensitivity (94-98%) and specificity (95-97%). For future orders, please include symptom duration to enable optimal protocol selection and interpretation.",
+          "suggestedICD10Codes": [
+            {
+              "code": "K35.80",
+              "description": "Unspecified acute appendicitis"
+            },
+            {
+              "code": "R10.31",
+              "description": "Right lower quadrant pain"
+            },
+            {
+              "code": "R50.9",
+              "description": "Fever, unspecified"
+            },
+            {
+              "code": "R11.0",
+              "description": "Nausea"
+            },
+            {
+              "code": "D72.829",
+              "description": "Elevated white blood cell count, unspecified"
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "74177",
+              "description": "CT of abdomen and pelvis with contrast"
+            }
+          ],
+          "internalReasoning": "The clinical presentation strongly suggests appendicitis with right lower quadrant pain, nausea, fever, and leukocytosis (WBC 14,000), all classic symptoms. CT abdomen/pelvis with contrast is the gold standard imaging modality for adults with suspected appendicitis per ACR Appropriateness Criteria. The missing duration of symptoms is a minor limitation but doesn't invalidate the need for imaging given the clear clinical picture of acute inflammation. A compliance score of 8 (rather than 9) reflects this minor documentation deficiency. The preferred modality in this case is clearly CT with contrast, as it offers optimal visualization of the appendix and surrounding structures, and can identify alternative diagnoses if appendicitis is not present."
+        }
+      }
+    }
+  ],
+  "dictation": "**Radiology Order Dictation**\n\n\"Radiology, this is Dr. Smith dictating an order for a patient, Mr. John Doe, date of birth 05/15/1975, medical record number 123456. I am requesting a CT scan of the abdomen and pelvis with contrast for evaluation of suspected appendicitis. The patient is a 48-year-old male presenting with right lower quadrant pain, nausea, and fever. His white blood cell count is elevated at 14,000. Please perform the study as soon as possible due to the clinical suspicion of an acute process. If there are any questions or concerns regarding this order, please contact me at extension 2345. Thank you.\"\n\n**Note:** In this dictation, the duration of symptoms (e.g., onset of pain) is missing. For suspected appendicitis, the duration of symptoms is critical to determine the urgency and appropriateness of imaging, as it helps differentiate acute appendicitis from other conditions or complications such as perforation.",
+  "initialValidation": {
+    "success": true,
+    "orderId": 199,
+    "validationResult": {
+      "validationStatus": "appropriate",
+      "complianceScore": 8,
+      "feedback": "The requested CT abdomen and pelvis with contrast is appropriate for suspected appendicitis in this 48-year-old male with right lower quadrant pain, nausea, fever, and elevated WBC count (14,000). These clinical findings align with ACR Appropriateness Criteria for suspected appendicitis. While the duration of symptoms is missing from the dictation, the presence of fever and elevated WBC suggests acute inflammation. Duration information would be helpful to better assess the urgency and risk of complications. CT with contrast is considered the first-line imaging study for suspected appendicitis in adults due to its high sensitivity (94-98%) and specificity (95-97%). For future orders, please include symptom duration to enable optimal protocol selection and interpretation.",
+      "suggestedICD10Codes": [
+        {
+          "code": "K35.80",
+          "description": "Unspecified acute appendicitis"
+        },
+        {
+          "code": "R10.31",
+          "description": "Right lower quadrant pain"
+        },
+        {
+          "code": "R50.9",
+          "description": "Fever, unspecified"
+        },
+        {
+          "code": "R11.0",
+          "description": "Nausea"
+        },
+        {
+          "code": "D72.829",
+          "description": "Elevated white blood cell count, unspecified"
+        }
+      ],
+      "suggestedCPTCodes": [
+        {
+          "code": "74177",
+          "description": "CT of abdomen and pelvis with contrast"
+        }
+      ],
+      "internalReasoning": "The clinical presentation strongly suggests appendicitis with right lower quadrant pain, nausea, fever, and leukocytosis (WBC 14,000), all classic symptoms. CT abdomen/pelvis with contrast is the gold standard imaging modality for adults with suspected appendicitis per ACR Appropriateness Criteria. The missing duration of symptoms is a minor limitation but doesn't invalidate the need for imaging given the clear clinical picture of acute inflammation. A compliance score of 8 (rather than 9) reflects this minor documentation deficiency. The preferred modality in this case is clearly CT with contrast, as it offers optimal visualization of the appendix and surrounding structures, and can identify alternative diagnoses if appendicitis is not present."
+    }
+  },
+  "success": false,
+  "endTime": "2025-04-15T00:54:30.194Z",
+  "duration": 12.317
+}

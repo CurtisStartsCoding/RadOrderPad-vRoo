@@ -1,0 +1,1 @@
+{"version":3,"file":"generate-token.js","sourceRoot":"","sources":["../../../../src/services/auth/token/generate-token.ts"],"names":[],"mappings":";;AAMA,sCAEC;AAPD,4DAA+E;AAE/E;;GAEG;AACH,SAAgB,aAAa,CAAC,IAAU;IACtC,OAAO,IAAA,2BAAgB,EAAC,IAAI,CAAC,CAAC;AAChC,CAAC"}
