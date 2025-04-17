@@ -27,6 +27,12 @@ out/
 build
 dist
 
+# Ignore compiled JavaScript and source maps within src
+src/**/*.js
+src/**/*.js.map
+
+# Ignore declaration files within src
+src/**/*.d.ts
 
 # Debug
 npm-debug.log*

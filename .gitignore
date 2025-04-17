@@ -4,6 +4,8 @@ node_modules/
 # Build output
 dist/
 build/
+.next/
+out/
 
 # Environment variables
 .env
@@ -69,6 +71,16 @@ run_*_test.sh
 *.js.bak
 *.js.orig
 *_backup_*.sql
+
+# Ignore compiled JavaScript and source maps within src
+src/**/*.js
+src/**/*.js.map
+client/src/**/*.js
+client/src/**/*.js.map
+
+# Ignore declaration files within src
+src/**/*.d.ts
+client/src/**/*.d.ts
 
 # Misc
 .DS_Store
