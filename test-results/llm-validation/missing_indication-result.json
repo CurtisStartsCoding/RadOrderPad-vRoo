@@ -6,50 +6,40 @@
     "expectedResult": "validation_failed",
     "expectedFeedback": "Missing clinical indication"
   },
-  "startTime": "2025-04-15T01:32:56.598Z",
+  "startTime": "2025-04-16T18:08:50.114Z",
   "steps": [
     {
       "step": "generate_dictation",
       "model": "grok",
-      "timestamp": "2025-04-15T01:32:57.201Z",
+      "timestamp": "2025-04-16T18:08:50.807Z",
       "output": "45/Male. Chest X-ray."
     },
     {
       "step": "validate_dictation",
       "model": "anthropic",
-      "timestamp": "2025-04-15T01:33:07.281Z",
+      "timestamp": "2025-04-16T18:08:55.831Z",
       "output": {
         "success": true,
-        "orderId": 222,
+        "orderId": 556,
         "validationResult": {
           "validationStatus": "needs_clarification",
           "complianceScore": 3,
-          "feedback": "The request for a chest X-ray lacks sufficient clinical information to determine appropriateness. For proper validation, please provide relevant clinical indications such as: presenting symptoms (cough, chest pain, dyspnea, fever), relevant history (smoking, prior lung disease, occupational exposures), and any specific clinical concerns (suspected pneumonia, lung mass, COPD exacerbation, tuberculosis screening, pre-operative evaluation, etc.). Without this information, the clinical necessity of the study cannot be properly assessed.",
+          "feedback": "Insufficient clinical information provided. Chest X-ray requires documented clinical indication (symptoms, diagnosis, or surveillance purpose). Please provide specific reason for imaging to ensure appropriate utilization.",
           "suggestedICD10Codes": [
             {
-              "code": "R07.9",
-              "description": "Chest pain, unspecified"
-            },
-            {
-              "code": "R05",
-              "description": "Cough"
-            },
-            {
-              "code": "Z13.83",
-              "description": "Encounter for screening for respiratory disorder NEC"
+              "code": "R07.8",
+              "description": "Other chest pain",
+              "isPrimary": true
             }
           ],
           "suggestedCPTCodes": [
             {
-              "code": "71045",
-              "description": "X-ray examination of chest, single view"
-            },
-            {
-              "code": "71046",
-              "description": "X-ray examination of chest, 2 views"
+              "code": "71020",
+              "description": "Radiologic examination, chest, two views, frontal and lateral",
+              "isPrimary": false
             }
           ],
-          "internalReasoning": "The dictation provides only demographic information (45-year-old male) and the requested study (chest X-ray) without any clinical indications. While chest X-rays are common and relatively low-risk imaging studies, ACR Appropriateness Criteria still require specific clinical indications to determine medical necessity. Without knowing symptoms, history, or the clinical question being addressed, it's impossible to determine if this is an appropriate use of imaging resources or if another approach would be more suitable. The suggested ICD-10 and CPT codes represent common indications and procedures, but proper code selection requires specific clinical information."
+          "internalReasoning": "No internal reasoning provided"
         }
       }
     }
@@ -57,40 +47,30 @@
   "dictation": "45/Male. Chest X-ray.",
   "initialValidation": {
     "success": true,
-    "orderId": 222,
+    "orderId": 556,
     "validationResult": {
       "validationStatus": "needs_clarification",
       "complianceScore": 3,
-      "feedback": "The request for a chest X-ray lacks sufficient clinical information to determine appropriateness. For proper validation, please provide relevant clinical indications such as: presenting symptoms (cough, chest pain, dyspnea, fever), relevant history (smoking, prior lung disease, occupational exposures), and any specific clinical concerns (suspected pneumonia, lung mass, COPD exacerbation, tuberculosis screening, pre-operative evaluation, etc.). Without this information, the clinical necessity of the study cannot be properly assessed.",
+      "feedback": "Insufficient clinical information provided. Chest X-ray requires documented clinical indication (symptoms, diagnosis, or surveillance purpose). Please provide specific reason for imaging to ensure appropriate utilization.",
       "suggestedICD10Codes": [
         {
-          "code": "R07.9",
-          "description": "Chest pain, unspecified"
-        },
-        {
-          "code": "R05",
-          "description": "Cough"
-        },
-        {
-          "code": "Z13.83",
-          "description": "Encounter for screening for respiratory disorder NEC"
+          "code": "R07.8",
+          "description": "Other chest pain",
+          "isPrimary": true
         }
       ],
       "suggestedCPTCodes": [
         {
-          "code": "71045",
-          "description": "X-ray examination of chest, single view"
-        },
-        {
-          "code": "71046",
-          "description": "X-ray examination of chest, 2 views"
+          "code": "71020",
+          "description": "Radiologic examination, chest, two views, frontal and lateral",
+          "isPrimary": false
         }
       ],
-      "internalReasoning": "The dictation provides only demographic information (45-year-old male) and the requested study (chest X-ray) without any clinical indications. While chest X-rays are common and relatively low-risk imaging studies, ACR Appropriateness Criteria still require specific clinical indications to determine medical necessity. Without knowing symptoms, history, or the clinical question being addressed, it's impossible to determine if this is an appropriate use of imaging resources or if another approach would be more suitable. The suggested ICD-10 and CPT codes represent common indications and procedures, but proper code selection requires specific clinical information."
+      "internalReasoning": "No internal reasoning provided"
     }
   },
   "finalValidationStatus": "needs_clarification",
   "success": false,
-  "endTime": "2025-04-15T01:33:07.281Z",
-  "duration": 10.683
+  "endTime": "2025-04-16T18:08:55.831Z",
+  "duration": 5.717
 }

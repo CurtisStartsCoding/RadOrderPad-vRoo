@@ -1,10 +1,10 @@
 {
-  "orgId": "org_1pv0t3ri",
-  "adminId": "user_bryras6q",
-  "adminToken": "mock_token_ukvoajfj2xs",
-  "physicianId": "user_74zzhzz9",
-  "physicianToken": "mock_token_1sr8gapt8r9",
-  "orderId": "order_pxmbd250",
+  "orgId": "org_ref_a",
+  "adminId": "user_admin_ref_a",
+  "adminToken": "mock_token_database_x89p2fm4",
+  "physicianId": "user_physician_a",
+  "physicianToken": "mock_token_database_1c13tlq5",
+  "orderId": "order_database_wmg6q885",
   "validationStatus": "validated",
   "cptCode": "72148",
   "icd10Codes": [

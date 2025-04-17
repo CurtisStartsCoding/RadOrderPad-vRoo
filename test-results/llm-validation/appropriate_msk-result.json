@@ -6,99 +6,81 @@
     "expectedResult": "validated",
     "expectedFeedback": ""
   },
-  "startTime": "2025-04-15T01:34:14.415Z",
+  "startTime": "2025-04-16T18:09:39.471Z",
   "steps": [
     {
       "step": "generate_dictation",
       "model": "grok",
-      "timestamp": "2025-04-15T01:34:16.761Z",
-      "output": "45/Male. MRI of the right knee. Persistent pain and swelling for 6 weeks, unresponsive to rest and physical therapy."
+      "timestamp": "2025-04-16T18:09:40.614Z",
+      "output": "45/Male. MRI of right knee. Persistent pain and swelling for 3 months, unresponsive to physical therapy and anti-inflammatory medications."
     },
     {
       "step": "validate_dictation",
       "model": "anthropic",
-      "timestamp": "2025-04-15T01:34:25.992Z",
+      "timestamp": "2025-04-16T18:09:45.303Z",
       "output": {
         "success": true,
-        "orderId": 228,
+        "orderId": 563,
         "validationResult": {
           "validationStatus": "appropriate",
           "complianceScore": 8,
-          "feedback": "The requested MRI of the right knee is appropriate for this 45-year-old male with persistent knee pain and swelling for 6 weeks that has not responded to conservative management (rest and physical therapy). According to ACR Appropriateness Criteria and evidence-based guidelines, MRI is the preferred imaging modality for evaluating internal derangement of the knee when symptoms persist despite conservative treatment. This study will help evaluate for meniscal tears, ligament injuries, cartilage damage, or other internal knee pathologies that may require surgical intervention.",
+          "feedback": "MRI knee without contrast is appropriate for persistent knee pain with failed conservative management. Consider adding details about mechanism of injury, locking/catching symptoms, or suspected internal derangement in future orders.",
           "suggestedICD10Codes": [
             {
               "code": "M25.561",
-              "description": "Pain in right knee"
+              "description": "Pain in right knee",
+              "isPrimary": true
             },
             {
               "code": "M25.461",
-              "description": "Effusion, right knee"
-            },
-            {
-              "code": "S83.91XA",
-              "description": "Unspecified injury of right knee, initial encounter"
+              "description": "Effusion, right knee",
+              "isPrimary": false
             }
           ],
           "suggestedCPTCodes": [
             {
               "code": "73721",
-              "description": "MRI knee without contrast"
-            },
-            {
-              "code": "73722",
-              "description": "MRI knee with contrast (if internal derangement suspected)"
-            },
-            {
-              "code": "73723",
-              "description": "MRI knee without and with contrast (if infection or tumor suspected)"
+              "description": "Magnetic resonance (e.g., proton) imaging, any joint of lower extremity; without contrast material",
+              "isPrimary": false
             }
           ],
-          "internalReasoning": "The case involves a 45-year-old male with persistent knee pain and swelling for 6 weeks who has failed conservative management (rest and physical therapy). According to ACR Appropriateness Criteria for chronic knee pain, MRI is highly appropriate (usually rated 7-9) when symptoms persist despite conservative treatment. The duration (6 weeks) exceeds the typical timeframe for self-limited injuries, and the failure of conservative measures suggests the need for advanced imaging to guide further treatment decisions. The most likely diagnoses include meniscal tear, ligament injury, or cartilage damage, all of which are best evaluated with MRI. Without contrast would be the typical protocol unless there are concerns for infection or tumor."
+          "internalReasoning": "No internal reasoning provided"
         }
       }
     }
   ],
-  "dictation": "45/Male. MRI of the right knee. Persistent pain and swelling for 6 weeks, unresponsive to rest and physical therapy.",
+  "dictation": "45/Male. MRI of right knee. Persistent pain and swelling for 3 months, unresponsive to physical therapy and anti-inflammatory medications.",
   "initialValidation": {
     "success": true,
-    "orderId": 228,
+    "orderId": 563,
     "validationResult": {
       "validationStatus": "appropriate",
       "complianceScore": 8,
-      "feedback": "The requested MRI of the right knee is appropriate for this 45-year-old male with persistent knee pain and swelling for 6 weeks that has not responded to conservative management (rest and physical therapy). According to ACR Appropriateness Criteria and evidence-based guidelines, MRI is the preferred imaging modality for evaluating internal derangement of the knee when symptoms persist despite conservative treatment. This study will help evaluate for meniscal tears, ligament injuries, cartilage damage, or other internal knee pathologies that may require surgical intervention.",
+      "feedback": "MRI knee without contrast is appropriate for persistent knee pain with failed conservative management. Consider adding details about mechanism of injury, locking/catching symptoms, or suspected internal derangement in future orders.",
       "suggestedICD10Codes": [
         {
           "code": "M25.561",
-          "description": "Pain in right knee"
+          "description": "Pain in right knee",
+          "isPrimary": true
         },
         {
           "code": "M25.461",
-          "description": "Effusion, right knee"
-        },
-        {
-          "code": "S83.91XA",
-          "description": "Unspecified injury of right knee, initial encounter"
+          "description": "Effusion, right knee",
+          "isPrimary": false
         }
       ],
       "suggestedCPTCodes": [
         {
           "code": "73721",
-          "description": "MRI knee without contrast"
-        },
-        {
-          "code": "73722",
-          "description": "MRI knee with contrast (if internal derangement suspected)"
-        },
-        {
-          "code": "73723",
-          "description": "MRI knee without and with contrast (if infection or tumor suspected)"
+          "description": "Magnetic resonance (e.g., proton) imaging, any joint of lower extremity; without contrast material",
+          "isPrimary": false
         }
       ],
-      "internalReasoning": "The case involves a 45-year-old male with persistent knee pain and swelling for 6 weeks who has failed conservative management (rest and physical therapy). According to ACR Appropriateness Criteria for chronic knee pain, MRI is highly appropriate (usually rated 7-9) when symptoms persist despite conservative treatment. The duration (6 weeks) exceeds the typical timeframe for self-limited injuries, and the failure of conservative measures suggests the need for advanced imaging to guide further treatment decisions. The most likely diagnoses include meniscal tear, ligament injury, or cartilage damage, all of which are best evaluated with MRI. Without contrast would be the typical protocol unless there are concerns for infection or tumor."
+      "internalReasoning": "No internal reasoning provided"
     }
   },
   "finalValidationStatus": "appropriate",
   "success": true,
-  "endTime": "2025-04-15T01:34:25.992Z",
-  "duration": 11.577
+  "endTime": "2025-04-16T18:09:45.303Z",
+  "duration": 5.832
 }

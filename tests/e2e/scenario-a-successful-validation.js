@@ -178,14 +178,19 @@ async function runTest() {
     helpers.log('Order verification completed successfully', SCENARIO);
     helpers.log(`${SCENARIO} completed successfully`, SCENARIO);
     
+    return true;
   } catch (error) {
     helpers.log(`Error in ${SCENARIO}: ${error.message}`, SCENARIO);
-    throw error;
+    return false;
   }
 }
 
-// Run the test
-runTest().catch(error => {
-  helpers.log(`Test failed: ${error.message}`, SCENARIO);
-  process.exit(1);
-});
+// Export the runTest function
+module.exports = { runTest };
+
+// If this script is run directly (not required), run the test
+if (require.main === module) {
+  runTest().then(success => {
+    process.exit(success ? 0 : 1);
+  });
+}

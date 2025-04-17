@@ -1,4 +1,4 @@
- # Comprehensive Workflow Testing Suite
+# Comprehensive Workflow Testing Suite
 
 This directory contains end-to-end test cases and tools for testing the complete workflow of the RadOrderPad system, with particular focus on validation failures, physician overrides, admin updates, and radiology group handoffs.
 
@@ -24,6 +24,7 @@ The test cases are defined in `comprehensive_workflow_test_cases.md` and cover a
 - Duplicate study requests
 - Complex multi-system disorders
 - Emergent situations with ongoing updates
+- Registration and onboarding for physician and radiology groups
 
 Each test case includes:
 - Initial order details
@@ -31,6 +32,19 @@ Each test case includes:
 - Physician override information
 - Admin processing steps
 - Expected radiology outcome
+
+## Test Scenarios
+
+The following test scenarios are implemented:
+
+1. **Scenario A**: Full Physician Order (Successful Validation)
+2. **Scenario B**: Full Physician Order (Override)
+3. **Scenario C**: Admin Finalization
+4. **Scenario D**: Radiology View/Update
+5. **Scenario E**: Connection Request
+6. **Scenario F**: User Invite
+7. **Scenario G**: File Upload
+8. **Scenario H**: Comprehensive Registration and Onboarding
 
 ## Running the Tests
 
@@ -48,12 +62,12 @@ Each test case includes:
 
 #### Windows
 ```
-.\run-comprehensive-workflow-tests.bat
+.\run-e2e-tests.bat
 ```
 
 #### Unix/Mac
 ```
-./run-comprehensive-workflow-tests.sh
+./run-e2e-tests.sh
 ```
 
 ### Running a Specific Test
@@ -62,12 +76,26 @@ To run a specific test case (e.g., test case #3):
 
 #### Windows
 ```
-.\run-comprehensive-workflow-tests.bat 3
+.\run-e2e-tests.bat 3
 ```
 
 #### Unix/Mac
 ```
-./run-comprehensive-workflow-tests.sh 3
+./run-e2e-tests.sh 3
+```
+
+### Running Registration and Onboarding Tests
+
+To run only the registration and onboarding tests:
+
+#### Windows
+```
+.\run-registration-onboarding-tests.bat
+```
+
+#### Unix/Mac
+```
+./run-registration-onboarding-tests.sh
 ```
 
 ## Test Results

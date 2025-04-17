@@ -58,7 +58,8 @@ async function runTests() {
     { name: 'D: Radiology View/Update', script: path.join(__dirname, 'scenario-d-radiology-workflow.js') },
     { name: 'E: Connection Request', script: path.join(__dirname, 'scenario-e-connection-request.js') },
     { name: 'F: User Invite', script: path.join(__dirname, 'scenario-f-user-invite.js') },
-    { name: 'G: File Upload', script: path.join(__dirname, 'scenario-g-file-upload.js') }
+    { name: 'G: File Upload', script: path.join(__dirname, 'scenario-g-file-upload.js') },
+    { name: 'H: Comprehensive Registration and Onboarding', script: path.join(__dirname, 'scenario-h-registration-onboarding.js') }
   ];
   
   // Run each scenario

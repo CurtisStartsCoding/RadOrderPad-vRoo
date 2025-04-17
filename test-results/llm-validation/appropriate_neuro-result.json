@@ -6,98 +6,101 @@
     "expectedResult": "validated",
     "expectedFeedback": ""
   },
-  "startTime": "2025-04-15T01:24:17.252Z",
+  "startTime": "2025-04-16T18:09:32.327Z",
   "steps": [
     {
       "step": "generate_dictation",
       "model": "grok",
-      "timestamp": "2025-04-15T01:24:18.202Z",
-      "output": "45/Male. Brain MRI. Suspected stroke with acute onset of left-sided weakness and speech difficulty."
+      "timestamp": "2025-04-16T18:09:33.302Z",
+      "output": "45/Male. Brain MRI. Suspected stroke with sudden onset of left-sided weakness and speech difficulty."
     },
     {
       "step": "validate_dictation",
       "model": "anthropic",
-      "timestamp": "2025-04-15T01:24:26.694Z",
+      "timestamp": "2025-04-16T18:09:39.469Z",
       "output": {
         "success": true,
-        "orderId": 211,
+        "orderId": 562,
         "validationResult": {
           "validationStatus": "appropriate",
           "complianceScore": 9,
-          "feedback": "Brain MRI is the preferred imaging study for suspected acute stroke. MRI with diffusion-weighted imaging is highly sensitive for detecting acute ischemic changes and can identify stroke within minutes of onset. The patient's presentation with acute left-sided weakness and speech difficulties are classic signs of possible stroke, particularly affecting the right hemisphere of the brain. Timely imaging is critical for treatment decisions, especially if thrombolytic therapy is being considered. American College of Radiology (ACR) Appropriateness Criteria and American Heart Association/American Stroke Association guidelines support MRI brain as a first-line imaging approach for suspected stroke when readily available.",
+          "feedback": "Brain MRI is highly appropriate for acute stroke symptoms. Consider adding diffusion-weighted imaging sequence for maximum sensitivity. MRI without and with contrast (70553) may provide additional diagnostic information if considering other etiologies.",
           "suggestedICD10Codes": [
             {
-              "code": "I63.9",
-              "description": "Cerebral infarction, unspecified"
-            },
-            {
-              "code": "R29.810",
-              "description": "Facial weakness"
+              "code": "R29.789",
+              "description": "Other symptoms and signs involving the nervous system",
+              "isPrimary": true
             },
             {
               "code": "R47.01",
-              "description": "Aphasia"
+              "description": "Aphasia",
+              "isPrimary": false
             },
             {
-              "code": "R29.891",
-              "description": "Unilateral weakness"
+              "code": "R53.1",
+              "description": "Weakness",
+              "isPrimary": false
             }
           ],
           "suggestedCPTCodes": [
             {
               "code": "70551",
-              "description": "MRI brain without contrast"
+              "description": "Magnetic resonance (e.g., proton) imaging, brain (including brain stem); without contrast material",
+              "isPrimary": false
             },
             {
               "code": "70553",
-              "description": "MRI brain without and with contrast"
+              "description": "Magnetic resonance imaging, brain (including brain stem); without contrast material, followed by contrast material(s) and further sequences",
+              "isPrimary": false
             }
           ],
-          "internalReasoning": "The clinical presentation of acute onset left-sided weakness and speech difficulty strongly suggests an acute cerebrovascular event. Brain MRI, particularly with diffusion-weighted imaging, is the most sensitive test for early detection of ischemic stroke and can differentiate between acute stroke and stroke mimics. According to ACR Appropriateness Criteria, MRI is rated as 'usually appropriate' (9/9) for patients with suspected stroke. While CT may be faster and more readily available in emergency settings, MRI provides superior diagnostic information, especially for posterior circulation strokes and small infarcts. The requested study aligns perfectly with evidence-based guidelines for this clinical scenario."
+          "internalReasoning": "No internal reasoning provided"
         }
       }
     }
   ],
-  "dictation": "45/Male. Brain MRI. Suspected stroke with acute onset of left-sided weakness and speech difficulty.",
+  "dictation": "45/Male. Brain MRI. Suspected stroke with sudden onset of left-sided weakness and speech difficulty.",
   "initialValidation": {
     "success": true,
-    "orderId": 211,
+    "orderId": 562,
     "validationResult": {
       "validationStatus": "appropriate",
       "complianceScore": 9,
-      "feedback": "Brain MRI is the preferred imaging study for suspected acute stroke. MRI with diffusion-weighted imaging is highly sensitive for detecting acute ischemic changes and can identify stroke within minutes of onset. The patient's presentation with acute left-sided weakness and speech difficulties are classic signs of possible stroke, particularly affecting the right hemisphere of the brain. Timely imaging is critical for treatment decisions, especially if thrombolytic therapy is being considered. American College of Radiology (ACR) Appropriateness Criteria and American Heart Association/American Stroke Association guidelines support MRI brain as a first-line imaging approach for suspected stroke when readily available.",
+      "feedback": "Brain MRI is highly appropriate for acute stroke symptoms. Consider adding diffusion-weighted imaging sequence for maximum sensitivity. MRI without and with contrast (70553) may provide additional diagnostic information if considering other etiologies.",
       "suggestedICD10Codes": [
         {
-          "code": "I63.9",
-          "description": "Cerebral infarction, unspecified"
-        },
-        {
-          "code": "R29.810",
-          "description": "Facial weakness"
+          "code": "R29.789",
+          "description": "Other symptoms and signs involving the nervous system",
+          "isPrimary": true
         },
         {
           "code": "R47.01",
-          "description": "Aphasia"
+          "description": "Aphasia",
+          "isPrimary": false
         },
         {
-          "code": "R29.891",
-          "description": "Unilateral weakness"
+          "code": "R53.1",
+          "description": "Weakness",
+          "isPrimary": false
         }
       ],
       "suggestedCPTCodes": [
         {
           "code": "70551",
-          "description": "MRI brain without contrast"
+          "description": "Magnetic resonance (e.g., proton) imaging, brain (including brain stem); without contrast material",
+          "isPrimary": false
         },
         {
           "code": "70553",
-          "description": "MRI brain without and with contrast"
+          "description": "Magnetic resonance imaging, brain (including brain stem); without contrast material, followed by contrast material(s) and further sequences",
+          "isPrimary": false
         }
       ],
-      "internalReasoning": "The clinical presentation of acute onset left-sided weakness and speech difficulty strongly suggests an acute cerebrovascular event. Brain MRI, particularly with diffusion-weighted imaging, is the most sensitive test for early detection of ischemic stroke and can differentiate between acute stroke and stroke mimics. According to ACR Appropriateness Criteria, MRI is rated as 'usually appropriate' (9/9) for patients with suspected stroke. While CT may be faster and more readily available in emergency settings, MRI provides superior diagnostic information, especially for posterior circulation strokes and small infarcts. The requested study aligns perfectly with evidence-based guidelines for this clinical scenario."
+      "internalReasoning": "No internal reasoning provided"
     }
   },
-  "success": false,
-  "endTime": "2025-04-15T01:24:26.694Z",
-  "duration": 9.442
+  "finalValidationStatus": "appropriate",
+  "success": true,
+  "endTime": "2025-04-16T18:09:39.469Z",
+  "duration": 7.142
 }

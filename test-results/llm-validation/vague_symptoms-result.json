@@ -6,46 +6,40 @@
     "expectedResult": "needs_clarification",
     "expectedFeedback": "Need more specific information"
   },
-  "startTime": "2025-04-15T01:33:16.224Z",
+  "startTime": "2025-04-16T18:09:13.008Z",
   "steps": [
     {
       "step": "generate_dictation",
       "model": "grok",
-      "timestamp": "2025-04-15T01:33:16.825Z",
+      "timestamp": "2025-04-16T18:09:14.210Z",
       "output": "45/Male. Chest X-ray. Chest pain."
     },
     {
       "step": "validate_dictation",
       "model": "anthropic",
-      "timestamp": "2025-04-15T01:33:24.799Z",
+      "timestamp": "2025-04-16T18:09:21.143Z",
       "output": {
         "success": true,
-        "orderId": 224,
+        "orderId": 559,
         "validationResult": {
           "validationStatus": "needs_clarification",
-          "complianceScore": 5,
-          "feedback": "While a chest X-ray is often an appropriate first-line imaging study for chest pain, the clinical information provided is too limited for a definitive determination. Additional details would be helpful, such as: duration and quality of chest pain, associated symptoms (dyspnea, fever, cough, trauma history), risk factors for cardiac disease, vital signs, and physical examination findings. For acute chest pain with suspected cardiac origin, an ECG and cardiac biomarkers would typically be initial tests. Chest X-ray is appropriate for evaluating non-cardiac causes like pneumonia, pneumothorax, or traumatic injury.",
+          "complianceScore": 6,
+          "feedback": "Dictation lacks specific chest pain characteristics, duration, or associated symptoms. Chest X-ray is appropriate for initial evaluation, but further clinical details would help determine if additional imaging modalities are warranted.",
           "suggestedICD10Codes": [
             {
               "code": "R07.9",
-              "description": "Chest pain, unspecified"
-            },
-            {
-              "code": "R07.89",
-              "description": "Other chest pain"
+              "description": "Chest pain, unspecified",
+              "isPrimary": true
             }
           ],
           "suggestedCPTCodes": [
             {
-              "code": "71045",
-              "description": "Radiologic examination, chest; single view"
-            },
-            {
-              "code": "71046",
-              "description": "Radiologic examination, chest; 2 views"
+              "code": "71020",
+              "description": "Radiologic examination, chest, two views, frontal and lateral",
+              "isPrimary": false
             }
           ],
-          "internalReasoning": "The request includes minimal clinical information ('chest pain') which is insufficient to fully validate the appropriateness of a chest X-ray. Chest X-ray is often reasonable for evaluating chest pain to rule out conditions like pneumonia, pneumothorax, or rib fractures, but without knowing the character of pain, associated symptoms, or risk factors, it's difficult to determine if this is the most appropriate initial study. American College of Radiology guidelines typically recommend more specific clinical context for optimal imaging selection. The generic nature of the clinical information warrants a middle compliance score and request for clarification."
+          "internalReasoning": "No internal reasoning provided"
         }
       }
     }
@@ -53,36 +47,30 @@
   "dictation": "45/Male. Chest X-ray. Chest pain.",
   "initialValidation": {
     "success": true,
-    "orderId": 224,
+    "orderId": 559,
     "validationResult": {
       "validationStatus": "needs_clarification",
-      "complianceScore": 5,
-      "feedback": "While a chest X-ray is often an appropriate first-line imaging study for chest pain, the clinical information provided is too limited for a definitive determination. Additional details would be helpful, such as: duration and quality of chest pain, associated symptoms (dyspnea, fever, cough, trauma history), risk factors for cardiac disease, vital signs, and physical examination findings. For acute chest pain with suspected cardiac origin, an ECG and cardiac biomarkers would typically be initial tests. Chest X-ray is appropriate for evaluating non-cardiac causes like pneumonia, pneumothorax, or traumatic injury.",
+      "complianceScore": 6,
+      "feedback": "Dictation lacks specific chest pain characteristics, duration, or associated symptoms. Chest X-ray is appropriate for initial evaluation, but further clinical details would help determine if additional imaging modalities are warranted.",
       "suggestedICD10Codes": [
         {
           "code": "R07.9",
-          "description": "Chest pain, unspecified"
-        },
-        {
-          "code": "R07.89",
-          "description": "Other chest pain"
+          "description": "Chest pain, unspecified",
+          "isPrimary": true
         }
       ],
       "suggestedCPTCodes": [
         {
-          "code": "71045",
-          "description": "Radiologic examination, chest; single view"
-        },
-        {
-          "code": "71046",
-          "description": "Radiologic examination, chest; 2 views"
+          "code": "71020",
+          "description": "Radiologic examination, chest, two views, frontal and lateral",
+          "isPrimary": false
         }
       ],
-      "internalReasoning": "The request includes minimal clinical information ('chest pain') which is insufficient to fully validate the appropriateness of a chest X-ray. Chest X-ray is often reasonable for evaluating chest pain to rule out conditions like pneumonia, pneumothorax, or rib fractures, but without knowing the character of pain, associated symptoms, or risk factors, it's difficult to determine if this is the most appropriate initial study. American College of Radiology guidelines typically recommend more specific clinical context for optimal imaging selection. The generic nature of the clinical information warrants a middle compliance score and request for clarification."
+      "internalReasoning": "No internal reasoning provided"
     }
   },
   "finalValidationStatus": "needs_clarification",
   "success": true,
-  "endTime": "2025-04-15T01:33:24.799Z",
-  "duration": 8.575
+  "endTime": "2025-04-16T18:09:21.143Z",
+  "duration": 8.135
 }

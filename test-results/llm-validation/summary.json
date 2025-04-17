@@ -1,5 +1,5 @@
 {
-  "startTime": "2025-04-15T01:32:35.745Z",
+  "startTime": "2025-04-16T18:08:50.112Z",
   "categories": {
     "A": {
       "total": 3,
@@ -13,30 +13,25 @@
     },
     "C": {
       "total": 3,
-      "passed": 2,
-      "failed": 1
+      "passed": 3,
+      "failed": 0
     }
   },
   "results": [
-    {
-      "id": "wrong_wrong_wrong",
-      "description": "Multiple validation failures",
-      "success": true
-    },
-    {
-      "id": "missing_duration",
-      "description": "Missing duration",
-      "success": false
-    },
     {
       "id": "missing_indication",
       "description": "Missing clinical indication",
       "success": false
     },
     {
-      "id": "missing_duration",
-      "description": "Missing duration",
+      "id": "contradictory_info",
+      "description": "Contradictory information",
       "success": false
+    },
+    {
+      "id": "mismatched_study",
+      "description": "Mismatched study and symptoms",
+      "success": true
     },
     {
       "id": "vague_symptoms",
@@ -44,30 +39,35 @@
       "success": true
     },
     {
-      "id": "incomplete_history",
-      "description": "Incomplete medical history",
-      "success": true
-    },
-    {
-      "id": "incomplete_history",
-      "description": "Incomplete medical history",
-      "success": true
-    },
-    {
-      "id": "wrong_wrong_wrong",
-      "description": "Multiple validation failures",
+      "id": "missing_duration",
+      "description": "Missing duration",
       "success": false
+    },
+    {
+      "id": "incomplete_history",
+      "description": "Incomplete medical history",
+      "success": true
+    },
+    {
+      "id": "appropriate_neuro",
+      "description": "Appropriate neurological case",
+      "success": true
     },
     {
       "id": "appropriate_msk",
       "description": "Appropriate musculoskeletal case",
       "success": true
+    },
+    {
+      "id": "multiple_studies",
+      "description": "Multiple imaging studies",
+      "success": true
     }
   ],
-  "endTime": "2025-04-15T01:34:25.994Z",
-  "duration": 110.249,
+  "endTime": "2025-04-16T18:09:52.887Z",
+  "duration": 62.775,
   "totalTests": 9,
-  "totalPassed": 5,
-  "totalFailed": 4,
-  "successRate": 55.55555555555556
+  "totalPassed": 6,
+  "totalFailed": 3,
+  "successRate": 66.66666666666666
 }

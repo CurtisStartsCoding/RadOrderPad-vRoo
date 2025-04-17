@@ -6,50 +6,40 @@
     "expectedResult": "validation_failed",
     "expectedFeedback": "Requested study does not match clinical indication"
   },
-  "startTime": "2025-04-15T01:24:35.005Z",
+  "startTime": "2025-04-16T18:09:05.987Z",
   "steps": [
     {
       "step": "generate_dictation",
       "model": "grok",
-      "timestamp": "2025-04-15T01:24:35.568Z",
+      "timestamp": "2025-04-16T18:09:07.821Z",
       "output": "35/Male. Brain MRI. Ankle pain."
     },
     {
       "step": "validate_dictation",
       "model": "anthropic",
-      "timestamp": "2025-04-15T01:24:43.436Z",
+      "timestamp": "2025-04-16T18:09:13.007Z",
       "output": {
         "success": true,
-        "orderId": 213,
+        "orderId": 558,
         "validationResult": {
           "validationStatus": "inappropriate",
-          "complianceScore": 1,
-          "feedback": "Brain MRI is not indicated for ankle pain. There is no clinical connection between ankle pain and brain imaging, and no neurological symptoms were provided that would warrant brain imaging. For evaluation of ankle pain, appropriate imaging would typically include ankle radiographs initially, with consideration of ankle MRI if indicated based on radiograph findings or specific clinical concerns. Please provide neurological symptoms if brain imaging is being considered, or revise the imaging request to focus on the symptomatic ankle.",
+          "complianceScore": 2,
+          "feedback": "Brain MRI is not indicated for ankle pain. Ankle ultrasound or radiographs would be more appropriate first-line imaging. Clinical indication for brain imaging is missing and requires clarification.",
           "suggestedICD10Codes": [
             {
-              "code": "M25.571",
-              "description": "Pain in right ankle and joints of right foot"
-            },
-            {
-              "code": "M25.572",
-              "description": "Pain in left ankle and joints of left foot"
-            },
-            {
-              "code": "M25.579",
-              "description": "Pain in unspecified ankle and joints of unspecified foot"
+              "code": "M25.57",
+              "description": "Pain in ankle and joints of foot, unspecified",
+              "isPrimary": true
             }
           ],
           "suggestedCPTCodes": [
             {
-              "code": "73600",
-              "description": "Radiograph of ankle, 2 views"
-            },
-            {
-              "code": "73718",
-              "description": "MRI of ankle without contrast"
+              "code": "76881",
+              "description": "Ultrasound, extremity, nonvascular, real-time with image documentation; complete",
+              "isPrimary": false
             }
           ],
-          "internalReasoning": "The clinical information provided indicates ankle pain in a 35-year-old male, with a requested brain MRI. There is a clear anatomical disconnect between the symptoms (ankle) and the requested imaging (brain). No neurological symptoms, headache, dizziness, visual changes, or other brain-related complaints were mentioned that would justify brain imaging. According to ACR Appropriateness Criteria, brain MRI would be rated as 'usually not appropriate' for isolated ankle pain. The appropriate imaging pathway for ankle pain typically begins with radiographs, followed by MRI of the ankle if indicated for further evaluation of soft tissue, ligamentous or osteochondral injury."
+          "internalReasoning": "No internal reasoning provided"
         }
       }
     }
@@ -57,39 +47,30 @@
   "dictation": "35/Male. Brain MRI. Ankle pain.",
   "initialValidation": {
     "success": true,
-    "orderId": 213,
+    "orderId": 558,
     "validationResult": {
       "validationStatus": "inappropriate",
-      "complianceScore": 1,
-      "feedback": "Brain MRI is not indicated for ankle pain. There is no clinical connection between ankle pain and brain imaging, and no neurological symptoms were provided that would warrant brain imaging. For evaluation of ankle pain, appropriate imaging would typically include ankle radiographs initially, with consideration of ankle MRI if indicated based on radiograph findings or specific clinical concerns. Please provide neurological symptoms if brain imaging is being considered, or revise the imaging request to focus on the symptomatic ankle.",
+      "complianceScore": 2,
+      "feedback": "Brain MRI is not indicated for ankle pain. Ankle ultrasound or radiographs would be more appropriate first-line imaging. Clinical indication for brain imaging is missing and requires clarification.",
       "suggestedICD10Codes": [
         {
-          "code": "M25.571",
-          "description": "Pain in right ankle and joints of right foot"
-        },
-        {
-          "code": "M25.572",
-          "description": "Pain in left ankle and joints of left foot"
-        },
-        {
-          "code": "M25.579",
-          "description": "Pain in unspecified ankle and joints of unspecified foot"
+          "code": "M25.57",
+          "description": "Pain in ankle and joints of foot, unspecified",
+          "isPrimary": true
         }
       ],
       "suggestedCPTCodes": [
         {
-          "code": "73600",
-          "description": "Radiograph of ankle, 2 views"
-        },
-        {
-          "code": "73718",
-          "description": "MRI of ankle without contrast"
+          "code": "76881",
+          "description": "Ultrasound, extremity, nonvascular, real-time with image documentation; complete",
+          "isPrimary": false
         }
       ],
-      "internalReasoning": "The clinical information provided indicates ankle pain in a 35-year-old male, with a requested brain MRI. There is a clear anatomical disconnect between the symptoms (ankle) and the requested imaging (brain). No neurological symptoms, headache, dizziness, visual changes, or other brain-related complaints were mentioned that would justify brain imaging. According to ACR Appropriateness Criteria, brain MRI would be rated as 'usually not appropriate' for isolated ankle pain. The appropriate imaging pathway for ankle pain typically begins with radiographs, followed by MRI of the ankle if indicated for further evaluation of soft tissue, ligamentous or osteochondral injury."
+      "internalReasoning": "No internal reasoning provided"
     }
   },
-  "success": false,
-  "endTime": "2025-04-15T01:24:43.436Z",
-  "duration": 8.431
+  "finalValidationStatus": "inappropriate",
+  "success": true,
+  "endTime": "2025-04-16T18:09:13.007Z",
+  "duration": 7.02
 }

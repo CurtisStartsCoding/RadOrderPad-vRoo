@@ -6,91 +6,71 @@
     "expectedResult": "needs_clarification",
     "expectedFeedback": "Incomplete medical history"
   },
-  "startTime": "2025-04-15T01:33:37.795Z",
+  "startTime": "2025-04-16T18:09:27.108Z",
   "steps": [
     {
       "step": "generate_dictation",
       "model": "grok",
-      "timestamp": "2025-04-15T01:33:38.761Z",
-      "output": "45/Male. Chest CT. Suspected pulmonary embolism with incomplete history of recent travel or immobilization."
+      "timestamp": "2025-04-16T18:09:28.188Z",
+      "output": "45/Male. Chest CT. Suspected pulmonary embolism with incomplete history of recent surgery or immobilization."
     },
     {
       "step": "validate_dictation",
       "model": "anthropic",
-      "timestamp": "2025-04-15T01:34:01.204Z",
+      "timestamp": "2025-04-16T18:09:32.326Z",
       "output": {
         "success": true,
-        "orderId": 226,
+        "orderId": 561,
         "validationResult": {
           "validationStatus": "needs_clarification",
-          "complianceScore": 5,
-          "feedback": "The request for a Chest CT for suspected pulmonary embolism is conditionally appropriate, but requires additional clinical information. Current guidelines recommend risk stratification using validated tools (Wells criteria or PERC rule) before imaging. The incomplete history regarding recent travel or immobilization suggests the risk assessment may not be complete. Please document additional risk factors (e.g., tachycardia, hemoptysis, cancer history, recent surgery), relevant symptoms (dyspnea, chest pain, hypoxemia), and D-dimer results if obtained. If the patient has a moderate-to-high pretest probability of PE or a positive D-dimer with low pretest probability, CT pulmonary angiography (CTPA) would be appropriate.",
+          "complianceScore": 3,
+          "feedback": "CT order lacks sufficient clinical details to support pulmonary embolism evaluation. Please document risk factors, D-dimer results, or specific symptoms to justify CT pulmonary angiography according to ACR criteria.",
           "suggestedICD10Codes": [
             {
-              "code": "I26.99",
-              "description": "Other pulmonary embolism without acute cor pulmonale"
-            },
-            {
-              "code": "R07.9",
-              "description": "Chest pain, unspecified"
-            },
-            {
-              "code": "R06.02",
-              "description": "Shortness of breath"
+              "code": "B39.0",
+              "description": "Acute pulmonary histoplasmosis capsulati",
+              "isPrimary": true
             }
           ],
           "suggestedCPTCodes": [
             {
-              "code": "71275",
-              "description": "CT angiography, chest (noncoronary), with contrast material(s)"
-            },
-            {
-              "code": "71260",
-              "description": "CT thorax with contrast material"
+              "code": "71020",
+              "description": "Radiologic examination, chest, two views, frontal and lateral",
+              "isPrimary": false
             }
           ],
-          "internalReasoning": "For suspected PE, ACR Appropriateness Criteria recommend risk stratification before imaging. The dictation lacks critical information about symptoms, vital signs, risk factors, and whether D-dimer testing was performed. CTPA (71275) is the preferred imaging for PE evaluation in appropriate candidates, though standard chest CT with contrast (71260) may sometimes be ordered. Without complete clinical information, the appropriateness is uncertain, hence the middle compliance score. Additional documentation is needed to justify medical necessity and ensure appropriate resource utilization."
+          "internalReasoning": "No internal reasoning provided"
         }
       }
     }
   ],
-  "dictation": "45/Male. Chest CT. Suspected pulmonary embolism with incomplete history of recent travel or immobilization.",
+  "dictation": "45/Male. Chest CT. Suspected pulmonary embolism with incomplete history of recent surgery or immobilization.",
   "initialValidation": {
     "success": true,
-    "orderId": 226,
+    "orderId": 561,
     "validationResult": {
       "validationStatus": "needs_clarification",
-      "complianceScore": 5,
-      "feedback": "The request for a Chest CT for suspected pulmonary embolism is conditionally appropriate, but requires additional clinical information. Current guidelines recommend risk stratification using validated tools (Wells criteria or PERC rule) before imaging. The incomplete history regarding recent travel or immobilization suggests the risk assessment may not be complete. Please document additional risk factors (e.g., tachycardia, hemoptysis, cancer history, recent surgery), relevant symptoms (dyspnea, chest pain, hypoxemia), and D-dimer results if obtained. If the patient has a moderate-to-high pretest probability of PE or a positive D-dimer with low pretest probability, CT pulmonary angiography (CTPA) would be appropriate.",
+      "complianceScore": 3,
+      "feedback": "CT order lacks sufficient clinical details to support pulmonary embolism evaluation. Please document risk factors, D-dimer results, or specific symptoms to justify CT pulmonary angiography according to ACR criteria.",
       "suggestedICD10Codes": [
         {
-          "code": "I26.99",
-          "description": "Other pulmonary embolism without acute cor pulmonale"
-        },
-        {
-          "code": "R07.9",
-          "description": "Chest pain, unspecified"
-        },
-        {
-          "code": "R06.02",
-          "description": "Shortness of breath"
+          "code": "B39.0",
+          "description": "Acute pulmonary histoplasmosis capsulati",
+          "isPrimary": true
         }
       ],
       "suggestedCPTCodes": [
         {
-          "code": "71275",
-          "description": "CT angiography, chest (noncoronary), with contrast material(s)"
-        },
-        {
-          "code": "71260",
-          "description": "CT thorax with contrast material"
+          "code": "71020",
+          "description": "Radiologic examination, chest, two views, frontal and lateral",
+          "isPrimary": false
         }
       ],
-      "internalReasoning": "For suspected PE, ACR Appropriateness Criteria recommend risk stratification before imaging. The dictation lacks critical information about symptoms, vital signs, risk factors, and whether D-dimer testing was performed. CTPA (71275) is the preferred imaging for PE evaluation in appropriate candidates, though standard chest CT with contrast (71260) may sometimes be ordered. Without complete clinical information, the appropriateness is uncertain, hence the middle compliance score. Additional documentation is needed to justify medical necessity and ensure appropriate resource utilization."
+      "internalReasoning": "No internal reasoning provided"
     }
   },
   "finalValidationStatus": "needs_clarification",
   "success": true,
-  "endTime": "2025-04-15T01:34:01.204Z",
-  "duration": 23.409
+  "endTime": "2025-04-16T18:09:32.326Z",
+  "duration": 5.218
 }
