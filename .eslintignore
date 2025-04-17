@@ -1,0 +1,10 @@
+# Ignore everything by default
+*
+
+# Don't ignore these directories
+!client/
+!client/src/
+!client/src/features/
+!client/src/features/radiology-queue/
+!client/src/features/radiology-queue/hooks/
+!client/src/features/radiology-queue/hooks/*.ts
