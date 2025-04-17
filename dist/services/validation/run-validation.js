@@ -24,17 +24,19 @@ async function runValidation(text, context = {}, options = {}) {
         // 4. Generate database context based on keywords
         const databaseContext = await (0, database_1.generateDatabaseContext)(keywords);
         console.log('Generated database context');
-        // 5. Construct the prompt
-        const prompt = (0, database_1.constructPrompt)(promptTemplate.content_template, sanitizedText, databaseContext, promptTemplate.word_limit, context.isOverrideValidation || false);
+        // 5. Construct the prompt with hard-coded word limit of 33
+        console.log('Using hard-coded word count: 33');
+        const prompt = (0, database_1.constructPrompt)(promptTemplate.content_template, sanitizedText, databaseContext, 33, // Hard-coded to 33 words
+        context.isOverrideValidation || false);
         console.log('Constructed prompt');
-        // 6. Call LLM with fallback logic
+        // 7. Call LLM with fallback logic
         const llmResponse = await (0, llm_1.callLLMWithFallback)(prompt);
         console.log(`LLM call successful using ${llmResponse.provider} (${llmResponse.model})`);
         console.log(`Tokens used: ${llmResponse.totalTokens}, Latency: ${llmResponse.latencyMs}ms`);
-        // 7. Process the LLM response
+        // 8. Process the LLM response
         const validationResult = (0, response_1.processLLMResponse)(llmResponse.content);
         console.log('Processed LLM response');
-        // 8. Log the validation attempt to the PHI database (skip if in test mode)
+        // 9. Log the validation attempt to the PHI database (skip if in test mode)
         if (!options.testMode) {
             await (0, logging_1.logValidationAttempt)(text, validationResult, llmResponse, context.orderId, context.userId || 1 // Default to user ID 1 if not provided
             );
@@ -43,7 +45,7 @@ async function runValidation(text, context = {}, options = {}) {
         else {
             console.log('Test mode: Skipping validation attempt logging');
         }
-        // 9. Return the validation result
+        // 10. Return the validation result
         return validationResult;
     }
     catch (error) {

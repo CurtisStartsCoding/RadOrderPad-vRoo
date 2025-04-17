@@ -1,42 +1,20 @@
 @echo off
-echo Running Stripe webhook tests...
-
-REM Generate a JWT token for an admin user
-echo Generating JWT token for admin user...
-for /f "tokens=*" %%a in ('node -e "const helpers = require(\"./test-helpers\"); const adminUser = { userId: 1, orgId: 1, role: \"admin_referring\", email: \"test.admin@example.com\" }; const token = helpers.generateToken(adminUser); console.log(token);"') do set JWT_TOKEN=%%a
-echo Token generated: %JWT_TOKEN:~0,20%...
-
-REM Get API base URL from config
-for /f "tokens=*" %%a in ('node -e "const helpers = require(\"./test-helpers\"); console.log(helpers.config.api.baseUrl);"') do set API_BASE_URL=%%a
-echo Using API base URL: %API_BASE_URL%
-
+echo ===== Running Stripe Webhook Tests =====
 echo.
-echo ===== Running Direct Function Tests =====
-echo.
+
+REM Ensure the dist directory is up to date
+call npx tsc
 
 REM Run the test script
-node ./test-stripe-webhooks.js
+node tests/batch/test-stripe-webhooks.js > test-results\stripe-webhook-tests.log 2>&1
 
 REM Check the exit code
-if %ERRORLEVEL% EQU 0 (
-  echo Tests completed successfully.
+if %errorlevel% equ 0 (
+    echo [PASS] Stripe Webhook Tests
+    echo Updated test audit log for 'Stripe Webhook Tests' with status 'PASS' and date '%date% %time%'. >> test-results\test-audit.log
 ) else (
-  echo Tests failed with exit code %ERRORLEVEL%.
+    echo [FAIL] Stripe Webhook Tests - Check test-results\stripe-webhook-tests.log for details
+    echo Updated test audit log for 'Stripe Webhook Tests' with status 'FAIL' and date '%date% %time%'. >> test-results\test-audit.log
 )
 
 echo.
-echo ===== Triggering real Stripe webhook events =====
-echo.
-echo This will trigger actual Stripe webhook events that will be sent to your server.
-echo Check the server logs and Stripe CLI listener output for results.
-echo.
-
-REM Navigate to the root directory where stripe.exe is located
-cd ..\..
-
-REM Trigger a checkout.session.completed event
-echo Triggering checkout.session.completed event...
-.\stripe trigger checkout.session.completed
-
-echo.
-echo Test execution complete. Check the server logs and Stripe CLI listener output for results.

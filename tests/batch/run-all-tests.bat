@@ -163,8 +163,20 @@ if %ERRORLEVEL% EQU 0 (
 )
 echo.
 
+echo ===== 13. Running MemoryDB Cache Tests =====
+timeout /t 2 /nobreak > nul
+call run-memorydb-cache-test.bat > test-results\memorydb-cache-tests.log 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo [PASS] MemoryDB Cache Tests
+    call update-test-audit-log.bat "MemoryDB Cache Tests" "PASS" "Redis caching layer working correctly"
+) else (
+    echo [FAIL] MemoryDB Cache Tests - Check test-results\memorydb-cache-tests.log for details
+    call update-test-audit-log.bat "MemoryDB Cache Tests" "FAIL" "Check test-results\memorydb-cache-tests.log for details"
+)
+echo.
+
 echo ===== Test Summary =====
-echo 12 test suites executed.
+echo 13 test suites executed.
 echo Test results have been saved to the test-results directory.
 echo To view detailed logs, check the corresponding .log files.
 echo.

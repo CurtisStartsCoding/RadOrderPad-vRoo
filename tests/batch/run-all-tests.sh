@@ -168,8 +168,21 @@ else
 fi
 echo
 
+echo "===== 13. Running MemoryDB Cache Tests ====="
+sleep 2
+./run-memorydb-cache-test.sh > test-results/memorydb-cache-tests.log 2>&1
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
+    echo "[PASS] MemoryDB Cache Tests"
+    ./update-test-audit-log.sh "MemoryDB Cache Tests" "PASS" "Redis caching layer working correctly"
+else
+    echo "[FAIL] MemoryDB Cache Tests - Check test-results/memorydb-cache-tests.log for details"
+    ./update-test-audit-log.sh "MemoryDB Cache Tests" "FAIL" "Check test-results/memorydb-cache-tests.log for details"
+fi
+echo
+
 echo "===== Test Summary ====="
-echo "12 test suites executed."
+echo "13 test suites executed."
 echo "Test results have been saved to the test-results directory."
 echo "To view detailed logs, check the corresponding .log files."
 echo

@@ -59,7 +59,8 @@ async function runTests() {
     { name: 'E: Connection Request', script: path.join(__dirname, 'scenario-e-connection-request.js') },
     { name: 'F: User Invite', script: path.join(__dirname, 'scenario-f-user-invite.js') },
     { name: 'G: File Upload', script: path.join(__dirname, 'scenario-g-file-upload.js') },
-    { name: 'H: Comprehensive Registration and Onboarding', script: path.join(__dirname, 'scenario-h-registration-onboarding.js') }
+    { name: 'H: Comprehensive Registration and Onboarding', script: path.join(__dirname, 'scenario-h-registration-onboarding.js') },
+    { name: 'I: Redis Caching Test', script: path.join(__dirname, 'scenario-i-redis-caching.js') }
   ];
   
   // Run each scenario

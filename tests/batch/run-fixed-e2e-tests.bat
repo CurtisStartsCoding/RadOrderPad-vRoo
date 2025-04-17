@@ -71,6 +71,29 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
+echo Running Scenario I (Redis Caching Test)...
+rem This scenario uses the original test-helpers.js, not the fixed version
+rem Temporarily restore the original test-helpers.js
+if exist tests\e2e\test-helpers.js.orig (
+  copy /Y tests\e2e\test-helpers.js tests\e2e\test-helpers.js.temp
+  copy /Y tests\e2e\test-helpers.js.orig tests\e2e\test-helpers.js
+)
+
+call batch-files\run-scenario-i-redis-caching.bat
+set SCENARIO_I_RESULT=%ERRORLEVEL%
+
+rem Restore the fixed test-helpers.js
+if exist tests\e2e\test-helpers.js.temp (
+  copy /Y tests\e2e\test-helpers.js.temp tests\e2e\test-helpers.js
+  del tests\e2e\test-helpers.js.temp
+)
+
+if %SCENARIO_I_RESULT% NEQ 0 (
+  echo Scenario I failed. Stopping tests.
+  exit /b 1
+)
+
+echo.
 echo All tests passed successfully!
 echo Results available in test-results\e2e\
 

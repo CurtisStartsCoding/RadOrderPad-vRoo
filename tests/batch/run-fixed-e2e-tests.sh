@@ -28,7 +28,39 @@ cp tests/e2e/test-helpers-fixed.js tests/e2e/test-helpers.js
 # Run the tests
 echo "Starting tests at $(date)"
 export NODE_PATH="$PWD/node_modules"
+
+# Run all tests except Scenario I
+echo "Running tests A-H..."
 node tests/e2e/run-all-e2e-tests.js
+
+# Save the exit code
+EXIT_CODE=$?
+
+# If tests A-H passed, run Scenario I separately
+if [ $EXIT_CODE -eq 0 ]; then
+  echo "Running Scenario I (Redis Caching Test)..."
+  # This scenario uses the original test-helpers.js, not the fixed version
+  # Temporarily restore the original test-helpers.js
+  if [ -f tests/e2e/test-helpers.js.bak ]; then
+    cp tests/e2e/test-helpers.js tests/e2e/test-helpers.js.temp
+    cp tests/e2e/test-helpers.js.bak tests/e2e/test-helpers.js
+  fi
+
+  # Run Scenario I
+  bash batch-files/run-scenario-i-redis-caching.sh
+  SCENARIO_I_RESULT=$?
+
+  # Restore the fixed test-helpers.js
+  if [ -f tests/e2e/test-helpers.js.temp ]; then
+    cp tests/e2e/test-helpers.js.temp tests/e2e/test-helpers.js
+    rm tests/e2e/test-helpers.js.temp
+  fi
+
+  # Update exit code if Scenario I failed
+  if [ $SCENARIO_I_RESULT -ne 0 ]; then
+    EXIT_CODE=1
+  fi
+fi
 
 # Save the exit code
 EXIT_CODE=$?

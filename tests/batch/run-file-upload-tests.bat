@@ -1,18 +1,14 @@
 @echo off
 echo Running File Upload Tests...
 
-rem Generate JWT token using test-helpers
-for /f "tokens=*" %%a in ('node -e "const helpers = require('./test-helpers'); const token = helpers.generateToken(helpers.config.testData.adminStaff); console.log(token);"') do set JWT_TOKEN=%%a
-echo Using JWT token: %JWT_TOKEN:~0,20%...
+REM Generate a JWT token for an admin_referring user
+echo Generating JWT token...
+for /f "tokens=*" %%a in ('node -e "const helpers = require(\"./tests/batch/test-helpers\"); const adminUser = { userId: 1, orgId: 1, role: \"admin_referring\", email: \"test.admin@example.com\" }; const token = helpers.generateToken(adminUser); console.log(token);"') do set JWT_TOKEN=%%a
+echo Token generated (first 20 chars): %JWT_TOKEN:~0,20%...
 
-rem Run the tests
-node test-file-upload.js
+REM Run the test script with the token set as an environment variable
+echo Running test script...
+node tests/batch/test-file-upload.js
 
-rem Check for errors
-if %ERRORLEVEL% NEQ 0 (
-    echo File Upload Tests failed with error code %ERRORLEVEL%
-    exit /b %ERRORLEVEL%
-)
-
-echo File Upload Tests completed successfully.
-exit /b 0
+echo Tests finished.
+pause

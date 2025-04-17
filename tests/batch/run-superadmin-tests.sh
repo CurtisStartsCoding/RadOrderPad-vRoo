@@ -1,3 +1,3 @@
 #!/bin/bash
 echo "Running Super Admin API Tests..."
-./test-superadmin-api.sh
+npx mocha tests/superadmin-api.test.js --timeout 10000
