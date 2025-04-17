@@ -3,8 +3,7 @@ import * as React from "react";
 /**
  * Textarea props
  */
-export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+export type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 /**
  * Textarea component

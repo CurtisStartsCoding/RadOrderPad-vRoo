@@ -10,7 +10,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "../../../components/ui/dialog";
 import { usePatientIdentification } from "../hooks/usePatientIdentification";
 import { DEFAULT_DOB_MANUAL } from "../constants";

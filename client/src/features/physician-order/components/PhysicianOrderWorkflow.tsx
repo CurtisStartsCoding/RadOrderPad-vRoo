@@ -1,4 +1,4 @@
- import * as React from "react";
+import * as React from "react";
 import { OrderProgressIndicator } from "../../../components/common/OrderProgressIndicator";
 import { PatientInfoCard } from "./PatientInfoCard";
 import { PatientIdentificationDialog } from "./PatientIdentificationDialog";
@@ -31,7 +31,6 @@ export const PhysicianOrderWorkflow = () => {
     orderData,
     isOverrideDialogOpen,
     overrideReason,
-    signatureData,
     isSubmittingOrder,
     isClinicalContextOpen,
     clinicalContextItems,
