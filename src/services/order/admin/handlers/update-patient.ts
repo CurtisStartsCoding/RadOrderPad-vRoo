@@ -6,13 +6,11 @@ import { PatientUpdateData, PatientUpdateResult } from '../types';
  * Update patient information
  * @param orderId Order ID
  * @param patientData Patient data
- * @param userId User ID
  * @returns Promise with result
  */
 export async function updatePatientInfo(
   orderId: number, 
-  patientData: PatientUpdateData, 
-  userId: number
+  patientData: PatientUpdateData
 ): Promise<PatientUpdateResult> {
   try {
     // 1. Verify order exists and has status 'pending_admin'

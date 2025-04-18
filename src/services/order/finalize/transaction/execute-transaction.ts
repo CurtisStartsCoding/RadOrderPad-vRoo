@@ -2,7 +2,7 @@ import { getPhiDbClient } from '../../../../config/db';
 import { Order, OrderStatus } from '../../../../models';
 import PatientService from '../../../patient.service';
 import OrderHistoryService from '../../../order-history.service';
-import { FinalizeOrderPayload, FinalizeOrderResponse, TransactionContext } from '../types';
+import { FinalizeOrderPayload, FinalizeOrderResponse } from '../types';
 import { verifyUserAuthorization } from '../authorization';
 import { updateOrderWithFinalData } from '../update';
 
@@ -41,15 +41,6 @@ export async function executeTransaction(
     // Verify authorization (user belongs to the referring organization)
     await verifyUserAuthorization(userId, order.referring_organization_id);
     
-    // Create transaction context
-    const context: TransactionContext = {
-      client,
-      orderId,
-      order,
-      userId,
-      payload
-    };
-    
     // Handle temporary patient if needed
     let patientId = order.patient_id;
     if (payload.isTemporaryPatient && payload.patientInfo) {
@@ -63,8 +54,6 @@ export async function executeTransaction(
     // Update the order
     await updateOrderWithFinalData(client, orderId, patientId, payload, userId);
     
-    // Generate presigned URL for signature upload if needed
-    let signatureUploadInfo = null;
     if (payload.signatureData) {
       // For backward compatibility, if signatureData is provided as base64,
       // we'll log a warning but still proceed with the order finalization

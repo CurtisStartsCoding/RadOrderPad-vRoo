@@ -6,13 +6,11 @@ import { InsuranceUpdateData, InsuranceUpdateResult } from '../types';
  * Update insurance information
  * @param orderId Order ID
  * @param insuranceData Insurance data
- * @param userId User ID
  * @returns Promise with result
  */
 export async function updateInsuranceInfo(
   orderId: number, 
-  insuranceData: InsuranceUpdateData, 
-  userId: number
+  insuranceData: InsuranceUpdateData
 ): Promise<InsuranceUpdateResult> {
   try {
     // 1. Verify order exists and has status 'pending_admin'

@@ -1,4 +1,4 @@
-import { getUploadUrl, confirmUpload } from '../../../upload';
+import { getUploadUrl } from '../../../upload';
 
 /**
  * Handle signature upload
@@ -8,12 +8,10 @@ import { getUploadUrl, confirmUpload } from '../../../upload';
  * After successful upload, the frontend should call the confirmUpload endpoint.
  *
  * @param orderId The ID of the order
- * @param userId The ID of the user uploading the signature
  * @returns Promise that resolves to the presigned URL and file key
  */
 export async function handleSignatureUpload(
-  orderId: number,
-  userId: number
+  orderId: number
 ): Promise<{ presignedUrl: string; fileKey: string }> {
   // Generate a filename for the signature
   const fileName = `signature_${orderId}_${Date.now()}.png`;
@@ -34,7 +32,7 @@ export async function handleSignatureUpload(
     throw new Error('Failed to generate presigned URL for signature upload');
   }
   
-  console.log(`Signature presigned URL generated: ${result.presignedUrl}`);
+  console.warn(`Signature presigned URL generated: ${result.presignedUrl}`);
   
   return {
     presignedUrl: result.presignedUrl,

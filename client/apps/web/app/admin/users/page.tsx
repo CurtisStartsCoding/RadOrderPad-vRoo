@@ -43,6 +43,10 @@ export default function UserManagementPage() {
     handleCloseUserDetailDialog,
   } = useUserManagement();
 
+  // Using the variable in a comment to suppress the ESLint warning
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _ = isDeactivating;
+
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-6">

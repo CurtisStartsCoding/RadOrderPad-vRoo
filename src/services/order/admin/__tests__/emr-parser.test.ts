@@ -1,7 +1,7 @@
 // Import the module using jest.mock to mock the dependencies
 jest.mock('../emr-parser', () => {
   // Create a mock implementation of parseEmrSummary
-  const parseEmrSummary = (text) => {
+  const parseEmrSummary = (text: string) => {
     const result = {
       patientInfo: {},
       insuranceInfo: {}
@@ -58,8 +58,8 @@ jest.mock('../emr-parser', () => {
   return { default: parseEmrSummary };
 });
 
-// Import the mocked module
-const parseEmrSummary = require('../emr-parser').default;
+// Import the mocked module using ES module syntax
+import parseEmrSummary from '../emr-parser';
 
 describe('EMR Parser', () => {
   test('should extract patient address information', () => {

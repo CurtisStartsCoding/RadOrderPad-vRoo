@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "../../../../../src/hooks/useAuth";
 import { useRadiologyQueue } from "../../../../../src/features/radiology-queue";
 import { QueueFilters, RadiologyOrderTable } from "../../../../../src/features/radiology-queue";
@@ -15,8 +14,6 @@ import { redirect } from "next/navigation";
  * Protected route for radiology_staff and admin roles.
  */
 export default function RadiologyQueuePage() {
-  const router = useRouter();
-  
   // Get authentication state
   const { user, isLoading: isAuthLoading } = useAuth();
   

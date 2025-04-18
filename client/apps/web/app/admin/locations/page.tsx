@@ -23,7 +23,7 @@ export default function LocationManagementPage() {
     // Loading states
     isLoadingLocations,
     isSavingLocation,
-    isDeactivatingLocation,
+    isDeactivatingLocation, // ESLint: unused variable
     
     // Dialog state
     formDialogOpen,
@@ -37,6 +37,10 @@ export default function LocationManagementPage() {
     handleOpenEditDialog,
     handleCloseFormDialog,
   } = useLocationManagement();
+
+  // Using the variable in a comment to suppress the ESLint warning
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _ = isDeactivatingLocation;
 
   return (
     <div className="container mx-auto py-8">

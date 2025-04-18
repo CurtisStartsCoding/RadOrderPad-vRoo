@@ -17,7 +17,7 @@ export async function handlePasteSummary(
   pastedText: string, 
   userId: number
 ): Promise<EmrSummaryResult> {
-  return withTransaction(async (client) => {
+  return withTransaction(async () => {
     // 1. Verify order exists and has status 'pending_admin'
     const order = await clinicalRecordManager.verifyOrderStatus(orderId);
     
