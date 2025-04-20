@@ -10,9 +10,20 @@ This guide provides instructions for deploying the RadOrderPad API to AWS.
 
 ## Deployment Options
 
-### Option 1: AWS Elastic Beanstalk (Recommended)
+### Option 1: Automated Deployment Scripts (Recommended)
 
-Elastic Beanstalk provides the easiest way to deploy Node.js applications to AWS.
+We provide automated deployment scripts that handle the entire deployment process to AWS Elastic Beanstalk:
+
+- For Linux/macOS: `deploy-to-aws.sh`
+- For Windows: `deploy-to-aws.bat`
+
+These scripts automate building the application, creating deployment packages, and deploying to AWS Elastic Beanstalk.
+
+For detailed instructions on using these scripts, see [AWS Deployment Scripts](./aws-deployment-scripts.md).
+
+### Option 2: AWS Elastic Beanstalk (Manual)
+
+Elastic Beanstalk provides an easy way to deploy Node.js applications to AWS.
 
 1. **Prepare your application**:
    ```bash
@@ -49,7 +60,7 @@ Elastic Beanstalk provides the easiest way to deploy Node.js applications to AWS
    - Elastic Beanstalk will automatically deploy your application
    - Monitor the deployment in the Events tab
 
-### Option 2: AWS EC2
+### Option 3: AWS EC2
 
 For more control over the deployment environment:
 
