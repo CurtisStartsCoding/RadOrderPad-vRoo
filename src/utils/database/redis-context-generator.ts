@@ -1,6 +1,6 @@
 /**
  * Redis-based Database Context Generator
- * 
+ *
  * This module provides a function to generate database context for validation
  * using RedisSearch in MemoryDB.
  */
@@ -15,6 +15,7 @@ import {
   getMarkdownDocs
 } from '../redis/search';
 import { getRedisClient, testRedisConnection } from '../../config/redis';
+import logger from '../../utils/logger.js';
 
 /**
  * Generate database context based on extracted keywords using RedisSearch
@@ -35,12 +36,15 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
       const isConnected = await testRedisConnection();
       if (!isConnected) {
         console.log('Redis connection test failed, falling back to PostgreSQL...');
+        logger.info('CONTEXT_PATH: Using PostgreSQL fallback (Redis connection failed)');
         return await fallbackToPostgres(keywords);
       }
       console.log('Redis connection successful, proceeding with RedisSearch');
+      logger.info('CONTEXT_PATH: Using RedisSearch as primary path');
     } catch (pingError) {
       console.error('Redis connection test error:', pingError);
       console.log('Falling back to PostgreSQL for context generation...');
+      logger.info('CONTEXT_PATH: Using PostgreSQL fallback (Redis connection error)');
       return await fallbackToPostgres(keywords);
     }
     
@@ -78,6 +82,7 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
   } catch (error) {
     // If RedisSearch fails, fall back to PostgreSQL
     console.error('Error using RedisSearch for context generation:', error);
+    logger.error('Error using RedisSearch for context generation:', error);
     
     // Provide more informative messages for common errors
     if (error instanceof Error &&
@@ -89,9 +94,19 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
       console.error('2. Your IP address may not be allowlisted in Redis Cloud');
       console.error('3. Check your Redis Cloud configuration in the .env file');
       console.error('See Docs/redis_integration.md for more details');
+      
+      logger.error('Connection to Redis Cloud failed', {
+        details: [
+          'The Redis Cloud instance may not be accessible from your current network',
+          'Your IP address may not be allowlisted in Redis Cloud',
+          'Check your Redis Cloud configuration in the .env file'
+        ],
+        documentation: 'See Docs/redis_integration.md for more details'
+      });
     }
     
     console.log('Falling back to PostgreSQL for context generation...');
+    logger.info('CONTEXT_PATH: Using PostgreSQL fallback (RedisSearch error)');
     
     return await fallbackToPostgres(keywords);
   }
@@ -103,6 +118,8 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
  * @returns Formatted database context string
  */
 async function fallbackToPostgres(keywords: string[]): Promise<string> {
+  logger.info('CONTEXT_PATH: Executing PostgreSQL fallback path');
+  
   try {
     // Categorize keywords for more targeted queries
     const categorizedKeywords = categorizeKeywords(keywords);
@@ -190,6 +207,7 @@ async function fallbackToPostgres(keywords: string[]): Promise<string> {
     );
   } catch (error) {
     console.error('Error in PostgreSQL fallback for context generation:', error);
+    logger.error('Error in PostgreSQL fallback for context generation:', error);
     return 'Error generating database context. Please try again later.';
   }
 }

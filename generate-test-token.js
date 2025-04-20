@@ -7,8 +7,10 @@
  * node generate-test-token.js
  */
 
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import fs from 'fs';
+dotenv.config();
 
 // Get the JWT secret from the environment
 const secret = process.env.JWT_SECRET || 'your_jwt_secret_key_here';
@@ -26,6 +28,10 @@ const token = jwt.sign(payload, secret, { expiresIn: '24h' });
 
 console.log('Generated JWT token for testing:');
 console.log(token);
+
+// Write the token to a file
+fs.writeFileSync('./test-token.txt', token);
+console.log('\nToken has been written to test-token.txt');
 console.log('\nUse this token in your test script:');
 console.log('export JWT_TOKEN=<token>');
 console.log('node test-validation-engine.js');

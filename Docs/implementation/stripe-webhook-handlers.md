@@ -1,7 +1,7 @@
 # Stripe Webhook Handlers Implementation
 
-**Version:** 1.0
-**Date:** 2025-04-20
+**Version:** 1.1
+**Date:** 2025-04-20 (Updated)
 
 This document describes the implementation of the Stripe webhook handlers in the RadOrderPad application, focusing on the database update logic for managing organization status, subscription tiers, and credit balances.
 
@@ -111,7 +111,9 @@ Custom error classes in `src/services/billing/stripe/webhooks/errors.ts` provide
 
 ### 5. Testing
 
-The webhook handlers can be tested using the provided test script:
+The webhook handlers can be tested using the provided test scripts:
+
+#### 5.1 Original Test Script
 
 ```bash
 # Windows
@@ -123,12 +125,114 @@ The webhook handlers can be tested using the provided test script:
 
 This script simulates Stripe events and verifies that the handlers update the database correctly.
 
+#### 5.2 Enhanced Test Script (New)
+
+```bash
+# Windows
+.\tests\batch\run-stripe-webhook-handlers-test.bat
+
+# Unix/Linux/macOS
+./tests/batch/run-stripe-webhook-handlers-test.sh
+```
+
+The enhanced test script (`tests/batch/test-stripe-webhook-handlers.js`) provides more comprehensive testing:
+
+1. **Idempotency Testing**: Sends the same event twice to verify it's only processed once
+2. **Error Handling Testing**: Sends events with invalid data to test error handling
+3. **Purgatory Resolution Testing**: Tests the full cycle of putting an organization in purgatory and then reactivating it
+
+The test script uses the following approach:
+- Creates unique event IDs using UUID
+- Simulates different Stripe webhook events
+- Verifies the responses from the webhook handlers
+- Provides detailed logging of test results
+
 ## Key Considerations
 
 1. **Transactions**: All database operations are wrapped in transactions to ensure data consistency
-2. **Error Handling**: Comprehensive error handling with specific error types
-3. **Logging**: Detailed logging of all operations for debugging and auditing
-4. **Notifications**: Email notifications to organization admins for important events
+2. **Idempotency**: Webhook handlers check if an event has already been processed to prevent duplicate processing
+3. **Error Handling**: Comprehensive error handling with specific error types
+4. **Logging**: Detailed logging of all operations for debugging and auditing
+5. **Notifications**: Email notifications to organization admins for important events
+
+## Recent Improvements (v1.1)
+
+### 1. Idempotency Handling
+
+Both webhook handlers now include explicit idempotency checks to prevent duplicate processing of the same event:
+
+```typescript
+// Check if this event has already been processed (idempotency)
+const eventResult = await client.query(
+  `SELECT id FROM billing_events WHERE stripe_event_id = $1`,
+  [event.id]
+);
+
+if (eventResult.rowCount && eventResult.rowCount > 0) {
+  logger.info(`Stripe event ${event.id} has already been processed. Skipping.`);
+  await client.query('COMMIT');
+  return;
+}
+```
+
+This ensures that even if the same webhook event is received multiple times (which can happen with Stripe's retry mechanism), it will only be processed once.
+
+### 2. Improved Error Handling
+
+The error handling in both handlers has been standardized using a common `handleError` function:
+
+```typescript
+function handleError(error: unknown, operation: string): never {
+  if (error instanceof StripeWebhookError) {
+    throw error;
+  } else if (error instanceof OrganizationNotFoundError) {
+    throw error;
+  } else if (error instanceof Error) {
+    throw new DatabaseOperationError(operation, error);
+  } else {
+    throw new Error(`Unknown error during ${operation}: ${String(error)}`);
+  }
+}
+```
+
+This provides more consistent error reporting and makes the code more maintainable.
+
+### 3. Fixed Purgatory Event Resolution
+
+Fixed a bug in the `handleReactivation` function where purgatory events were being updated with an incorrect WHERE clause:
+
+```typescript
+// Before:
+await client.query(
+  `UPDATE purgatory_events
+   SET status = 'resolved', resolved_at = NOW()
+   WHERE organization_id = $1 AND status = 'active'`,
+  [orgId]
+);
+
+// After:
+await client.query(
+  `UPDATE purgatory_events
+   SET status = 'resolved', resolved_at = NOW()
+   WHERE organization_id = $1 AND status != 'resolved'`,
+  [orgId]
+);
+```
+
+This ensures that all active purgatory events for an organization are properly resolved when the organization is reactivated.
+
+### 4. Enhanced Testing
+
+A new comprehensive test suite has been created to verify the webhook handlers:
+
+- `tests/batch/test-stripe-webhook-handlers.js`: Tests the webhook handlers with various scenarios
+- `tests/batch/run-stripe-webhook-handlers-test.bat`: Windows batch script to run the tests
+- `tests/batch/run-stripe-webhook-handlers-test.sh`: Unix/Linux/macOS shell script to run the tests
+
+The test suite includes tests for:
+- Idempotency handling
+- Error handling
+- Purgatory event resolution
 
 ## Future Enhancements
 
@@ -142,3 +246,5 @@ This script simulates Stripe events and verifies that the handlers update the da
 
 - [Stripe Webhooks Documentation](https://stripe.com/docs/webhooks)
 - [Stripe API Reference](https://stripe.com/docs/api)
+- [Enhanced Test Script](../../tests/batch/test-stripe-webhook-handlers.js)
+- [Stripe Webhooks Refactoring](./stripe-webhooks-refactoring.md)

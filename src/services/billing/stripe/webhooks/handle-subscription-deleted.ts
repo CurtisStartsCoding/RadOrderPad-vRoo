@@ -26,10 +26,22 @@ export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<vo
   try {
     await client.query('BEGIN');
     
+    // Check if this event has already been processed (idempotency)
+    const eventResult = await client.query(
+      `SELECT id FROM billing_events WHERE stripe_event_id = $1`,
+      [event.id]
+    );
+    
+    if (eventResult.rowCount && eventResult.rowCount > 0) {
+      logger.info(`Stripe event ${event.id} has already been processed. Skipping.`);
+      await client.query('COMMIT');
+      return;
+    }
+    
     // Find the organization by Stripe customer ID
     const orgResult = await client.query(
-      `SELECT id, name, type, status 
-       FROM organizations 
+      `SELECT id, name, type, status
+       FROM organizations
        WHERE billing_id = $1`,
       [customerId]
     );
@@ -128,15 +140,23 @@ export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<vo
     await client.query('ROLLBACK');
     logger.error('Error processing subscription deletion:', error);
     
-    // Rethrow as a more specific error if possible
-    if (error instanceof StripeWebhookError) {
-      throw error;
-    } else if (error instanceof Error) {
-      throw new DatabaseOperationError('subscription deletion', error);
-    } else {
-      throw new Error(`Unknown error during subscription deletion: ${String(error)}`);
-    }
+    handleError(error, 'subscription deletion');
   } finally {
     client.release();
+  }
+}
+
+/**
+ * Handle errors
+ */
+function handleError(error: unknown, operation: string): never {
+  if (error instanceof StripeWebhookError) {
+    throw error;
+  } else if (error instanceof OrganizationNotFoundError) {
+    throw error;
+  } else if (error instanceof Error) {
+    throw new DatabaseOperationError(operation, error);
+  } else {
+    throw new Error(`Unknown error during ${operation}: ${String(error)}`);
   }
 }

@@ -12,6 +12,18 @@ import {
 import { PoolClient } from 'pg';
 
 /**
+ * Organization interface
+ */
+interface Organization {
+  id: number;
+  name: string;
+  type: string;
+  status: string;
+  subscription_tier: string | null;
+  credit_balance: number;
+}
+
+/**
  * Handle customer.subscription.updated event
  * This is triggered when a subscription is updated (e.g., tier change, status change)
  */
@@ -28,6 +40,18 @@ export async function handleSubscriptionUpdated(event: Stripe.Event): Promise<vo
   
   try {
     await client.query('BEGIN');
+    
+    // Check if this event has already been processed (idempotency)
+    const eventResult = await client.query(
+      `SELECT id FROM billing_events WHERE stripe_event_id = $1`,
+      [event.id]
+    );
+    
+    if (eventResult.rowCount && eventResult.rowCount > 0) {
+      logger.info(`Stripe event ${event.id} has already been processed. Skipping.`);
+      await client.query('COMMIT');
+      return;
+    }
     
     // Find the organization
     const organization = await findOrganizationByCustomerId(client, customerId);
@@ -74,9 +98,9 @@ export async function handleSubscriptionUpdated(event: Stripe.Event): Promise<vo
  * Find organization by Stripe customer ID
  */
 async function findOrganizationByCustomerId(
-  client: PoolClient, 
+  client: PoolClient,
   customerId: string
-): Promise<any> {
+): Promise<Organization> {
   const orgResult = await client.query(
     `SELECT id, name, type, status, subscription_tier, credit_balance 
      FROM organizations 
@@ -98,7 +122,7 @@ async function handleTierChanges(
   client: PoolClient,
   subscription: Stripe.Subscription,
   eventId: string,
-  organization: any,
+  organization: Organization,
   subscriptionItems: Stripe.SubscriptionItem[]
 ): Promise<void> {
   const orgId = organization.id;
@@ -145,7 +169,7 @@ async function handleTierChanges(
  */
 async function notifyAdminsAboutTierChange(
   client: PoolClient,
-  organization: any,
+  organization: Organization,
   currentTier: string | null,
   newTier: string
 ): Promise<void> {
@@ -177,7 +201,7 @@ async function notifyAdminsAboutTierChange(
 async function handlePastDueStatus(
   client: PoolClient,
   eventId: string,
-  organization: any
+  organization: Organization
 ): Promise<void> {
   const orgId = organization.id;
   
@@ -232,7 +256,7 @@ async function handlePastDueStatus(
  */
 async function notifyAdminsAboutPastDue(
   client: PoolClient,
-  organization: any
+  organization: Organization
 ): Promise<void> {
   const adminUsersResult = await client.query(
     `SELECT email, first_name, last_name 
@@ -264,7 +288,7 @@ async function notifyAdminsAboutPastDue(
 async function handleReactivation(
   client: PoolClient,
   eventId: string,
-  organization: any
+  organization: Organization
 ): Promise<void> {
   const orgId = organization.id;
   
@@ -278,9 +302,9 @@ async function handleReactivation(
   
   // Update purgatory events
   await client.query(
-    `UPDATE purgatory_events 
-     SET status = 'resolved', resolved_at = NOW() 
-     WHERE organization_id = $1 AND status = 'active'`,
+    `UPDATE purgatory_events
+     SET status = 'resolved', resolved_at = NOW()
+     WHERE organization_id = $1 AND status != 'resolved'`,
     [orgId]
   );
   
@@ -315,7 +339,7 @@ async function handleReactivation(
  */
 async function notifyAdminsAboutReactivation(
   client: PoolClient,
-  organization: any
+  organization: Organization
 ): Promise<void> {
   const adminUsersResult = await client.query(
     `SELECT email, first_name, last_name 

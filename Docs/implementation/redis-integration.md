@@ -158,6 +158,32 @@ This test will:
 
 The test includes a 30-second timeout to prevent it from hanging indefinitely if there are connection issues.
 
+### Enhanced RedisSearch Test
+
+To verify that the system is correctly using RedisSearch as the primary path and PostgreSQL as the fallback, you can run the enhanced RedisSearch test:
+
+```bash
+# Windows
+.\run-redis-search-enhanced-test.bat
+
+# Unix/Linux/macOS
+./run-redis-search-enhanced-test.sh
+```
+
+This test will:
+1. Create RedisSearch indexes
+2. Verify the indexes were created
+3. Test the primary RedisSearch path by calling the validation endpoint
+4. Test the PostgreSQL fallback path by temporarily disabling the Redis connection
+5. Compare the results from both paths
+
+The test verifies that:
+- The system uses RedisSearch as the primary path when Redis is available
+- The system falls back to PostgreSQL when Redis is unavailable
+- Both paths produce similar results
+
+This test is particularly useful for ensuring that the fallback mechanism works correctly and that the system can continue to function even if Redis is unavailable.
+
 ## Fallback Strategy
 
 If Redis Cloud is unavailable, the application falls back to PostgreSQL for data retrieval:
@@ -165,6 +191,24 @@ If Redis Cloud is unavailable, the application falls back to PostgreSQL for data
 1. Connection test is performed before each Redis operation
 2. If the connection fails, the application gracefully falls back to PostgreSQL
 3. Detailed error messages are logged to help diagnose connection issues
+4. Path tracing logs indicate which path (RedisSearch or PostgreSQL) is being used
+
+### Path Tracing
+
+The system logs which path (RedisSearch or PostgreSQL) is being used for context generation, making it easy to monitor the system's behavior in production:
+
+```typescript
+// When using RedisSearch
+logger.info('CONTEXT_PATH: Using RedisSearch as primary path');
+
+// When falling back to PostgreSQL
+logger.info('CONTEXT_PATH: Using PostgreSQL fallback (Redis connection failed)');
+logger.info('CONTEXT_PATH: Using PostgreSQL fallback (Redis connection error)');
+logger.info('CONTEXT_PATH: Using PostgreSQL fallback (RedisSearch error)');
+logger.info('CONTEXT_PATH: Executing PostgreSQL fallback path');
+```
+
+These log entries can be used to track which path is being used and why, helping to diagnose issues and monitor the system's behavior.
 
 ## Benefits
 
@@ -180,6 +224,25 @@ This implementation provides significant benefits:
 - **Index Creation**: The `create-redis-indexes.ts` script creates and updates RedisSearch indexes
 - **Connection Testing**: The `testRedisConnection` function can be used to test the Redis Cloud connection
 - **Error Logging**: Comprehensive error logging helps diagnose issues
+- **Path Tracing**: The system logs which path (RedisSearch or PostgreSQL) is being used for context generation
+
+### Monitoring Path Usage
+
+You can monitor which path (RedisSearch or PostgreSQL) is being used by searching for log entries with the prefix `CONTEXT_PATH:`:
+
+```
+CONTEXT_PATH: Using RedisSearch as primary path
+CONTEXT_PATH: Using PostgreSQL fallback (Redis connection failed)
+CONTEXT_PATH: Using PostgreSQL fallback (Redis connection error)
+CONTEXT_PATH: Using PostgreSQL fallback (RedisSearch error)
+CONTEXT_PATH: Executing PostgreSQL fallback path
+```
+
+These log entries can be used to:
+- Monitor the percentage of requests using RedisSearch vs. PostgreSQL
+- Identify when Redis is unavailable or experiencing issues
+- Track the performance of each path
+- Set up alerts for when the system falls back to PostgreSQL too frequently
 
 ## Future Enhancements
 
