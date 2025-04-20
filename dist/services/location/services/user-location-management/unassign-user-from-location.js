@@ -1,4 +1,7 @@
-import { unassignUserFromLocation as unassignUserFromLocationQuery } from '../../queries';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.unassignUserFromLocation = unassignUserFromLocation;
+const queries_1 = require("../../queries");
 /**
  * Unassign a user from a location
  * @param userId User ID
@@ -6,7 +9,7 @@ import { unassignUserFromLocation as unassignUserFromLocationQuery } from '../..
  * @param orgId Organization ID (for authorization)
  * @returns Promise with success status
  */
-export async function unassignUserFromLocation(userId, locationId, orgId) {
-    return unassignUserFromLocationQuery(userId, locationId, orgId);
+async function unassignUserFromLocation(userId, locationId, orgId) {
+    return (0, queries_1.unassignUserFromLocation)(userId, locationId, orgId);
 }
 //# sourceMappingURL=unassign-user-from-location.js.map

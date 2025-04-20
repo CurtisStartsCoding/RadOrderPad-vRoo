@@ -1,10 +1,13 @@
+"use strict";
 /**
  * SQL queries for connection operations
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TERMINATE_RELATIONSHIP_QUERY = exports.GET_RELATIONSHIP_FOR_TERMINATION_QUERY = exports.REJECT_RELATIONSHIP_QUERY = exports.APPROVE_RELATIONSHIP_QUERY = exports.GET_RELATIONSHIP_FOR_APPROVAL_QUERY = exports.CREATE_RELATIONSHIP_QUERY = exports.UPDATE_RELATIONSHIP_TO_PENDING_QUERY = exports.CHECK_EXISTING_RELATIONSHIP_QUERY = exports.CHECK_ORGANIZATIONS_QUERY = exports.LIST_INCOMING_REQUESTS_QUERY = exports.LIST_CONNECTIONS_QUERY = void 0;
 /**
  * Query to list connections for an organization
  */
-export const LIST_CONNECTIONS_QUERY = `
+exports.LIST_CONNECTIONS_QUERY = `
 SELECT r.*, 
        o1.name as initiating_org_name,
        o2.name as target_org_name,
@@ -23,7 +26,7 @@ ORDER BY r.created_at DESC
 /**
  * Query to list incoming connection requests
  */
-export const LIST_INCOMING_REQUESTS_QUERY = `
+exports.LIST_INCOMING_REQUESTS_QUERY = `
 SELECT r.*, 
        o1.name as initiating_org_name,
        u1.first_name as initiator_first_name,
@@ -38,13 +41,13 @@ ORDER BY r.created_at DESC
 /**
  * Query to check if organizations exist
  */
-export const CHECK_ORGANIZATIONS_QUERY = `
+exports.CHECK_ORGANIZATIONS_QUERY = `
 SELECT id, name, contact_email FROM organizations WHERE id IN ($1, $2)
 `;
 /**
  * Query to check if a relationship already exists
  */
-export const CHECK_EXISTING_RELATIONSHIP_QUERY = `
+exports.CHECK_EXISTING_RELATIONSHIP_QUERY = `
 SELECT id, status FROM organization_relationships 
 WHERE (organization_id = $1 AND related_organization_id = $2)
 OR (organization_id = $2 AND related_organization_id = $1)
@@ -52,7 +55,7 @@ OR (organization_id = $2 AND related_organization_id = $1)
 /**
  * Query to update an existing relationship to pending
  */
-export const UPDATE_RELATIONSHIP_TO_PENDING_QUERY = `
+exports.UPDATE_RELATIONSHIP_TO_PENDING_QUERY = `
 UPDATE organization_relationships
 SET status = 'pending', 
     organization_id = $1,
@@ -67,7 +70,7 @@ RETURNING id
 /**
  * Query to create a new relationship
  */
-export const CREATE_RELATIONSHIP_QUERY = `
+exports.CREATE_RELATIONSHIP_QUERY = `
 INSERT INTO organization_relationships
 (organization_id, related_organization_id, status, initiated_by_id, notes)
 VALUES ($1, $2, 'pending', $3, $4)
@@ -76,7 +79,7 @@ RETURNING id
 /**
  * Query to get a relationship for approval
  */
-export const GET_RELATIONSHIP_FOR_APPROVAL_QUERY = `
+exports.GET_RELATIONSHIP_FOR_APPROVAL_QUERY = `
 SELECT r.*, 
        o1.name as initiating_org_name,
        o1.contact_email as initiating_org_email
@@ -87,7 +90,7 @@ WHERE r.id = $1 AND r.related_organization_id = $2 AND r.status = 'pending'
 /**
  * Query to approve a relationship
  */
-export const APPROVE_RELATIONSHIP_QUERY = `
+exports.APPROVE_RELATIONSHIP_QUERY = `
 UPDATE organization_relationships
 SET status = 'active', approved_by_id = $1, updated_at = NOW()
 WHERE id = $2
@@ -95,7 +98,7 @@ WHERE id = $2
 /**
  * Query to reject a relationship
  */
-export const REJECT_RELATIONSHIP_QUERY = `
+exports.REJECT_RELATIONSHIP_QUERY = `
 UPDATE organization_relationships
 SET status = 'rejected', approved_by_id = $1, updated_at = NOW()
 WHERE id = $2
@@ -103,7 +106,7 @@ WHERE id = $2
 /**
  * Query to get a relationship for termination
  */
-export const GET_RELATIONSHIP_FOR_TERMINATION_QUERY = `
+exports.GET_RELATIONSHIP_FOR_TERMINATION_QUERY = `
 SELECT r.*, 
        o1.name as org1_name,
        o1.contact_email as org1_email,
@@ -117,7 +120,7 @@ WHERE r.id = $1 AND (r.organization_id = $2 OR r.related_organization_id = $2) A
 /**
  * Query to terminate a relationship
  */
-export const TERMINATE_RELATIONSHIP_QUERY = `
+exports.TERMINATE_RELATIONSHIP_QUERY = `
 UPDATE organization_relationships
 SET status = 'terminated', updated_at = NOW()
 WHERE id = $1

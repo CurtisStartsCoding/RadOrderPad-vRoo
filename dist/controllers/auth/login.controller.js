@@ -1,9 +1,15 @@
-import authService from '../../services/auth';
-import { handleAuthError, loginErrorMap } from './error-handler';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LoginController = void 0;
+const auth_1 = __importDefault(require("../../services/auth"));
+const error_handler_1 = require("./error-handler");
 /**
  * Controller for handling user login
  */
-export class LoginController {
+class LoginController {
     /**
      * Login a user
      */
@@ -19,13 +25,14 @@ export class LoginController {
                 email,
                 password
             };
-            const result = await authService.login(loginData);
+            const result = await auth_1.default.login(loginData);
             res.status(200).json(result);
         }
         catch (error) {
-            handleAuthError(error, res, 'Login', loginErrorMap, 'An error occurred during login');
+            (0, error_handler_1.handleAuthError)(error, res, 'Login', error_handler_1.loginErrorMap, 'An error occurred during login');
         }
     }
 }
-export default new LoginController();
+exports.LoginController = LoginController;
+exports.default = new LoginController();
 //# sourceMappingURL=login.controller.js.map

@@ -1,18 +1,21 @@
-import { getMainDbClient } from '../../../../../config/db';
-import { generalNotifications } from '../../../../../services/notification/services';
-import { shouldEnterPurgatory } from './should-enter-purgatory';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleInvoicePaymentFailed = handleInvoicePaymentFailed;
+const db_1 = require("../../../../../config/db");
+const services_1 = require("../../../../../services/notification/services");
+const should_enter_purgatory_1 = require("./should-enter-purgatory");
 /**
  * Handle invoice.payment_failed event
  * This is triggered when an invoice payment fails
  */
-export async function handleInvoicePaymentFailed(event) {
+async function handleInvoicePaymentFailed(event) {
     const invoice = event.data.object;
     const customerId = invoice.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice');
     }
     // Get the organization by Stripe customer ID
-    const client = await getMainDbClient();
+    const client = await (0, db_1.getMainDbClient)();
     try {
         await client.query('BEGIN');
         // Find the organization by Stripe customer ID
@@ -40,7 +43,7 @@ export async function handleInvoicePaymentFailed(event) {
             `Invoice payment failed: ${invoice.number || invoice.id}`
         ]);
         // Check if the organization should enter purgatory mode
-        const enterPurgatory = shouldEnterPurgatory(invoice, organization);
+        const enterPurgatory = (0, should_enter_purgatory_1.shouldEnterPurgatory)(invoice, organization);
         // If the organization should enter purgatory and is not already in purgatory
         if (enterPurgatory && currentStatus !== 'purgatory') {
             // 1. Update organization status
@@ -67,7 +70,7 @@ export async function handleInvoicePaymentFailed(event) {
          AND role IN ('admin_referring', 'admin_radiology')`, [orgId]);
             // 5. Send notifications to all admin users
             for (const admin of adminUsersResult.rows) {
-                await generalNotifications.sendNotificationEmail(admin.email, 'URGENT: Account Payment Failure', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+                await services_1.generalNotifications.sendNotificationEmail(admin.email, 'URGENT: Account Payment Failure', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
                     `We regret to inform you that your organization's account (${orgName}) ` +
                     `has been placed on hold due to a payment failure.\n\n` +
                     `Invoice Details:\n` +
@@ -89,7 +92,7 @@ export async function handleInvoicePaymentFailed(event) {
          AND role IN ('admin_referring', 'admin_radiology')`, [orgId]);
             // Send notifications to all admin users
             for (const admin of adminUsersResult.rows) {
-                await generalNotifications.sendNotificationEmail(admin.email, 'Payment Failure Notice', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+                await services_1.generalNotifications.sendNotificationEmail(admin.email, 'Payment Failure Notice', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
                     `We're writing to inform you that a recent payment for your organization's account (${orgName}) ` +
                     `has failed to process.\n\n` +
                     `Invoice Details:\n` +

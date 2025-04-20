@@ -1,10 +1,16 @@
-import AdminOrderService from '../../services/order/admin';
-import { handleControllerError } from './types';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handlePasteSummary = handlePasteSummary;
+const admin_1 = __importDefault(require("../../services/order/admin"));
+const types_1 = require("./types");
 /**
  * Handle pasted EMR summary
  * @route POST /api/admin/orders/:orderId/paste-summary
  */
-export async function handlePasteSummary(req, res) {
+async function handlePasteSummary(req, res) {
     try {
         const orderId = parseInt(req.params.orderId);
         if (isNaN(orderId)) {
@@ -23,12 +29,12 @@ export async function handlePasteSummary(req, res) {
             return;
         }
         // Call the service to handle the pasted EMR summary
-        const result = await AdminOrderService.handlePasteSummary(orderId, pastedText, userId);
+        const result = await admin_1.default.handlePasteSummary(orderId, pastedText, userId);
         res.status(200).json(result);
     }
     catch (error) {
-        handleControllerError(error, res, 'handlePasteSummary');
+        (0, types_1.handleControllerError)(error, res, 'handlePasteSummary');
     }
 }
-export default handlePasteSummary;
+exports.default = handlePasteSummary;
 //# sourceMappingURL=paste-summary.controller.js.map

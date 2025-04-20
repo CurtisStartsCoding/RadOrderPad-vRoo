@@ -1,4 +1,7 @@
-import { queryMainDb } from '../../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.verifyUserAuthorization = verifyUserAuthorization;
+const db_1 = require("../../../../config/db");
 /**
  * Verify that the user belongs to the referring organization
  *
@@ -6,8 +9,8 @@ import { queryMainDb } from '../../../../config/db';
  * @param referringOrgId The ID of the referring organization
  * @throws Error if the user is not authorized
  */
-export async function verifyUserAuthorization(userId, referringOrgId) {
-    const userResult = await queryMainDb('SELECT organization_id FROM users WHERE id = $1', [userId]);
+async function verifyUserAuthorization(userId, referringOrgId) {
+    const userResult = await (0, db_1.queryMainDb)('SELECT organization_id FROM users WHERE id = $1', [userId]);
     if (userResult.rows.length === 0) {
         throw new Error('User not found');
     }

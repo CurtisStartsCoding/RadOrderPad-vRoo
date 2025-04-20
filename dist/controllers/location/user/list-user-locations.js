@@ -1,24 +1,30 @@
-import locationService from '../../../services/location';
-import { checkAuthentication, validateUserId, handleControllerError } from '../types';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.listUserLocations = void 0;
+const location_1 = __importDefault(require("../../../services/location"));
+const types_1 = require("../types");
 /**
  * List locations assigned to a user
  * @param req Express request object
  * @param res Express response object
  */
-export const listUserLocations = async (req, res) => {
+const listUserLocations = async (req, res) => {
     try {
         // Check if user is authenticated
-        if (!checkAuthentication(req, res)) {
+        if (!(0, types_1.checkAuthentication)(req, res)) {
             return;
         }
         // Validate user ID
-        if (!validateUserId(req, res)) {
+        if (!(0, types_1.validateUserId)(req, res)) {
             return;
         }
         const orgId = req.user.orgId;
         const userId = parseInt(req.params.userId);
         try {
-            const locations = await locationService.listUserLocations(userId, orgId);
+            const locations = await location_1.default.listUserLocations(userId, orgId);
             res.status(200).json({ locations });
         }
         catch (error) {
@@ -32,8 +38,9 @@ export const listUserLocations = async (req, res) => {
         }
     }
     catch (error) {
-        handleControllerError(res, error, 'Failed to list user locations');
+        (0, types_1.handleControllerError)(res, error, 'Failed to list user locations');
     }
 };
-export default listUserLocations;
+exports.listUserLocations = listUserLocations;
+exports.default = exports.listUserLocations;
 //# sourceMappingURL=list-user-locations.js.map

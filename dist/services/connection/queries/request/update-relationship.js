@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UPDATE_RELATIONSHIP_TO_PENDING_QUERY = void 0;
 /**
  * Query to update an existing relationship to pending
  */
-export const UPDATE_RELATIONSHIP_TO_PENDING_QUERY = `
+exports.UPDATE_RELATIONSHIP_TO_PENDING_QUERY = `
 UPDATE organization_relationships
 SET status = 'pending', 
     organization_id = $1,

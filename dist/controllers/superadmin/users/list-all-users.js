@@ -1,9 +1,12 @@
-import { listAllUsers } from '../../../services/superadmin';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.listAllUsersController = listAllUsersController;
+const superadmin_1 = require("../../../services/superadmin");
 /**
  * List all users with optional filtering
  * GET /api/superadmin/users
  */
-export async function listAllUsersController(req, res) {
+async function listAllUsersController(req, res) {
     try {
         // Extract query parameters for filtering
         const filters = {};
@@ -20,7 +23,7 @@ export async function listAllUsersController(req, res) {
             filters.status = req.query.status === 'true';
         }
         // Call the service function
-        const users = await listAllUsers(filters);
+        const users = await (0, superadmin_1.listAllUsers)(filters);
         // Return the users
         res.status(200).json({
             success: true,

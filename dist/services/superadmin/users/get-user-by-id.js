@@ -1,11 +1,14 @@
-import { queryMainDb } from '../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUserById = getUserById;
+const db_1 = require("../../../config/db");
 /**
  * Get a user by ID
  *
  * @param userId User ID
  * @returns Promise with user details or null if not found
  */
-export async function getUserById(userId) {
+async function getUserById(userId) {
     try {
         // Query for the user with organization details
         const userQuery = `
@@ -17,7 +20,7 @@ export async function getUserById(userId) {
       JOIN organizations o ON u.organization_id = o.id
       WHERE u.id = $1
     `;
-        const userResult = await queryMainDb(userQuery, [userId]);
+        const userResult = await (0, db_1.queryMainDb)(userQuery, [userId]);
         if (userResult.rowCount === 0) {
             return null;
         }
@@ -29,7 +32,7 @@ export async function getUserById(userId) {
       JOIN user_locations ul ON l.id = ul.location_id
       WHERE ul.user_id = $1
     `;
-        const locationsResult = await queryMainDb(locationsQuery, [userId]);
+        const locationsResult = await (0, db_1.queryMainDb)(locationsQuery, [userId]);
         // Return user with related data
         return {
             ...user,

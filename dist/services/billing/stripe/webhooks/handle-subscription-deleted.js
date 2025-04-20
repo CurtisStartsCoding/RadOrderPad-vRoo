@@ -1,25 +1,31 @@
-import { getMainDbClient } from '../../../../config/db';
-import { generalNotifications } from '../../../../services/notification/services';
-import logger from '../../../../utils/logger';
-import { StripeWebhookError, OrganizationNotFoundError, DatabaseOperationError } from './errors';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleSubscriptionDeleted = handleSubscriptionDeleted;
+const db_1 = require("../../../../config/db");
+const services_1 = require("../../../../services/notification/services");
+const logger_1 = __importDefault(require("../../../../utils/logger"));
+const errors_1 = require("./errors");
 /**
  * Handle customer.subscription.deleted event
  * This is triggered when a subscription is canceled
  */
-export async function handleSubscriptionDeleted(event) {
+async function handleSubscriptionDeleted(event) {
     const subscription = event.data.object;
     const customerId = subscription.customer;
     if (!customerId) {
-        throw new StripeWebhookError('Missing customer ID in subscription');
+        throw new errors_1.StripeWebhookError('Missing customer ID in subscription');
     }
     // Get the organization by Stripe customer ID
-    const client = await getMainDbClient();
+    const client = await (0, db_1.getMainDbClient)();
     try {
         await client.query('BEGIN');
         // Check if this event has already been processed (idempotency)
         const eventResult = await client.query(`SELECT id FROM billing_events WHERE stripe_event_id = $1`, [event.id]);
         if (eventResult.rowCount && eventResult.rowCount > 0) {
-            logger.info(`Stripe event ${event.id} has already been processed. Skipping.`);
+            logger_1.default.info(`Stripe event ${event.id} has already been processed. Skipping.`);
             await client.query('COMMIT');
             return;
         }
@@ -28,7 +34,7 @@ export async function handleSubscriptionDeleted(event) {
        FROM organizations
        WHERE billing_id = $1`, [customerId]);
         if (orgResult.rowCount === 0) {
-            throw new OrganizationNotFoundError(customerId);
+            throw new errors_1.OrganizationNotFoundError(customerId);
         }
         const organization = orgResult.rows[0];
         const orgId = organization.id;
@@ -70,7 +76,7 @@ export async function handleSubscriptionDeleted(event) {
             // 5. Send notifications to all admin users
             for (const admin of adminUsersResult.rows) {
                 try {
-                    await generalNotifications.sendNotificationEmail(admin.email, 'IMPORTANT: Subscription Canceled', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+                    await services_1.generalNotifications.sendNotificationEmail(admin.email, 'IMPORTANT: Subscription Canceled', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
                         `We regret to inform you that your organization's subscription (${orgName}) ` +
                         `has been canceled, and your account has been placed on hold.\n\n` +
                         `While your account is on hold, you will have limited access to RadOrderPad features. ` +
@@ -80,18 +86,18 @@ export async function handleSubscriptionDeleted(event) {
                         `The RadOrderPad Team`);
                 }
                 catch (notificationError) {
-                    logger.error(`Failed to send notification to ${admin.email}:`, notificationError);
+                    logger_1.default.error(`Failed to send notification to ${admin.email}:`, notificationError);
                     // Continue processing other admins even if one notification fails
                 }
             }
-            logger.info(`Organization ${orgId} placed in purgatory mode due to subscription cancellation`);
+            logger_1.default.info(`Organization ${orgId} placed in purgatory mode due to subscription cancellation`);
         }
         await client.query('COMMIT');
-        logger.info(`Successfully processed subscription deletion for org ${orgId}`);
+        logger_1.default.info(`Successfully processed subscription deletion for org ${orgId}`);
     }
     catch (error) {
         await client.query('ROLLBACK');
-        logger.error('Error processing subscription deletion:', error);
+        logger_1.default.error('Error processing subscription deletion:', error);
         handleError(error, 'subscription deletion');
     }
     finally {
@@ -102,14 +108,14 @@ export async function handleSubscriptionDeleted(event) {
  * Handle errors
  */
 function handleError(error, operation) {
-    if (error instanceof StripeWebhookError) {
+    if (error instanceof errors_1.StripeWebhookError) {
         throw error;
     }
-    else if (error instanceof OrganizationNotFoundError) {
+    else if (error instanceof errors_1.OrganizationNotFoundError) {
         throw error;
     }
     else if (error instanceof Error) {
-        throw new DatabaseOperationError(operation, error);
+        throw new errors_1.DatabaseOperationError(operation, error);
     }
     else {
         throw new Error(`Unknown error during ${operation}: ${String(error)}`);

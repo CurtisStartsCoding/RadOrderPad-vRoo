@@ -1,9 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authorizeOrganization = void 0;
 // Import types to ensure Express Request interface is extended
-import './types';
+require("./types");
 /**
  * Middleware to check if user belongs to the specified organization
  */
-export const authorizeOrganization = (req, res, next) => {
+const authorizeOrganization = (req, res, next) => {
     if (!req.user) {
         return res.status(401).json({ message: 'User not authenticated' });
     }
@@ -18,4 +21,5 @@ export const authorizeOrganization = (req, res, next) => {
     }
     next();
 };
+exports.authorizeOrganization = authorizeOrganization;
 //# sourceMappingURL=authorize-organization.js.map

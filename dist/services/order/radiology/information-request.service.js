@@ -1,4 +1,7 @@
-import { queryPhiDb } from '../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.requestInformation = requestInformation;
+const db_1 = require("../../../config/db");
 /**
  * Request additional information from referring group
  * @param orderId Order ID
@@ -8,10 +11,10 @@ import { queryPhiDb } from '../../../config/db';
  * @param orgId Radiology organization ID
  * @returns Promise with result
  */
-export async function requestInformation(orderId, requestedInfoType, requestedInfoDetails, userId, orgId) {
+async function requestInformation(orderId, requestedInfoType, requestedInfoDetails, userId, orgId) {
     try {
         // 1. Verify order exists and belongs to the radiology group
-        const orderResult = await queryPhiDb(`SELECT o.id, o.referring_organization_id, o.radiology_organization_id
+        const orderResult = await (0, db_1.queryPhiDb)(`SELECT o.id, o.referring_organization_id, o.radiology_organization_id
        FROM orders o
        WHERE o.id = $1`, [orderId]);
         if (orderResult.rows.length === 0) {
@@ -22,7 +25,7 @@ export async function requestInformation(orderId, requestedInfoType, requestedIn
             throw new Error(`Unauthorized: Order ${orderId} does not belong to your organization`);
         }
         // 2. Create information request
-        const result = await queryPhiDb(`INSERT INTO information_requests
+        const result = await (0, db_1.queryPhiDb)(`INSERT INTO information_requests
        (order_id, requested_by_user_id, requesting_organization_id, target_organization_id,
         requested_info_type, requested_info_details, status, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
@@ -37,7 +40,7 @@ export async function requestInformation(orderId, requestedInfoType, requestedIn
         ]);
         const requestId = result.rows[0].id;
         // 3. Log the event in order_history
-        await queryPhiDb(`INSERT INTO order_history
+        await (0, db_1.queryPhiDb)(`INSERT INTO order_history
        (order_id, user_id, event_type, details, created_at)
        VALUES ($1, $2, $3, $4, NOW())`, [
             orderId,
@@ -58,5 +61,5 @@ export async function requestInformation(orderId, requestedInfoType, requestedIn
         throw error;
     }
 }
-export default requestInformation;
+exports.default = requestInformation;
 //# sourceMappingURL=information-request.service.js.map

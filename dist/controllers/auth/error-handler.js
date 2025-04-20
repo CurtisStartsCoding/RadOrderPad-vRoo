@@ -1,3 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.loginErrorMap = exports.registrationErrorMap = void 0;
+exports.handleAuthError = handleAuthError;
 /**
  * Error handling utilities for authentication controllers
  */
@@ -9,7 +13,7 @@
  * @param errorMap Map of error messages to HTTP status codes
  * @param defaultMessage Default error message
  */
-export function handleAuthError(error, res, operation, errorMap = {}, defaultMessage = 'An error occurred') {
+function handleAuthError(error, res, operation, errorMap = {}, defaultMessage = 'An error occurred') {
     console.error(`${operation} error:`, error);
     if (error instanceof Error) {
         // Check if the error message is in the error map
@@ -26,7 +30,7 @@ export function handleAuthError(error, res, operation, errorMap = {}, defaultMes
 /**
  * Error map for registration
  */
-export const registrationErrorMap = {
+exports.registrationErrorMap = {
     'Invalid registration key': 403,
     'Organization already exists': 409,
     'Email already in use': 409
@@ -34,13 +38,13 @@ export const registrationErrorMap = {
 /**
  * Error map for login
  */
-export const loginErrorMap = {
+exports.loginErrorMap = {
     'Invalid email or password': 401,
     'User account is inactive': 401
 };
-export default {
+exports.default = {
     handleAuthError,
-    registrationErrorMap,
-    loginErrorMap
+    registrationErrorMap: exports.registrationErrorMap,
+    loginErrorMap: exports.loginErrorMap
 };
 //# sourceMappingURL=error-handler.js.map

@@ -1,9 +1,15 @@
-import authService from '../../services/auth';
-import { handleAuthError, registrationErrorMap } from './error-handler';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RegisterController = void 0;
+const auth_1 = __importDefault(require("../../services/auth"));
+const error_handler_1 = require("./error-handler");
 /**
  * Controller for handling organization and user registration
  */
-export class RegisterController {
+class RegisterController {
     /**
      * Register a new organization and admin user
      */
@@ -50,13 +56,14 @@ export class RegisterController {
                 specialty: user.specialty,
                 phone_number: user.phone_number
             };
-            const result = await authService.registerOrganization(orgData, userData);
+            const result = await auth_1.default.registerOrganization(orgData, userData);
             res.status(201).json(result);
         }
         catch (error) {
-            handleAuthError(error, res, 'Registration', registrationErrorMap, 'An error occurred during registration');
+            (0, error_handler_1.handleAuthError)(error, res, 'Registration', error_handler_1.registrationErrorMap, 'An error occurred during registration');
         }
     }
 }
-export default new RegisterController();
+exports.RegisterController = RegisterController;
+exports.default = new RegisterController();
 //# sourceMappingURL=register.controller.js.map

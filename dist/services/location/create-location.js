@@ -1,17 +1,20 @@
-import { queryMainDb } from '../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createLocation = createLocation;
+const db_1 = require("../../config/db");
 /**
  * Create a new location for an organization
  * @param orgId Organization ID
  * @param locationData Location data
  * @returns Promise with created location
  */
-export async function createLocation(orgId, locationData) {
+async function createLocation(orgId, locationData) {
     try {
         // Validate required fields
         if (!locationData.name) {
             throw new Error('Location name is required');
         }
-        const result = await queryMainDb(`INSERT INTO locations
+        const result = await (0, db_1.queryMainDb)(`INSERT INTO locations
        (organization_id, name, address_line1, address_line2, city, state, zip_code, phone_number, is_active)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true)
        RETURNING *`, [

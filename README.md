@@ -74,7 +74,12 @@ RadOrderPad is designed to improve the accuracy and efficiency of radiology orde
    node debug-scripts/import_using_node.js
    ```
 
-6. Start the development server:
+6. Verify module system configuration:
+   ```
+   node scripts/verify-module-config.js
+   ```
+
+7. Start the development server:
    ```
    npm run dev
    ```
@@ -84,11 +89,14 @@ RadOrderPad is designed to improve the accuracy and efficiency of radiology orde
 - `ORDER_API_README.md`: API documentation
 - `Docs/core_principles.md`: Core principles of the validation system
 - `Docs/field-naming-fix-summary.md`: Summary of field naming fixes
+- `Docs/module-system-fix.md`: Documentation of the module system fix
+- `Docs/aws-deployment-guide.md`: Guide for deploying to AWS
 - `Docs/prompt_examples/`: Example prompts for the validation system
 - `debug-scripts/README.md`: Documentation for utility scripts
 
 ## Recent Improvements
 
+- Fixed module system configuration to ensure compatibility between TypeScript and Node.js
 - Fixed a critical bug in the code normalization process that was stripping the isPrimary flag from ICD-10 codes
 - Successfully imported comprehensive medical data including CPT codes, ICD-10 codes, and mappings
 - Implemented a comprehensive validation framework with specialty-specific criteria

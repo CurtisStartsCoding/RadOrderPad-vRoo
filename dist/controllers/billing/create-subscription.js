@@ -1,4 +1,10 @@
-import BillingService from '../../services/billing';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createSubscription = createSubscription;
+const billing_1 = __importDefault(require("../../services/billing"));
 /**
  * Create a Stripe subscription for a specific pricing tier
  *
@@ -6,7 +12,7 @@ import BillingService from '../../services/billing';
  * @param res Express response object
  * @returns Response with subscription details or error
  */
-export async function createSubscription(req, res) {
+async function createSubscription(req, res) {
     try {
         // Extract organization ID from authenticated user
         const orgId = req.user?.orgId;
@@ -43,7 +49,7 @@ export async function createSubscription(req, res) {
             });
         }
         // Create subscription
-        const subscriptionResult = await BillingService.createSubscription(orgId, priceId);
+        const subscriptionResult = await billing_1.default.createSubscription(orgId, priceId);
         // Return subscription details
         return res.status(200).json({
             success: true,

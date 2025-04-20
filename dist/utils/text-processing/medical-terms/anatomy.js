@@ -1,10 +1,14 @@
+"use strict";
 /**
  * Anatomical terms for medical keyword extraction
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.anatomyTerms = void 0;
+exports.isAnatomyTerm = isAnatomyTerm;
 /**
  * Common anatomical terms organized by body region
  */
-export const anatomyTerms = [
+exports.anatomyTerms = [
     // Head and neck
     'head', 'neck', 'skull', 'brain', 'cerebral', 'cranial', 'facial', 'sinus', 'nasal', 'orbit',
     'eye', 'ocular', 'ear', 'temporal', 'jaw', 'mandible', 'maxilla', 'throat', 'pharynx', 'larynx',
@@ -30,7 +34,7 @@ export const anatomyTerms = [
  * @param term - The term to check
  * @returns True if the term is an anatomical term
  */
-export function isAnatomyTerm(term) {
-    return anatomyTerms.includes(term.toLowerCase());
+function isAnatomyTerm(term) {
+    return exports.anatomyTerms.includes(term.toLowerCase());
 }
 //# sourceMappingURL=anatomy.js.map

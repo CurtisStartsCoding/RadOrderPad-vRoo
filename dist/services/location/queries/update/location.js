@@ -1,4 +1,7 @@
-import { queryMainDb } from '../../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateLocation = updateLocation;
+const db_1 = require("../../../../config/db");
 /**
  * Update a location
  * @param locationId Location ID
@@ -6,20 +9,20 @@ import { queryMainDb } from '../../../../config/db';
  * @param locationData Location data to update
  * @returns Promise with updated location
  */
-export async function updateLocation(locationId, orgId, locationData) {
+async function updateLocation(locationId, orgId, locationData) {
     try {
         // Validate required fields
         if (!locationData.name) {
             throw new Error('Location name is required');
         }
         // First, verify the location belongs to the organization
-        const checkResult = await queryMainDb(`SELECT id FROM locations 
+        const checkResult = await (0, db_1.queryMainDb)(`SELECT id FROM locations 
        WHERE id = $1 AND organization_id = $2`, [locationId, orgId]);
         if (checkResult.rows.length === 0) {
             throw new Error(`Location ${locationId} not found or not authorized`);
         }
         // Update the location
-        const result = await queryMainDb(`UPDATE locations
+        const result = await (0, db_1.queryMainDb)(`UPDATE locations
        SET name = $1, 
            address_line1 = $2, 
            address_line2 = $3, 

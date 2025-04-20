@@ -1,4 +1,7 @@
-import { OrderStatus } from '../../../../../models';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.applyStatusFilter = applyStatusFilter;
+const models_1 = require("../../../../../models");
 /**
  * Apply status filter to the query
  * @param query Current query string
@@ -7,7 +10,7 @@ import { OrderStatus } from '../../../../../models';
  * @param status Status to filter by
  * @returns Updated query, params, and paramIndex
  */
-export function applyStatusFilter(query, params, paramIndex, status) {
+function applyStatusFilter(query, params, paramIndex, status) {
     if (status) {
         query += ` AND o.status = $${paramIndex}`;
         params.push(status);
@@ -15,10 +18,10 @@ export function applyStatusFilter(query, params, paramIndex, status) {
     }
     else {
         query += ` AND o.status = $${paramIndex}`;
-        params.push(OrderStatus.PENDING_RADIOLOGY);
+        params.push(models_1.OrderStatus.PENDING_RADIOLOGY);
         paramIndex++;
     }
     return { query, params, paramIndex };
 }
-export default applyStatusFilter;
+exports.default = applyStatusFilter;
 //# sourceMappingURL=status-filter.js.map

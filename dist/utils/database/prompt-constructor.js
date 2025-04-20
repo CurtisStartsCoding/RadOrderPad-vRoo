@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.constructPrompt = constructPrompt;
 /**
  * Construct the prompt for the LLM
  */
-export function constructPrompt(templateContent, sanitizedText, databaseContext, wordLimit, isOverrideValidation) {
+function constructPrompt(templateContent, sanitizedText, databaseContext, wordLimit, isOverrideValidation) {
     let prompt = templateContent;
     // Replace placeholders safely
     prompt = prompt.replace('{{DATABASE_CONTEXT}}', databaseContext || '');

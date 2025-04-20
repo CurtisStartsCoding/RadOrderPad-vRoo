@@ -1,8 +1,11 @@
-import { BaseEmailTemplate } from './email-template-base.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.InviteEmailTemplate = void 0;
+const email_template_base_js_1 = require("./email-template-base.js");
 /**
  * Template for invitation emails
  */
-export class InviteEmailTemplate extends BaseEmailTemplate {
+class InviteEmailTemplate extends email_template_base_js_1.BaseEmailTemplate {
     /**
      * Generate email content for invitation
      * @param data Invitation data
@@ -47,6 +50,7 @@ ${this.getEmailSignature()}
         };
     }
 }
+exports.InviteEmailTemplate = InviteEmailTemplate;
 // Create and export a singleton instance
-export default new InviteEmailTemplate();
+exports.default = new InviteEmailTemplate();
 //# sourceMappingURL=invite-template.js.map

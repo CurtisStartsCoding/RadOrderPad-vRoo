@@ -1,9 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.parseEmrSummary = parseEmrSummary;
 /**
  * Parse EMR summary text to extract patient and insurance information
  * @param text EMR summary text
  * @returns Parsed data
  */
-export function parseEmrSummary(text) {
+function parseEmrSummary(text) {
     // Initialize parsed data structure
     const parsedData = {
         patientInfo: {},
@@ -56,5 +59,5 @@ export function parseEmrSummary(text) {
     }
     return parsedData;
 }
-export default parseEmrSummary;
+exports.default = parseEmrSummary;
 //# sourceMappingURL=emr-parser.js.map

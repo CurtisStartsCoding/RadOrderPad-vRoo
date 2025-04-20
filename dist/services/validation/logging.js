@@ -1,14 +1,17 @@
-import { queryPhiDb } from '../../config/db';
-import { logLLMUsage } from './llm-logging';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.logValidationAttempt = logValidationAttempt;
+const db_1 = require("../../config/db");
+const llm_logging_1 = require("./llm-logging");
 /**
  * Log validation attempt to the PHI database
  */
-export async function logValidationAttempt(originalText, validationResult, llmResponse, orderId, userId = 1) {
+async function logValidationAttempt(originalText, validationResult, llmResponse, orderId, userId = 1) {
     try {
         // Get the next attempt number for this order
         let attemptNumber = 1;
         if (orderId) {
-            const attemptResult = await queryPhiDb(`SELECT MAX(attempt_number) as max_attempt FROM validation_attempts WHERE order_id = $1`, [orderId]);
+            const attemptResult = await (0, db_1.queryPhiDb)(`SELECT MAX(attempt_number) as max_attempt FROM validation_attempts WHERE order_id = $1`, [orderId]);
             if (attemptResult.rows[0].max_attempt) {
                 attemptNumber = attemptResult.rows[0].max_attempt + 1;
             }
@@ -17,7 +20,7 @@ export async function logValidationAttempt(originalText, validationResult, llmRe
         const icd10Codes = JSON.stringify(validationResult.suggestedICD10Codes.map(code => code.code));
         const cptCodes = JSON.stringify(validationResult.suggestedCPTCodes.map(code => code.code));
         // Insert validation attempt record
-        await queryPhiDb(`INSERT INTO validation_attempts (
+        await (0, db_1.queryPhiDb)(`INSERT INTO validation_attempts (
         order_id,
         attempt_number,
         validation_input_text,
@@ -40,7 +43,7 @@ export async function logValidationAttempt(originalText, validationResult, llmRe
             userId
         ]);
         // Log LLM usage details
-        await logLLMUsage(llmResponse);
+        await (0, llm_logging_1.logLLMUsage)(llmResponse);
     }
     catch (error) {
         console.error('Error logging validation attempt:', error);

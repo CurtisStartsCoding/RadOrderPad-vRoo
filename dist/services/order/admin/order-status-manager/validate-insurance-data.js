@@ -1,9 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateInsuranceData = validateInsuranceData;
 /**
  * Validate insurance data for required fields
  * @param insurance Insurance data
  * @returns Array of missing field names
  */
-export function validateInsuranceData(insurance) {
+function validateInsuranceData(insurance) {
     const missingFields = [];
     if (!insurance) {
         missingFields.push('primary insurance');

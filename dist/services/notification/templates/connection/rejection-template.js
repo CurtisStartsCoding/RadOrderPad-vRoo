@@ -1,8 +1,11 @@
-import { BaseEmailTemplate } from '../email-template-base.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConnectionRejectionEmailTemplate = void 0;
+const email_template_base_js_1 = require("../email-template-base.js");
 /**
  * Template for connection rejection emails
  */
-export class ConnectionRejectionEmailTemplate extends BaseEmailTemplate {
+class ConnectionRejectionEmailTemplate extends email_template_base_js_1.BaseEmailTemplate {
     /**
      * Generate email content for connection rejection
      * @param data Connection rejection data
@@ -41,6 +44,7 @@ ${this.getEmailSignature()}
         };
     }
 }
+exports.ConnectionRejectionEmailTemplate = ConnectionRejectionEmailTemplate;
 // Create and export a singleton instance
-export default new ConnectionRejectionEmailTemplate();
+exports.default = new ConnectionRejectionEmailTemplate();
 //# sourceMappingURL=rejection-template.js.map

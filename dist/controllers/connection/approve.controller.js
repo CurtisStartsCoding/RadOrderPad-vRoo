@@ -1,20 +1,26 @@
-import connectionService from '../../services/connection';
-import { authenticateUser } from './auth-utils';
-import { handleConnectionError } from './error-utils';
-import { validateRelationshipId } from './validation-utils';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.approveConnection = approveConnection;
+const connection_1 = __importDefault(require("../../services/connection"));
+const auth_utils_1 = require("./auth-utils");
+const error_utils_1 = require("./error-utils");
+const validation_utils_1 = require("./validation-utils");
 /**
  * Approve a connection request
  * @param req Express request object
  * @param res Express response object
  */
-export async function approveConnection(req, res) {
+async function approveConnection(req, res) {
     try {
         // Authenticate user
-        const user = authenticateUser(req, res);
+        const user = (0, auth_utils_1.authenticateUser)(req, res);
         if (!user)
             return;
         // Validate relationship ID
-        const relationshipId = validateRelationshipId(req, res);
+        const relationshipId = (0, validation_utils_1.validateRelationshipId)(req, res);
         if (relationshipId === null)
             return;
         // Create approval parameters
@@ -25,7 +31,7 @@ export async function approveConnection(req, res) {
         };
         try {
             // Approve connection
-            const result = await connectionService.approveConnection(params);
+            const result = await connection_1.default.approveConnection(params);
             // Return response
             res.status(200).json(result);
         }
@@ -42,10 +48,10 @@ export async function approveConnection(req, res) {
         }
     }
     catch (error) {
-        handleConnectionError(error, res, 'approveConnection');
+        (0, error_utils_1.handleConnectionError)(error, res, 'approveConnection');
     }
 }
-export default {
+exports.default = {
     approveConnection
 };
 //# sourceMappingURL=approve.controller.js.map

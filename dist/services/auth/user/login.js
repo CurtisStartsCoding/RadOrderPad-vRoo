@@ -1,14 +1,17 @@
-import { findUserByEmail } from './find-user-by-email';
-import { verifyPassword } from './verify-password';
-import { updateLastLogin } from './update-last-login';
-import { formatUserResponse } from './format-user-response';
-import { generateToken } from '../token/generate-token';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.login = login;
+const find_user_by_email_1 = require("./find-user-by-email");
+const verify_password_1 = require("./verify-password");
+const update_last_login_1 = require("./update-last-login");
+const format_user_response_1 = require("./format-user-response");
+const generate_token_1 = require("../token/generate-token");
 /**
  * Login a user
  */
-export async function login(loginData) {
+async function login(loginData) {
     // Find the user by email
-    const user = await findUserByEmail(loginData.email);
+    const user = await (0, find_user_by_email_1.findUserByEmail)(loginData.email);
     if (!user) {
         throw new Error('Invalid email or password');
     }
@@ -17,16 +20,16 @@ export async function login(loginData) {
         throw new Error('User account is inactive');
     }
     // Verify the password
-    const isPasswordValid = await verifyPassword(loginData.password, user.password_hash);
+    const isPasswordValid = await (0, verify_password_1.verifyPassword)(loginData.password, user.password_hash);
     if (!isPasswordValid) {
         throw new Error('Invalid email or password');
     }
     // Update last login timestamp
-    await updateLastLogin(user.id);
+    await (0, update_last_login_1.updateLastLogin)(user.id);
     // Generate JWT token
-    const token = generateToken(user);
+    const token = (0, generate_token_1.generateToken)(user);
     // Format user response
-    const userResponse = formatUserResponse(user);
+    const userResponse = (0, format_user_response_1.formatUserResponse)(user);
     return {
         token,
         user: userResponse

@@ -1,10 +1,16 @@
-import { getMainDbClient } from '../../../config/db';
-import notificationManager from '../../notification';
-import { GET_RELATIONSHIP_FOR_TERMINATION_QUERY, TERMINATE_RELATIONSHIP_QUERY } from '../queries/terminate';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TerminateConnectionService = void 0;
+const db_1 = require("../../../config/db");
+const notification_1 = __importDefault(require("../../notification"));
+const terminate_1 = require("../queries/terminate");
 /**
  * Service for terminating connections
  */
-export class TerminateConnectionService {
+class TerminateConnectionService {
     /**
      * Terminate an active connection
      * @param params Terminate connection parameters
@@ -12,16 +18,16 @@ export class TerminateConnectionService {
      */
     async terminateConnection(params) {
         const { relationshipId, terminatingUserId, terminatingOrgId } = params;
-        const client = await getMainDbClient();
+        const client = await (0, db_1.getMainDbClient)();
         try {
             await client.query('BEGIN');
             // Get the relationship
-            const relationshipResult = await client.query(GET_RELATIONSHIP_FOR_TERMINATION_QUERY, [relationshipId, terminatingOrgId]);
+            const relationshipResult = await client.query(terminate_1.GET_RELATIONSHIP_FOR_TERMINATION_QUERY, [relationshipId, terminatingOrgId]);
             if (relationshipResult.rows.length === 0) {
                 throw new Error('Relationship not found, not authorized, or not in active status');
             }
             // Update the relationship
-            await client.query(TERMINATE_RELATIONSHIP_QUERY, [relationshipId]);
+            await client.query(terminate_1.TERMINATE_RELATIONSHIP_QUERY, [relationshipId]);
             // Send notification
             const relationship = relationshipResult.rows[0];
             const isInitiator = relationship.organization_id === terminatingOrgId;
@@ -30,7 +36,7 @@ export class TerminateConnectionService {
             const partnerName = isInitiator ? relationship.org2_name : relationship.org1_name;
             const terminatingOrgName = isInitiator ? relationship.org1_name : relationship.org2_name;
             if (partnerEmail) {
-                await notificationManager.sendConnectionTerminated(partnerEmail, partnerName, terminatingOrgName);
+                await notification_1.default.sendConnectionTerminated(partnerEmail, partnerName, terminatingOrgName);
             }
             await client.query('COMMIT');
             return {
@@ -49,5 +55,6 @@ export class TerminateConnectionService {
         }
     }
 }
-export default new TerminateConnectionService();
+exports.TerminateConnectionService = TerminateConnectionService;
+exports.default = new TerminateConnectionService();
 //# sourceMappingURL=terminate-connection.js.map

@@ -1,11 +1,14 @@
-import { queryMainDb } from '../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.listAllUsers = listAllUsers;
+const db_1 = require("../../../config/db");
 /**
  * List all users with optional filtering
  *
  * @param filters Optional filters for users
  * @returns Promise with array of users
  */
-export async function listAllUsers(filters) {
+async function listAllUsers(filters) {
     try {
         // Start building the query
         let query = `
@@ -43,7 +46,7 @@ export async function listAllUsers(filters) {
         // Add ordering
         query += ` ORDER BY u.last_name, u.first_name`;
         // Execute the query
-        const result = await queryMainDb(query, params);
+        const result = await (0, db_1.queryMainDb)(query, params);
         // Remove password_hash from results for security
         const users = result.rows.map((user) => {
             const { password_hash, ...userWithoutPassword } = user;

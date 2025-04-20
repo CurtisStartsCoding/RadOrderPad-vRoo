@@ -1,8 +1,14 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { queryPhiDb } from '../../config/db';
-import config from '../../config/config';
-import s3ClientSingleton from './s3-client.service';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUploadUrl = getUploadUrl;
+const client_s3_1 = require("@aws-sdk/client-s3");
+const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
+const db_1 = require("../../config/db");
+const config_1 = __importDefault(require("../../config/config"));
+const s3_client_service_1 = __importDefault(require("./s3-client.service"));
 /**
  * Generate a presigned URL for uploading a file to S3
  * @param fileType The MIME type of the file
@@ -13,14 +19,14 @@ import s3ClientSingleton from './s3-client.service';
  * @param documentType The type of document (e.g., 'signature', 'report', etc.)
  * @returns Object containing the presigned URL and the file key
  */
-export async function getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType = 'signature') {
+async function getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType = 'signature') {
     try {
         // Validate inputs
         if (!fileType || !fileName || !contentType) {
             throw new Error('Missing required parameters: fileType, fileName, or contentType');
         }
         // Ensure AWS credentials are configured
-        if (!config.aws.accessKeyId || !config.aws.secretAccessKey || !config.aws.s3.bucketName) {
+        if (!config_1.default.aws.accessKeyId || !config_1.default.aws.secretAccessKey || !config_1.default.aws.s3.bucketName) {
             throw new Error('AWS credentials or S3 bucket name not configured');
         }
         // Validate file type
@@ -39,7 +45,7 @@ export async function getUploadUrl(fileType, fileName, contentType, orderId, pat
         let organizationId = 0;
         if (orderId) {
             try {
-                const orderResult = await queryPhiDb('SELECT referring_organization_id FROM orders WHERE id = $1', [orderId]);
+                const orderResult = await (0, db_1.queryPhiDb)('SELECT referring_organization_id FROM orders WHERE id = $1', [orderId]);
                 if (orderResult.rows.length > 0) {
                     organizationId = orderResult.rows[0].referring_organization_id;
                 }
@@ -54,14 +60,14 @@ export async function getUploadUrl(fileType, fileName, contentType, orderId, pat
         const contextId = orderId || patientId || 'no_id';
         const fileKey = `uploads/${organizationId}/${contextType}/${contextId}/${timestamp}_${randomString}_${sanitizedFileName}`;
         // Create the S3 command
-        const command = new PutObjectCommand({
-            Bucket: config.aws.s3.bucketName,
+        const command = new client_s3_1.PutObjectCommand({
+            Bucket: config_1.default.aws.s3.bucketName,
             Key: fileKey,
             ContentType: contentType
         });
         // Generate the presigned URL
-        const s3Client = s3ClientSingleton.getClient();
-        const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
+        const s3Client = s3_client_service_1.default.getClient();
+        const presignedUrl = await (0, s3_request_presigner_1.getSignedUrl)(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
         console.log(`[FileUploadService] Generated presigned URL for ${fileKey}`);
         return {
             success: true,
@@ -74,5 +80,5 @@ export async function getUploadUrl(fileType, fileName, contentType, orderId, pat
         throw error;
     }
 }
-export default getUploadUrl;
+exports.default = getUploadUrl;
 //# sourceMappingURL=presigned-url.service.js.map

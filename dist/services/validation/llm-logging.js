@@ -1,14 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.logLLMUsage = logLLMUsage;
 /**
  * LLM usage logging functionality
  */
-import { queryPhiDb } from '../../config/db';
+const db_1 = require("../../config/db");
 /**
  * Log LLM usage details
  */
-export async function logLLMUsage(llmResponse) {
+async function logLLMUsage(llmResponse) {
     try {
         // Log LLM usage details
-        await queryPhiDb(`INSERT INTO llm_validation_logs (
+        await (0, db_1.queryPhiDb)(`INSERT INTO llm_validation_logs (
         provider,
         model,
         prompt_tokens,
@@ -32,7 +35,7 @@ export async function logLLMUsage(llmResponse) {
             console.log('llm_validation_logs table does not exist. Skipping LLM usage logging.');
             // Create the table if it doesn't exist
             try {
-                await queryPhiDb(`
+                await (0, db_1.queryPhiDb)(`
           CREATE TABLE IF NOT EXISTS llm_validation_logs (
             id SERIAL PRIMARY KEY,
             provider VARCHAR(50) NOT NULL,

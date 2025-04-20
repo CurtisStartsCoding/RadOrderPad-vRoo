@@ -1,4 +1,7 @@
-import { assignUserToLocation as assignUserToLocationQuery } from '../../queries';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.assignUserToLocation = assignUserToLocation;
+const queries_1 = require("../../queries");
 /**
  * Assign a user to a location
  * @param userId User ID
@@ -6,7 +9,7 @@ import { assignUserToLocation as assignUserToLocationQuery } from '../../queries
  * @param orgId Organization ID (for authorization)
  * @returns Promise with success status
  */
-export async function assignUserToLocation(userId, locationId, orgId) {
-    return assignUserToLocationQuery(userId, locationId, orgId);
+async function assignUserToLocation(userId, locationId, orgId) {
+    return (0, queries_1.assignUserToLocation)(userId, locationId, orgId);
 }
 //# sourceMappingURL=assign-user-to-location.js.map

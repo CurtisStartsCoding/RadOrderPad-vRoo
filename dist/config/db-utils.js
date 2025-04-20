@@ -1,4 +1,7 @@
-import { mainDbPool, phiDbPool } from './db-config';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.closeDatabaseConnections = exports.testDatabaseConnections = exports.queryPhiDb = exports.getPhiDbClient = exports.queryMainDb = exports.getMainDbClient = exports.testDbConnection = exports.queryDb = exports.getDbClient = void 0;
+const db_config_1 = require("./db-config");
 /**
  * Generic database utility functions
  */
@@ -8,7 +11,7 @@ import { mainDbPool, phiDbPool } from './db-config';
  * @param dbName Name of the database (for error logging)
  * @returns Promise with a database client
  */
-export const getDbClient = async (pool, dbName) => {
+const getDbClient = async (pool, dbName) => {
     try {
         const client = await pool.connect();
         return client;
@@ -18,6 +21,7 @@ export const getDbClient = async (pool, dbName) => {
         throw error;
     }
 };
+exports.getDbClient = getDbClient;
 /**
  * Query a database
  * @param pool Database pool
@@ -26,8 +30,8 @@ export const getDbClient = async (pool, dbName) => {
  * @param dbName Name of the database (for error logging)
  * @returns Promise with query result
  */
-export const queryDb = async (pool, text, params = [], dbName) => {
-    const client = await getDbClient(pool, dbName);
+const queryDb = async (pool, text, params = [], dbName) => {
+    const client = await (0, exports.getDbClient)(pool, dbName);
     try {
         const result = await client.query(text, params);
         return result;
@@ -36,16 +40,17 @@ export const queryDb = async (pool, text, params = [], dbName) => {
         client.release();
     }
 };
+exports.queryDb = queryDb;
 /**
  * Test a database connection
  * @param pool Database pool
  * @param dbName Name of the database (for logging)
  * @returns Promise with boolean indicating success
  */
-export const testDbConnection = async (pool, dbName) => {
+const testDbConnection = async (pool, dbName) => {
     try {
         console.log(`Testing ${dbName} database connection...`);
-        const client = await getDbClient(pool, dbName);
+        const client = await (0, exports.getDbClient)(pool, dbName);
         const result = await client.query('SELECT NOW()');
         client.release();
         console.log(`${dbName} database connection successful:`, result.rows[0].now);
@@ -56,40 +61,47 @@ export const testDbConnection = async (pool, dbName) => {
         return false;
     }
 };
+exports.testDbConnection = testDbConnection;
 /**
  * Convenience functions for main database
  */
-export const getMainDbClient = async () => {
-    return getDbClient(mainDbPool, 'main');
+const getMainDbClient = async () => {
+    return (0, exports.getDbClient)(db_config_1.mainDbPool, 'main');
 };
-export const queryMainDb = async (text, params = []) => {
-    return queryDb(mainDbPool, text, params, 'main');
+exports.getMainDbClient = getMainDbClient;
+const queryMainDb = async (text, params = []) => {
+    return (0, exports.queryDb)(db_config_1.mainDbPool, text, params, 'main');
 };
+exports.queryMainDb = queryMainDb;
 /**
  * Convenience functions for PHI database
  */
-export const getPhiDbClient = async () => {
-    return getDbClient(phiDbPool, 'PHI');
+const getPhiDbClient = async () => {
+    return (0, exports.getDbClient)(db_config_1.phiDbPool, 'PHI');
 };
-export const queryPhiDb = async (text, params = []) => {
-    return queryDb(phiDbPool, text, params, 'PHI');
+exports.getPhiDbClient = getPhiDbClient;
+const queryPhiDb = async (text, params = []) => {
+    return (0, exports.queryDb)(db_config_1.phiDbPool, text, params, 'PHI');
 };
+exports.queryPhiDb = queryPhiDb;
 /**
  * Test both database connections
  * @returns Promise with boolean indicating success of both connections
  */
-export const testDatabaseConnections = async () => {
-    const mainSuccess = await testDbConnection(mainDbPool, 'main');
-    const phiSuccess = await testDbConnection(phiDbPool, 'PHI');
+const testDatabaseConnections = async () => {
+    const mainSuccess = await (0, exports.testDbConnection)(db_config_1.mainDbPool, 'main');
+    const phiSuccess = await (0, exports.testDbConnection)(db_config_1.phiDbPool, 'PHI');
     // Return true only if both connections are successful
     return mainSuccess && phiSuccess;
 };
+exports.testDatabaseConnections = testDatabaseConnections;
 /**
  * Close all database connections
  */
-export const closeDatabaseConnections = async () => {
-    await mainDbPool.end();
-    await phiDbPool.end();
+const closeDatabaseConnections = async () => {
+    await db_config_1.mainDbPool.end();
+    await db_config_1.phiDbPool.end();
     console.log('Database connections closed');
 };
+exports.closeDatabaseConnections = closeDatabaseConnections;
 //# sourceMappingURL=db-utils.js.map

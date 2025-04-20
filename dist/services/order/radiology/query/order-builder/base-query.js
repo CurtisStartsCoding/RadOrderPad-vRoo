@@ -1,9 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createBaseQuery = createBaseQuery;
 /**
  * Create the base query for getting incoming orders
  * @param orgId Radiology organization ID
  * @returns Object containing the query string, parameters, and next parameter index
  */
-export function createBaseQuery(orgId) {
+function createBaseQuery(orgId) {
     const query = `
     SELECT o.id, o.order_number, o.status, o.priority, o.modality, o.body_part, 
            o.final_cpt_code, o.final_cpt_code_description, o.final_validation_status,
@@ -18,5 +21,5 @@ export function createBaseQuery(orgId) {
         paramIndex: 2
     };
 }
-export default createBaseQuery;
+exports.default = createBaseQuery;
 //# sourceMappingURL=base-query.js.map

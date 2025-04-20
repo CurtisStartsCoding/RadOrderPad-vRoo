@@ -1,9 +1,15 @@
-import emailSender from '../email-sender.js';
-import { generalNotificationTemplate } from '../templates/index.js';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GeneralNotificationService = void 0;
+const email_sender_js_1 = __importDefault(require("../email-sender.js"));
+const index_js_1 = require("../templates/index.js");
 /**
  * Service for handling general notifications
  */
-export class GeneralNotificationService {
+class GeneralNotificationService {
     /**
      * Send a notification email
      * @param email Email address to send the notification to
@@ -20,11 +26,12 @@ export class GeneralNotificationService {
             message
         };
         // Generate the email content
-        const emailContent = generalNotificationTemplate.generateContent(templateData);
+        const emailContent = index_js_1.generalNotificationTemplate.generateContent(templateData);
         // Send the email
-        await emailSender.sendEmail(email, emailContent.subject, emailContent.textBody, emailContent.htmlBody);
+        await email_sender_js_1.default.sendEmail(email, emailContent.subject, emailContent.textBody, emailContent.htmlBody);
     }
 }
+exports.GeneralNotificationService = GeneralNotificationService;
 // Create and export a singleton instance
-export default new GeneralNotificationService();
+exports.default = new GeneralNotificationService();
 //# sourceMappingURL=general-notifications.js.map

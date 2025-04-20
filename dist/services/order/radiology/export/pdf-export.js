@@ -1,9 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generatePdfExport = generatePdfExport;
 /**
  * Generate PDF export of order data
  * @param orderDetails Order details object
  * @returns PDF buffer
  */
-export function generatePdfExport(orderDetails) {
+function generatePdfExport(orderDetails) {
     try {
         // This is a placeholder implementation
         // In a real implementation, you would use a PDF generation library like jsPDF
@@ -20,5 +23,5 @@ export function generatePdfExport(orderDetails) {
         throw new Error('Failed to generate PDF export');
     }
 }
-export default generatePdfExport;
+exports.default = generatePdfExport;
 //# sourceMappingURL=pdf-export.js.map

@@ -1,4 +1,7 @@
-import { executeTransaction } from './transaction';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleFinalizeOrder = handleFinalizeOrder;
+const transaction_1 = require("./transaction");
 /**
  * Handle finalization of an order
  *
@@ -11,7 +14,7 @@ import { executeTransaction } from './transaction';
  * @param userId The ID of the user finalizing the order
  * @returns Promise that resolves with the finalization result
  */
-export async function handleFinalizeOrder(orderId, payload, userId) {
-    return executeTransaction(orderId, payload, userId);
+async function handleFinalizeOrder(orderId, payload, userId) {
+    return (0, transaction_1.executeTransaction)(orderId, payload, userId);
 }
 //# sourceMappingURL=handler.js.map

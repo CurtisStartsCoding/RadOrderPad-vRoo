@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OrderPriority = exports.OrderStatus = void 0;
 /**
  * Order status enum
  */
-export var OrderStatus;
+var OrderStatus;
 (function (OrderStatus) {
     OrderStatus["DRAFT"] = "draft";
     OrderStatus["PENDING_VALIDATION"] = "pending_validation";
@@ -13,13 +16,13 @@ export var OrderStatus;
     OrderStatus["CANCELLED"] = "cancelled";
     OrderStatus["RESULTS_AVAILABLE"] = "results_available";
     OrderStatus["RESULTS_ACKNOWLEDGED"] = "results_acknowledged";
-})(OrderStatus || (OrderStatus = {}));
+})(OrderStatus || (exports.OrderStatus = OrderStatus = {}));
 /**
  * Order priority enum
  */
-export var OrderPriority;
+var OrderPriority;
 (function (OrderPriority) {
     OrderPriority["ROUTINE"] = "routine";
     OrderPriority["STAT"] = "stat";
-})(OrderPriority || (OrderPriority = {}));
+})(OrderPriority || (exports.OrderPriority = OrderPriority = {}));
 //# sourceMappingURL=order-types.js.map

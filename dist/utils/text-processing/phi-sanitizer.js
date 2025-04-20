@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.stripPHI = stripPHI;
 /**
  * Default options for PHI sanitization
  */
@@ -21,7 +24,7 @@ const DEFAULT_PHI_SANITIZER_OPTIONS = {
  * @param options - Options for PHI sanitization
  * @returns Sanitized text with PHI removed
  */
-export function stripPHI(text, options = DEFAULT_PHI_SANITIZER_OPTIONS) {
+function stripPHI(text, options = DEFAULT_PHI_SANITIZER_OPTIONS) {
     // Start with the original text
     let sanitizedText = text;
     // Replace potential MRN numbers (Medical Record Numbers)

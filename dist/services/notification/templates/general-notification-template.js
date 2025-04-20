@@ -1,8 +1,11 @@
-import { BaseEmailTemplate } from './email-template-base.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GeneralNotificationEmailTemplate = void 0;
+const email_template_base_js_1 = require("./email-template-base.js");
 /**
  * Template for general notification emails
  */
-export class GeneralNotificationEmailTemplate extends BaseEmailTemplate {
+class GeneralNotificationEmailTemplate extends email_template_base_js_1.BaseEmailTemplate {
     /**
      * Generate email content for general notification
      * @param data Notification data
@@ -31,6 +34,7 @@ ${this.getEmailSignature()}
         };
     }
 }
+exports.GeneralNotificationEmailTemplate = GeneralNotificationEmailTemplate;
 // Create and export a singleton instance
-export default new GeneralNotificationEmailTemplate();
+exports.default = new GeneralNotificationEmailTemplate();
 //# sourceMappingURL=general-notification-template.js.map

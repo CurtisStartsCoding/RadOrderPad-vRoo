@@ -1,10 +1,14 @@
+"use strict";
 /**
  * Medical abbreviation terms for keyword extraction
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.abbreviationTerms = void 0;
+exports.isAbbreviationTerm = isAbbreviationTerm;
 /**
  * Common medical abbreviations
  */
-export const abbreviationTerms = [
+exports.abbreviationTerms = [
     // Common medical abbreviations
     'ca', // cancer
     'dx', // diagnosis
@@ -33,7 +37,7 @@ export const abbreviationTerms = [
  * @param term - The term to check
  * @returns True if the term is a medical abbreviation
  */
-export function isAbbreviationTerm(term) {
-    return abbreviationTerms.includes(term.toLowerCase());
+function isAbbreviationTerm(term) {
+    return exports.abbreviationTerms.includes(term.toLowerCase());
 }
 //# sourceMappingURL=abbreviations.js.map

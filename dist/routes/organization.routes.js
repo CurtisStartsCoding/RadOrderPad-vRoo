@@ -1,28 +1,33 @@
-import express from 'express';
-import { authenticateJWT, authorizeRole } from '../middleware/auth';
-import locationController from '../controllers/location';
-const router = express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const auth_1 = require("../middleware/auth");
+const location_1 = __importDefault(require("../controllers/location"));
+const router = express_1.default.Router();
 // Middleware to authenticate all routes
-router.use(authenticateJWT);
+router.use(auth_1.authenticateJWT);
 // Organization routes (to be implemented)
-router.get('/mine', authenticateJWT, (req, res) => {
+router.get('/mine', auth_1.authenticateJWT, (req, res) => {
     res.status(501).json({ message: 'Not implemented yet' });
 });
-router.put('/mine', authenticateJWT, authorizeRole(['admin_referring', 'admin_radiology']), (req, res) => {
+router.put('/mine', auth_1.authenticateJWT, (0, auth_1.authorizeRole)(['admin_referring', 'admin_radiology']), (req, res) => {
     res.status(501).json({ message: 'Not implemented yet' });
 });
 // Location routes
 // Only admin roles can manage locations
 const adminRoles = ['admin_referring', 'admin_radiology'];
 // List locations for the user's organization
-router.get('/mine/locations', authorizeRole(adminRoles), locationController.listLocations);
+router.get('/mine/locations', (0, auth_1.authorizeRole)(adminRoles), location_1.default.listLocations);
 // Create a new location
-router.post('/mine/locations', authorizeRole(adminRoles), locationController.createLocation);
+router.post('/mine/locations', (0, auth_1.authorizeRole)(adminRoles), location_1.default.createLocation);
 // Get details of a specific location
-router.get('/mine/locations/:locationId', authorizeRole(adminRoles), locationController.getLocation);
+router.get('/mine/locations/:locationId', (0, auth_1.authorizeRole)(adminRoles), location_1.default.getLocation);
 // Update a location
-router.put('/mine/locations/:locationId', authorizeRole(adminRoles), locationController.updateLocation);
+router.put('/mine/locations/:locationId', (0, auth_1.authorizeRole)(adminRoles), location_1.default.updateLocation);
 // Deactivate a location (soft delete)
-router.delete('/mine/locations/:locationId', authorizeRole(adminRoles), locationController.deactivateLocation);
-export default router;
+router.delete('/mine/locations/:locationId', (0, auth_1.authorizeRole)(adminRoles), location_1.default.deactivateLocation);
+exports.default = router;
 //# sourceMappingURL=organization.routes.js.map

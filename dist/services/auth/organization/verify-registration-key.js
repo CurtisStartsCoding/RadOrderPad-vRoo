@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.verifyRegistrationKey = verifyRegistrationKey;
 /**
  * Verify the registration key
  */
-export function verifyRegistrationKey(providedKey) {
+function verifyRegistrationKey(providedKey) {
     const registrationKey = process.env.REGISTRATION_KEY;
     return providedKey === registrationKey;
 }

@@ -1,8 +1,11 @@
-import { queryPhiDb } from '../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateConfirmUploadRequest = validateConfirmUploadRequest;
+const db_1 = require("../../config/db");
 /**
  * Validate request for upload confirmation
  */
-export async function validateConfirmUploadRequest(req, res) {
+async function validateConfirmUploadRequest(req, res) {
     const { fileKey, orderId, patientId, documentType, fileName, fileSize, contentType } = req.body;
     // Validate required fields
     if (!fileKey || !orderId || !patientId || !documentType || !fileName || !fileSize || !contentType) {
@@ -31,7 +34,7 @@ export async function validateConfirmUploadRequest(req, res) {
         return true;
     }
     // For non-test environments, verify order exists and belongs to user's organization
-    const orderResult = await queryPhiDb('SELECT referring_organization_id FROM orders WHERE id = $1', [orderId]);
+    const orderResult = await (0, db_1.queryPhiDb)('SELECT referring_organization_id FROM orders WHERE id = $1', [orderId]);
     if (orderResult.rows.length === 0) {
         res.status(404).json({
             success: false,

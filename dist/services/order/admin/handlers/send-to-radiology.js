@@ -1,16 +1,52 @@
-import { withTransaction } from '../utils/transaction';
-import * as clinicalRecordManager from '../clinical-record-manager';
-import * as orderStatusManager from '../order-status-manager';
-import * as validation from '../validation';
-import BillingService, { InsufficientCreditsError } from '../../../../services/billing';
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendToRadiology = sendToRadiology;
+const transaction_1 = require("../utils/transaction");
+const clinicalRecordManager = __importStar(require("../clinical-record-manager"));
+const orderStatusManager = __importStar(require("../order-status-manager"));
+const validation = __importStar(require("../validation"));
+const billing_1 = __importStar(require("../../../../services/billing"));
 /**
  * Send order to radiology
  * @param orderId Order ID
  * @param userId User ID
  * @returns Promise with result
  */
-export async function sendToRadiology(orderId, userId) {
-    return withTransaction(async (client) => {
+async function sendToRadiology(orderId, userId) {
+    return (0, transaction_1.withTransaction)(async (client) => {
         // 1. Verify order exists and has status 'pending_admin'
         const order = await clinicalRecordManager.verifyOrderStatus(orderId);
         // 2. Check if patient has required information
@@ -29,9 +65,9 @@ export async function sendToRadiology(orderId, userId) {
         // Get the organization ID from the order
         const organizationId = order.referring_organization_id;
         // Check if the organization has sufficient credits
-        const hasCredits = await BillingService.hasCredits(organizationId);
+        const hasCredits = await billing_1.default.hasCredits(organizationId);
         if (!hasCredits) {
-            throw new InsufficientCreditsError(`Organization ${organizationId} has insufficient credits to submit order to radiology`);
+            throw new billing_1.InsufficientCreditsError(`Organization ${organizationId} has insufficient credits to submit order to radiology`);
         }
         // Check if the organization account is active
         const orgStatusResult = await client.query('SELECT status FROM organizations WHERE id = $1', [organizationId]);
@@ -45,7 +81,7 @@ export async function sendToRadiology(orderId, userId) {
         // 4. Update order status to 'pending_radiology'
         await orderStatusManager.updateOrderStatusToRadiology(orderId, userId);
         // 5. Burn a credit for the order submission
-        await BillingService.burnCredit({
+        await billing_1.default.burnCredit({
             organizationId,
             userId,
             orderId,
@@ -59,5 +95,5 @@ export async function sendToRadiology(orderId, userId) {
         };
     });
 }
-export default sendToRadiology;
+exports.default = sendToRadiology;
 //# sourceMappingURL=send-to-radiology.js.map

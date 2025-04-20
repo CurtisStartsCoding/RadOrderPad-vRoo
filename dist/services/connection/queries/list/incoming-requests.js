@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LIST_INCOMING_REQUESTS_QUERY = void 0;
 /**
  * Query to list incoming connection requests
  */
-export const LIST_INCOMING_REQUESTS_QUERY = `
+exports.LIST_INCOMING_REQUESTS_QUERY = `
 SELECT r.*, 
        o1.name as initiating_org_name,
        u1.first_name as initiator_first_name,

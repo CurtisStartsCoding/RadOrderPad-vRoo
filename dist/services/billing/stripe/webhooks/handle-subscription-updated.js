@@ -1,27 +1,33 @@
-import { getMainDbClient } from '../../../../config/db';
-import { generalNotifications } from '../../../../services/notification/services';
-import { mapPriceIdToTier } from '../../../../utils/billing/map-price-id-to-tier';
-import { replenishCreditsForTier } from '../../credit/replenish-credits-for-tier';
-import logger from '../../../../utils/logger';
-import { StripeWebhookError, OrganizationNotFoundError, DatabaseOperationError } from './errors';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleSubscriptionUpdated = handleSubscriptionUpdated;
+const db_1 = require("../../../../config/db");
+const services_1 = require("../../../../services/notification/services");
+const map_price_id_to_tier_1 = require("../../../../utils/billing/map-price-id-to-tier");
+const replenish_credits_for_tier_1 = require("../../credit/replenish-credits-for-tier");
+const logger_1 = __importDefault(require("../../../../utils/logger"));
+const errors_1 = require("./errors");
 /**
  * Handle customer.subscription.updated event
  * This is triggered when a subscription is updated (e.g., tier change, status change)
  */
-export async function handleSubscriptionUpdated(event) {
+async function handleSubscriptionUpdated(event) {
     const subscription = event.data.object;
     const customerId = subscription.customer;
     if (!customerId) {
-        throw new StripeWebhookError('Missing customer ID in subscription');
+        throw new errors_1.StripeWebhookError('Missing customer ID in subscription');
     }
     // Get the organization by Stripe customer ID
-    const client = await getMainDbClient();
+    const client = await (0, db_1.getMainDbClient)();
     try {
         await client.query('BEGIN');
         // Check if this event has already been processed (idempotency)
         const eventResult = await client.query(`SELECT id FROM billing_events WHERE stripe_event_id = $1`, [event.id]);
         if (eventResult.rowCount && eventResult.rowCount > 0) {
-            logger.info(`Stripe event ${event.id} has already been processed. Skipping.`);
+            logger_1.default.info(`Stripe event ${event.id} has already been processed. Skipping.`);
             await client.query('COMMIT');
             return;
         }
@@ -44,11 +50,11 @@ export async function handleSubscriptionUpdated(event) {
             await handleReactivation(client, event.id, organization);
         }
         await client.query('COMMIT');
-        logger.info(`Successfully processed subscription update for org ${orgId}`);
+        logger_1.default.info(`Successfully processed subscription update for org ${orgId}`);
     }
     catch (error) {
         await client.query('ROLLBACK');
-        logger.error('Error processing subscription update:', error);
+        logger_1.default.error('Error processing subscription update:', error);
         handleError(error, 'subscription update');
     }
     finally {
@@ -63,7 +69,7 @@ async function findOrganizationByCustomerId(client, customerId) {
      FROM organizations 
      WHERE billing_id = $1`, [customerId]);
     if (orgResult.rowCount === 0) {
-        throw new OrganizationNotFoundError(customerId);
+        throw new errors_1.OrganizationNotFoundError(customerId);
     }
     return orgResult.rows[0];
 }
@@ -75,7 +81,7 @@ async function handleTierChanges(client, subscription, eventId, organization, su
     const orgType = organization.type;
     const currentTier = organization.subscription_tier;
     const priceId = subscriptionItems[0].price.id;
-    const newTier = mapPriceIdToTier(priceId);
+    const newTier = (0, map_price_id_to_tier_1.mapPriceIdToTier)(priceId);
     if (newTier && newTier !== currentTier) {
         // Update the organization's subscription tier
         await client.query(`UPDATE organizations 
@@ -92,7 +98,7 @@ async function handleTierChanges(client, subscription, eventId, organization, su
         ]);
         // If this is a referring practice, replenish credits based on the new tier
         if (orgType === 'referring_practice' && newTier) {
-            await replenishCreditsForTier(orgId, newTier, client, eventId);
+            await (0, replenish_credits_for_tier_1.replenishCreditsForTier)(orgId, newTier, client, eventId);
         }
         // Notify organization admins about the tier change
         await notifyAdminsAboutTierChange(client, organization, currentTier, newTier);
@@ -107,7 +113,7 @@ async function notifyAdminsAboutTierChange(client, organization, currentTier, ne
      WHERE organization_id = $1 
      AND role IN ('admin_referring', 'admin_radiology')`, [organization.id]);
     for (const admin of adminUsersResult.rows) {
-        await generalNotifications.sendNotificationEmail(admin.email, 'Your subscription tier has changed', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+        await services_1.generalNotifications.sendNotificationEmail(admin.email, 'Your subscription tier has changed', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
             `Your organization's subscription tier has been updated from ${currentTier || 'none'} to ${newTier}. ` +
             `This change may affect your available features and credit allocation.\n\n` +
             `If you have any questions about this change, please contact our support team.\n\n` +
@@ -158,7 +164,7 @@ async function notifyAdminsAboutPastDue(client, organization) {
      WHERE organization_id = $1 
      AND role IN ('admin_referring', 'admin_radiology')`, [organization.id]);
     for (const admin of adminUsersResult.rows) {
-        await generalNotifications.sendNotificationEmail(admin.email, 'IMPORTANT: Payment Past Due', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+        await services_1.generalNotifications.sendNotificationEmail(admin.email, 'IMPORTANT: Payment Past Due', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
             `We regret to inform you that your organization's subscription payment is past due, ` +
             `and your account has been placed on hold.\n\n` +
             `While your account is on hold, you will have limited access to RadOrderPad features. ` +
@@ -207,7 +213,7 @@ async function notifyAdminsAboutReactivation(client, organization) {
      WHERE organization_id = $1 
      AND role IN ('admin_referring', 'admin_radiology')`, [organization.id]);
     for (const admin of adminUsersResult.rows) {
-        await generalNotifications.sendNotificationEmail(admin.email, 'Your account has been reactivated', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+        await services_1.generalNotifications.sendNotificationEmail(admin.email, 'Your account has been reactivated', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
             `We're pleased to inform you that your organization's account has been reactivated ` +
             `following the successful payment of your outstanding invoice. ` +
             `Your organization now has full access to all RadOrderPad features.\n\n` +
@@ -220,14 +226,14 @@ async function notifyAdminsAboutReactivation(client, organization) {
  * Handle errors
  */
 function handleError(error, operation) {
-    if (error instanceof StripeWebhookError) {
+    if (error instanceof errors_1.StripeWebhookError) {
         throw error;
     }
-    else if (error instanceof OrganizationNotFoundError) {
+    else if (error instanceof errors_1.OrganizationNotFoundError) {
         throw error;
     }
     else if (error instanceof Error) {
-        throw new DatabaseOperationError(operation, error);
+        throw new errors_1.DatabaseOperationError(operation, error);
     }
     else {
         throw new Error(`Unknown error during ${operation}: ${String(error)}`);

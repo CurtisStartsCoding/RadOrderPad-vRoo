@@ -1,8 +1,11 @@
-import { applyStatusFilter } from './status-filter';
-import { applyReferringOrgFilter } from './organization-filter';
-import { applyPriorityFilter, applyModalityFilter } from './metadata-filters';
-import { applyDateRangeFilter } from './date-filters';
-import { applyValidationStatusFilter } from './validation-filter';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.applyAllFilters = applyAllFilters;
+const status_filter_1 = require("./status-filter");
+const organization_filter_1 = require("./organization-filter");
+const metadata_filters_1 = require("./metadata-filters");
+const date_filters_1 = require("./date-filters");
+const validation_filter_1 = require("./validation-filter");
 /**
  * Apply all filters to the query
  * @param query Current query string
@@ -14,13 +17,12 @@ import { applyValidationStatusFilter } from './validation-filter';
 function applyAllFilters(query, params, paramIndex, filters = {}) {
     let result = { query, params, paramIndex };
     // Apply each filter in sequence
-    result = applyStatusFilter(result.query, result.params, result.paramIndex, filters.status);
-    result = applyReferringOrgFilter(result.query, result.params, result.paramIndex, filters.referringOrgId);
-    result = applyPriorityFilter(result.query, result.params, result.paramIndex, filters.priority);
-    result = applyModalityFilter(result.query, result.params, result.paramIndex, filters.modality);
-    result = applyDateRangeFilter(result.query, result.params, result.paramIndex, filters.startDate, filters.endDate);
-    result = applyValidationStatusFilter(result.query, result.params, result.paramIndex, filters.validationStatus);
+    result = (0, status_filter_1.applyStatusFilter)(result.query, result.params, result.paramIndex, filters.status);
+    result = (0, organization_filter_1.applyReferringOrgFilter)(result.query, result.params, result.paramIndex, filters.referringOrgId);
+    result = (0, metadata_filters_1.applyPriorityFilter)(result.query, result.params, result.paramIndex, filters.priority);
+    result = (0, metadata_filters_1.applyModalityFilter)(result.query, result.params, result.paramIndex, filters.modality);
+    result = (0, date_filters_1.applyDateRangeFilter)(result.query, result.params, result.paramIndex, filters.startDate, filters.endDate);
+    result = (0, validation_filter_1.applyValidationStatusFilter)(result.query, result.params, result.paramIndex, filters.validationStatus);
     return result;
 }
-export { applyAllFilters };
 //# sourceMappingURL=filter-orchestrator.js.map

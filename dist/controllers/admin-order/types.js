@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleControllerError = handleControllerError;
 /**
  * Common error handler function for admin order controllers
  */
-export function handleControllerError(error, res, controllerName) {
+function handleControllerError(error, res, controllerName) {
     console.error(`Error in ${controllerName} controller:`, error);
     if (error instanceof Error) {
         if (error.message.includes('not found')) {

@@ -1,10 +1,14 @@
+"use strict";
 /**
  * Symptom and condition terms for medical keyword extraction
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.symptomTerms = void 0;
+exports.isSymptomTerm = isSymptomTerm;
 /**
  * Common symptoms and conditions organized by category
  */
-export const symptomTerms = [
+exports.symptomTerms = [
     // Pain and discomfort
     'pain', 'ache', 'discomfort', 'tenderness', 'burning', 'sharp', 'dull', 'chronic', 'acute',
     // Inflammation and swelling
@@ -37,7 +41,7 @@ export const symptomTerms = [
  * @param term - The term to check
  * @returns True if the term is a symptom or condition term
  */
-export function isSymptomTerm(term) {
-    return symptomTerms.includes(term.toLowerCase());
+function isSymptomTerm(term) {
+    return exports.symptomTerms.includes(term.toLowerCase());
 }
 //# sourceMappingURL=symptoms.js.map

@@ -1,23 +1,30 @@
-import locationService from '../../../services/location';
-import { checkAuthentication, handleControllerError } from '../types';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.listLocations = void 0;
+const location_1 = __importDefault(require("../../../services/location"));
+const types_1 = require("../types");
 /**
  * List locations for the authenticated user's organization
  * @param req Express request object
  * @param res Express response object
  */
-export const listLocations = async (req, res) => {
+const listLocations = async (req, res) => {
     try {
         // Check if user is authenticated
-        if (!checkAuthentication(req, res)) {
+        if (!(0, types_1.checkAuthentication)(req, res)) {
             return;
         }
         const orgId = req.user.orgId;
-        const locations = await locationService.listLocations(orgId);
+        const locations = await location_1.default.listLocations(orgId);
         res.status(200).json({ locations });
     }
     catch (error) {
-        handleControllerError(res, error, 'Failed to list locations');
+        (0, types_1.handleControllerError)(res, error, 'Failed to list locations');
     }
 };
-export default listLocations;
+exports.listLocations = listLocations;
+exports.default = exports.listLocations;
 //# sourceMappingURL=list-locations.js.map

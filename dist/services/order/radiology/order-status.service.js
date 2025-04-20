@@ -1,4 +1,7 @@
-import { getPhiDbClient } from '../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateOrderStatus = updateOrderStatus;
+const db_1 = require("../../../config/db");
 /**
  * Update order status
  * @param orderId Order ID
@@ -7,9 +10,9 @@ import { getPhiDbClient } from '../../../config/db';
  * @param orgId Radiology organization ID
  * @returns Promise with result
  */
-export async function updateOrderStatus(orderId, newStatus, userId, orgId) {
+async function updateOrderStatus(orderId, newStatus, userId, orgId) {
     // Get a client for transaction
-    const client = await getPhiDbClient();
+    const client = await (0, db_1.getPhiDbClient)();
     try {
         // Start transaction
         await client.query('BEGIN');
@@ -55,5 +58,5 @@ export async function updateOrderStatus(orderId, newStatus, userId, orgId) {
         client.release();
     }
 }
-export default updateOrderStatus;
+exports.default = updateOrderStatus;
 //# sourceMappingURL=order-status.service.js.map

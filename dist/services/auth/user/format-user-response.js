@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.formatUserResponse = formatUserResponse;
 /**
  * Format a user object into a user response object
  */
-export function formatUserResponse(user) {
+function formatUserResponse(user) {
     return {
         id: user.id,
         email: user.email,

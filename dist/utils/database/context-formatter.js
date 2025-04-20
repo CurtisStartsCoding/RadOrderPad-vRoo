@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.formatDatabaseContext = formatDatabaseContext;
 /**
  * Format database context from query results
  */
-export function formatDatabaseContext(icd10Rows, cptRows, mappingRows, markdownRows) {
+function formatDatabaseContext(icd10Rows, cptRows, mappingRows, markdownRows) {
     // Construct the database context
     let context = '';
     // Add ICD-10 codes

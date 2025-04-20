@@ -1,4 +1,7 @@
-import { accountNotifications, generalNotifications, connectionNotifications } from './services/index.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NotificationManager = void 0;
+const index_js_1 = require("./services/index.js");
 /**
  * NotificationManager - Central manager for all notification types
  *
@@ -15,7 +18,7 @@ import { accountNotifications, generalNotifications, connectionNotifications } f
  * All methods are asynchronous and return Promises that resolve when the
  * notification has been successfully sent or reject with an error.
  */
-export class NotificationManager {
+class NotificationManager {
     /**
      * Send an invitation email to a user
      *
@@ -36,7 +39,7 @@ export class NotificationManager {
      * @throws Error if the email cannot be sent
      */
     async sendInviteEmail(email, token, organizationName, inviterName) {
-        return accountNotifications.sendInviteEmail(email, token, organizationName, inviterName);
+        return index_js_1.accountNotifications.sendInviteEmail(email, token, organizationName, inviterName);
     }
     /**
      * Send a password reset email to a user
@@ -44,7 +47,7 @@ export class NotificationManager {
      * @param token Reset token
      */
     async sendPasswordResetEmail(email, token) {
-        return accountNotifications.sendPasswordResetEmail(email, token);
+        return index_js_1.accountNotifications.sendPasswordResetEmail(email, token);
     }
     /**
      * Send a notification email
@@ -53,7 +56,7 @@ export class NotificationManager {
      * @param message Email message
      */
     async sendNotificationEmail(email, subject, message) {
-        return generalNotifications.sendNotificationEmail(email, subject, message);
+        return index_js_1.generalNotifications.sendNotificationEmail(email, subject, message);
     }
     /**
      * Send a connection request notification to an organization
@@ -61,7 +64,7 @@ export class NotificationManager {
      * @param requestingOrgName Name of the organization requesting the connection
      */
     async sendConnectionRequest(email, requestingOrgName) {
-        return connectionNotifications.sendConnectionRequest(email, requestingOrgName);
+        return index_js_1.connectionNotifications.sendConnectionRequest(email, requestingOrgName);
     }
     /**
      * Send a connection approval notification
@@ -69,7 +72,7 @@ export class NotificationManager {
      * @param approvedOrgName Name of the organization that requested the connection
      */
     async sendConnectionApproved(email, approvedOrgName) {
-        return connectionNotifications.sendConnectionApproved(email, approvedOrgName);
+        return index_js_1.connectionNotifications.sendConnectionApproved(email, approvedOrgName);
     }
     /**
      * Send a connection rejection notification
@@ -77,7 +80,7 @@ export class NotificationManager {
      * @param rejectedOrgName Name of the organization that requested the connection
      */
     async sendConnectionRejected(email, rejectedOrgName) {
-        return connectionNotifications.sendConnectionRejected(email, rejectedOrgName);
+        return index_js_1.connectionNotifications.sendConnectionRejected(email, rejectedOrgName);
     }
     /**
      * Send a connection termination notification
@@ -86,9 +89,10 @@ export class NotificationManager {
      * @param terminatingOrgName Name of the organization terminating the connection
      */
     async sendConnectionTerminated(email, partnerOrgName, terminatingOrgName) {
-        return connectionNotifications.sendConnectionTerminated(email, partnerOrgName, terminatingOrgName);
+        return index_js_1.connectionNotifications.sendConnectionTerminated(email, partnerOrgName, terminatingOrgName);
     }
 }
+exports.NotificationManager = NotificationManager;
 // Create and export a singleton instance
-export default new NotificationManager();
+exports.default = new NotificationManager();
 //# sourceMappingURL=notification-manager.js.map

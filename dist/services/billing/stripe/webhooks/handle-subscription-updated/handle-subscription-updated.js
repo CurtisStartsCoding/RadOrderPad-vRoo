@@ -1,21 +1,24 @@
-import { getMainDbClient } from '../../../../../config/db';
-import { mapPriceIdToTier } from './map-price-id-to-tier';
-import { replenishCreditsForTier } from '../../../../../services/billing/credit-management';
-import { handlePurgatoryTransition, handleReactivationTransition } from './status-transitions';
-import { sendTierChangeNotifications } from './notifications';
-import { StripeWebhookError, OrganizationNotFoundError, DatabaseOperationError } from '../errors';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleSubscriptionUpdated = handleSubscriptionUpdated;
+const db_1 = require("../../../../../config/db");
+const map_price_id_to_tier_1 = require("./map-price-id-to-tier");
+const credit_management_1 = require("../../../../../services/billing/credit-management");
+const status_transitions_1 = require("./status-transitions");
+const notifications_1 = require("./notifications");
+const errors_1 = require("../errors");
 /**
  * Handle customer.subscription.updated event
  * This is triggered when a subscription is updated (e.g., plan change, status change)
  */
-export async function handleSubscriptionUpdated(event) {
+async function handleSubscriptionUpdated(event) {
     const subscription = event.data.object;
     const customerId = subscription.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in subscription');
     }
     // Get the organization by Stripe customer ID
-    const client = await getMainDbClient();
+    const client = await (0, db_1.getMainDbClient)();
     try {
         await client.query('BEGIN');
         // Find the organization by Stripe customer ID
@@ -23,7 +26,7 @@ export async function handleSubscriptionUpdated(event) {
        FROM organizations 
        WHERE billing_id = $1`, [customerId]);
         if (orgResult.rowCount === 0) {
-            throw new OrganizationNotFoundError(customerId);
+            throw new errors_1.OrganizationNotFoundError(customerId);
         }
         const organization = orgResult.rows[0];
         const orgId = organization.id;
@@ -39,7 +42,7 @@ export async function handleSubscriptionUpdated(event) {
         let tierChanged = false;
         if (subscriptionItems.length > 0 && subscriptionItems[0].price?.id) {
             const priceId = subscriptionItems[0].price.id;
-            newTier = mapPriceIdToTier(priceId);
+            newTier = (0, map_price_id_to_tier_1.mapPriceIdToTier)(priceId);
             tierChanged = newTier !== currentTier;
         }
         // Handle subscription status changes
@@ -70,7 +73,7 @@ export async function handleSubscriptionUpdated(event) {
             if (tierChanged || (statusChanged && newStatus === 'active')) {
                 // Only replenish credits for referring organizations (they use credits)
                 if (organization.type === 'referring_practice') {
-                    await replenishCreditsForTier(orgId, newTier, client, event.id);
+                    await (0, credit_management_1.replenishCreditsForTier)(orgId, newTier, client, event.id);
                 }
             }
             // Log the billing event
@@ -85,15 +88,15 @@ export async function handleSubscriptionUpdated(event) {
             // Handle status transitions
             if (statusChanged && newStatus === 'purgatory') {
                 // Handle transition to purgatory
-                await handlePurgatoryTransition(client, orgId, orgName);
+                await (0, status_transitions_1.handlePurgatoryTransition)(client, orgId, orgName);
             }
             else if (statusChanged && newStatus === 'active') {
                 // Handle transition to active (reactivation)
-                await handleReactivationTransition(client, orgId, orgName);
+                await (0, status_transitions_1.handleReactivationTransition)(client, orgId, orgName);
             }
             // Handle tier change notifications
             if (tierChanged) {
-                await sendTierChangeNotifications(client, orgId, orgName, currentTier, newTier);
+                await (0, notifications_1.sendTierChangeNotifications)(client, orgId, orgName, currentTier, newTier);
             }
         }
         await client.query('COMMIT');
@@ -103,11 +106,11 @@ export async function handleSubscriptionUpdated(event) {
         await client.query('ROLLBACK');
         console.error('Error processing subscription update:', error);
         // Rethrow as a more specific error if possible
-        if (error instanceof StripeWebhookError) {
+        if (error instanceof errors_1.StripeWebhookError) {
             throw error;
         }
         else if (error instanceof Error) {
-            throw new DatabaseOperationError('subscription update', error);
+            throw new errors_1.DatabaseOperationError('subscription update', error);
         }
         else {
             throw new Error(`Unknown error during subscription update: ${String(error)}`);

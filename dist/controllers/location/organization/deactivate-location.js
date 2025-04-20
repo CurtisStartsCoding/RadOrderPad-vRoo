@@ -1,24 +1,30 @@
-import locationService from '../../../services/location';
-import { checkAuthentication, validateLocationId, handleControllerError } from '../types';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deactivateLocation = void 0;
+const location_1 = __importDefault(require("../../../services/location"));
+const types_1 = require("../types");
 /**
  * Deactivate a location (soft delete)
  * @param req Express request object
  * @param res Express response object
  */
-export const deactivateLocation = async (req, res) => {
+const deactivateLocation = async (req, res) => {
     try {
         // Check if user is authenticated
-        if (!checkAuthentication(req, res)) {
+        if (!(0, types_1.checkAuthentication)(req, res)) {
             return;
         }
         // Validate location ID
-        if (!validateLocationId(req, res)) {
+        if (!(0, types_1.validateLocationId)(req, res)) {
             return;
         }
         const orgId = req.user.orgId;
         const locationId = parseInt(req.params.locationId);
         try {
-            const success = await locationService.deactivateLocation(locationId, orgId);
+            const success = await location_1.default.deactivateLocation(locationId, orgId);
             if (success) {
                 res.status(200).json({
                     message: 'Location deactivated successfully',
@@ -40,8 +46,9 @@ export const deactivateLocation = async (req, res) => {
         }
     }
     catch (error) {
-        handleControllerError(res, error, 'Failed to deactivate location');
+        (0, types_1.handleControllerError)(res, error, 'Failed to deactivate location');
     }
 };
-export default deactivateLocation;
+exports.deactivateLocation = deactivateLocation;
+exports.default = exports.deactivateLocation;
 //# sourceMappingURL=deactivate-location.js.map

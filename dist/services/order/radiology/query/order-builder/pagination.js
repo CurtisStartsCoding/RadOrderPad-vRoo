@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.applyPagination = applyPagination;
 /**
  * Apply pagination to the query
  * @param query Current query string
@@ -15,5 +18,4 @@ function applyPagination(query, params, paramIndex, page = 1, limit = 20) {
     paramIndex += 2;
     return { query, params, paramIndex };
 }
-export { applyPagination };
 //# sourceMappingURL=pagination.js.map

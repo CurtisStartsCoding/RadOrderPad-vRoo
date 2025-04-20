@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.normalizeResponseFields = normalizeResponseFields;
 /**
  * Normalize response field names to handle casing issues
  */
-export function normalizeResponseFields(response) {
+function normalizeResponseFields(response) {
     const normalized = {};
     // Map of possible field names to normalized field names
     const fieldMap = {

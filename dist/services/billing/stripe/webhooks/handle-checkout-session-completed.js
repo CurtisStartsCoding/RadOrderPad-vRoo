@@ -1,10 +1,13 @@
-import { getMainDbClient } from '../../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleCheckoutSessionCompleted = handleCheckoutSessionCompleted;
+const db_1 = require("../../../../config/db");
 /**
  * Handle checkout.session.completed event
  * This is triggered when a customer completes a checkout session,
  * typically for purchasing credit bundles
  */
-export async function handleCheckoutSessionCompleted(event) {
+async function handleCheckoutSessionCompleted(event) {
     const session = event.data.object;
     // Extract metadata from the session
     const metadata = session.metadata || {};
@@ -35,7 +38,7 @@ export async function handleCheckoutSessionCompleted(event) {
     // Get the payment amount in cents
     const amountCents = session.amount_total || 0;
     // Use a transaction to update the organization's credit balance and log the billing event
-    const client = await getMainDbClient();
+    const client = await (0, db_1.getMainDbClient)();
     try {
         await client.query('BEGIN');
         // 1. Update the organization's credit balance

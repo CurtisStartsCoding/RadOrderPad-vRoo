@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LIST_CONNECTIONS_QUERY = void 0;
 /**
  * Query to list connections for an organization
  */
-export const LIST_CONNECTIONS_QUERY = `
+exports.LIST_CONNECTIONS_QUERY = `
 SELECT r.*, 
        o1.name as initiating_org_name,
        o2.name as target_org_name,

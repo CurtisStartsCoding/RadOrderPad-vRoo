@@ -1,18 +1,24 @@
+"use strict";
 /**
  * Anthropic Claude API provider
  */
-import config from '../../../config/config';
-import { LLMProvider } from '../types';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.callClaude = callClaude;
+const config_1 = __importDefault(require("../../../config/config"));
+const types_1 = require("../types");
 /**
  * Call Anthropic Claude API
  */
-export async function callClaude(prompt) {
+async function callClaude(prompt) {
     console.log('Calling Anthropic Claude API...');
-    const apiKey = config.llm.anthropicApiKey;
+    const apiKey = config_1.default.llm.anthropicApiKey;
     if (!apiKey) {
         throw new Error('ANTHROPIC_API_KEY not set');
     }
-    const modelName = config.llm.claudeModelName;
+    const modelName = config_1.default.llm.claudeModelName;
     console.log(`Using model: ${modelName}`);
     const startTime = Date.now();
     try {
@@ -25,12 +31,12 @@ export async function callClaude(prompt) {
             },
             body: JSON.stringify({
                 model: modelName,
-                max_tokens: config.llm.maxTokens,
+                max_tokens: config_1.default.llm.maxTokens,
                 messages: [
                     { role: 'user', content: prompt }
                 ]
             }),
-            signal: AbortSignal.timeout(config.llm.timeout)
+            signal: AbortSignal.timeout(config_1.default.llm.timeout)
         });
         if (!response.ok) {
             const errorText = await response.text();
@@ -39,7 +45,7 @@ export async function callClaude(prompt) {
         const data = await response.json();
         const endTime = Date.now();
         return {
-            provider: LLMProvider.ANTHROPIC,
+            provider: types_1.LLMProvider.ANTHROPIC,
             model: data.model,
             content: data.content[0].text,
             promptTokens: data.usage.input_tokens,

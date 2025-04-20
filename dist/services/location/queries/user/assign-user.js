@@ -1,4 +1,7 @@
-import { getMainDbClient } from '../../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.assignUserToLocation = assignUserToLocation;
+const db_1 = require("../../../../config/db");
 /**
  * Assign a user to a location
  * @param userId User ID
@@ -6,8 +9,8 @@ import { getMainDbClient } from '../../../../config/db';
  * @param orgId Organization ID (for authorization)
  * @returns Promise with success status
  */
-export async function assignUserToLocation(userId, locationId, orgId) {
-    const client = await getMainDbClient();
+async function assignUserToLocation(userId, locationId, orgId) {
+    const client = await (0, db_1.getMainDbClient)();
     try {
         await client.query('BEGIN');
         // Verify the user belongs to the organization

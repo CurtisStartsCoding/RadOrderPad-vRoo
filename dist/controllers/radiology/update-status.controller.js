@@ -1,9 +1,15 @@
-import RadiologyOrderService from '../../services/order/radiology';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateOrderStatus = updateOrderStatus;
+const radiology_1 = __importDefault(require("../../services/order/radiology"));
 /**
  * Update order status
  * @route POST /api/radiology/orders/:orderId/update-status
  */
-export async function updateOrderStatus(req, res) {
+async function updateOrderStatus(req, res) {
     try {
         const orderId = parseInt(req.params.orderId);
         if (isNaN(orderId)) {
@@ -29,7 +35,7 @@ export async function updateOrderStatus(req, res) {
             return;
         }
         // Call the service to update the order status
-        const result = await RadiologyOrderService.updateOrderStatus(orderId, newStatus, userId, orgId);
+        const result = await radiology_1.default.updateOrderStatus(orderId, newStatus, userId, orgId);
         res.status(200).json(result);
     }
     catch (error) {
@@ -50,5 +56,5 @@ export async function updateOrderStatus(req, res) {
         }
     }
 }
-export default updateOrderStatus;
+exports.default = updateOrderStatus;
 //# sourceMappingURL=update-status.controller.js.map

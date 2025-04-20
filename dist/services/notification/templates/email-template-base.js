@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseEmailTemplate = void 0;
 /**
  * Base class for email templates
  *
@@ -12,7 +15,7 @@
  * - Standard email signature
  * - Utility methods for frontend URL handling
  */
-export class BaseEmailTemplate {
+class BaseEmailTemplate {
     /**
      * Get the frontend URL from environment or use default
      * @returns Frontend URL
@@ -82,4 +85,5 @@ The RadOrderPad Team`;
 </html>`;
     }
 }
+exports.BaseEmailTemplate = BaseEmailTemplate;
 //# sourceMappingURL=email-template-base.js.map

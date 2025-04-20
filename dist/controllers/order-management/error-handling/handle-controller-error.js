@@ -1,10 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleControllerError = handleControllerError;
 /**
  * Handles controller errors and sends appropriate response
  * @param error The error that occurred
  * @param res Express response object
  * @param context Additional context for logging (e.g., function name)
  */
-export function handleControllerError(error, res, context) {
+function handleControllerError(error, res, context) {
     console.error(`Error in ${context}:`, error);
     if (error instanceof Error) {
         // Handle specific error types based on error message

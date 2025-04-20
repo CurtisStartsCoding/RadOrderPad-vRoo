@@ -1,9 +1,12 @@
-import { queryMainDb } from '../../../config/db';
-import { LIST_CONNECTIONS_QUERY, LIST_INCOMING_REQUESTS_QUERY } from '../queries/list';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ListConnectionsService = void 0;
+const db_1 = require("../../../config/db");
+const list_1 = require("../queries/list");
 /**
  * Service for listing connections
  */
-export class ListConnectionsService {
+class ListConnectionsService {
     /**
      * List connections for an organization
      * @param orgId Organization ID
@@ -11,7 +14,7 @@ export class ListConnectionsService {
      */
     async listConnections(orgId) {
         try {
-            const result = await queryMainDb(LIST_CONNECTIONS_QUERY, [orgId]);
+            const result = await (0, db_1.queryMainDb)(list_1.LIST_CONNECTIONS_QUERY, [orgId]);
             return result.rows.map((row) => {
                 // Determine if this org is the initiator or target
                 const isInitiator = row.organization_id === orgId;
@@ -43,7 +46,7 @@ export class ListConnectionsService {
      */
     async listIncomingRequests(orgId) {
         try {
-            const result = await queryMainDb(LIST_INCOMING_REQUESTS_QUERY, [orgId]);
+            const result = await (0, db_1.queryMainDb)(list_1.LIST_INCOMING_REQUESTS_QUERY, [orgId]);
             return result.rows.map((row) => {
                 return {
                     id: row.id,
@@ -63,5 +66,6 @@ export class ListConnectionsService {
         }
     }
 }
-export default new ListConnectionsService();
+exports.ListConnectionsService = ListConnectionsService;
+exports.default = new ListConnectionsService();
 //# sourceMappingURL=list-connections.js.map

@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.mapPriceIdToTier = mapPriceIdToTier;
 /**
  * Map Stripe price ID to subscription tier
  *
@@ -7,7 +10,7 @@
  * @param priceId Stripe price ID
  * @returns Subscription tier string
  */
-export function mapPriceIdToTier(priceId) {
+function mapPriceIdToTier(priceId) {
     // Comprehensive mapping of Stripe price IDs to internal tier names
     const priceTierMap = {
         // Monthly plans

@@ -1,9 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.extractCPTCodes = extractCPTCodes;
 /**
  * Extract potential CPT codes from text
  * @param text - The text to extract codes from
  * @returns Array of extracted CPT codes
  */
-export function extractCPTCodes(text) {
+function extractCPTCodes(text) {
     // CPT codes are 5-digit numbers
     const cptRegex = /\b\d{5}\b/g;
     const matches = text.match(cptRegex);

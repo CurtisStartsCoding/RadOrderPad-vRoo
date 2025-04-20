@@ -1,18 +1,24 @@
-import locationService from '../../../services/location';
-import { checkAuthentication, validateLocationId, handleControllerError } from '../types';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateLocation = void 0;
+const location_1 = __importDefault(require("../../../services/location"));
+const types_1 = require("../types");
 /**
  * Update a location
  * @param req Express request object
  * @param res Express response object
  */
-export const updateLocation = async (req, res) => {
+const updateLocation = async (req, res) => {
     try {
         // Check if user is authenticated
-        if (!checkAuthentication(req, res)) {
+        if (!(0, types_1.checkAuthentication)(req, res)) {
             return;
         }
         // Validate location ID
-        if (!validateLocationId(req, res)) {
+        if (!(0, types_1.validateLocationId)(req, res)) {
             return;
         }
         const orgId = req.user.orgId;
@@ -24,7 +30,7 @@ export const updateLocation = async (req, res) => {
             return;
         }
         try {
-            const location = await locationService.updateLocation(locationId, orgId, locationData);
+            const location = await location_1.default.updateLocation(locationId, orgId, locationData);
             res.status(200).json({
                 message: 'Location updated successfully',
                 location
@@ -41,8 +47,9 @@ export const updateLocation = async (req, res) => {
         }
     }
     catch (error) {
-        handleControllerError(res, error, 'Failed to update location');
+        (0, types_1.handleControllerError)(res, error, 'Failed to update location');
     }
 };
-export default updateLocation;
+exports.updateLocation = updateLocation;
+exports.default = exports.updateLocation;
 //# sourceMappingURL=update-location.js.map

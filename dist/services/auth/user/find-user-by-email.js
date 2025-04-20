@@ -1,9 +1,12 @@
-import { queryMainDb } from '../../../config/db';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.findUserByEmail = findUserByEmail;
+const db_1 = require("../../../config/db");
 /**
  * Find a user by email
  */
-export async function findUserByEmail(email) {
-    const result = await queryMainDb('SELECT * FROM users WHERE email = $1', [email]);
+async function findUserByEmail(email) {
+    const result = await (0, db_1.queryMainDb)('SELECT * FROM users WHERE email = $1', [email]);
     if (result.rows.length === 0) {
         return null;
     }

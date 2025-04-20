@@ -1,18 +1,24 @@
+"use strict";
 /**
  * Grok API provider
  */
-import config from '../../../config/config';
-import { LLMProvider } from '../types';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.callGrok = callGrok;
+const config_1 = __importDefault(require("../../../config/config"));
+const types_1 = require("../types");
 /**
  * Call Grok API
  */
-export async function callGrok(prompt) {
+async function callGrok(prompt) {
     console.log('Calling Grok API...');
-    const apiKey = config.llm.grokApiKey;
+    const apiKey = config_1.default.llm.grokApiKey;
     if (!apiKey) {
         throw new Error('GROK_API_KEY not set');
     }
-    const modelName = config.llm.grokModelName;
+    const modelName = config_1.default.llm.grokModelName;
     console.log(`Using model: ${modelName}`);
     const startTime = Date.now();
     try {
@@ -27,9 +33,9 @@ export async function callGrok(prompt) {
                 messages: [
                     { role: 'user', content: prompt }
                 ],
-                max_tokens: config.llm.maxTokens
+                max_tokens: config_1.default.llm.maxTokens
             }),
-            signal: AbortSignal.timeout(config.llm.timeout)
+            signal: AbortSignal.timeout(config_1.default.llm.timeout)
         });
         if (!response.ok) {
             const errorText = await response.text();
@@ -38,7 +44,7 @@ export async function callGrok(prompt) {
         const data = await response.json();
         const endTime = Date.now();
         return {
-            provider: LLMProvider.GROK,
+            provider: types_1.LLMProvider.GROK,
             model: data.model,
             content: data.choices[0].message.content,
             promptTokens: data.usage.prompt_tokens,

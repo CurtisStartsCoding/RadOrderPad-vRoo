@@ -1,8 +1,11 @@
-import { BaseEmailTemplate } from '../email-template-base.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConnectionApprovalEmailTemplate = void 0;
+const email_template_base_js_1 = require("../email-template-base.js");
 /**
  * Template for connection approval emails
  */
-export class ConnectionApprovalEmailTemplate extends BaseEmailTemplate {
+class ConnectionApprovalEmailTemplate extends email_template_base_js_1.BaseEmailTemplate {
     /**
      * Generate email content for connection approval
      * @param data Connection approval data
@@ -41,6 +44,7 @@ ${this.getEmailSignature()}
         };
     }
 }
+exports.ConnectionApprovalEmailTemplate = ConnectionApprovalEmailTemplate;
 // Create and export a singleton instance
-export default new ConnectionApprovalEmailTemplate();
+exports.default = new ConnectionApprovalEmailTemplate();
 //# sourceMappingURL=approval-template.js.map

@@ -1,20 +1,26 @@
-import config from '../../../../config/config.js';
-import { connectionApprovalTemplate } from '../../templates/index.js';
-import sendTemplatedEmail from './send-email.js';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendConnectionApproved = sendConnectionApproved;
+const config_js_1 = __importDefault(require("../../../../config/config.js"));
+const index_js_1 = require("../../templates/index.js");
+const send_email_js_1 = __importDefault(require("./send-email.js"));
 /**
  * Send a connection approval notification
  * @param email Email address of the requesting organization admin
  * @param approvedOrgName Name of the organization that requested the connection
  */
-export async function sendConnectionApproved(email, approvedOrgName) {
+async function sendConnectionApproved(email, approvedOrgName) {
     // Prepare the template data
     const templateData = {
         email,
         approvedOrgName,
-        frontendUrl: config.frontendUrl
+        frontendUrl: config_js_1.default.frontendUrl
     };
     // Send the email using the common function
-    await sendTemplatedEmail(email, connectionApprovalTemplate, templateData, 'connection approval');
+    await (0, send_email_js_1.default)(email, index_js_1.connectionApprovalTemplate, templateData, 'connection approval');
 }
-export default sendConnectionApproved;
+exports.default = sendConnectionApproved;
 //# sourceMappingURL=approval.js.map

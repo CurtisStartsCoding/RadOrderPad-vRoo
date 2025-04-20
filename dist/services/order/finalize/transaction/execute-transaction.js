@@ -1,9 +1,15 @@
-import { getPhiDbClient } from '../../../../config/db';
-import { OrderStatus } from '../../../../models';
-import PatientService from '../../../patient.service';
-import OrderHistoryService from '../../../order-history.service';
-import { verifyUserAuthorization } from '../authorization';
-import { updateOrderWithFinalData } from '../update';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.executeTransaction = executeTransaction;
+const db_1 = require("../../../../config/db");
+const models_1 = require("../../../../models");
+const patient_service_1 = __importDefault(require("../../../patient.service"));
+const order_history_service_1 = __importDefault(require("../../../order-history.service"));
+const authorization_1 = require("../authorization");
+const update_1 = require("../update");
 /**
  * Execute the order finalization transaction
  *
@@ -12,9 +18,9 @@ import { updateOrderWithFinalData } from '../update';
  * @param userId The ID of the user finalizing the order
  * @returns Promise that resolves with the finalization result
  */
-export async function executeTransaction(orderId, payload, userId) {
+async function executeTransaction(orderId, payload, userId) {
     // Get a client for transaction
-    const client = await getPhiDbClient();
+    const client = await (0, db_1.getPhiDbClient)();
     try {
         // Start transaction
         await client.query('BEGIN');
@@ -25,7 +31,7 @@ export async function executeTransaction(orderId, payload, userId) {
         }
         const order = orderResult.rows[0];
         // Verify authorization (user belongs to the referring organization)
-        await verifyUserAuthorization(userId, order.referring_organization_id);
+        await (0, authorization_1.verifyUserAuthorization)(userId, order.referring_organization_id);
         // Create transaction context
         const context = {
             client,
@@ -37,10 +43,10 @@ export async function executeTransaction(orderId, payload, userId) {
         // Handle temporary patient if needed
         let patientId = order.patient_id;
         if (payload.isTemporaryPatient && payload.patientInfo) {
-            patientId = await PatientService.createTemporaryPatient(client, order.referring_organization_id, payload.patientInfo);
+            patientId = await patient_service_1.default.createTemporaryPatient(client, order.referring_organization_id, payload.patientInfo);
         }
         // Update the order
-        await updateOrderWithFinalData(client, orderId, patientId, payload, userId);
+        await (0, update_1.updateOrderWithFinalData)(client, orderId, patientId, payload, userId);
         // Generate presigned URL for signature upload if needed
         const signatureUploadInfo = null;
         if (payload.signatureData) {
@@ -53,7 +59,7 @@ export async function executeTransaction(orderId, payload, userId) {
         // and finally confirm the upload using the /api/uploads/confirm endpoint
         // Log order history
         const eventType = payload.overridden ? 'override' : 'signed';
-        await OrderHistoryService.logOrderHistory(client, orderId, userId, order.status, OrderStatus.PENDING_ADMIN, eventType);
+        await order_history_service_1.default.logOrderHistory(client, orderId, userId, order.status, models_1.OrderStatus.PENDING_ADMIN, eventType);
         // Commit transaction
         await client.query('COMMIT');
         return {

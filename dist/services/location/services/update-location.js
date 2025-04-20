@@ -1,4 +1,7 @@
-import { updateLocation as updateLocationQuery } from '../queries';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateLocation = updateLocation;
+const queries_1 = require("../queries");
 /**
  * Update a location
  * @param locationId Location ID
@@ -6,7 +9,7 @@ import { updateLocation as updateLocationQuery } from '../queries';
  * @param locationData Location data to update
  * @returns Promise with updated location
  */
-export async function updateLocation(locationId, orgId, locationData) {
-    return updateLocationQuery(locationId, orgId, locationData);
+async function updateLocation(locationId, orgId, locationData) {
+    return (0, queries_1.updateLocation)(locationId, orgId, locationData);
 }
 //# sourceMappingURL=update-location.js.map
