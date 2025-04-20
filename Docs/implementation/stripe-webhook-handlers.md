@@ -1,107 +1,144 @@
 # Stripe Webhook Handlers Implementation
 
 **Version:** 1.0
-**Date:** 2025-04-19
-**Author:** Backend Team
+**Date:** 2025-04-20
 
-This document describes the implementation of Stripe webhook handlers for subscription events in the RadOrderPad application.
+This document describes the implementation of the Stripe webhook handlers in the RadOrderPad application, focusing on the database update logic for managing organization status, subscription tiers, and credit balances.
 
 ## Overview
 
-The Stripe webhook handlers process events from Stripe related to subscription changes. These events are critical for maintaining the correct subscription status, tier, and credit balance for organizations in the system.
+The Stripe webhook handlers are responsible for processing events from Stripe and updating the database accordingly. The main events handled are:
 
-## Handlers
+1. `invoice.payment_succeeded`: Triggered when an invoice payment succeeds
+2. `customer.subscription.updated`: Triggered when a subscription is updated
+3. `customer.subscription.deleted`: Triggered when a subscription is canceled
 
-### 1. Subscription Updated Handler
+These handlers ensure that the organization's status, subscription tier, and credit balance are kept in sync with their Stripe subscription.
 
-**Files:**
-- `src/services/billing/stripe/webhooks/handle-subscription-updated/handle-subscription-updated.ts` - Main handler
-- `src/services/billing/stripe/webhooks/handle-subscription-updated/status-transitions.ts` - Status transition logic
-- `src/services/billing/stripe/webhooks/handle-subscription-updated/notifications.ts` - Notification logic
-- `src/services/billing/stripe/webhooks/handle-subscription-updated/map-price-id-to-tier.ts` - Price ID mapping
-- `src/services/billing/stripe/webhooks/handle-subscription-updated/index.ts` - Module exports
+## Implementation Details
 
-This handler processes the `customer.subscription.updated` event from Stripe, which is triggered when a subscription is updated (e.g., plan change, status change). The implementation follows the Single Responsibility Principle by separating concerns into focused modules.
+### 1. Architecture
 
-#### Key Functionality:
+The webhook handlers follow a modular design with clear separation of concerns:
 
-- **Organization Lookup:** Finds the organization by Stripe customer ID.
-- **Tier Mapping:** Maps Stripe price IDs to internal tier names using the `mapPriceIdToTier` function.
-- **Status Management:** Updates organization status based on subscription status:
-  - If subscription is active but org is in purgatory → reactivate
-  - If subscription is canceled but org is active → put in purgatory
-- **Credit Replenishment:** Replenishes credits for referring organizations when:
-  - Tier changes
-  - Status changes to active
-- **Database Updates:** Updates the organization's subscription tier and status in a transaction.
-- **Event Logging:** Logs billing events and purgatory events.
-- **Relationship Management:** Updates organization relationships when status changes.
-- **Notifications:** Sends email notifications to organization admins about status and tier changes.
+- **Webhook Handlers**: Process specific Stripe events and update the database
+- **Utility Functions**: Provide reusable functionality for common operations
+- **Error Handling**: Custom error classes for better error reporting and handling
 
-### 2. Subscription Deleted Handler
+### 2. Database Update Logic
 
-**File:** `src/services/billing/stripe/webhooks/handle-subscription-deleted.ts`
+#### 2.1 Invoice Payment Succeeded Handler
 
-This handler processes the `customer.subscription.deleted` event from Stripe, which is triggered when a subscription is canceled.
+The `handleInvoicePaymentSucceeded` function in `src/services/billing/stripe/webhooks/handle-invoice-payment-succeeded.ts` handles the `invoice.payment_succeeded` event:
 
-#### Key Functionality:
+1. **Identify Organization**: Finds the organization by Stripe customer ID
+2. **Log Billing Event**: Records the payment in the `billing_events` table
+3. **Handle Purgatory Exit**: If the organization is in purgatory, reactivates it:
+   - Updates `organizations.status` to 'active'
+   - Updates `purgatory_events` to mark events as resolved
+   - Updates `organization_relationships` to reactivate relationships
+   - Sends notifications to organization admins
+4. **Replenish Credits**: If this is a subscription renewal for a referring practice:
+   - Uses the `replenishCreditsForTier` utility to reset the credit balance based on the subscription tier
+   - The credit balance is SET to the tier's allocation, not added to the existing balance
 
-- **Organization Lookup:** Finds the organization by Stripe customer ID.
-- **Status Management:** Sets organization status to 'purgatory' if not already in that state.
-- **Subscription Tier:** Sets the subscription tier to NULL to indicate no active subscription.
-- **Database Updates:** Updates the organization's status and subscription tier in a transaction.
-- **Event Logging:** Logs billing events and purgatory events.
-- **Relationship Management:** Updates organization relationships to 'purgatory' status.
-- **Notifications:** Sends email notifications to organization admins about the subscription cancellation.
+#### 2.2 Subscription Updated Handler
 
-## Supporting Modules
+The `handleSubscriptionUpdated` function in `src/services/billing/stripe/webhooks/handle-subscription-updated.ts` handles the `customer.subscription.updated` event:
 
-### 1. Price ID to Tier Mapping
+1. **Identify Organization**: Finds the organization by Stripe customer ID
+2. **Handle Tier Changes**: If the subscription price has changed:
+   - Maps the price ID to a subscription tier using the `mapPriceIdToTier` utility
+   - Updates `organizations.subscription_tier`
+   - Logs the tier change in `billing_events`
+   - Replenishes credits based on the new tier for referring practices
+   - Sends notifications to organization admins
+3. **Handle Status Changes**:
+   - If subscription status is 'past_due' and organization is 'active':
+     - Updates `organizations.status` to 'purgatory'
+     - Creates a new entry in `purgatory_events`
+     - Updates `organization_relationships` to put relationships in purgatory
+     - Logs the status change in `billing_events`
+     - Sends notifications to organization admins
+   - If subscription status is 'active' and organization is in 'purgatory':
+     - Updates `organizations.status` to 'active'
+     - Updates `purgatory_events` to mark events as resolved
+     - Updates `organization_relationships` to reactivate relationships
+     - Logs the status change in `billing_events`
+     - Sends notifications to organization admins
 
-**File:** `src/services/billing/stripe/webhooks/handle-subscription-updated/map-price-id-to-tier.ts`
+#### 2.3 Subscription Deleted Handler
 
-Maps Stripe price IDs to internal subscription tier names. Includes mappings for:
-- Monthly plans
-- Yearly plans
-- Test price IDs
-- Production price IDs
+The `handleSubscriptionDeleted` function in `src/services/billing/stripe/webhooks/handle-subscription-deleted.ts` handles the `customer.subscription.deleted` event:
 
-### 2. Credit Management
+1. **Identify Organization**: Finds the organization by Stripe customer ID
+2. **Log Billing Event**: Records the subscription cancellation in `billing_events`
+3. **Handle Purgatory Entry**: If the organization is not already in purgatory:
+   - Updates `organizations.status` to 'purgatory'
+   - Sets `organizations.subscription_tier` to NULL
+   - Creates a new entry in `purgatory_events`
+   - Updates `organization_relationships` to put relationships in purgatory
+   - Sends notifications to organization admins
 
-**File:** `src/services/billing/credit/replenish-credits-for-tier.ts`
+### 3. Utility Functions
 
-Handles credit replenishment based on subscription tier. Defines the credit allocation for each tier:
-- Tier 1: 500 credits
-- Tier 2: 1500 credits
-- Tier 3: 5000 credits
+#### 3.1 Credit Replenishment
 
-### 3. Error Handling
+The `replenishCreditsForTier` function in `src/services/billing/credit/replenish-credits-for-tier.ts` handles credit replenishment:
 
-**File:** `src/services/billing/stripe/webhooks/errors.ts`
+- Maps subscription tiers to credit allocations
+- Updates the organization's credit balance to the allocated amount
+- Logs the replenishment in `billing_events`
 
-Defines custom error types for Stripe webhook handlers:
-- `StripeWebhookError`: Base class for webhook errors
-- `OrganizationNotFoundError`: Organization not found by Stripe customer ID
-- `DatabaseOperationError`: Database operation failed
-- `NotificationError`: Failed to send notification
+#### 3.2 Price ID to Tier Mapping
 
-## Testing
+The `mapPriceIdToTier` function in `src/utils/billing/map-price-id-to-tier.ts` maps Stripe price IDs to subscription tiers:
 
-**File:** `tests/stripe-webhook-handlers.test.js`
+- Maintains a mapping of price IDs to tiers
+- Returns the corresponding tier for a given price ID
+- Provides utility functions for getting credit allocations and display names for tiers
 
-Test script for verifying the functionality of the webhook handlers. Simulates Stripe webhook events and tests the handlers' responses.
+### 4. Error Handling
 
-## Error Handling
+Custom error classes in `src/services/billing/stripe/webhooks/errors.ts` provide better error reporting and handling:
 
-All webhook handlers include robust error handling:
-- Database operations are wrapped in transactions to ensure atomicity
-- Custom error types provide detailed error information
-- Notification failures are caught and logged but don't prevent other operations
-- All errors are logged with detailed context
+- `StripeWebhookError`: Base class for all webhook errors
+- `OrganizationNotFoundError`: Thrown when an organization is not found
+- `DatabaseOperationError`: Thrown when a database operation fails
+- `SubscriptionNotFoundError`: Thrown when a subscription is not found
+- `TierMappingError`: Thrown when a price ID cannot be mapped to a tier
+- `NotificationError`: Thrown when a notification fails to send
 
-## Future Improvements
+### 5. Testing
 
-1. **Retry Mechanism:** Implement a retry mechanism for failed webhook processing.
-2. **Webhook Signature Verification:** Enhance security by verifying Stripe webhook signatures.
-3. **Logging Enhancement:** Add structured logging for better monitoring and debugging.
-4. **Metrics Collection:** Collect metrics on webhook processing for performance monitoring.
+The webhook handlers can be tested using the provided test script:
+
+```bash
+# Windows
+.\test-stripe-webhooks.bat
+
+# Unix/Linux/macOS
+./test-stripe-webhooks.sh
+```
+
+This script simulates Stripe events and verifies that the handlers update the database correctly.
+
+## Key Considerations
+
+1. **Transactions**: All database operations are wrapped in transactions to ensure data consistency
+2. **Error Handling**: Comprehensive error handling with specific error types
+3. **Logging**: Detailed logging of all operations for debugging and auditing
+4. **Notifications**: Email notifications to organization admins for important events
+
+## Future Enhancements
+
+1. **Webhook Signature Verification**: Add verification of Stripe webhook signatures
+2. **Retry Mechanism**: Implement a retry mechanism for failed webhook processing
+3. **Event Logging**: Log all received webhook events for auditing
+4. **Metrics Collection**: Add metrics collection for webhook processing
+5. **Webhook Dashboard**: Create a dashboard for monitoring webhook events
+
+## References
+
+- [Stripe Webhooks Documentation](https://stripe.com/docs/webhooks)
+- [Stripe API Reference](https://stripe.com/docs/api)

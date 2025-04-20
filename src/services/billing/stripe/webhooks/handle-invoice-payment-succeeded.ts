@@ -1,6 +1,13 @@
 import Stripe from 'stripe';
 import { getMainDbClient } from '../../../../config/db';
 import { generalNotifications } from '../../../../services/notification/services';
+import { replenishCreditsForTier } from '../../credit/replenish-credits-for-tier';
+import logger from '../../../../utils/logger';
+import {
+  StripeWebhookError,
+  OrganizationNotFoundError,
+  DatabaseOperationError
+} from './errors';
 
 /**
  * Handle invoice.payment_succeeded event
@@ -12,7 +19,7 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
   const customerId = invoice.customer as string;
   
   if (!customerId) {
-    throw new Error('Missing customer ID in invoice');
+    throw new StripeWebhookError('Missing customer ID in invoice');
   }
   
   // Get the organization by Stripe customer ID
@@ -30,7 +37,7 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
     );
     
     if (orgResult.rowCount === 0) {
-      throw new Error(`Organization with Stripe customer ID ${customerId} not found`);
+      throw new OrganizationNotFoundError(customerId);
     }
     
     const organization = orgResult.rows[0];
@@ -42,7 +49,7 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
     // Determine if this is a subscription renewal or usage charge
     // Check if this is a subscription invoice by looking at the subscription field
     // Using type assertion since the Stripe types might not be fully accurate
-    const isSubscriptionRenewal = Boolean((invoice as any).subscription);
+    const isSubscriptionRenewal = Boolean((invoice as Stripe.Invoice & { subscription?: string }).subscription);
     
     // Log the billing event
     await client.query(
@@ -116,51 +123,29 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
     }
     
     // If this is a subscription renewal for a referring practice, replenish credits
-    if (isSubscriptionRenewal && orgType === 'referring_practice') {
-      // Determine credit amount based on subscription tier
-      let creditAmount = 0;
-      
-      // Simple mapping of tiers to credit amounts
-      // In a real implementation, this would likely be stored in a database
-      if (subscriptionTier === 'tier_1') {
-        creditAmount = 500;
-      } else if (subscriptionTier === 'tier_2') {
-        creditAmount = 1000;
-      } else if (subscriptionTier === 'tier_3') {
-        creditAmount = 2000;
-      } else {
-        creditAmount = 500; // Default fallback amount
-      }
-      
-      // Update the organization's credit balance
-      await client.query(
-        `UPDATE organizations 
-         SET credit_balance = $1 
-         WHERE id = $2`,
-        [creditAmount, orgId]
-      );
-      
-      // Log the credit replenishment
-      await client.query(
-        `INSERT INTO billing_events 
-         (organization_id, event_type, description) 
-         VALUES ($1, $2, $3)`,
-        [
-          orgId,
-          'credit_grant',
-          `Monthly credit replenishment: ${creditAmount} credits for tier ${subscriptionTier}`
-        ]
-      );
+    if (isSubscriptionRenewal && orgType === 'referring_practice' && subscriptionTier) {
+      // Use the dedicated utility to replenish credits based on tier
+      await replenishCreditsForTier(orgId, subscriptionTier, client, event.id);
     }
     
     await client.query('COMMIT');
     
-    console.log(`Successfully processed invoice payment for org ${orgId}`);
+    logger.info(`Successfully processed invoice payment for org ${orgId}`);
     
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('Error processing invoice payment:', error);
-    throw error;
+    logger.error('Error processing invoice payment:', error);
+    
+    // Rethrow as a more specific error if possible
+    if (error instanceof StripeWebhookError) {
+      throw error;
+    } else if (error instanceof OrganizationNotFoundError) {
+      throw error;
+    } else if (error instanceof Error) {
+      throw new DatabaseOperationError('invoice payment processing', error);
+    } else {
+      throw new Error(`Unknown error during invoice payment processing: ${String(error)}`);
+    }
   } finally {
     client.release();
   }
