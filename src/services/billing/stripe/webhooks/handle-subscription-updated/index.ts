@@ -1,10 +1,16 @@
 /**
- * Export all functions related to handling subscription updated events
+ * Subscription Updated Webhook Handler Module
+ * 
+ * This module provides functionality for handling Stripe subscription updated events.
  */
 
-export { mapPriceIdToTier } from './map-price-id-to-tier';
+// Export the main handler function
 export { handleSubscriptionUpdated } from './handle-subscription-updated';
 
-// Default export for backward compatibility
-import { handleSubscriptionUpdated } from './handle-subscription-updated';
-export default handleSubscriptionUpdated;
+// Export supporting functions
+export { mapPriceIdToTier } from './map-price-id-to-tier';
+export { 
+  handlePurgatoryTransition,
+  handleReactivationTransition
+} from './status-transitions';
+export { sendTierChangeNotifications } from './notifications';

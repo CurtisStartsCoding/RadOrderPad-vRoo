@@ -1,24 +1,18 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConnectionNotificationService = void 0;
-const request_1 = __importDefault(require("./connection-notifications/request"));
-const approval_1 = __importDefault(require("./connection-notifications/approval"));
-const rejection_1 = __importDefault(require("./connection-notifications/rejection"));
-const termination_1 = __importDefault(require("./connection-notifications/termination"));
+import sendConnectionRequest from './connection-notifications/request';
+import sendConnectionApproved from './connection-notifications/approval';
+import sendConnectionRejected from './connection-notifications/rejection';
+import sendConnectionTerminated from './connection-notifications/termination';
 /**
  * Service for handling connection-related notifications
  */
-class ConnectionNotificationService {
+export class ConnectionNotificationService {
     /**
      * Send a connection request notification to an organization
      * @param email Email address of the target organization admin
      * @param requestingOrgName Name of the organization requesting the connection
      */
     async sendConnectionRequest(email, requestingOrgName) {
-        return (0, request_1.default)(email, requestingOrgName);
+        return sendConnectionRequest(email, requestingOrgName);
     }
     /**
      * Send a connection approval notification
@@ -26,7 +20,7 @@ class ConnectionNotificationService {
      * @param approvedOrgName Name of the organization that requested the connection
      */
     async sendConnectionApproved(email, approvedOrgName) {
-        return (0, approval_1.default)(email, approvedOrgName);
+        return sendConnectionApproved(email, approvedOrgName);
     }
     /**
      * Send a connection rejection notification
@@ -34,7 +28,7 @@ class ConnectionNotificationService {
      * @param rejectedOrgName Name of the organization that requested the connection
      */
     async sendConnectionRejected(email, rejectedOrgName) {
-        return (0, rejection_1.default)(email, rejectedOrgName);
+        return sendConnectionRejected(email, rejectedOrgName);
     }
     /**
      * Send a connection termination notification
@@ -43,10 +37,9 @@ class ConnectionNotificationService {
      * @param terminatingOrgName Name of the organization terminating the connection
      */
     async sendConnectionTerminated(email, partnerOrgName, terminatingOrgName) {
-        return (0, termination_1.default)(email, partnerOrgName, terminatingOrgName);
+        return sendConnectionTerminated(email, partnerOrgName, terminatingOrgName);
     }
 }
-exports.ConnectionNotificationService = ConnectionNotificationService;
 // Create and export a singleton instance
-exports.default = new ConnectionNotificationService();
+export default new ConnectionNotificationService();
 //# sourceMappingURL=connection-notifications.js.map

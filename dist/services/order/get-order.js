@@ -1,20 +1,17 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOrderById = getOrderById;
-const db_1 = require("../../config/db");
+import { queryMainDb, queryPhiDb } from '../../config/db';
 /**
  * Get order details by ID
  */
-async function getOrderById(orderId, userId) {
+export async function getOrderById(orderId, userId) {
     try {
         // Get user information to determine organization
-        const userResult = await (0, db_1.queryMainDb)('SELECT organization_id FROM users WHERE id = $1', [userId]);
+        const userResult = await queryMainDb('SELECT organization_id FROM users WHERE id = $1', [userId]);
         if (userResult.rows.length === 0) {
             throw new Error('User not found');
         }
         const user = userResult.rows[0];
         // Get order details
-        const orderResult = await (0, db_1.queryPhiDb)('SELECT * FROM orders WHERE id = $1', [orderId]);
+        const orderResult = await queryPhiDb('SELECT * FROM orders WHERE id = $1', [orderId]);
         if (orderResult.rows.length === 0) {
             throw new Error('Order not found');
         }

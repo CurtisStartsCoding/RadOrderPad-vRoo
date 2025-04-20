@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const services_1 = require("../services");
+import { listLocations, createLocation, getLocation, updateLocation, deactivateLocation } from '../services';
 /**
  * Manager for location operations
  */
@@ -11,7 +9,7 @@ class LocationManager {
      * @returns Promise with locations list
      */
     async listLocations(orgId) {
-        return (0, services_1.listLocations)(orgId);
+        return listLocations(orgId);
     }
     /**
      * Create a new location for an organization
@@ -20,7 +18,7 @@ class LocationManager {
      * @returns Promise with created location
      */
     async createLocation(orgId, locationData) {
-        return (0, services_1.createLocation)(orgId, locationData);
+        return createLocation(orgId, locationData);
     }
     /**
      * Get a location by ID
@@ -29,7 +27,7 @@ class LocationManager {
      * @returns Promise with location details
      */
     async getLocation(locationId, orgId) {
-        return (0, services_1.getLocation)(locationId, orgId);
+        return getLocation(locationId, orgId);
     }
     /**
      * Update a location
@@ -39,7 +37,7 @@ class LocationManager {
      * @returns Promise with updated location
      */
     async updateLocation(locationId, orgId, locationData) {
-        return (0, services_1.updateLocation)(locationId, orgId, locationData);
+        return updateLocation(locationId, orgId, locationData);
     }
     /**
      * Deactivate a location (soft delete)
@@ -48,8 +46,8 @@ class LocationManager {
      * @returns Promise with success status
      */
     async deactivateLocation(locationId, orgId) {
-        return (0, services_1.deactivateLocation)(locationId, orgId);
+        return deactivateLocation(locationId, orgId);
     }
 }
-exports.default = new LocationManager();
+export default new LocationManager();
 //# sourceMappingURL=location-manager.js.map

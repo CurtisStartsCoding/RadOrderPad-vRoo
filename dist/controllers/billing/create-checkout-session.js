@@ -1,10 +1,4 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCheckoutSession = createCheckoutSession;
-const billing_1 = __importDefault(require("../../services/billing"));
+import BillingService from '../../services/billing';
 /**
  * Create a checkout session for purchasing credit bundles
  *
@@ -12,7 +6,7 @@ const billing_1 = __importDefault(require("../../services/billing"));
  * @param res Express response object
  * @returns Response with checkout session ID or error
  */
-async function createCheckoutSession(req, res) {
+export async function createCheckoutSession(req, res) {
     try {
         // Extract organization ID from authenticated user
         const orgId = req.user?.orgId;
@@ -25,7 +19,7 @@ async function createCheckoutSession(req, res) {
         // Extract optional price ID from request body
         const { priceId } = req.body;
         // Create checkout session
-        const sessionId = await billing_1.default.createCreditCheckoutSession(orgId, priceId);
+        const sessionId = await BillingService.createCreditCheckoutSession(orgId, priceId);
         return res.status(200).json({
             success: true,
             sessionId

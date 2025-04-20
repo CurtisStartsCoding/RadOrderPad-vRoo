@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.applyDateRangeFilter = applyDateRangeFilter;
 /**
  * Apply date range filters to the query
  * @param query Current query string
@@ -23,4 +20,5 @@ function applyDateRangeFilter(query, params, paramIndex, startDate, endDate) {
     }
     return { query, params, paramIndex };
 }
+export { applyDateRangeFilter };
 //# sourceMappingURL=date-filters.js.map

@@ -1,17 +1,15 @@
-"use strict";
 /**
  * Patient manager functions
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePatientFromEmr = exports.updatePatientInfo = void 0;
 // Import functions
-const update_patient_info_1 = require("./update-patient-info");
-Object.defineProperty(exports, "updatePatientInfo", { enumerable: true, get: function () { return update_patient_info_1.updatePatientInfo; } });
-const update_patient_from_emr_1 = require("./update-patient-from-emr");
-Object.defineProperty(exports, "updatePatientFromEmr", { enumerable: true, get: function () { return update_patient_from_emr_1.updatePatientFromEmr; } });
+import { updatePatientInfo } from './update-patient-info';
+import { updatePatientFromEmr } from './update-patient-from-emr';
+// Re-export functions
+export { updatePatientInfo };
+export { updatePatientFromEmr };
 // Default export for backward compatibility
-exports.default = {
-    updatePatientInfo: update_patient_info_1.updatePatientInfo,
-    updatePatientFromEmr: update_patient_from_emr_1.updatePatientFromEmr
+export default {
+    updatePatientInfo,
+    updatePatientFromEmr
 };
 //# sourceMappingURL=index.js.map

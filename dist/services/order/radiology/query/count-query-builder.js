@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildCountQuery = buildCountQuery;
-const models_1 = require("../../../../models");
+import { OrderStatus } from '../../../../models';
 /**
  * Build the count query for pagination
  * @param orgId Radiology organization ID
  * @param filters Filter parameters
  * @returns Object containing the query string and parameters
  */
-function buildCountQuery(orgId, filters = {}) {
+export function buildCountQuery(orgId, filters = {}) {
     // Build the count query
     let countQuery = `
     SELECT COUNT(*) as total
@@ -16,7 +13,7 @@ function buildCountQuery(orgId, filters = {}) {
     WHERE o.radiology_organization_id = $1
     AND o.status = $2
   `;
-    const countParams = [orgId, filters.status || models_1.OrderStatus.PENDING_RADIOLOGY];
+    const countParams = [orgId, filters.status || OrderStatus.PENDING_RADIOLOGY];
     // Add the same filters as the main query
     let countParamIndex = 3;
     if (filters.referringOrgId) {
@@ -51,5 +48,5 @@ function buildCountQuery(orgId, filters = {}) {
     }
     return { query: countQuery, params: countParams };
 }
-exports.default = buildCountQuery;
+export default buildCountQuery;
 //# sourceMappingURL=count-query-builder.js.map

@@ -1,1 +1,1 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../../src/services/order/admin/insurance/index.ts"],"names":[],"mappings":";;;AAAA,+CAAoD;AAIlD,oGAJO,iCAAmB,OAIP;AAHrB,uDAA2D;AAIzD,uGAJO,wCAAsB,OAIP"}
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../../src/services/order/admin/insurance/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,MAAM,eAAe,CAAC;AACpD,OAAO,EAAE,sBAAsB,EAAE,MAAM,mBAAmB,CAAC;AAE3D,OAAO,EACL,mBAAmB,EACnB,sBAAsB,EACvB,CAAC"}

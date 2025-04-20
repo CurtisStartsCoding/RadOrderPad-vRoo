@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getIncomingOrders = getIncomingOrders;
-const radiology_1 = __importDefault(require("../../services/order/radiology"));
+import RadiologyOrderService from '../../services/order/radiology';
 /**
  * Get incoming orders queue for radiology group
  * @route GET /api/radiology/orders
  */
-async function getIncomingOrders(req, res) {
+export async function getIncomingOrders(req, res) {
     try {
         // Get user information from the JWT token
         const orgId = req.user?.orgId;
@@ -60,7 +54,7 @@ async function getIncomingOrders(req, res) {
             filters.limit = parseInt(req.query.limit);
         }
         // Call the service to get the incoming orders
-        const result = await radiology_1.default.getIncomingOrders(orgId, filters);
+        const result = await RadiologyOrderService.getIncomingOrders(orgId, filters);
         res.status(200).json(result);
     }
     catch (error) {
@@ -73,5 +67,5 @@ async function getIncomingOrders(req, res) {
         }
     }
 }
-exports.default = getIncomingOrders;
+export default getIncomingOrders;
 //# sourceMappingURL=incoming-orders.controller.js.map

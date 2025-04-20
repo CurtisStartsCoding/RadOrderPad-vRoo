@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.InviteEmailTemplate = void 0;
-const email_template_base_1 = require("./email-template-base");
+import { BaseEmailTemplate } from './email-template-base';
 /**
  * Template for invitation emails
  */
-class InviteEmailTemplate extends email_template_base_1.BaseEmailTemplate {
+export class InviteEmailTemplate extends BaseEmailTemplate {
     /**
      * Generate email content for invitation
      * @param data Invitation data
@@ -50,7 +47,6 @@ ${this.getEmailSignature()}
         };
     }
 }
-exports.InviteEmailTemplate = InviteEmailTemplate;
 // Create and export a singleton instance
-exports.default = new InviteEmailTemplate();
+export default new InviteEmailTemplate();
 //# sourceMappingURL=invite-template.js.map

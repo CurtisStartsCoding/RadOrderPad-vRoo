@@ -1,12 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCreditCheckoutSession = createCreditCheckoutSession;
-const db_1 = require("../../../config/db");
-const stripe_service_1 = __importDefault(require("./stripe.service"));
-const config_1 = __importDefault(require("../../../config/config"));
+import { queryMainDb } from '../../../config/db';
+import stripeService from './stripe.service';
+import config from '../../../config/config';
 /**
  * Create a Stripe checkout session for purchasing credit bundles
  *
@@ -15,15 +9,15 @@ const config_1 = __importDefault(require("../../../config/config"));
  * @returns Promise<string> Checkout session ID
  * @throws Error if the organization doesn't have a billing_id or if there's an issue creating the checkout session
  */
-async function createCreditCheckoutSession(orgId, priceId) {
+export async function createCreditCheckoutSession(orgId, priceId) {
     try {
         // Use the provided price ID or fall back to the default from config
-        const actualPriceId = priceId || config_1.default.stripe.creditBundlePriceId;
+        const actualPriceId = priceId || config.stripe.creditBundlePriceId;
         if (!actualPriceId) {
             throw new Error('No price ID provided and no default price ID configured');
         }
         // Get the organization's billing_id (Stripe customer ID)
-        const orgResult = await (0, db_1.queryMainDb)('SELECT billing_id FROM organizations WHERE id = $1', [orgId]);
+        const orgResult = await queryMainDb('SELECT billing_id FROM organizations WHERE id = $1', [orgId]);
         if (!orgResult.rows.length) {
             throw new Error(`Organization with ID ${orgId} not found`);
         }
@@ -37,7 +31,7 @@ async function createCreditCheckoutSession(orgId, priceId) {
             credit_bundle_price_id: actualPriceId
         };
         // Create the checkout session
-        const session = await stripe_service_1.default.createCheckoutSession(billingId, actualPriceId, metadata, config_1.default.stripe.frontendSuccessUrl, config_1.default.stripe.frontendCancelUrl);
+        const session = await stripeService.createCheckoutSession(billingId, actualPriceId, metadata, config.stripe.frontendSuccessUrl, config.stripe.frontendCancelUrl);
         console.log(`[BillingService] Created checkout session ${session.id} for organization ${orgId}`);
         return session.id;
     }

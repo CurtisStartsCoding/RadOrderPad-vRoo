@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.isMedicalCode = isMedicalCode;
 /**
  * Check if a string is a medical code (ICD-10 or CPT)
  * @param text - The string to check
  * @returns True if the string is a medical code
  */
-function isMedicalCode(text) {
+export function isMedicalCode(text) {
     // Check for ICD-10 code pattern
     const icd10Pattern = /^[A-Z]\d{2}(?:\.\d{1,2})?$/;
     if (icd10Pattern.test(text)) {

@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validatePatientFields = validatePatientFields;
 /**
  * Validate patient has required information for sending to radiology
  * @param patient Patient data
  * @returns Array of missing field names
  */
-function validatePatientFields(patient) {
+export function validatePatientFields(patient) {
     const missingPatientFields = [];
     if (!patient.address_line1)
         missingPatientFields.push('address');

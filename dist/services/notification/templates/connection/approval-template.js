@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConnectionApprovalEmailTemplate = void 0;
-const email_template_base_1 = require("../email-template-base");
+import { BaseEmailTemplate } from '../email-template-base';
 /**
  * Template for connection approval emails
  */
-class ConnectionApprovalEmailTemplate extends email_template_base_1.BaseEmailTemplate {
+export class ConnectionApprovalEmailTemplate extends BaseEmailTemplate {
     /**
      * Generate email content for connection approval
      * @param data Connection approval data
@@ -42,7 +39,6 @@ ${this.getEmailSignature()}
         };
     }
 }
-exports.ConnectionApprovalEmailTemplate = ConnectionApprovalEmailTemplate;
 // Create and export a singleton instance
-exports.default = new ConnectionApprovalEmailTemplate();
+export default new ConnectionApprovalEmailTemplate();
 //# sourceMappingURL=approval-template.js.map

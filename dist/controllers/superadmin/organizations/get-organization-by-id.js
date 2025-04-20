@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOrganizationByIdController = getOrganizationByIdController;
-const superadmin_1 = require("../../../services/superadmin");
+import { getOrganizationById } from '../../../services/superadmin';
 /**
  * Get an organization by ID
  * GET /api/superadmin/organizations/:orgId
  */
-async function getOrganizationByIdController(req, res) {
+export async function getOrganizationByIdController(req, res) {
     try {
         // Extract organization ID from request parameters
         const orgId = parseInt(req.params.orgId, 10);
@@ -18,7 +15,7 @@ async function getOrganizationByIdController(req, res) {
             return;
         }
         // Call the service function
-        const organization = await (0, superadmin_1.getOrganizationById)(orgId);
+        const organization = await getOrganizationById(orgId);
         if (!organization) {
             res.status(404).json({
                 success: false,

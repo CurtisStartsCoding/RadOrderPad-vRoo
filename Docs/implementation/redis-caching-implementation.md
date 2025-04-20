@@ -79,12 +79,86 @@ The tests verify the following functionality:
 4. Caching ICD-10 codes
 5. Cache invalidation
 
+## RedisSearch Integration
+
+The RedisSearch integration has been implemented to enable fast context generation for AI-powered features. This enhancement significantly accelerates the database context generation step for the Validation Engine.
+
+### Components
+
+The RedisSearch integration consists of the following components:
+
+1. **Redis Index Manager** (`src/utils/redis/redis-index-manager.ts`): Responsible for creating and managing RedisSearch indexes on MemoryDB.
+2. **Redis Search Utilities** (`src/utils/redis/redis-search.ts`): Provides functions for searching medical codes and related data using RedisSearch.
+3. **Redis Context Generator** (`src/utils/database/redis-context-generator.ts`): Generates database context using RedisSearch, with fallback to PostgreSQL if RedisSearch fails.
+4. **Index Creation Script** (`src/scripts/create-redis-indexes.ts`): A standalone script to create the RedisSearch indexes.
+5. **Test Script** (`tests/test-redis-search.js`): Tests the RedisSearch functionality by calling the validation endpoint with a sample dictation.
+
+### Index Schema
+
+The RedisSearch indexes are created with the following schema:
+
+#### CPT Index
+
+```
+FT.CREATE cpt_index ON JSON PREFIX 1 cpt: SCHEMA
+  $.description AS description TEXT WEIGHT 5.0
+  $.modality AS modality TAG
+  $.body_part AS body_part TAG
+  $.description AS description_nostem TEXT NOSTEM
+```
+
+#### ICD-10 Index
+
+```
+FT.CREATE icd10_index ON JSON PREFIX 1 icd10: SCHEMA
+  $.description AS description TEXT WEIGHT 5.0
+  $.keywords AS keywords TEXT WEIGHT 2.0
+  $.category AS category TAG
+  $.is_billable AS is_billable TAG
+  $.description AS description_nostem TEXT NOSTEM
+```
+
+### Search Functionality
+
+The RedisSearch integration provides the following search functionality:
+
+- **ICD-10 Code Search**: Searches for ICD-10 codes based on keywords, with support for categorized keywords (symptoms, anatomy terms, modalities).
+- **CPT Code Search**: Searches for CPT codes based on keywords, with support for categorized keywords.
+- **Mapping Retrieval**: Retrieves mappings between ICD-10 and CPT codes.
+- **Markdown Doc Retrieval**: Retrieves markdown documentation for ICD-10 codes.
+
+### Context Generation
+
+The Redis Context Generator generates database context using RedisSearch, with fallback to PostgreSQL if RedisSearch fails. This ensures that the validation process can continue even if Redis is unavailable or the indexes don't exist.
+
+### Testing
+
+The RedisSearch functionality can be tested using the provided test script and batch file:
+
+```
+node tests/test-redis-search.js
+```
+
+Or:
+
+```
+run-redis-search-test.bat
+```
+
+### Performance Improvements
+
+The use of RedisSearch significantly improves the performance of the database context generation step:
+
+1. **Reduced Database Load**: By using RedisSearch instead of PostgreSQL for context generation, we reduce the load on the database.
+2. **Improved API Latency**: RedisSearch provides sub-millisecond lookups for cached data, resulting in faster API responses.
+3. **Advanced Search Capabilities**: RedisSearch enables more advanced search capabilities, such as full-text search and tag filtering.
+
 ## Future Enhancements
 
-1. **RedisSearch Integration**: The cached data will be indexed using RedisSearch to enable fast context generation for AI-powered features.
-2. **Cache Warming**: Implement proactive cache warming for frequently accessed data.
-3. **Cache Metrics**: Add monitoring and metrics for cache hit/miss rates and performance.
-4. **Distributed Locking**: Implement distributed locking for concurrent operations on the same data.
+1. **Cache Warming**: Implement proactive cache warming for frequently accessed data.
+2. **Cache Metrics**: Add monitoring and metrics for cache hit/miss rates and performance.
+3. **Distributed Locking**: Implement distributed locking for concurrent operations on the same data.
+4. **Automatic Index Updates**: Implement automatic index updates when the underlying reference data in PostgreSQL changes.
 
 ## Performance Considerations
 

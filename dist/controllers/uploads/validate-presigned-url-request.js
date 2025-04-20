@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validatePresignedUrlRequest = validatePresignedUrlRequest;
 /**
  * Validate request for presigned URL generation
  */
-function validatePresignedUrlRequest(req, res) {
+export function validatePresignedUrlRequest(req, res) {
     const { fileType, fileName, contentType, fileSize } = req.body;
     // Validate required fields
     if (!fileType || !fileName || !contentType) {

@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateRequiredFields = validateRequiredFields;
 /**
  * Validate that all required fields are present
  */
-function validateRequiredFields(response) {
+export function validateRequiredFields(response) {
     const requiredFields = [
         'validationStatus',
         'complianceScore',

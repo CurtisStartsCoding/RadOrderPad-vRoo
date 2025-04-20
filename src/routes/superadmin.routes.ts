@@ -4,7 +4,9 @@ import {
   listAllOrganizationsController,
   getOrganizationByIdController,
   listAllUsersController,
-  getUserByIdController
+  getUserByIdController,
+  prompts,
+  logs
 } from '../controllers/superadmin';
 
 const router = Router();
@@ -20,5 +22,24 @@ router.get('/organizations/:orgId', getOrganizationByIdController);
 // User routes
 router.get('/users', listAllUsersController);
 router.get('/users/:userId', getUserByIdController);
+
+// Prompt template routes
+router.post('/prompts/templates', prompts.templates.createPromptTemplateController);
+router.get('/prompts/templates', prompts.templates.listPromptTemplatesController);
+router.get('/prompts/templates/:templateId', prompts.templates.getPromptTemplateController);
+router.put('/prompts/templates/:templateId', prompts.templates.updatePromptTemplateController);
+router.delete('/prompts/templates/:templateId', prompts.templates.deletePromptTemplateController);
+
+// Prompt assignment routes
+router.post('/prompts/assignments', prompts.assignments.createPromptAssignmentController);
+router.get('/prompts/assignments', prompts.assignments.listPromptAssignmentsController);
+router.get('/prompts/assignments/:assignmentId', prompts.assignments.getPromptAssignmentController);
+router.put('/prompts/assignments/:assignmentId', prompts.assignments.updatePromptAssignmentController);
+router.delete('/prompts/assignments/:assignmentId', prompts.assignments.deletePromptAssignmentController);
+
+// Log viewing routes
+router.get('/logs/validation', logs.listLlmValidationLogsController);
+router.get('/logs/credits', logs.listCreditUsageLogsController);
+router.get('/logs/purgatory', logs.listPurgatoryEventsController);
 
 export default router;

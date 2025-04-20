@@ -1,20 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.connectionManager = exports.generalManager = exports.accountManager = exports.NotificationManager = void 0;
-const account_1 = __importDefault(require("./account"));
-exports.accountManager = account_1.default;
-const general_1 = __importDefault(require("./general"));
-exports.generalManager = general_1.default;
-const connection_1 = __importDefault(require("./connection"));
-exports.connectionManager = connection_1.default;
+import accountManager from './account';
+import generalManager from './general';
+import connectionManager from './connection';
 /**
  * Manager for handling different types of notifications
  * This class serves as a facade for the underlying notification managers
  */
-class NotificationManager {
+export class NotificationManager {
     /**
      * Send an invitation email to a user
      * @param email Email address to send the invitation to
@@ -23,7 +14,7 @@ class NotificationManager {
      * @param inviterName Name of the user who sent the invitation
      */
     async sendInviteEmail(email, token, organizationName, inviterName) {
-        return account_1.default.sendInviteEmail(email, token, organizationName, inviterName);
+        return accountManager.sendInviteEmail(email, token, organizationName, inviterName);
     }
     /**
      * Send a password reset email to a user
@@ -31,7 +22,7 @@ class NotificationManager {
      * @param token Reset token
      */
     async sendPasswordResetEmail(email, token) {
-        return account_1.default.sendPasswordResetEmail(email, token);
+        return accountManager.sendPasswordResetEmail(email, token);
     }
     /**
      * Send a notification email
@@ -40,7 +31,7 @@ class NotificationManager {
      * @param message Email message
      */
     async sendNotificationEmail(email, subject, message) {
-        return general_1.default.sendNotificationEmail(email, subject, message);
+        return generalManager.sendNotificationEmail(email, subject, message);
     }
     /**
      * Send a connection request notification to an organization
@@ -48,7 +39,7 @@ class NotificationManager {
      * @param requestingOrgName Name of the organization requesting the connection
      */
     async sendConnectionRequest(email, requestingOrgName) {
-        return connection_1.default.sendConnectionRequest(email, requestingOrgName);
+        return connectionManager.sendConnectionRequest(email, requestingOrgName);
     }
     /**
      * Send a connection approval notification
@@ -56,7 +47,7 @@ class NotificationManager {
      * @param approvedOrgName Name of the organization that requested the connection
      */
     async sendConnectionApproved(email, approvedOrgName) {
-        return connection_1.default.sendConnectionApproved(email, approvedOrgName);
+        return connectionManager.sendConnectionApproved(email, approvedOrgName);
     }
     /**
      * Send a connection rejection notification
@@ -64,7 +55,7 @@ class NotificationManager {
      * @param rejectedOrgName Name of the organization that requested the connection
      */
     async sendConnectionRejected(email, rejectedOrgName) {
-        return connection_1.default.sendConnectionRejected(email, rejectedOrgName);
+        return connectionManager.sendConnectionRejected(email, rejectedOrgName);
     }
     /**
      * Send a connection termination notification
@@ -73,10 +64,11 @@ class NotificationManager {
      * @param terminatingOrgName Name of the organization terminating the connection
      */
     async sendConnectionTerminated(email, partnerOrgName, terminatingOrgName) {
-        return connection_1.default.sendConnectionTerminated(email, partnerOrgName, terminatingOrgName);
+        return connectionManager.sendConnectionTerminated(email, partnerOrgName, terminatingOrgName);
     }
 }
-exports.NotificationManager = NotificationManager;
+// Export individual managers for direct use
+export { accountManager, generalManager, connectionManager };
 // Create and export a singleton instance
-exports.default = new NotificationManager();
+export default new NotificationManager();
 //# sourceMappingURL=index.js.map

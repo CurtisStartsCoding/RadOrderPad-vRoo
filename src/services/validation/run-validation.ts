@@ -6,7 +6,7 @@ import { stripPHI, extractMedicalKeywords } from '../../utils/text-processing';
 import { callLLMWithFallback } from '../../utils/llm';
 import {
   getActivePromptTemplate,
-  generateDatabaseContext,
+  generateDatabaseContextWithRedis,
   constructPrompt,
   getUserSpecialty,
   getSpecialtyWordCount
@@ -38,9 +38,9 @@ export async function runValidation(
     const promptTemplate = await getActivePromptTemplate();
     console.log('Using prompt template:', promptTemplate.name);
     
-    // 4. Generate database context based on keywords
-    const databaseContext = await generateDatabaseContext(keywords);
-    console.log('Generated database context');
+    // 4. Generate database context based on keywords using RedisSearch
+    const databaseContext = await generateDatabaseContextWithRedis(keywords);
+    console.log('Generated database context using RedisSearch');
     
     // 5. Construct the prompt with hard-coded word limit of 33
     console.log('Using hard-coded word count: 33');

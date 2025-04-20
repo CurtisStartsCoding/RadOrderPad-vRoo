@@ -1,14 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const uploads_1 = require("../controllers/uploads");
-const auth_1 = require("../middleware/auth");
-const router = (0, express_1.Router)();
+import { Router } from 'express';
+import { UploadsController } from '../controllers/uploads';
+import { authenticateJWT, authorizeRole } from '../middleware/auth';
+const router = Router();
 // Apply authentication middleware to all routes
-router.use(auth_1.authenticateJWT);
+router.use(authenticateJWT);
 // Route to get a presigned URL for uploading a file
-router.post('/presigned-url', (0, auth_1.authorizeRole)(['physician', 'admin_referring', 'admin_radiology', 'radiologist', 'admin_staff']), uploads_1.UploadsController.getPresignedUrl);
+router.post('/presigned-url', authorizeRole(['physician', 'admin_referring', 'admin_radiology', 'radiologist', 'admin_staff']), UploadsController.getPresignedUrl);
 // Route to confirm a file upload
-router.post('/confirm', (0, auth_1.authorizeRole)(['physician', 'admin_referring', 'admin_radiology', 'radiologist', 'admin_staff']), uploads_1.UploadsController.confirmUpload);
-exports.default = router;
+router.post('/confirm', authorizeRole(['physician', 'admin_referring', 'admin_radiology', 'radiologist', 'admin_staff']), UploadsController.confirmUpload);
+export default router;
 //# sourceMappingURL=uploads.routes.js.map

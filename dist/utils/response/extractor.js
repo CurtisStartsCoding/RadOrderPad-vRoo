@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.extractPartialInformation = extractPartialInformation;
 /**
  * Extract partial information from a malformed response
  */
-function extractPartialInformation(responseContent) {
+export function extractPartialInformation(responseContent) {
     const result = {};
     // Try to extract compliance score
     const scoreMatch = responseContent.match(/(?:compliance|score)[\s:]+(\d+)/i);

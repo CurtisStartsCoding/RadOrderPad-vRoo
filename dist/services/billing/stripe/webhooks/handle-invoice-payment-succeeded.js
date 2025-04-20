@@ -1,21 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleInvoicePaymentSucceeded = handleInvoicePaymentSucceeded;
-const db_1 = require("../../../../config/db");
-const services_1 = require("../../../../services/notification/services");
+import { getMainDbClient } from '../../../../config/db';
+import { generalNotifications } from '../../../../services/notification/services';
 /**
  * Handle invoice.payment_succeeded event
  * This is triggered when an invoice payment succeeds,
  * either for a subscription renewal or a one-time charge
  */
-async function handleInvoicePaymentSucceeded(event) {
+export async function handleInvoicePaymentSucceeded(event) {
     const invoice = event.data.object;
     const customerId = invoice.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in invoice');
     }
     // Get the organization by Stripe customer ID
-    const client = await (0, db_1.getMainDbClient)();
+    const client = await getMainDbClient();
     try {
         await client.query('BEGIN');
         // Find the organization by Stripe customer ID
@@ -71,7 +68,7 @@ async function handleInvoicePaymentSucceeded(event) {
          AND role IN ('admin_referring', 'admin_radiology')`, [orgId]);
             // Send notifications to all admin users
             for (const admin of adminUsersResult.rows) {
-                await services_1.generalNotifications.sendNotificationEmail(admin.email, 'Your account has been reactivated', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+                await generalNotifications.sendNotificationEmail(admin.email, 'Your account has been reactivated', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
                     `We're pleased to inform you that your organization's account has been reactivated ` +
                     `following the successful payment of your outstanding invoice. ` +
                     `Your organization now has full access to all RadOrderPad features.\n\n` +

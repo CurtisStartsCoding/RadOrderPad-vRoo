@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.applyValidationStatusFilter = applyValidationStatusFilter;
 /**
  * Apply validation status filter to the query
  * @param query Current query string
@@ -17,4 +14,5 @@ function applyValidationStatusFilter(query, params, paramIndex, validationStatus
     }
     return { query, params, paramIndex };
 }
+export { applyValidationStatusFilter };
 //# sourceMappingURL=validation-filter.js.map

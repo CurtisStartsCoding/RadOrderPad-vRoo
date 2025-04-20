@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Service for handling order history operations
  */
@@ -25,5 +23,5 @@ class OrderHistoryService {
         ]);
     }
 }
-exports.default = new OrderHistoryService();
+export default new OrderHistoryService();
 //# sourceMappingURL=order-history.service.js.map

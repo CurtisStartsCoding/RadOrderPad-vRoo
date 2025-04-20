@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const services_1 = require("../services");
+import { listUserLocations, assignUserToLocation, unassignUserFromLocation } from '../services';
 /**
  * Manager for user-location operations
  */
@@ -12,7 +10,7 @@ class UserLocationManager {
      * @returns Promise with locations list
      */
     async listUserLocations(userId, orgId) {
-        return (0, services_1.listUserLocations)(userId, orgId);
+        return listUserLocations(userId, orgId);
     }
     /**
      * Assign a user to a location
@@ -22,7 +20,7 @@ class UserLocationManager {
      * @returns Promise with success status
      */
     async assignUserToLocation(userId, locationId, orgId) {
-        return (0, services_1.assignUserToLocation)(userId, locationId, orgId);
+        return assignUserToLocation(userId, locationId, orgId);
     }
     /**
      * Unassign a user from a location
@@ -32,8 +30,8 @@ class UserLocationManager {
      * @returns Promise with success status
      */
     async unassignUserFromLocation(userId, locationId, orgId) {
-        return (0, services_1.unassignUserFromLocation)(userId, locationId, orgId);
+        return unassignUserFromLocation(userId, locationId, orgId);
     }
 }
-exports.default = new UserLocationManager();
+export default new UserLocationManager();
 //# sourceMappingURL=user-location-manager.js.map

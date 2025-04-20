@@ -96,16 +96,16 @@ This document specifies the features, capabilities, and access levels for the Su
 *(Financial administration)*
 
 -   **View Billing Events:** Display `billing_events` log with filters (org, date, type). Exportable.
--   **View Credit Usage:** Display `credit_usage_logs` with filters (org, user, date). Exportable.
+-   **View Credit Usage:** Display `credit_usage_logs` with filters (org, user, date, action_type). Exportable. API endpoint: `GET /api/superadmin/logs/credits` with pagination and comprehensive filtering.
 -   **Sync Stripe Data:** Button to manually trigger sync with Stripe (e.g., update customer details, check subscription status).
 -   **Manual Credit Grant:** Interface to grant credits to specific organizations (logs to `billing_events`).
--   **View Purgatory Events:** Display `purgatory_events` log.
+-   **View Purgatory Events:** Display `purgatory_events` log with filters (org, date, status, reason). API endpoint: `GET /api/superadmin/logs/purgatory` with pagination and comprehensive filtering.
 
 ### 3.5. Validation & LLM Analytics
 
 *(Platform intelligence and performance monitoring)*
 
-- **View LLM Logs:** Display `llm_validation_logs` with filters (org, user, model, status, date). Analyze fallback rates, latencies, token usage per model.
+- **View LLM Logs:** Display `llm_validation_logs` with filters (org, user, model, status, date, llm_provider). Analyze fallback rates, latencies, token usage per model. API endpoint: `GET /api/superadmin/logs/validation` with pagination and comprehensive filtering options including date ranges.
 - **View Validation Attempts:** (Requires **audited** access to PHI DB or aggregated non-PHI view) Analyze validation outcomes, scores, feedback effectiveness, override reasons (`validation_attempts` data). Filterable by org, physician, date range. **Access must adhere to minimum necessary principle.**
 
 - **Prompt Management:** Comprehensive interface for managing validation prompts:

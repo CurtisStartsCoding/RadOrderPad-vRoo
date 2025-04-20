@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleValidationRequest = handleValidationRequest;
 /**
  * Main handler for validation requests
  */
-const validation_1 = __importDefault(require("../../../services/validation"));
-const draft_order_1 = require("./draft-order");
-const attempt_tracking_1 = require("./attempt-tracking");
+import ValidationService from '../../../services/validation';
+import { createDraftOrder } from './draft-order';
+import { getNextAttemptNumber, logValidationAttempt } from './attempt-tracking';
 /**
  * Handle validation request for an order
  *
@@ -22,18 +16,18 @@ const attempt_tracking_1 = require("./attempt-tracking");
  * @param radiologyOrganizationId - Optional ID of the radiology organization
  * @returns Object containing success status, order ID, and validation result
  */
-async function handleValidationRequest(dictationText, patientInfo, userId, orgId, orderId, isOverrideValidation = false, radiologyOrganizationId) {
+export async function handleValidationRequest(dictationText, patientInfo, userId, orgId, orderId, isOverrideValidation = false, radiologyOrganizationId) {
     try {
         let orderIdToUse;
         let attemptNumber = 1;
         // If no orderId provided, create a draft order
         if (!orderId) {
-            orderIdToUse = await (0, draft_order_1.createDraftOrder)(dictationText, userId, patientInfo, radiologyOrganizationId);
+            orderIdToUse = await createDraftOrder(dictationText, userId, patientInfo, radiologyOrganizationId);
         }
         else {
             orderIdToUse = orderId;
             // Get the current attempt number for this order
-            attemptNumber = await (0, attempt_tracking_1.getNextAttemptNumber)(orderIdToUse);
+            attemptNumber = await getNextAttemptNumber(orderIdToUse);
         }
         // Call the validation engine
         const validationContext = {
@@ -43,9 +37,9 @@ async function handleValidationRequest(dictationText, patientInfo, userId, orgId
             orderId: orderIdToUse,
             isOverrideValidation
         };
-        const validationResult = await validation_1.default.runValidation(dictationText, validationContext);
+        const validationResult = await ValidationService.runValidation(dictationText, validationContext);
         // Log the validation attempt in the PHI database
-        await (0, attempt_tracking_1.logValidationAttempt)(orderIdToUse, attemptNumber, dictationText, validationResult, userId);
+        await logValidationAttempt(orderIdToUse, attemptNumber, dictationText, validationResult, userId);
         // Return the validation result without credit consumption
         return {
             success: true,

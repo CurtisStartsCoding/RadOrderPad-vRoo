@@ -1,16 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePatientInfo = updatePatientInfo;
-const admin_1 = __importDefault(require("../../services/order/admin"));
-const types_1 = require("./types");
+import AdminOrderService from '../../services/order/admin';
+import { handleControllerError } from './types';
 /**
  * Update patient information
  * @route PUT /api/admin/orders/:orderId/patient-info
  */
-async function updatePatientInfo(req, res) {
+export async function updatePatientInfo(req, res) {
     try {
         const orderId = parseInt(req.params.orderId);
         if (isNaN(orderId)) {
@@ -29,12 +23,12 @@ async function updatePatientInfo(req, res) {
             return;
         }
         // Call the service to update the patient information
-        const result = await admin_1.default.updatePatientInfo(orderId, patientData, userId);
+        const result = await AdminOrderService.updatePatientInfo(orderId, patientData, userId);
         res.status(200).json(result);
     }
     catch (error) {
-        (0, types_1.handleControllerError)(error, res, 'updatePatientInfo');
+        handleControllerError(error, res, 'updatePatientInfo');
     }
 }
-exports.default = updatePatientInfo;
+export default updatePatientInfo;
 //# sourceMappingURL=update-patient.controller.js.map

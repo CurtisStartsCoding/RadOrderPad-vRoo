@@ -1,21 +1,21 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleSubscriptionUpdated = handleSubscriptionUpdated;
-const db_1 = require("../../../../../config/db");
-const services_1 = require("../../../../../services/notification/services");
-const map_price_id_to_tier_1 = require("./map-price-id-to-tier");
+import { getMainDbClient } from '../../../../../config/db';
+import { mapPriceIdToTier } from './map-price-id-to-tier';
+import { replenishCreditsForTier } from '../../../../../services/billing/credit-management';
+import { handlePurgatoryTransition, handleReactivationTransition } from './status-transitions';
+import { sendTierChangeNotifications } from './notifications';
+import { StripeWebhookError, OrganizationNotFoundError, DatabaseOperationError } from '../errors';
 /**
  * Handle customer.subscription.updated event
  * This is triggered when a subscription is updated (e.g., plan change, status change)
  */
-async function handleSubscriptionUpdated(event) {
+export async function handleSubscriptionUpdated(event) {
     const subscription = event.data.object;
     const customerId = subscription.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in subscription');
     }
     // Get the organization by Stripe customer ID
-    const client = await (0, db_1.getMainDbClient)();
+    const client = await getMainDbClient();
     try {
         await client.query('BEGIN');
         // Find the organization by Stripe customer ID
@@ -23,7 +23,7 @@ async function handleSubscriptionUpdated(event) {
        FROM organizations 
        WHERE billing_id = $1`, [customerId]);
         if (orgResult.rowCount === 0) {
-            throw new Error(`Organization with Stripe customer ID ${customerId} not found`);
+            throw new OrganizationNotFoundError(customerId);
         }
         const organization = orgResult.rows[0];
         const orgId = organization.id;
@@ -39,7 +39,7 @@ async function handleSubscriptionUpdated(event) {
         let tierChanged = false;
         if (subscriptionItems.length > 0 && subscriptionItems[0].price?.id) {
             const priceId = subscriptionItems[0].price.id;
-            newTier = (0, map_price_id_to_tier_1.mapPriceIdToTier)(priceId);
+            newTier = mapPriceIdToTier(priceId);
             tierChanged = newTier !== currentTier;
         }
         // Handle subscription status changes
@@ -63,9 +63,16 @@ async function handleSubscriptionUpdated(event) {
         }
         // Update organization if tier or status changed
         if (tierChanged || statusChanged) {
-            await client.query(`UPDATE organizations 
-         SET subscription_tier = $1, status = $2 
+            await client.query(`UPDATE organizations
+         SET subscription_tier = $1, status = $2
          WHERE id = $3`, [newTier, newStatus, orgId]);
+            // Replenish credits if tier changed or status changed to active
+            if (tierChanged || (statusChanged && newStatus === 'active')) {
+                // Only replenish credits for referring organizations (they use credits)
+                if (organization.type === 'referring_practice') {
+                    await replenishCreditsForTier(orgId, newTier, client, event.id);
+                }
+            }
             // Log the billing event
             await client.query(`INSERT INTO billing_events 
          (organization_id, event_type, stripe_event_id, description) 
@@ -75,76 +82,18 @@ async function handleSubscriptionUpdated(event) {
                 event.id,
                 `Subscription updated: status=${subscriptionStatus}, tier=${newTier}`
             ]);
-            // If status changed to purgatory, create purgatory event and update relationships
+            // Handle status transitions
             if (statusChanged && newStatus === 'purgatory') {
-                // Create purgatory event
-                await client.query(`INSERT INTO purgatory_events 
-           (organization_id, reason, triggered_by) 
-           VALUES ($1, $2, $3)`, [
-                    orgId,
-                    'subscription_canceled',
-                    'stripe_webhook'
-                ]);
-                // Update organization relationships
-                await client.query(`UPDATE organization_relationships 
-           SET status = 'purgatory' 
-           WHERE (organization_id = $1 OR related_organization_id = $1) 
-           AND status = 'active'`, [orgId]);
-                // Notify admins about purgatory status
-                const adminUsersResult = await client.query(`SELECT email, first_name, last_name 
-           FROM users 
-           WHERE organization_id = $1 
-           AND role IN ('admin_referring', 'admin_radiology')`, [orgId]);
-                for (const admin of adminUsersResult.rows) {
-                    await services_1.generalNotifications.sendNotificationEmail(admin.email, 'IMPORTANT: Account Status Change', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
-                        `We regret to inform you that your organization's account (${orgName}) ` +
-                        `has been placed on hold due to subscription cancellation.\n\n` +
-                        `While your account is on hold, you will have limited access to RadOrderPad features. ` +
-                        `To restore full access, please renew your subscription in your account settings ` +
-                        `or contact our support team for assistance.\n\n` +
-                        `Best regards,\n` +
-                        `The RadOrderPad Team`);
-                }
+                // Handle transition to purgatory
+                await handlePurgatoryTransition(client, orgId, orgName);
             }
             else if (statusChanged && newStatus === 'active') {
-                // If status changed to active, update purgatory events and relationships
-                // Update purgatory events
-                await client.query(`UPDATE purgatory_events 
-           SET status = 'resolved', resolved_at = NOW() 
-           WHERE organization_id = $1 AND status = 'active'`, [orgId]);
-                // Update organization relationships
-                await client.query(`UPDATE organization_relationships 
-           SET status = 'active' 
-           WHERE (organization_id = $1 OR related_organization_id = $1) 
-           AND status = 'purgatory'`, [orgId]);
-                // Notify admins about reactivation
-                const adminUsersResult = await client.query(`SELECT email, first_name, last_name 
-           FROM users 
-           WHERE organization_id = $1 
-           AND role IN ('admin_referring', 'admin_radiology')`, [orgId]);
-                for (const admin of adminUsersResult.rows) {
-                    await services_1.generalNotifications.sendNotificationEmail(admin.email, 'Account Reactivated', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
-                        `We're pleased to inform you that your organization's account (${orgName}) ` +
-                        `has been reactivated. You now have full access to all RadOrderPad features.\n\n` +
-                        `Thank you for your continued partnership.\n\n` +
-                        `Best regards,\n` +
-                        `The RadOrderPad Team`);
-                }
+                // Handle transition to active (reactivation)
+                await handleReactivationTransition(client, orgId, orgName);
             }
-            // If tier changed, notify admins
+            // Handle tier change notifications
             if (tierChanged) {
-                const adminUsersResult = await client.query(`SELECT email, first_name, last_name 
-           FROM users 
-           WHERE organization_id = $1 
-           AND role IN ('admin_referring', 'admin_radiology')`, [orgId]);
-                for (const admin of adminUsersResult.rows) {
-                    await services_1.generalNotifications.sendNotificationEmail(admin.email, 'Subscription Tier Change', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
-                        `Your organization's subscription tier has been updated from ${currentTier} to ${newTier}.\n\n` +
-                        `This change may affect your monthly credit allocation and billing amount. ` +
-                        `Please review your account settings for more details.\n\n` +
-                        `Best regards,\n` +
-                        `The RadOrderPad Team`);
-                }
+                await sendTierChangeNotifications(client, orgId, orgName, currentTier, newTier);
             }
         }
         await client.query('COMMIT');
@@ -153,7 +102,16 @@ async function handleSubscriptionUpdated(event) {
     catch (error) {
         await client.query('ROLLBACK');
         console.error('Error processing subscription update:', error);
-        throw error;
+        // Rethrow as a more specific error if possible
+        if (error instanceof StripeWebhookError) {
+            throw error;
+        }
+        else if (error instanceof Error) {
+            throw new DatabaseOperationError('subscription update', error);
+        }
+        else {
+            throw new Error(`Unknown error during subscription update: ${String(error)}`);
+        }
     }
     finally {
         client.release();

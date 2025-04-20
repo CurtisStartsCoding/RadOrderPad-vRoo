@@ -1,21 +1,36 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapPriceIdToTier = mapPriceIdToTier;
 /**
  * Map Stripe price ID to subscription tier
+ *
+ * This function maps Stripe price IDs to our internal subscription tier names.
+ * It includes both monthly and yearly subscription plans.
  *
  * @param priceId Stripe price ID
  * @returns Subscription tier string
  */
-function mapPriceIdToTier(priceId) {
-    // In a real implementation, this mapping would be stored in a database
-    // or configuration file
+export function mapPriceIdToTier(priceId) {
+    // Comprehensive mapping of Stripe price IDs to internal tier names
     const priceTierMap = {
+        // Monthly plans
         'price_tier1_monthly': 'tier_1',
         'price_tier2_monthly': 'tier_2',
         'price_tier3_monthly': 'tier_3',
-        // Add more mappings as needed
+        // Yearly plans (discounted)
+        'price_tier1_yearly': 'tier_1',
+        'price_tier2_yearly': 'tier_2',
+        'price_tier3_yearly': 'tier_3',
+        // Test price IDs
+        'price_test_tier1': 'tier_1',
+        'price_test_tier2': 'tier_2',
+        'price_test_tier3': 'tier_3',
+        // Production price IDs (to be updated with actual Stripe price IDs)
+        'price_1AbCdEfGhIjKlMnOpQrStUv': 'tier_1',
+        'price_2AbCdEfGhIjKlMnOpQrStUv': 'tier_2',
+        'price_3AbCdEfGhIjKlMnOpQrStUv': 'tier_3'
     };
+    // Log warning if price ID is not found in the mapping
+    if (!priceTierMap[priceId]) {
+        console.warn(`Unknown Stripe price ID: ${priceId}. Defaulting to tier_1.`);
+    }
     return priceTierMap[priceId] || 'tier_1'; // Default to tier_1 if not found
 }
 //# sourceMappingURL=map-price-id-to-tier.js.map

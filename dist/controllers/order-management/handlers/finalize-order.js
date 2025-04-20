@@ -1,29 +1,23 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.finalizeOrder = finalizeOrder;
-const order_service_1 = __importDefault(require("../../../services/order.service"));
-const validation_1 = require("../validation");
-const error_handling_1 = require("../error-handling");
+import OrderService from '../../../services/order.service';
+import { validateOrderId, validateFinalizePayload, validateUserAuth } from '../validation';
+import { handleControllerError } from '../error-handling';
 /**
  * Handles the finalize order request
  * @param req Express request object
  * @param res Express response object
  */
-async function finalizeOrder(req, res) {
+export async function finalizeOrder(req, res) {
     try {
         // Validate order ID
-        if (!(0, validation_1.validateOrderId)(req, res)) {
+        if (!validateOrderId(req, res)) {
             return;
         }
         // Validate payload
-        if (!(0, validation_1.validateFinalizePayload)(req, res)) {
+        if (!validateFinalizePayload(req, res)) {
             return;
         }
         // Validate user authentication
-        const userId = (0, validation_1.validateUserAuth)(req, res);
+        const userId = validateUserAuth(req, res);
         if (!userId) {
             return;
         }
@@ -65,11 +59,11 @@ async function finalizeOrder(req, res) {
             }
         }
         // Call the service to handle the finalization
-        const result = await order_service_1.default.handleFinalizeOrder(orderId, payload, userId);
+        const result = await OrderService.handleFinalizeOrder(orderId, payload, userId);
         res.status(200).json(result);
     }
     catch (error) {
-        (0, error_handling_1.handleControllerError)(error, res, 'finalizeOrder');
+        handleControllerError(error, res, 'finalizeOrder');
     }
 }
 //# sourceMappingURL=finalize-order.js.map

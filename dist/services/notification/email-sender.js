@@ -1,30 +1,24 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AwsSesEmailSender = void 0;
-const client_ses_1 = require("@aws-sdk/client-ses");
-const config_1 = __importDefault(require("../../config/config"));
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import config from '../../config/config';
 /**
  * AWS SES Email Sender implementation
  */
-class AwsSesEmailSender {
+export class AwsSesEmailSender {
     /**
      * Create a new AWS SES Email Sender
      */
     constructor() {
         // Initialize the SES client with AWS credentials and region
-        this.sesClient = new client_ses_1.SESClient({
-            region: config_1.default.aws.region,
+        this.sesClient = new SESClient({
+            region: config.aws.region,
             credentials: {
-                accessKeyId: config_1.default.aws.accessKeyId || '',
-                secretAccessKey: config_1.default.aws.secretAccessKey || ''
+                accessKeyId: config.aws.accessKeyId || '',
+                secretAccessKey: config.aws.secretAccessKey || ''
             }
         });
         // Set the from email address and test mode
-        this.fromEmail = config_1.default.aws.ses.fromEmail;
-        this.testMode = config_1.default.aws.ses.testMode;
+        this.fromEmail = config.aws.ses.fromEmail;
+        this.testMode = config.aws.ses.testMode;
     }
     /**
      * Send an email using AWS SES
@@ -70,7 +64,7 @@ class AwsSesEmailSender {
                 }
             };
             // Send the email
-            const command = new client_ses_1.SendEmailCommand(params);
+            const command = new SendEmailCommand(params);
             await this.sesClient.send(command);
             // Log success
             console.log(`[NOTIFICATION] Email sent successfully to ${to}`);
@@ -82,7 +76,6 @@ class AwsSesEmailSender {
         }
     }
 }
-exports.AwsSesEmailSender = AwsSesEmailSender;
 // Create and export a singleton instance
-exports.default = new AwsSesEmailSender();
+export default new AwsSesEmailSender();
 //# sourceMappingURL=email-sender.js.map

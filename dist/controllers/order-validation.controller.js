@@ -1,14 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrderValidationController = void 0;
-const order_service_1 = __importDefault(require("../services/order.service"));
+import OrderService from '../services/order.service';
 /**
  * Controller for handling order validation
  */
-class OrderValidationController {
+export class OrderValidationController {
     /**
      * Validate an order
      * @route POST /api/orders/validate
@@ -29,7 +23,7 @@ class OrderValidationController {
                 return;
             }
             // Call the service to handle the validation
-            const result = await order_service_1.default.handleValidationRequest(dictationText, patientInfo, userId, orgId, orderId, isOverrideValidation, radiologyOrganizationId);
+            const result = await OrderService.handleValidationRequest(dictationText, patientInfo, userId, orgId, orderId, isOverrideValidation, radiologyOrganizationId);
             res.status(200).json(result);
         }
         catch (error) {
@@ -52,6 +46,5 @@ class OrderValidationController {
         }
     }
 }
-exports.OrderValidationController = OrderValidationController;
-exports.default = new OrderValidationController();
+export default new OrderValidationController();
 //# sourceMappingURL=order-validation.controller.js.map

@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConnectionRequestEmailTemplate = void 0;
-const email_template_base_1 = require("../email-template-base");
+import { BaseEmailTemplate } from '../email-template-base';
 /**
  * Template for connection request emails
  */
-class ConnectionRequestEmailTemplate extends email_template_base_1.BaseEmailTemplate {
+export class ConnectionRequestEmailTemplate extends BaseEmailTemplate {
     /**
      * Generate email content for connection request
      * @param data Connection request data
@@ -44,7 +41,6 @@ ${this.getEmailSignature()}
         };
     }
 }
-exports.ConnectionRequestEmailTemplate = ConnectionRequestEmailTemplate;
 // Create and export a singleton instance
-exports.default = new ConnectionRequestEmailTemplate();
+export default new ConnectionRequestEmailTemplate();
 //# sourceMappingURL=request-template.js.map

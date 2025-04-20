@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = __importDefault(require("dotenv"));
+import dotenv from 'dotenv';
 // Load environment variables
-dotenv_1.default.config();
-exports.default = {
+dotenv.config();
+export default {
     // Server configuration
     port: process.env.PORT || 3000,
     frontendUrl: process.env.FRONTEND_URL || 'https://app.radorderpad.com',

@@ -1,6 +1,6 @@
 # Super Admin API Implementation
 
-**Date:** 2025-04-14
+**Date:** 2025-04-19
 **Author:** Roo
 
 ## Overview
@@ -26,10 +26,31 @@ src/
 │       │   ├── index.ts
 │       │   ├── list-all-organizations.ts
 │       │   └── get-organization-by-id.ts
-│       └── users/
+│       ├── users/
+│       │   ├── index.ts
+│       │   ├── list-all-users.ts
+│       │   └── get-user-by-id.ts
+│       ├── prompts/
+│       │   ├── index.ts
+│       │   ├── templates/
+│       │   │   ├── index.ts
+│       │   │   ├── createPromptTemplate.ts
+│       │   │   ├── getPromptTemplateById.ts
+│       │   │   ├── listPromptTemplates.ts
+│       │   │   ├── updatePromptTemplate.ts
+│       │   │   └── deletePromptTemplate.ts
+│       │   └── assignments/
+│       │       ├── index.ts
+│       │       ├── createPromptAssignment.ts
+│       │       ├── getPromptAssignmentById.ts
+│       │       ├── listPromptAssignments.ts
+│       │       ├── updatePromptAssignment.ts
+│       │       └── deletePromptAssignment.ts
+│       └── logs/
 │           ├── index.ts
-│           ├── list-all-users.ts
-│           └── get-user-by-id.ts
+│           ├── listLlmValidationLogs.ts
+│           ├── listCreditUsageLogs.ts
+│           └── listPurgatoryEvents.ts
 ├── controllers/
 │   └── superadmin/
 │       ├── index.ts
@@ -37,10 +58,16 @@ src/
 │       │   ├── index.ts
 │       │   ├── list-all-organizations.ts
 │       │   └── get-organization-by-id.ts
-│       └── users/
-│           ├── index.ts
-│           ├── list-all-users.ts
-│           └── get-user-by-id.ts
+│       ├── users/
+│       │   ├── index.ts
+│       │   ├── list-all-users.ts
+│       │   └── get-user-by-id.ts
+│       ├── prompts/
+│       │   ├── index.ts
+│       │   ├── templates.ts
+│       │   ├── assignments.ts
+│       │   └── index.ts
+│       └── logs.ts
 └── routes/
     ├── index.ts
     └── superadmin.routes.ts
@@ -56,6 +83,19 @@ The Super Admin API provides the following endpoints:
 | GET | `/api/superadmin/organizations/:orgId` | Get detailed information about a specific organization | `getOrganizationByIdController` |
 | GET | `/api/superadmin/users` | List all users with optional filtering | `listAllUsersController` |
 | GET | `/api/superadmin/users/:userId` | Get detailed information about a specific user | `getUserByIdController` |
+| GET | `/api/superadmin/prompts/templates` | List all prompt templates with optional filtering | `listPromptTemplatesController` |
+| GET | `/api/superadmin/prompts/templates/:templateId` | Get a specific prompt template by ID | `getPromptTemplateByIdController` |
+| POST | `/api/superadmin/prompts/templates` | Create a new prompt template | `createPromptTemplateController` |
+| PUT | `/api/superadmin/prompts/templates/:templateId` | Update an existing prompt template | `updatePromptTemplateController` |
+| DELETE | `/api/superadmin/prompts/templates/:templateId` | Delete a prompt template | `deletePromptTemplateController` |
+| GET | `/api/superadmin/prompts/assignments` | List all prompt assignments with optional filtering | `listPromptAssignmentsController` |
+| GET | `/api/superadmin/prompts/assignments/:assignmentId` | Get a specific prompt assignment by ID | `getPromptAssignmentByIdController` |
+| POST | `/api/superadmin/prompts/assignments` | Create a new prompt assignment | `createPromptAssignmentController` |
+| PUT | `/api/superadmin/prompts/assignments/:assignmentId` | Update an existing prompt assignment | `updatePromptAssignmentController` |
+| DELETE | `/api/superadmin/prompts/assignments/:assignmentId` | Delete a prompt assignment | `deletePromptAssignmentController` |
+| GET | `/api/superadmin/logs/validation` | List LLM validation logs with filtering and pagination | `listLlmValidationLogsController` |
+| GET | `/api/superadmin/logs/credits` | List credit usage logs with filtering and pagination | `listCreditUsageLogsController` |
+| GET | `/api/superadmin/logs/purgatory` | List purgatory events with filtering and pagination | `listPurgatoryEventsController` |
 
 ## Security
 
@@ -78,6 +118,26 @@ All Super Admin API endpoints are protected by:
 - **listAllUsers**: Queries the `users` table with optional filtering by organization ID, email, role, and status
 - **getUserById**: Queries the `users` table by ID and includes related data (location assignments)
 
+#### Prompts
+
+- **createPromptTemplate**: Creates a new prompt template in the `prompt_templates` table
+- **getPromptTemplateById**: Retrieves a specific prompt template by ID
+- **listPromptTemplates**: Lists prompt templates with optional filtering
+- **updatePromptTemplate**: Updates an existing prompt template
+- **deletePromptTemplate**: Soft-deletes a prompt template
+
+- **createPromptAssignment**: Creates a new prompt assignment in the `prompt_assignments` table
+- **getPromptAssignmentById**: Retrieves a specific prompt assignment by ID with joined data
+- **listPromptAssignments**: Lists prompt assignments with optional filtering
+- **updatePromptAssignment**: Updates an existing prompt assignment
+- **deletePromptAssignment**: Deletes a prompt assignment
+
+#### Logs
+
+- **listLlmValidationLogs**: Queries the `llm_validation_logs` table with comprehensive filtering options (organization_id, user_id, date range, status, llm_provider, model_name) and pagination
+- **listCreditUsageLogs**: Queries the `credit_usage_logs` table with filtering (organization_id, user_id, date range, action_type) and pagination
+- **listPurgatoryEvents**: Queries the `purgatory_events` table with filtering (organization_id, date range, status, reason) and pagination
+
 ### Controller Functions
 
 Each controller function:
@@ -96,7 +156,7 @@ The Super Admin API is thoroughly tested using the following:
 
 ### Test Suite
 
-The test suite is located in `tests/superadmin-api.test.js` and includes:
+The test suites include:
 
 - **Authentication Tests**: Verify that endpoints require authentication and the `super_admin` role
 - **Organization Endpoints Tests**:
@@ -105,6 +165,13 @@ The test suite is located in `tests/superadmin-api.test.js` and includes:
 - **User Endpoints Tests**:
   - List all users with and without filters
   - Get user by ID with success and error cases
+- **Prompt Management Tests**:
+  - Create, read, update, and delete prompt templates
+  - Create, read, update, and delete prompt assignments
+- **Log Viewing Tests**:
+  - List LLM validation logs with and without filters
+  - List credit usage logs with and without filters
+  - List purgatory events with and without filters
 
 ### Testing Tools
 
@@ -115,10 +182,15 @@ The test suite is located in `tests/superadmin-api.test.js` and includes:
 
 ### Running Tests
 
-Two scripts are provided to run the tests:
+Multiple test scripts are provided to run the tests:
 
-- `run-superadmin-tests.bat` for Windows
-- `run-superadmin-tests.sh` for Unix-based systems
+- `test-superadmin-prompts.bat`/`.sh`: Tests for prompt template and assignment endpoints
+- `test-superadmin-logs.bat`/`.sh`: Tests for log viewing endpoints
+- `tests/batch/test-superadmin-logs.bat`/`.sh`: Batch versions of the log tests
+
+All tests are included in the main test runners:
+- `run-all-tests.bat` for Windows
+- `run-all-tests.sh` for Unix-based systems
 
 These scripts run the tests with a timeout of 10 seconds to allow for database operations.
 
@@ -127,6 +199,6 @@ These scripts run the tests with a timeout of 10 seconds to allow for database o
 Future enhancements to the Super Admin API may include:
 
 1. Write operations (create, update, delete) for organizations and users
-2. Endpoints for managing billing, credits, and purgatory status
-3. Endpoints for system monitoring and analytics
-4. Audit logging for Super Admin actions
+2. Additional analytics endpoints for system monitoring
+3. Audit logging for Super Admin actions
+4. Real-time dashboard data endpoints

@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.applyModalityFilter = applyModalityFilter;
 /**
  * Apply modality filter to the query
  * @param query Current query string
@@ -9,7 +6,7 @@ exports.applyModalityFilter = applyModalityFilter;
  * @param modality Modality to filter by
  * @returns Updated query, params, and paramIndex
  */
-function applyModalityFilter(query, params, paramIndex, modality) {
+export function applyModalityFilter(query, params, paramIndex, modality) {
     if (modality) {
         query += ` AND o.modality = $${paramIndex}`;
         params.push(modality);

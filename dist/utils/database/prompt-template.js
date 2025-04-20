@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getActivePromptTemplate = getActivePromptTemplate;
-const db_1 = require("../../config/db");
+import { queryMainDb } from '../../config/db';
 /**
  * Get the active default prompt template from the database
  */
-async function getActivePromptTemplate() {
+export async function getActivePromptTemplate() {
     console.log("Looking for active default prompt template");
-    const result = await (0, db_1.queryMainDb)(`SELECT * FROM prompt_templates
+    const result = await queryMainDb(`SELECT * FROM prompt_templates
      WHERE type = 'default' AND active = true
      ORDER BY created_at DESC
      LIMIT 1`);

@@ -1,31 +1,25 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.assignUserToLocation = void 0;
-const location_1 = __importDefault(require("../../../services/location"));
-const types_1 = require("../types");
+import locationService from '../../../services/location';
+import { checkAuthentication, validateUserAndLocationIds, handleControllerError } from '../types';
 /**
  * Assign a user to a location
  * @param req Express request object
  * @param res Express response object
  */
-const assignUserToLocation = async (req, res) => {
+export const assignUserToLocation = async (req, res) => {
     try {
         // Check if user is authenticated
-        if (!(0, types_1.checkAuthentication)(req, res)) {
+        if (!checkAuthentication(req, res)) {
             return;
         }
         // Validate user and location IDs
-        if (!(0, types_1.validateUserAndLocationIds)(req, res)) {
+        if (!validateUserAndLocationIds(req, res)) {
             return;
         }
         const orgId = req.user.orgId;
         const userId = parseInt(req.params.userId);
         const locationId = parseInt(req.params.locationId);
         try {
-            const success = await location_1.default.assignUserToLocation(userId, locationId, orgId);
+            const success = await locationService.assignUserToLocation(userId, locationId, orgId);
             if (success) {
                 res.status(200).json({
                     message: 'User assigned to location successfully',
@@ -48,9 +42,8 @@ const assignUserToLocation = async (req, res) => {
         }
     }
     catch (error) {
-        (0, types_1.handleControllerError)(res, error, 'Failed to assign user to location');
+        handleControllerError(res, error, 'Failed to assign user to location');
     }
 };
-exports.assignUserToLocation = assignUserToLocation;
-exports.default = exports.assignUserToLocation;
+export default assignUserToLocation;
 //# sourceMappingURL=assign-user-to-location.js.map

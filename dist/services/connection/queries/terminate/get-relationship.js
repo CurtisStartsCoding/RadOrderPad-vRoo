@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_RELATIONSHIP_FOR_TERMINATION_QUERY = void 0;
 /**
  * Query to get a relationship for termination
  */
-exports.GET_RELATIONSHIP_FOR_TERMINATION_QUERY = `
+export const GET_RELATIONSHIP_FOR_TERMINATION_QUERY = `
 SELECT r.*, 
        o1.name as org1_name,
        o1.contact_email as org1_email,

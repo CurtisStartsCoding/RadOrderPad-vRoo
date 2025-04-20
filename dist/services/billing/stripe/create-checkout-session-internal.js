@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCheckoutSessionInternal = createCheckoutSessionInternal;
 /**
  * Create a checkout session for purchasing credit bundles
  * This is an internal function used by the StripeService facade
@@ -13,7 +10,7 @@ exports.createCheckoutSessionInternal = createCheckoutSessionInternal;
  * @param cancelUrl URL to redirect to on canceled payment
  * @returns Promise<Stripe.Checkout.Session> The created checkout session
  */
-async function createCheckoutSessionInternal(stripe, customerId, priceId, metadata, successUrl, cancelUrl) {
+export async function createCheckoutSessionInternal(stripe, customerId, priceId, metadata, successUrl, cancelUrl) {
     try {
         const session = await stripe.checkout.sessions.create({
             mode: 'payment',

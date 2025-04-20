@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserRole = void 0;
-var UserRole;
+export var UserRole;
 (function (UserRole) {
     UserRole["ADMIN_REFERRING"] = "admin_referring";
     UserRole["ADMIN_RADIOLOGY"] = "admin_radiology";
@@ -10,5 +7,5 @@ var UserRole;
     UserRole["RADIOLOGIST"] = "radiologist";
     UserRole["SCHEDULER"] = "scheduler";
     UserRole["SUPER_ADMIN"] = "super_admin";
-})(UserRole || (exports.UserRole = UserRole = {}));
+})(UserRole || (UserRole = {}));
 //# sourceMappingURL=User.js.map

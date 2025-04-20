@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateFinalizePayload = validateFinalizePayload;
-const models_1 = require("../../../models");
+import { ValidationStatus } from '../../../models';
 /**
  * Validates the finalize order payload
  * @param req Express request object
  * @param res Express response object
  * @returns true if valid, false if invalid (response is sent in case of invalid)
  */
-function validateFinalizePayload(req, res) {
+export function validateFinalizePayload(req, res) {
     const rawPayload = req.body;
     // Check for required fields in both camelCase and snake_case formats
     const finalValidationStatus = rawPayload.finalValidationStatus || rawPayload.final_validation_status;
@@ -23,7 +20,7 @@ function validateFinalizePayload(req, res) {
         return false;
     }
     // Validate that finalValidationStatus is a valid enum value
-    if (!Object.values(models_1.ValidationStatus).includes(finalValidationStatus)) {
+    if (!Object.values(ValidationStatus).includes(finalValidationStatus)) {
         res.status(400).json({
             message: 'Invalid finalValidationStatus/final_validation_status value'
         });

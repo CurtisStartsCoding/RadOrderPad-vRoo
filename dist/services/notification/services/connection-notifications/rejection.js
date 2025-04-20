@@ -1,26 +1,20 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendConnectionRejected = sendConnectionRejected;
-const config_1 = __importDefault(require("../../../../config/config"));
-const templates_1 = require("../../templates");
-const send_email_1 = __importDefault(require("./send-email"));
+import config from '../../../../config/config';
+import { connectionRejectionTemplate } from '../../templates';
+import sendTemplatedEmail from './send-email';
 /**
  * Send a connection rejection notification
  * @param email Email address of the requesting organization admin
  * @param rejectedOrgName Name of the organization that requested the connection
  */
-async function sendConnectionRejected(email, rejectedOrgName) {
+export async function sendConnectionRejected(email, rejectedOrgName) {
     // Prepare the template data
     const templateData = {
         email,
         rejectedOrgName,
-        frontendUrl: config_1.default.frontendUrl
+        frontendUrl: config.frontendUrl
     };
     // Send the email using the common function
-    await (0, send_email_1.default)(email, templates_1.connectionRejectionTemplate, templateData, 'connection rejection');
+    await sendTemplatedEmail(email, connectionRejectionTemplate, templateData, 'connection rejection');
 }
-exports.default = sendConnectionRejected;
+export default sendConnectionRejected;
 //# sourceMappingURL=rejection.js.map

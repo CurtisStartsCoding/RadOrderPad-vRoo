@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.stripPHI = stripPHI;
 /**
  * Default options for PHI sanitization
  */
@@ -24,7 +21,7 @@ const DEFAULT_PHI_SANITIZER_OPTIONS = {
  * @param options - Options for PHI sanitization
  * @returns Sanitized text with PHI removed
  */
-function stripPHI(text, options = DEFAULT_PHI_SANITIZER_OPTIONS) {
+export function stripPHI(text, options = DEFAULT_PHI_SANITIZER_OPTIONS) {
     // Start with the original text
     let sanitizedText = text;
     // Replace potential MRN numbers (Medical Record Numbers)
@@ -37,14 +34,14 @@ function stripPHI(text, options = DEFAULT_PHI_SANITIZER_OPTIONS) {
     }
     // Replace potential phone numbers (various formats)
     if (options.sanitizePhoneNumbers) {
-        sanitizedText = sanitizedText.replace(/\b\d{3}[-\.\s]?\d{3}[-\.\s]?\d{4}\b/g, '[PHONE]');
-        sanitizedText = sanitizedText.replace(/\(\d{3}\)\s*\d{3}[-\.\s]?\d{4}\b/g, '[PHONE]');
-        sanitizedText = sanitizedText.replace(/\b1[-\.\s]?\d{3}[-\.\s]?\d{3}[-\.\s]?\d{4}\b/g, '[PHONE]');
+        sanitizedText = sanitizedText.replace(/\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g, '[PHONE]');
+        sanitizedText = sanitizedText.replace(/\(\d{3}\)\s*\d{3}[-.\s]?\d{4}\b/g, '[PHONE]');
+        sanitizedText = sanitizedText.replace(/\b1[-.\s]?\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g, '[PHONE]');
     }
     // Replace potential dates (various formats, but preserve age references)
     if (options.sanitizeDates) {
-        sanitizedText = sanitizedText.replace(/\b(0?[1-9]|1[0-2])[\/\-\.](0?[1-9]|[12]\d|3[01])[\/\-\.](19|20)\d{2}\b/g, '[DATE]');
-        sanitizedText = sanitizedText.replace(/\b(19|20)\d{2}[\/\-\.](0?[1-9]|1[0-2])[\/\-\.](0?[1-9]|[12]\d|3[01])\b/g, '[DATE]');
+        sanitizedText = sanitizedText.replace(/\b(0?[1-9]|1[0-2])[/\-.](0?[1-9]|[12]\d|3[01])[/\-.](19|20)\d{2}\b/g, '[DATE]');
+        sanitizedText = sanitizedText.replace(/\b(19|20)\d{2}[/\-.](0?[1-9]|1[0-2])[/\-.](0?[1-9]|[12]\d|3[01])\b/g, '[DATE]');
         sanitizedText = sanitizedText.replace(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* (0?[1-9]|[12]\d|3[01])(st|nd|rd|th)?,? (19|20)\d{2}\b/gi, '[DATE]');
     }
     // Replace potential full names (improved patterns)

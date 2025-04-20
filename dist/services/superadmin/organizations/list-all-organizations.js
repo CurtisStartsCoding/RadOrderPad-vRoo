@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.listAllOrganizations = listAllOrganizations;
-const db_1 = require("../../../config/db");
+import { queryMainDb } from '../../../config/db';
 /**
  * List all organizations with optional filtering
  *
  * @param filters Optional filters for organizations
  * @returns Promise with array of organizations
  */
-async function listAllOrganizations(filters) {
+export async function listAllOrganizations(filters) {
     try {
         // Start building the query
         let query = `
@@ -37,7 +34,7 @@ async function listAllOrganizations(filters) {
         // Add ordering
         query += ` ORDER BY name ASC`;
         // Execute the query
-        const result = await (0, db_1.queryMainDb)(query, params);
+        const result = await queryMainDb(query, params);
         return result.rows;
     }
     catch (error) {

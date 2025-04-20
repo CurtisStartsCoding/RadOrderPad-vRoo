@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPaginationResult = createPaginationResult;
 /**
  * Create pagination result object
  * @param totalCount Total number of items
@@ -8,7 +5,7 @@ exports.createPaginationResult = createPaginationResult;
  * @param limit Items per page
  * @returns Pagination result object
  */
-function createPaginationResult(totalCount, page, limit) {
+export function createPaginationResult(totalCount, page, limit) {
     return {
         total: totalCount,
         page,
@@ -16,5 +13,5 @@ function createPaginationResult(totalCount, page, limit) {
         pages: Math.ceil(totalCount / limit)
     };
 }
-exports.default = createPaginationResult;
+export default createPaginationResult;
 //# sourceMappingURL=pagination-helper.js.map

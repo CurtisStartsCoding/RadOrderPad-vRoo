@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchOrder = fetchOrder;
-const db_1 = require("../../../../config/db");
+import { queryPhiDb } from '../../../../config/db';
 /**
  * Fetch order data from the database
  * @param orderId Order ID
@@ -9,8 +6,8 @@ const db_1 = require("../../../../config/db");
  * @returns Order data
  * @throws Error if order not found or not authorized
  */
-async function fetchOrder(orderId, orgId) {
-    const orderResult = await (0, db_1.queryPhiDb)(`SELECT o.*
+export async function fetchOrder(orderId, orgId) {
+    const orderResult = await queryPhiDb(`SELECT o.*
      FROM orders o
      WHERE o.id = $1 AND o.radiology_organization_id = $2`, [orderId, orgId]);
     if (orderResult.rows.length === 0) {

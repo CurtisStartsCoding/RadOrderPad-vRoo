@@ -1,21 +1,16 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const auth_1 = require("../middleware/auth");
-const location_1 = __importDefault(require("../controllers/location"));
-const router = express_1.default.Router();
+import express from 'express';
+import { authenticateJWT, authorizeRole } from '../middleware/auth';
+import locationController from '../controllers/location';
+const router = express.Router();
 // Middleware to authenticate all routes
-router.use(auth_1.authenticateJWT);
+router.use(authenticateJWT);
 // Only admin roles can manage user-location assignments
 const adminRoles = ['admin_referring', 'admin_radiology'];
 // List locations assigned to a user
-router.get('/:userId/locations', (0, auth_1.authorizeRole)(adminRoles), location_1.default.listUserLocations);
+router.get('/:userId/locations', authorizeRole(adminRoles), locationController.listUserLocations);
 // Assign a user to a location
-router.post('/:userId/locations/:locationId', (0, auth_1.authorizeRole)(adminRoles), location_1.default.assignUserToLocation);
+router.post('/:userId/locations/:locationId', authorizeRole(adminRoles), locationController.assignUserToLocation);
 // Unassign a user from a location
-router.delete('/:userId/locations/:locationId', (0, auth_1.authorizeRole)(adminRoles), location_1.default.unassignUserFromLocation);
-exports.default = router;
+router.delete('/:userId/locations/:locationId', authorizeRole(adminRoles), locationController.unassignUserFromLocation);
+export default router;
 //# sourceMappingURL=user-location.routes.js.map

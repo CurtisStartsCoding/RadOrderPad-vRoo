@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const services_1 = require("./services");
+import { listConnectionsService, requestConnectionService, approveConnectionService, rejectConnectionService, terminateConnectionService } from './services';
 /**
  * Facade for connection services
  */
@@ -11,7 +9,7 @@ class ConnectionManager {
      * @returns Promise with connections list
      */
     async listConnections(orgId) {
-        return services_1.listConnectionsService.listConnections(orgId);
+        return listConnectionsService.listConnections(orgId);
     }
     /**
      * List pending incoming connection requests
@@ -19,7 +17,7 @@ class ConnectionManager {
      * @returns Promise with pending requests list
      */
     async listIncomingRequests(orgId) {
-        return services_1.listConnectionsService.listIncomingRequests(orgId);
+        return listConnectionsService.listIncomingRequests(orgId);
     }
     /**
      * Request a connection to another organization
@@ -27,7 +25,7 @@ class ConnectionManager {
      * @returns Promise with result
      */
     async requestConnection(params) {
-        return services_1.requestConnectionService.requestConnection(params);
+        return requestConnectionService.requestConnection(params);
     }
     /**
      * Approve a connection request
@@ -35,7 +33,7 @@ class ConnectionManager {
      * @returns Promise with result
      */
     async approveConnection(params) {
-        return services_1.approveConnectionService.approveConnection(params);
+        return approveConnectionService.approveConnection(params);
     }
     /**
      * Reject a connection request
@@ -43,7 +41,7 @@ class ConnectionManager {
      * @returns Promise with result
      */
     async rejectConnection(params) {
-        return services_1.rejectConnectionService.rejectConnection(params);
+        return rejectConnectionService.rejectConnection(params);
     }
     /**
      * Terminate an active connection
@@ -51,8 +49,8 @@ class ConnectionManager {
      * @returns Promise with result
      */
     async terminateConnection(params) {
-        return services_1.terminateConnectionService.terminateConnection(params);
+        return terminateConnectionService.terminateConnection(params);
     }
 }
-exports.default = new ConnectionManager();
+export default new ConnectionManager();
 //# sourceMappingURL=connection-manager.js.map

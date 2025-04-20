@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.hasCredits = hasCredits;
-const db_1 = require("../../../config/db");
+import { getMainDbClient } from '../../../config/db';
 /**
  * Check if an organization has sufficient credits
  *
@@ -9,9 +6,9 @@ const db_1 = require("../../../config/db");
  * @returns Promise<boolean> True if the organization has credits, false otherwise
  * @throws Error if the organization is not found or there's a database error
  */
-async function hasCredits(organizationId) {
+export async function hasCredits(organizationId) {
     try {
-        const client = await (0, db_1.getMainDbClient)();
+        const client = await getMainDbClient();
         const result = await client.query('SELECT credit_balance FROM organizations WHERE id = $1', [organizationId]);
         client.release();
         if (result.rows.length === 0) {

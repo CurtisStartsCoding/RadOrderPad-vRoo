@@ -64,7 +64,7 @@ export async function executeTransaction(
     await updateOrderWithFinalData(client, orderId, patientId, payload, userId);
     
     // Generate presigned URL for signature upload if needed
-    let signatureUploadInfo = null;
+    const signatureUploadInfo = null;
     if (payload.signatureData) {
       // For backward compatibility, if signatureData is provided as base64,
       // we'll log a warning but still proceed with the order finalization

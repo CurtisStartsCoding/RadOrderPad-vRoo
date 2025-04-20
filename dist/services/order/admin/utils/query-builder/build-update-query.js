@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildUpdateQuery = buildUpdateQuery;
 /**
  * Build an SQL update query
  * @param tableName Name of the table to update
@@ -12,7 +9,7 @@ exports.buildUpdateQuery = buildUpdateQuery;
  * @param returnFields Fields to return (default: ['id'])
  * @returns Object containing the query string and parameter values
  */
-function buildUpdateQuery(tableName, updateData, idField = 'id', idValue, fieldMap, includeTimestamp = true, returnFields = ['id']) {
+export function buildUpdateQuery(tableName, updateData, idField = 'id', idValue, fieldMap, includeTimestamp = true, returnFields = ['id']) {
     const updateFields = [];
     const updateValues = [];
     let valueIndex = 1;

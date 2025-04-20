@@ -1,12 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.burnCredit = burnCredit;
-const db_1 = require("../../../config/db");
-const config_1 = __importDefault(require("../../../config/config"));
-const errors_1 = require("../errors");
+import { getMainDbClient } from '../../../config/db';
+import config from '../../../config/config';
+import { InsufficientCreditsError } from '../errors';
 /**
  * Record credit usage for an order submission action
  * Decrements the organization's credit balance and logs the usage
@@ -18,14 +12,14 @@ const errors_1 = require("../errors");
  * @returns Promise<boolean> True if successful
  * @throws InsufficientCreditsError if the organization has insufficient credits
  */
-async function burnCredit(organizationId, userId, orderId, actionType) {
+export async function burnCredit(organizationId, userId, orderId, actionType) {
     // Check if billing test mode is enabled
-    if (config_1.default.testMode.billing) {
+    if (config.testMode.billing) {
         console.log(`[TEST MODE] Credit burn skipped for organization ${organizationId}, action: ${actionType}`);
         return true;
     }
     // Get a client for transaction
-    const client = await (0, db_1.getMainDbClient)();
+    const client = await getMainDbClient();
     try {
         // Start transaction
         await client.query('BEGIN');
@@ -38,14 +32,14 @@ async function burnCredit(organizationId, userId, orderId, actionType) {
         if (updateResult.rowCount === 0) {
             // No rows updated means the organization had insufficient credits
             await client.query('ROLLBACK');
-            throw new errors_1.InsufficientCreditsError(`Organization ${organizationId} has insufficient credits`);
+            throw new InsufficientCreditsError(`Organization ${organizationId} has insufficient credits`);
         }
         // Get the new credit balance
         const newBalance = updateResult.rows[0].credit_balance;
         // Double-check that the balance is not negative (should never happen with the WHERE clause above)
         if (newBalance < 0) {
             await client.query('ROLLBACK');
-            throw new errors_1.InsufficientCreditsError(`Organization ${organizationId} has a negative credit balance`);
+            throw new InsufficientCreditsError(`Organization ${organizationId} has a negative credit balance`);
         }
         // 2. Log the credit usage
         await client.query(`INSERT INTO credit_usage_logs 
@@ -62,7 +56,7 @@ async function burnCredit(organizationId, userId, orderId, actionType) {
         // Rollback transaction on error
         await client.query('ROLLBACK');
         // Re-throw InsufficientCreditsError, but wrap other errors
-        if (error instanceof errors_1.InsufficientCreditsError) {
+        if (error instanceof InsufficientCreditsError) {
             throw error;
         }
         else {

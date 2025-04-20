@@ -1,6 +1,11 @@
 import Stripe from 'stripe';
 import { getMainDbClient } from '../../../../config/db';
 import { generalNotifications } from '../../../../services/notification/services';
+import {
+  StripeWebhookError,
+  OrganizationNotFoundError,
+  DatabaseOperationError
+} from './errors';
 
 /**
  * Handle customer.subscription.deleted event
@@ -29,7 +34,7 @@ export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<vo
     );
     
     if (orgResult.rowCount === 0) {
-      throw new Error(`Organization with Stripe customer ID ${customerId} not found`);
+      throw new OrganizationNotFoundError(customerId);
     }
     
     const organization = orgResult.rows[0];
@@ -52,10 +57,10 @@ export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<vo
     
     // If the organization is not already in purgatory, put it in purgatory
     if (currentStatus !== 'purgatory') {
-      // 1. Update organization status
+      // 1. Update organization status and set subscription_tier to null
       await client.query(
-        `UPDATE organizations 
-         SET status = 'purgatory' 
+        `UPDATE organizations
+         SET status = 'purgatory', subscription_tier = NULL
          WHERE id = $1`,
         [orgId]
       );
@@ -92,18 +97,23 @@ export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<vo
       
       // 5. Send notifications to all admin users
       for (const admin of adminUsersResult.rows) {
-        await generalNotifications.sendNotificationEmail(
-          admin.email,
-          'IMPORTANT: Subscription Canceled',
-          `Dear ${admin.first_name} ${admin.last_name},\n\n` +
-          `We regret to inform you that your organization's subscription (${orgName}) ` +
-          `has been canceled, and your account has been placed on hold.\n\n` +
-          `While your account is on hold, you will have limited access to RadOrderPad features. ` +
-          `To restore full access, please renew your subscription in your account settings ` +
-          `or contact our support team for assistance.\n\n` +
-          `Best regards,\n` +
-          `The RadOrderPad Team`
-        );
+        try {
+          await generalNotifications.sendNotificationEmail(
+            admin.email,
+            'IMPORTANT: Subscription Canceled',
+            `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+            `We regret to inform you that your organization's subscription (${orgName}) ` +
+            `has been canceled, and your account has been placed on hold.\n\n` +
+            `While your account is on hold, you will have limited access to RadOrderPad features. ` +
+            `To restore full access, please renew your subscription in your account settings ` +
+            `or contact our support team for assistance.\n\n` +
+            `Best regards,\n` +
+            `The RadOrderPad Team`
+          );
+        } catch (notificationError) {
+          console.error(`Failed to send notification to ${admin.email}:`, notificationError);
+          // Continue processing other admins even if one notification fails
+        }
       }
       
       console.log(`Organization ${orgId} placed in purgatory mode due to subscription cancellation`);
@@ -116,7 +126,15 @@ export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<vo
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Error processing subscription deletion:', error);
-    throw error;
+    
+    // Rethrow as a more specific error if possible
+    if (error instanceof StripeWebhookError) {
+      throw error;
+    } else if (error instanceof Error) {
+      throw new DatabaseOperationError('subscription deletion', error);
+    } else {
+      throw new Error(`Unknown error during subscription deletion: ${String(error)}`);
+    }
   } finally {
     client.release();
   }

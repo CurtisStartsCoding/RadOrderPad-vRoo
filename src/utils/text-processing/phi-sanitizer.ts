@@ -43,15 +43,15 @@ export function stripPHI(text: string, options: PHISanitizerOptions = DEFAULT_PH
   
   // Replace potential phone numbers (various formats)
   if (options.sanitizePhoneNumbers) {
-    sanitizedText = sanitizedText.replace(/\b\d{3}[-\.\s]?\d{3}[-\.\s]?\d{4}\b/g, '[PHONE]');
-    sanitizedText = sanitizedText.replace(/\(\d{3}\)\s*\d{3}[-\.\s]?\d{4}\b/g, '[PHONE]');
-    sanitizedText = sanitizedText.replace(/\b1[-\.\s]?\d{3}[-\.\s]?\d{3}[-\.\s]?\d{4}\b/g, '[PHONE]');
+    sanitizedText = sanitizedText.replace(/\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g, '[PHONE]');
+    sanitizedText = sanitizedText.replace(/\(\d{3}\)\s*\d{3}[-.\s]?\d{4}\b/g, '[PHONE]');
+    sanitizedText = sanitizedText.replace(/\b1[-.\s]?\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g, '[PHONE]');
   }
   
   // Replace potential dates (various formats, but preserve age references)
   if (options.sanitizeDates) {
-    sanitizedText = sanitizedText.replace(/\b(0?[1-9]|1[0-2])[\/\-\.](0?[1-9]|[12]\d|3[01])[\/\-\.](19|20)\d{2}\b/g, '[DATE]');
-    sanitizedText = sanitizedText.replace(/\b(19|20)\d{2}[\/\-\.](0?[1-9]|1[0-2])[\/\-\.](0?[1-9]|[12]\d|3[01])\b/g, '[DATE]');
+    sanitizedText = sanitizedText.replace(/\b(0?[1-9]|1[0-2])[/\-.](0?[1-9]|[12]\d|3[01])[/\-.](19|20)\d{2}\b/g, '[DATE]');
+    sanitizedText = sanitizedText.replace(/\b(19|20)\d{2}[/\-.](0?[1-9]|1[0-2])[/\-.](0?[1-9]|[12]\d|3[01])\b/g, '[DATE]');
     sanitizedText = sanitizedText.replace(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* (0?[1-9]|[12]\d|3[01])(st|nd|rd|th)?,? (19|20)\d{2}\b/gi, '[DATE]');
   }
   

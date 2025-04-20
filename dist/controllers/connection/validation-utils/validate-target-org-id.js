@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateTargetOrgId = validateTargetOrgId;
 /**
  * Validate target organization ID from request body
  * @param req Express request object
@@ -8,7 +5,7 @@ exports.validateTargetOrgId = validateTargetOrgId;
  * @param initiatingOrgId The initiating organization ID for comparison
  * @returns The validated target organization ID if valid, null otherwise
  */
-function validateTargetOrgId(req, res, initiatingOrgId) {
+export function validateTargetOrgId(req, res, initiatingOrgId) {
     const { targetOrgId } = req.body;
     if (!targetOrgId) {
         res.status(400).json({ message: 'Target organization ID is required' });

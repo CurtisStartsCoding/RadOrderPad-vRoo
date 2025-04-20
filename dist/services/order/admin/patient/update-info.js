@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePatientInfo = updatePatientInfo;
-const db_1 = require("../../../../config/db");
+import { queryPhiDb } from '../../../../config/db';
 /**
  * Update patient information
  * @param patientId Patient ID
  * @param patientData Patient data
  * @returns Promise with result
  */
-async function updatePatientInfo(patientId, patientData) {
+export async function updatePatientInfo(patientId, patientData) {
     // Map patientData fields to database columns
     const fieldMap = {
         firstName: 'first_name',
@@ -47,8 +44,8 @@ async function updatePatientInfo(patientId, patientData) {
     WHERE id = $${valueIndex}
     RETURNING id
   `;
-    const result = await (0, db_1.queryPhiDb)(updateQuery, [...updateValues, patientId]);
+    const result = await queryPhiDb(updateQuery, [...updateValues, patientId]);
     return result.rows[0].id;
 }
-exports.default = updatePatientInfo;
+export default updatePatientInfo;
 //# sourceMappingURL=update-info.js.map

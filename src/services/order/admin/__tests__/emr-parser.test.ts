@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Import the module using jest.mock to mock the dependencies
 jest.mock('../emr-parser', () => {
   // Create a mock implementation of parseEmrSummary
@@ -59,6 +60,7 @@ jest.mock('../emr-parser', () => {
 });
 
 // Import the mocked module
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const parseEmrSummary = require('../emr-parser').default;
 
 describe('EMR Parser', () => {

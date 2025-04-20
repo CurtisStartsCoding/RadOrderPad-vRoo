@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePatientFromEmr = updatePatientFromEmr;
-const db_1 = require("../../../../config/db");
+import { queryPhiDb } from '../../../../config/db';
 /**
  * Update patient information from parsed EMR data
  * @param patientId Patient ID
  * @param parsedPatientInfo Parsed patient information
  * @returns Promise with result
  */
-async function updatePatientFromEmr(patientId, parsedPatientInfo) {
+export async function updatePatientFromEmr(patientId, parsedPatientInfo) {
     if (!parsedPatientInfo || Object.keys(parsedPatientInfo).length === 0) {
         return;
     }
@@ -51,8 +48,8 @@ async function updatePatientFromEmr(patientId, parsedPatientInfo) {
       SET ${patientUpdateFields.join(', ')}, updated_at = NOW()
       WHERE id = $${valueIndex}
     `;
-        await (0, db_1.queryPhiDb)(patientUpdateQuery, [...patientUpdateValues, patientId]);
+        await queryPhiDb(patientUpdateQuery, [...patientUpdateValues, patientId]);
     }
 }
-exports.default = updatePatientFromEmr;
+export default updatePatientFromEmr;
 //# sourceMappingURL=update-from-emr.js.map

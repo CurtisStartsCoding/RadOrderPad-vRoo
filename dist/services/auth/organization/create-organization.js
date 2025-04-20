@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createOrganization = createOrganization;
-const types_1 = require("../types");
+import { OrganizationStatus } from '../types';
 /**
  * Create a new organization
  */
-async function createOrganization(client, orgData) {
+export async function createOrganization(client, orgData) {
     const orgResult = await client.query(`INSERT INTO organizations 
     (name, type, npi, tax_id, address_line1, address_line2, city, state, zip_code, 
     phone_number, fax_number, contact_email, website, status, credit_balance) 
@@ -24,7 +21,7 @@ async function createOrganization(client, orgData) {
         orgData.fax_number || null,
         orgData.contact_email || null,
         orgData.website || null,
-        types_1.OrganizationStatus.ACTIVE,
+        OrganizationStatus.ACTIVE,
         0 // Initial credit balance
     ]);
     return orgResult.rows[0];

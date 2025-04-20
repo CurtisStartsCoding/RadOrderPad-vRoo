@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.withTransaction = withTransaction;
-const db_1 = require("../../../../config/db");
+import { getPhiDbClient } from '../../../../config/db';
 /**
  * Execute a function within a database transaction
  * @param callback Function to execute within transaction
  * @returns Promise with result of callback
  */
-async function withTransaction(callback) {
-    const client = await (0, db_1.getPhiDbClient)();
+export async function withTransaction(callback) {
+    const client = await getPhiDbClient();
     try {
         // Start transaction
         await client.query('BEGIN');
@@ -29,5 +26,5 @@ async function withTransaction(callback) {
         client.release();
     }
 }
-exports.default = withTransaction;
+export default withTransaction;
 //# sourceMappingURL=transaction.js.map

@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizeRole = void 0;
 // Import types to ensure Express Request interface is extended
-require("./types");
+import './types';
 /**
  * Middleware to check if user has required role
  */
-const authorizeRole = (roles) => {
+export const authorizeRole = (roles) => {
     return (req, res, next) => {
         if (!req.user) {
             return res.status(401).json({ message: 'User not authenticated' });
@@ -23,5 +20,4 @@ const authorizeRole = (roles) => {
         next();
     };
 };
-exports.authorizeRole = authorizeRole;
 //# sourceMappingURL=authorize-role.js.map

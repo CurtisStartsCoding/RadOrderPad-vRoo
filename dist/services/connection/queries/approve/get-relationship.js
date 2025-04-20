@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_RELATIONSHIP_FOR_APPROVAL_QUERY = void 0;
 /**
  * Query to get a relationship for approval
  */
-exports.GET_RELATIONSHIP_FOR_APPROVAL_QUERY = `
+export const GET_RELATIONSHIP_FOR_APPROVAL_QUERY = `
 SELECT r.*, 
        o1.name as initiating_org_name,
        o1.contact_email as initiating_org_email

@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.categorizeKeywords = categorizeKeywords;
 /**
  * Categorize keywords into different types for more targeted queries
  */
-function categorizeKeywords(keywords) {
+export function categorizeKeywords(keywords) {
     // Common anatomical terms
     const anatomyTermsList = [
         'head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger',

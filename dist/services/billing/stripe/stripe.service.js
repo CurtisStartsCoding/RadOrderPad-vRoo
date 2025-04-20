@@ -1,17 +1,12 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const stripe_1 = __importDefault(require("stripe"));
-const config_1 = __importDefault(require("../../../config/config"));
-const create_checkout_session_internal_1 = require("./create-checkout-session-internal");
+import Stripe from 'stripe';
+import config from '../../../config/config';
+import { createCheckoutSessionInternal } from './create-checkout-session-internal';
 /**
  * Service for interacting with the Stripe API
  */
 class StripeService {
     constructor() {
-        this.stripe = new stripe_1.default(config_1.default.stripe.secretKey || '', {
+        this.stripe = new Stripe(config.stripe.secretKey || '', {
             apiVersion: '2025-03-31.basil', // Use the latest API version
         });
     }
@@ -65,9 +60,9 @@ class StripeService {
      */
     async createCheckoutSession(customerId, priceId, metadata, successUrl, cancelUrl) {
         // Delegate to the standalone function
-        return (0, create_checkout_session_internal_1.createCheckoutSessionInternal)(this.stripe, customerId, priceId, metadata, successUrl, cancelUrl);
+        return createCheckoutSessionInternal(this.stripe, customerId, priceId, metadata, successUrl, cancelUrl);
     }
 }
 // Create and export a singleton instance
-exports.default = new StripeService();
+export default new StripeService();
 //# sourceMappingURL=stripe.service.js.map

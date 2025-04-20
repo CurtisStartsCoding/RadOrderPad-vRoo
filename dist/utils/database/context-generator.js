@@ -1,19 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateDatabaseContext = generateDatabaseContext;
-const db_1 = require("../../config/db");
-const keyword_categorizer_1 = require("./keyword-categorizer");
-const context_formatter_1 = require("./context-formatter");
+import { queryMainDb } from '../../config/db';
+import { categorizeKeywords } from './keyword-categorizer';
+import { formatDatabaseContext } from './context-formatter';
 /**
  * Generate database context based on extracted keywords
  */
-async function generateDatabaseContext(keywords) {
+export async function generateDatabaseContext(keywords) {
     if (keywords.length === 0) {
         return 'No specific medical context found in the input text.';
     }
     console.log('Generating database context with keywords:', keywords);
     // Categorize keywords for more targeted queries
-    const categorizedKeywords = (0, keyword_categorizer_1.categorizeKeywords)(keywords);
+    const categorizedKeywords = categorizeKeywords(keywords);
     console.log('Categorized keywords:', categorizedKeywords);
     // Simple query to find relevant ICD-10 codes
     const icd10Query = `
@@ -26,7 +23,7 @@ async function generateDatabaseContext(keywords) {
   `;
     const icd10Params = keywords.map(keyword => `%${keyword}%`);
     console.log('ICD-10 query params:', icd10Params);
-    const icd10Result = await (0, db_1.queryMainDb)(icd10Query, icd10Params);
+    const icd10Result = await queryMainDb(icd10Query, icd10Params);
     console.log(`Found ${icd10Result.rows.length} relevant ICD-10 codes`);
     // Simple query to find relevant CPT codes
     const cptQuery = `
@@ -39,7 +36,7 @@ async function generateDatabaseContext(keywords) {
   `;
     const cptParams = keywords.map(keyword => `%${keyword}%`);
     console.log('CPT query params:', cptParams);
-    const cptResult = await (0, db_1.queryMainDb)(cptQuery, cptParams);
+    const cptResult = await queryMainDb(cptQuery, cptParams);
     console.log(`Found ${cptResult.rows.length} relevant CPT codes`);
     // Simple query to find relevant mappings
     const mappingQuery = `
@@ -57,7 +54,7 @@ async function generateDatabaseContext(keywords) {
   `;
     const mappingParams = keywords.map(keyword => `%${keyword}%`);
     console.log('Mapping query params:', mappingParams);
-    const mappingResult = await (0, db_1.queryMainDb)(mappingQuery, mappingParams);
+    const mappingResult = await queryMainDb(mappingQuery, mappingParams);
     console.log(`Found ${mappingResult.rows.length} relevant mappings`);
     // Simple query to find relevant markdown docs
     const markdownQuery = `
@@ -71,8 +68,8 @@ async function generateDatabaseContext(keywords) {
   `;
     const markdownParams = keywords.map(keyword => `%${keyword}%`);
     console.log('Markdown query params:', markdownParams);
-    const markdownResult = await (0, db_1.queryMainDb)(markdownQuery, markdownParams);
+    const markdownResult = await queryMainDb(markdownQuery, markdownParams);
     console.log(`Found ${markdownResult.rows.length} relevant markdown docs`);
-    return (0, context_formatter_1.formatDatabaseContext)(icd10Result.rows, cptResult.rows, mappingResult.rows, markdownResult.rows);
+    return formatDatabaseContext(icd10Result.rows, cptResult.rows, mappingResult.rows, markdownResult.rows);
 }
 //# sourceMappingURL=context-generator.js.map

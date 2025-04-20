@@ -1,10 +1,4 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildEmailParams = buildEmailParams;
-const config_1 = __importDefault(require("../../../config/config"));
+import config from '../../../config/config';
 /**
  * Build the email parameters for AWS SES
  * @param to Recipient email address
@@ -13,8 +7,8 @@ const config_1 = __importDefault(require("../../../config/config"));
  * @param htmlBody HTML email body (optional)
  * @returns SendEmailCommandInput object
  */
-function buildEmailParams(to, subject, textBody, htmlBody) {
-    const fromEmail = config_1.default.aws.ses.fromEmail;
+export function buildEmailParams(to, subject, textBody, htmlBody) {
+    const fromEmail = config.aws.ses.fromEmail;
     return {
         Source: fromEmail,
         Destination: {

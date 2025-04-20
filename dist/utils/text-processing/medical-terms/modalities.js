@@ -1,14 +1,10 @@
-"use strict";
 /**
  * Imaging modality terms for medical keyword extraction
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.modalityTerms = void 0;
-exports.isModalityTerm = isModalityTerm;
 /**
  * Common imaging modalities organized by type
  */
-exports.modalityTerms = [
+export const modalityTerms = [
     // X-ray related
     'x-ray', 'xray', 'radiograph', 'radiography', 'plain film',
     // CT related
@@ -30,7 +26,7 @@ exports.modalityTerms = [
  * @param term - The term to check
  * @returns True if the term is an imaging modality term
  */
-function isModalityTerm(term) {
-    return exports.modalityTerms.includes(term.toLowerCase());
+export function isModalityTerm(term) {
+    return modalityTerms.includes(term.toLowerCase());
 }
 //# sourceMappingURL=modalities.js.map

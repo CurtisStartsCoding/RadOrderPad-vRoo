@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.applyPriorityFilter = applyPriorityFilter;
 /**
  * Apply priority filter to the query
  * @param query Current query string
@@ -9,7 +6,7 @@ exports.applyPriorityFilter = applyPriorityFilter;
  * @param priority Priority to filter by
  * @returns Updated query, params, and paramIndex
  */
-function applyPriorityFilter(query, params, paramIndex, priority) {
+export function applyPriorityFilter(query, params, paramIndex, priority) {
     if (priority) {
         query += ` AND o.priority = $${paramIndex}`;
         params.push(priority);

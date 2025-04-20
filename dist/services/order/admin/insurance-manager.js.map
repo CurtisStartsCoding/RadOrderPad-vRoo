@@ -1,1 +1,1 @@
-{"version":3,"file":"insurance-manager.js","sourceRoot":"","sources":["../../../../src/services/order/admin/insurance-manager.ts"],"names":[],"mappings":";AAAA;;;;GAIG;;;AAEH,2CAA0E;AAGxE,oGAHO,+BAAmB,OAGP;AACnB,uGAJ4B,kCAAsB,OAI5B"}
+{"version":3,"file":"insurance-manager.js","sourceRoot":"","sources":["../../../../src/services/order/admin/insurance-manager.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AAEH,OAAO,EAAE,mBAAmB,EAAE,sBAAsB,EAAE,MAAM,aAAa,CAAC;AAE1E,OAAO,EACL,mBAAmB,EACnB,sBAAsB,EACvB,CAAC"}

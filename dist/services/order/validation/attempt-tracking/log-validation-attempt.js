@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.logValidationAttempt = logValidationAttempt;
-const db_1 = require("../../../../config/db");
+import { queryPhiDb } from '../../../../config/db';
 /**
  * Log a validation attempt
  *
@@ -11,8 +8,8 @@ const db_1 = require("../../../../config/db");
  * @param validationResult - The result of the validation
  * @param userId - The ID of the user who initiated the validation
  */
-async function logValidationAttempt(orderId, attemptNumber, dictationText, validationResult, userId) {
-    await (0, db_1.queryPhiDb)(`INSERT INTO validation_attempts 
+export async function logValidationAttempt(orderId, attemptNumber, dictationText, validationResult, userId) {
+    await queryPhiDb(`INSERT INTO validation_attempts 
     (order_id, attempt_number, validation_input_text, validation_outcome, 
     generated_icd10_codes, generated_cpt_codes, generated_feedback_text, 
     generated_compliance_score, user_id, created_at) 

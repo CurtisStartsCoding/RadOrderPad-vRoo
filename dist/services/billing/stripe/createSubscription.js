@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSubscription = createSubscription;
-const stripe_1 = __importDefault(require("stripe"));
-const config_1 = __importDefault(require("../../../config/config"));
-const db_1 = require("../../../config/db");
+import Stripe from 'stripe';
+import config from '../../../config/config';
+import { getMainDbClient } from '../../../config/db';
 // Initialize Stripe client
-const stripe = new stripe_1.default(config_1.default.stripe.secretKey, {
-    apiVersion: config_1.default.stripe.apiVersion,
+const stripe = new Stripe(config.stripe.secretKey, {
+    apiVersion: config.stripe.apiVersion,
 });
 /**
  * Create a Stripe subscription for an organization
@@ -19,9 +13,9 @@ const stripe = new stripe_1.default(config_1.default.stripe.secretKey, {
  * @returns Promise with subscription details including client secret for payment confirmation
  * @throws Error if the organization doesn't have a billing_id or if there's an issue creating the subscription
  */
-async function createSubscription(orgId, priceId) {
+export async function createSubscription(orgId, priceId) {
     // Get a database client
-    const client = await (0, db_1.getMainDbClient)();
+    const client = await getMainDbClient();
     try {
         // Get the organization's Stripe customer ID (billing_id)
         const orgResult = await client.query('SELECT billing_id, name FROM organizations WHERE id = $1', [orgId]);

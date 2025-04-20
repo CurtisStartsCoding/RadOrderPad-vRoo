@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.normalizeCodeArray = normalizeCodeArray;
 /**
  * Normalize code arrays to ensure consistent format
  */
-function normalizeCodeArray(codes) {
+export function normalizeCodeArray(codes) {
     if (!codes)
         return [];
     // If codes is already an array of objects with code and description

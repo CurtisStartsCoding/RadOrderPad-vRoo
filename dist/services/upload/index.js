@@ -1,24 +1,15 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.s3ClientSingleton = exports.confirmUpload = exports.getUploadUrl = exports.FileUploadService = void 0;
-const s3_client_service_1 = require("./s3-client.service");
-Object.defineProperty(exports, "s3ClientSingleton", { enumerable: true, get: function () { return s3_client_service_1.s3ClientSingleton; } });
-const presigned_url_service_1 = __importDefault(require("./presigned-url.service"));
-exports.getUploadUrl = presigned_url_service_1.default;
-const document_upload_service_1 = __importDefault(require("./document-upload.service"));
-exports.confirmUpload = document_upload_service_1.default;
+import { s3ClientSingleton } from './s3-client.service';
+import getUploadUrl from './presigned-url.service';
+import confirmUpload from './document-upload.service';
 /**
  * Service for handling file upload operations using AWS S3
  */
-class FileUploadService {
+export class FileUploadService {
     /**
      * Initialize the S3 client
      */
     static getS3Client() {
-        return s3_client_service_1.s3ClientSingleton.getClient();
+        return s3ClientSingleton.getClient();
     }
     /**
      * Generate a presigned URL for uploading a file to S3
@@ -31,7 +22,7 @@ class FileUploadService {
      * @returns Object containing the presigned URL and the file key
      */
     static async getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType = 'signature') {
-        return (0, presigned_url_service_1.default)(fileType, fileName, contentType, orderId, patientId, documentType);
+        return getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType);
     }
     /**
      * Confirm a file upload and record it in the database
@@ -47,9 +38,10 @@ class FileUploadService {
      * @returns The ID of the created document record
      */
     static async confirmUpload(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId = 1, processingStatus = 'uploaded') {
-        return (0, document_upload_service_1.default)(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId, processingStatus);
+        return confirmUpload(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId, processingStatus);
     }
 }
-exports.FileUploadService = FileUploadService;
-exports.default = FileUploadService;
+export default FileUploadService;
+// Also export individual functions for direct use
+export { getUploadUrl, confirmUpload, s3ClientSingleton };
 //# sourceMappingURL=index.js.map

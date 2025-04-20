@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.confirmUpload = confirmUpload;
-const db_1 = require("../../config/db");
+import { queryPhiDb } from '../../config/db';
 /**
  * Confirm a file upload and record it in the database
  * @param fileKey The S3 file key
@@ -15,7 +12,7 @@ const db_1 = require("../../config/db");
  * @param processingStatus The processing status of the document
  * @returns The ID of the created document record
  */
-async function confirmUpload(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId = 1, // Default to 1 if not provided
+export async function confirmUpload(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId = 1, // Default to 1 if not provided
 processingStatus = 'uploaded' // Default to 'uploaded' if not provided
 ) {
     try {
@@ -35,7 +32,7 @@ processingStatus = 'uploaded' // Default to 'uploaded' if not provided
         }
         else {
             // Normal operation - insert record into document_uploads table
-            const result = await (0, db_1.queryPhiDb)(`INSERT INTO document_uploads
+            const result = await queryPhiDb(`INSERT INTO document_uploads
         (user_id, order_id, patient_id, document_type, filename, file_size, mime_type, file_path, processing_status, uploaded_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
         RETURNING id`, [userId, orderId, patientId, documentType, fileName, fileSize, contentType, fileKey, processingStatus]);
@@ -52,5 +49,5 @@ processingStatus = 'uploaded' // Default to 'uploaded' if not provided
         throw new Error(`Failed to record document upload: ${error.message || 'Unknown error'}`);
     }
 }
-exports.default = confirmUpload;
+export default confirmUpload;
 //# sourceMappingURL=document-upload.service.js.map

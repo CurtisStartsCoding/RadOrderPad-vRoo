@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.listAllOrganizationsController = listAllOrganizationsController;
-const superadmin_1 = require("../../../services/superadmin");
+import { listAllOrganizations } from '../../../services/superadmin';
 /**
  * List all organizations with optional filtering
  * GET /api/superadmin/organizations
  */
-async function listAllOrganizationsController(req, res) {
+export async function listAllOrganizationsController(req, res) {
     try {
         // Extract query parameters for filtering
         const filters = {
@@ -15,7 +12,7 @@ async function listAllOrganizationsController(req, res) {
             status: req.query.status
         };
         // Call the service function
-        const organizations = await (0, superadmin_1.listAllOrganizations)(filters);
+        const organizations = await listAllOrganizations(filters);
         // Return the organizations
         res.status(200).json({
             success: true,

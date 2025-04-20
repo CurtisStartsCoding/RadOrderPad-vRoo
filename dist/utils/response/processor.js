@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.processLLMResponse = processLLMResponse;
-const models_1 = require("../../models");
-const normalizer_1 = require("./normalizer");
-const validator_1 = require("./validator");
-const extractor_1 = require("./extractor");
+import { ValidationStatus } from '../../models';
+import { normalizeResponseFields, normalizeCodeArray } from './normalizer';
+import { validateRequiredFields, validateValidationStatus } from './validator';
+import { extractPartialInformation } from './extractor';
 /**
  * Process the LLM response for validation
  */
-function processLLMResponse(responseContent) {
+export function processLLMResponse(responseContent) {
     try {
         console.log("Processing LLM response:", responseContent.substring(0, 100) + "...");
         // Extract JSON from the response
@@ -36,14 +33,14 @@ function processLLMResponse(responseContent) {
             throw new Error(`Failed to parse JSON from LLM response: ${error instanceof Error ? error.message : String(error)}`);
         }
         // Normalize field names (handle potential casing issues)
-        const normalizedResponse = (0, normalizer_1.normalizeResponseFields)(parsedResponse);
+        const normalizedResponse = normalizeResponseFields(parsedResponse);
         // Validate required fields
-        (0, validator_1.validateRequiredFields)(normalizedResponse);
+        validateRequiredFields(normalizedResponse);
         // Ensure validationStatus is a valid enum value
-        (0, validator_1.validateValidationStatus)(normalizedResponse.validationStatus);
+        validateValidationStatus(normalizedResponse.validationStatus);
         // Normalize ICD-10 and CPT code arrays
-        const normalizedICD10Codes = (0, normalizer_1.normalizeCodeArray)(normalizedResponse.suggestedICD10Codes);
-        const normalizedCPTCodes = (0, normalizer_1.normalizeCodeArray)(normalizedResponse.suggestedCPTCodes);
+        const normalizedICD10Codes = normalizeCodeArray(normalizedResponse.suggestedICD10Codes);
+        const normalizedCPTCodes = normalizeCodeArray(normalizedResponse.suggestedCPTCodes);
         // Return the validation result
         return {
             validationStatus: normalizedResponse.validationStatus,
@@ -58,10 +55,10 @@ function processLLMResponse(responseContent) {
         console.error('Error processing LLM response:', error);
         console.error('Raw response:', responseContent);
         // Try to extract any useful information from the response
-        const extractedInfo = (0, extractor_1.extractPartialInformation)(responseContent);
+        const extractedInfo = extractPartialInformation(responseContent);
         // Return a default error result with any extracted information
         return {
-            validationStatus: models_1.ValidationStatus.NEEDS_CLARIFICATION,
+            validationStatus: ValidationStatus.NEEDS_CLARIFICATION,
             complianceScore: extractedInfo.complianceScore || 0,
             feedback: extractedInfo.feedback || 'Unable to process the validation request. Please try again or contact support if the issue persists.',
             suggestedICD10Codes: extractedInfo.icd10Codes || [],

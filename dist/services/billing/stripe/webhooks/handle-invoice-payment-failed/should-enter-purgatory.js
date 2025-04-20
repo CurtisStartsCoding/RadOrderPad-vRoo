@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.shouldEnterPurgatory = shouldEnterPurgatory;
 /**
  * Determine if an organization should be placed in purgatory mode
  * based on payment failure criteria
@@ -9,7 +6,7 @@ exports.shouldEnterPurgatory = shouldEnterPurgatory;
  * @param organization The organization data from the database
  * @returns boolean indicating whether to place in purgatory
  */
-function shouldEnterPurgatory(invoice, organization) {
+export function shouldEnterPurgatory(invoice, organization) {
     // In a real implementation, this would have more complex logic based on:
     // 1. Number of consecutive failures
     // 2. Total amount outstanding

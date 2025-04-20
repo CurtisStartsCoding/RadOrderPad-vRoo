@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.applySorting = applySorting;
 /**
  * Apply sorting to the query
  * @param query Current query string
@@ -28,4 +25,5 @@ function applySorting(query, sortBy, sortOrder) {
     }
     return query;
 }
+export { applySorting };
 //# sourceMappingURL=sorting.js.map

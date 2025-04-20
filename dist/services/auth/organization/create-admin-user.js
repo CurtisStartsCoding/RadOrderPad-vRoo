@@ -1,17 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createAdminUser = createAdminUser;
-const bcrypt_1 = __importDefault(require("bcrypt"));
+import bcrypt from 'bcrypt';
 /**
  * Create an admin user for an organization
  */
-async function createAdminUser(client, userData, organizationId) {
+export async function createAdminUser(client, userData, organizationId) {
     // Hash the password
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10');
-    const passwordHash = await bcrypt_1.default.hash(userData.password, saltRounds);
+    const passwordHash = await bcrypt.hash(userData.password, saltRounds);
     // Create the admin user
     const userResult = await client.query(`INSERT INTO users
     (organization_id, email, password_hash, first_name, last_name, role, npi,

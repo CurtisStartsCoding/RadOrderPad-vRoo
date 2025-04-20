@@ -1,24 +1,18 @@
-"use strict";
 /**
  * OpenAI GPT API provider
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.callGPT = callGPT;
-const config_1 = __importDefault(require("../../../config/config"));
-const types_1 = require("../types");
+import config from '../../../config/config';
+import { LLMProvider } from '../types';
 /**
  * Call OpenAI GPT API
  */
-async function callGPT(prompt) {
+export async function callGPT(prompt) {
     console.log('Calling OpenAI GPT API...');
-    const apiKey = config_1.default.llm.openaiApiKey;
+    const apiKey = config.llm.openaiApiKey;
     if (!apiKey) {
         throw new Error('OPENAI_API_KEY not set');
     }
-    const modelName = config_1.default.llm.gptModelName;
+    const modelName = config.llm.gptModelName;
     console.log(`Using model: ${modelName}`);
     const startTime = Date.now();
     try {
@@ -33,9 +27,9 @@ async function callGPT(prompt) {
                 messages: [
                     { role: 'user', content: prompt }
                 ],
-                max_tokens: config_1.default.llm.maxTokens
+                max_tokens: config.llm.maxTokens
             }),
-            signal: AbortSignal.timeout(config_1.default.llm.timeout)
+            signal: AbortSignal.timeout(config.llm.timeout)
         });
         if (!response.ok) {
             const errorText = await response.text();
@@ -44,7 +38,7 @@ async function callGPT(prompt) {
         const data = await response.json();
         const endTime = Date.now();
         return {
-            provider: types_1.LLMProvider.OPENAI,
+            provider: LLMProvider.OPENAI,
             model: data.model,
             content: data.choices[0].message.content,
             promptTokens: data.usage.prompt_tokens,

@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PasswordResetEmailTemplate = void 0;
-const email_template_base_1 = require("./email-template-base");
+import { BaseEmailTemplate } from './email-template-base';
 /**
  * Template for password reset emails
  */
-class PasswordResetEmailTemplate extends email_template_base_1.BaseEmailTemplate {
+export class PasswordResetEmailTemplate extends BaseEmailTemplate {
     /**
      * Generate email content for password reset
      * @param data Password reset data
@@ -50,7 +47,6 @@ ${this.getEmailSignature()}
         };
     }
 }
-exports.PasswordResetEmailTemplate = PasswordResetEmailTemplate;
 // Create and export a singleton instance
-exports.default = new PasswordResetEmailTemplate();
+export default new PasswordResetEmailTemplate();
 //# sourceMappingURL=password-reset-template.js.map

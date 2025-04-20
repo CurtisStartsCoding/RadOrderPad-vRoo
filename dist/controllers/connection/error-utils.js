@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleConnectionError = handleConnectionError;
 /**
  * Handle errors in connection controllers
  * @param error The error object
  * @param res Express response object
  * @param controllerName The name of the controller for logging purposes
  */
-function handleConnectionError(error, res, controllerName) {
+export function handleConnectionError(error, res, controllerName) {
     console.error(`Error in ${controllerName} controller:`, error);
     if (error instanceof Error) {
         // Handle not found or not authorized errors

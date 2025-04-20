@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.exportOrder = exportOrder;
-const radiology_1 = __importDefault(require("../../services/order/radiology"));
+import RadiologyOrderService from '../../services/order/radiology';
 /**
  * Export order data in specified format
  * @route GET /api/radiology/orders/:orderId/export/:format
  */
-async function exportOrder(req, res) {
+export async function exportOrder(req, res) {
     try {
         const orderId = parseInt(req.params.orderId);
         const format = req.params.format;
@@ -30,7 +24,7 @@ async function exportOrder(req, res) {
             return;
         }
         // Call the service to export the order
-        const result = await radiology_1.default.exportOrder(orderId, format, orgId);
+        const result = await RadiologyOrderService.exportOrder(orderId, format, orgId);
         // Set appropriate headers based on format
         if (format === 'pdf') {
             res.setHeader('Content-Type', 'application/pdf');
@@ -64,5 +58,5 @@ async function exportOrder(req, res) {
         }
     }
 }
-exports.default = exportOrder;
+export default exportOrder;
 //# sourceMappingURL=export-order.controller.js.map

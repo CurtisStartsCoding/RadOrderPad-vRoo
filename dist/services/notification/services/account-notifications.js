@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AccountNotificationService = void 0;
-const email_sender_1 = __importDefault(require("../email-sender"));
-const templates_1 = require("../templates");
+import emailSender from '../email-sender';
+import { inviteTemplate, passwordResetTemplate } from '../templates';
 /**
  * Service for handling account-related notifications
  */
-class AccountNotificationService {
+export class AccountNotificationService {
     /**
      * Send an invitation email to a user
      * @param email Email address to send the invitation to
@@ -29,9 +23,9 @@ class AccountNotificationService {
             frontendUrl: process.env.FRONTEND_URL || 'https://app.radorderpad.com'
         };
         // Generate the email content
-        const emailContent = templates_1.inviteTemplate.generateContent(templateData);
+        const emailContent = inviteTemplate.generateContent(templateData);
         // Send the email
-        await email_sender_1.default.sendEmail(email, emailContent.subject, emailContent.textBody, emailContent.htmlBody);
+        await emailSender.sendEmail(email, emailContent.subject, emailContent.textBody, emailContent.htmlBody);
     }
     /**
      * Send a password reset email to a user
@@ -48,12 +42,11 @@ class AccountNotificationService {
             frontendUrl: process.env.FRONTEND_URL || 'https://app.radorderpad.com'
         };
         // Generate the email content
-        const emailContent = templates_1.passwordResetTemplate.generateContent(templateData);
+        const emailContent = passwordResetTemplate.generateContent(templateData);
         // Send the email
-        await email_sender_1.default.sendEmail(email, emailContent.subject, emailContent.textBody, emailContent.htmlBody);
+        await emailSender.sendEmail(email, emailContent.subject, emailContent.textBody, emailContent.htmlBody);
     }
 }
-exports.AccountNotificationService = AccountNotificationService;
 // Create and export a singleton instance
-exports.default = new AccountNotificationService();
+export default new AccountNotificationService();
 //# sourceMappingURL=account-notifications.js.map

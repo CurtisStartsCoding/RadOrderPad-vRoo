@@ -1,16 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createStripeCustomer = createStripeCustomer;
-const billing_1 = __importDefault(require("../../../services/billing"));
+import BillingService from '../../../services/billing';
 /**
  * Create a Stripe customer for an organization
  */
-async function createStripeCustomer(organizationId, organizationName, contactEmail) {
+export async function createStripeCustomer(organizationId, organizationName, contactEmail) {
     try {
-        const stripeCustomerId = await billing_1.default.createStripeCustomerForOrg({
+        const stripeCustomerId = await BillingService.createStripeCustomerForOrg({
             orgId: organizationId,
             orgName: organizationName,
             orgEmail: contactEmail

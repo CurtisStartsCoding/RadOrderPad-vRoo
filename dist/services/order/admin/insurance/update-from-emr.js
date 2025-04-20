@@ -1,22 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateInsuranceFromEmr = updateInsuranceFromEmr;
-const db_1 = require("../../../../config/db");
+import { queryPhiDb } from '../../../../config/db';
 /**
  * Update insurance information from EMR data
  * @param patientId Patient ID
  * @param insuranceInfo Parsed insurance information from EMR
  * @returns Promise with insurance ID
  */
-async function updateInsuranceFromEmr(patientId, insuranceInfo) {
+export async function updateInsuranceFromEmr(patientId, insuranceInfo) {
     // Check if patient already has primary insurance
-    const existingInsuranceResult = await (0, db_1.queryPhiDb)(`SELECT id FROM patient_insurance 
+    const existingInsuranceResult = await queryPhiDb(`SELECT id FROM patient_insurance 
      WHERE patient_id = $1 AND is_primary = true`, [patientId]);
     let insuranceId;
     if (existingInsuranceResult.rows.length > 0) {
         // Update existing insurance
         insuranceId = existingInsuranceResult.rows[0].id;
-        await (0, db_1.queryPhiDb)(`UPDATE patient_insurance SET
+        await queryPhiDb(`UPDATE patient_insurance SET
        insurer_name = COALESCE($1, insurer_name),
        policy_number = COALESCE($2, policy_number),
        group_number = COALESCE($3, group_number),
@@ -32,7 +29,7 @@ async function updateInsuranceFromEmr(patientId, insuranceInfo) {
     }
     else {
         // Create new insurance
-        const newInsuranceResult = await (0, db_1.queryPhiDb)(`INSERT INTO patient_insurance
+        const newInsuranceResult = await queryPhiDb(`INSERT INTO patient_insurance
        (patient_id, insurer_name, policy_number, group_number, 
         policy_holder_name, is_primary, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, true, NOW(), NOW())

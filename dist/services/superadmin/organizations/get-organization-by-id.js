@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOrganizationById = getOrganizationById;
-const db_1 = require("../../../config/db");
+import { queryMainDb } from '../../../config/db';
 /**
  * Get an organization by ID
  *
  * @param orgId Organization ID
  * @returns Promise with organization details or null if not found
  */
-async function getOrganizationById(orgId) {
+export async function getOrganizationById(orgId) {
     try {
         // Query for the organization
         const orgQuery = `
@@ -16,7 +13,7 @@ async function getOrganizationById(orgId) {
       FROM organizations
       WHERE id = $1
     `;
-        const orgResult = await (0, db_1.queryMainDb)(orgQuery, [orgId]);
+        const orgResult = await queryMainDb(orgQuery, [orgId]);
         if (orgResult.rowCount === 0) {
             return null;
         }
@@ -28,7 +25,7 @@ async function getOrganizationById(orgId) {
       WHERE organization_id = $1
       ORDER BY last_name, first_name
     `;
-        const usersResult = await (0, db_1.queryMainDb)(usersQuery, [orgId]);
+        const usersResult = await queryMainDb(usersQuery, [orgId]);
         // Get connection relationships
         const connectionsQuery = `
       SELECT r.*, 
@@ -39,7 +36,7 @@ async function getOrganizationById(orgId) {
       JOIN organizations o2 ON r.related_organization_id = o2.id
       WHERE r.organization_id = $1 OR r.related_organization_id = $1
     `;
-        const connectionsResult = await (0, db_1.queryMainDb)(connectionsQuery, [orgId]);
+        const connectionsResult = await queryMainDb(connectionsQuery, [orgId]);
         // Get billing history
         const billingQuery = `
       SELECT *
@@ -47,7 +44,7 @@ async function getOrganizationById(orgId) {
       WHERE organization_id = $1
       ORDER BY created_at DESC
     `;
-        const billingResult = await (0, db_1.queryMainDb)(billingQuery, [orgId]);
+        const billingResult = await queryMainDb(billingQuery, [orgId]);
         // Get purgatory history
         const purgatoryQuery = `
       SELECT *
@@ -55,7 +52,7 @@ async function getOrganizationById(orgId) {
       WHERE organization_id = $1
       ORDER BY created_at DESC
     `;
-        const purgatoryResult = await (0, db_1.queryMainDb)(purgatoryQuery, [orgId]);
+        const purgatoryResult = await queryMainDb(purgatoryQuery, [orgId]);
         // Return organization with related data
         return {
             ...organization,

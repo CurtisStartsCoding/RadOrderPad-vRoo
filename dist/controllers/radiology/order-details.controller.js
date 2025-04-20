@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOrderDetails = getOrderDetails;
-const radiology_1 = __importDefault(require("../../services/order/radiology"));
+import RadiologyOrderService from '../../services/order/radiology';
 /**
  * Get full details of an order
  * @route GET /api/radiology/orders/:orderId
  */
-async function getOrderDetails(req, res) {
+export async function getOrderDetails(req, res) {
     try {
         const orderId = parseInt(req.params.orderId);
         if (isNaN(orderId)) {
@@ -23,7 +17,7 @@ async function getOrderDetails(req, res) {
             return;
         }
         // Call the service to get the order details
-        const result = await radiology_1.default.getOrderDetails(orderId, orgId);
+        const result = await RadiologyOrderService.getOrderDetails(orderId, orgId);
         res.status(200).json(result);
     }
     catch (error) {
@@ -44,5 +38,5 @@ async function getOrderDetails(req, res) {
         }
     }
 }
-exports.default = getOrderDetails;
+export default getOrderDetails;
 //# sourceMappingURL=order-details.controller.js.map

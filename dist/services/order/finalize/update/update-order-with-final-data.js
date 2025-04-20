@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateOrderWithFinalData = updateOrderWithFinalData;
-const models_1 = require("../../../../models");
+import { OrderStatus } from '../../../../models';
 /**
  * Update the order with final data
  *
@@ -11,7 +8,7 @@ const models_1 = require("../../../../models");
  * @param payload The finalize order payload
  * @param userId The ID of the user performing the update
  */
-async function updateOrderWithFinalData(client, orderId, patientId, payload, userId) {
+export async function updateOrderWithFinalData(client, orderId, patientId, payload, userId) {
     await client.query(`UPDATE orders SET
     patient_id = $1,
     status = $2,
@@ -32,7 +29,7 @@ async function updateOrderWithFinalData(client, orderId, patientId, payload, use
     updated_by_user_id = $14
     WHERE id = $15`, [
         patientId,
-        models_1.OrderStatus.PENDING_ADMIN,
+        OrderStatus.PENDING_ADMIN,
         payload.clinicalIndication,
         payload.finalCPTCode,
         payload.finalCPTCodeDescription,

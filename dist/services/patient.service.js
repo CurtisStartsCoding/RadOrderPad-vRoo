@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Service for handling patient-related operations
  */
@@ -27,5 +25,5 @@ class PatientService {
         return patientResult.rows[0].id;
     }
 }
-exports.default = new PatientService();
+export default new PatientService();
 //# sourceMappingURL=patient.service.js.map

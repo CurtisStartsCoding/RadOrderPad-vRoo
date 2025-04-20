@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConnectionTerminationEmailTemplate = void 0;
-const email_template_base_1 = require("../email-template-base");
+import { BaseEmailTemplate } from '../email-template-base';
 /**
  * Template for connection termination emails
  */
-class ConnectionTerminationEmailTemplate extends email_template_base_1.BaseEmailTemplate {
+export class ConnectionTerminationEmailTemplate extends BaseEmailTemplate {
     /**
      * Generate email content for connection termination
      * @param data Connection termination data
@@ -44,7 +41,6 @@ ${this.getEmailSignature()}
         };
     }
 }
-exports.ConnectionTerminationEmailTemplate = ConnectionTerminationEmailTemplate;
 // Create and export a singleton instance
-exports.default = new ConnectionTerminationEmailTemplate();
+export default new ConnectionTerminationEmailTemplate();
 //# sourceMappingURL=termination-template.js.map

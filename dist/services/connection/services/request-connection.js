@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RequestConnectionService = void 0;
-const db_1 = require("../../../config/db");
-const request_1 = require("../queries/request");
-const request_connection_helpers_1 = require("./request-connection-helpers");
+import { getMainDbClient } from '../../../config/db';
+import { CHECK_ORGANIZATIONS_QUERY, CHECK_EXISTING_RELATIONSHIP_QUERY } from '../queries/request';
+import { updateExistingRelationship, createNewRelationship } from './request-connection-helpers';
 /**
  * Service for requesting connections
  */
-class RequestConnectionService {
+export class RequestConnectionService {
     /**
      * Request a connection to another organization
      * @param params Request connection parameters
@@ -15,16 +12,16 @@ class RequestConnectionService {
      */
     async requestConnection(params) {
         const { initiatingOrgId, targetOrgId, initiatingUserId, notes } = params;
-        const client = await (0, db_1.getMainDbClient)();
+        const client = await getMainDbClient();
         try {
             await client.query('BEGIN');
             // Check if the organizations exist
-            const orgsResult = await client.query(request_1.CHECK_ORGANIZATIONS_QUERY, [initiatingOrgId, targetOrgId]);
+            const orgsResult = await client.query(CHECK_ORGANIZATIONS_QUERY, [initiatingOrgId, targetOrgId]);
             if (orgsResult.rows.length !== 2) {
                 throw new Error('One or both organizations not found');
             }
             // Check if a relationship already exists
-            const existingResult = await client.query(request_1.CHECK_EXISTING_RELATIONSHIP_QUERY, [initiatingOrgId, targetOrgId]);
+            const existingResult = await client.query(CHECK_EXISTING_RELATIONSHIP_QUERY, [initiatingOrgId, targetOrgId]);
             if (existingResult.rows.length > 0) {
                 const existing = existingResult.rows[0];
                 // If there's an active relationship, return it
@@ -49,11 +46,11 @@ class RequestConnectionService {
                 }
                 // If there's a rejected or terminated relationship, update it to pending
                 if (existing.status === 'rejected' || existing.status === 'terminated') {
-                    return (0, request_connection_helpers_1.updateExistingRelationship)(client, initiatingOrgId, targetOrgId, initiatingUserId, notes, existing.id, orgsResult.rows);
+                    return updateExistingRelationship(client, initiatingOrgId, targetOrgId, initiatingUserId, notes, existing.id, orgsResult.rows);
                 }
             }
             // Create a new relationship
-            return (0, request_connection_helpers_1.createNewRelationship)(client, initiatingOrgId, targetOrgId, initiatingUserId, notes, orgsResult.rows);
+            return createNewRelationship(client, initiatingOrgId, targetOrgId, initiatingUserId, notes, orgsResult.rows);
         }
         catch (error) {
             await client.query('ROLLBACK');
@@ -65,6 +62,5 @@ class RequestConnectionService {
         }
     }
 }
-exports.RequestConnectionService = RequestConnectionService;
-exports.default = new RequestConnectionService();
+export default new RequestConnectionService();
 //# sourceMappingURL=request-connection.js.map

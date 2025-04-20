@@ -1,26 +1,20 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.rejectConnection = rejectConnection;
-const connection_1 = __importDefault(require("../../services/connection"));
-const auth_utils_1 = require("./auth-utils");
-const error_utils_1 = require("./error-utils");
-const validation_utils_1 = require("./validation-utils");
+import connectionService from '../../services/connection';
+import { authenticateUser } from './auth-utils';
+import { handleConnectionError } from './error-utils';
+import { validateRelationshipId } from './validation-utils';
 /**
  * Reject a connection request
  * @param req Express request object
  * @param res Express response object
  */
-async function rejectConnection(req, res) {
+export async function rejectConnection(req, res) {
     try {
         // Authenticate user
-        const user = (0, auth_utils_1.authenticateUser)(req, res);
+        const user = authenticateUser(req, res);
         if (!user)
             return;
         // Validate relationship ID
-        const relationshipId = (0, validation_utils_1.validateRelationshipId)(req, res);
+        const relationshipId = validateRelationshipId(req, res);
         if (relationshipId === null)
             return;
         // Create rejection parameters
@@ -31,7 +25,7 @@ async function rejectConnection(req, res) {
         };
         try {
             // Reject connection
-            const result = await connection_1.default.rejectConnection(params);
+            const result = await connectionService.rejectConnection(params);
             // Return response
             res.status(200).json(result);
         }
@@ -48,10 +42,10 @@ async function rejectConnection(req, res) {
         }
     }
     catch (error) {
-        (0, error_utils_1.handleConnectionError)(error, res, 'rejectConnection');
+        handleConnectionError(error, res, 'rejectConnection');
     }
 }
-exports.default = {
+export default {
     rejectConnection
 };
 //# sourceMappingURL=reject.controller.js.map

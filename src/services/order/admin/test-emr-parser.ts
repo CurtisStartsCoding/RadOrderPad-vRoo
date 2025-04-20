@@ -1,6 +1,7 @@
-// Simple test script for EMR parser
-const emrParser = require('../../../../dist/services/order/admin/emr-parser');
-const parseEmrSummary = emrParser.default;
+/**
+ * Simple test script for EMR parser
+ */
+import { parseEmrSummary } from './emr-parser';
 
 // Test case 1: Extract patient address information
 const text1 = `
@@ -13,8 +14,10 @@ const text1 = `
   Email: john.doe@example.com
 `;
 
+// eslint-disable-next-line no-console
 console.log('Test Case 1:');
 const result1 = parseEmrSummary(text1);
+// eslint-disable-next-line no-console
 console.log(JSON.stringify(result1, null, 2));
 
 // Test case 2: Extract insurance information
@@ -27,8 +30,10 @@ const text2 = `
   Policy Holder: Jane Doe
 `;
 
+// eslint-disable-next-line no-console
 console.log('\nTest Case 2:');
 const result2 = parseEmrSummary(text2);
+// eslint-disable-next-line no-console
 console.log(JSON.stringify(result2, null, 2));
 
 // Test case 3: Handle different formats of information
@@ -49,6 +54,8 @@ const text3 = `
   Subscriber: Jane Doe
 `;
 
+// eslint-disable-next-line no-console
 console.log('\nTest Case 3:');
 const result3 = parseEmrSummary(text3);
+// eslint-disable-next-line no-console
 console.log(JSON.stringify(result3, null, 2));

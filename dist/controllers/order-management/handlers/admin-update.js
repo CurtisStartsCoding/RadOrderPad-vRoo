@@ -1,22 +1,19 @@
-"use strict";
 /**
  * Admin Update Handler
  *
  * This handler processes requests to add administrative updates to an order.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminUpdate = adminUpdate;
-const error_handling_1 = require("../error-handling");
-const validation_1 = require("../validation");
-const db_1 = require("../../../config/db");
+import { handleControllerError } from '../error-handling';
+import { validateOrderId } from '../validation';
+import { queryMainDb, queryPhiDb } from '../../../config/db';
 /**
  * Add administrative updates to an order
  * @route POST /api/orders/:orderId/admin-update
  */
-async function adminUpdate(req, res) {
+export async function adminUpdate(req, res) {
     try {
         // Validate order ID
-        if (!(0, validation_1.validateOrderId)(req, res)) {
+        if (!validateOrderId(req, res)) {
             return;
         }
         const orderId = parseInt(req.params.orderId);
@@ -30,7 +27,7 @@ async function adminUpdate(req, res) {
         const userId = req.user?.userId;
         // Update the order with admin information
         if (additionalInformation) {
-            await (0, db_1.queryPhiDb)(`UPDATE orders 
+            await queryPhiDb(`UPDATE orders 
          SET 
            admin_notes = CASE 
              WHEN admin_notes IS NULL THEN $1
@@ -43,12 +40,12 @@ async function adminUpdate(req, res) {
         // Process attachments if any
         if (attachments && attachments.length > 0) {
             for (const attachment of attachments) {
-                await (0, db_1.queryPhiDb)(`INSERT INTO order_attachments (order_id, file_path, file_type, uploaded_by, description)
+                await queryPhiDb(`INSERT INTO order_attachments (order_id, file_path, file_type, uploaded_by, description)
            VALUES ($1, $2, $3, $4, $5)`, [orderId, attachment.path, attachment.type, userId, attachment.description || null]);
             }
         }
         // Log the admin update action
-        await (0, db_1.queryMainDb)(`INSERT INTO order_history (order_id, action, performed_by, details)
+        await queryMainDb(`INSERT INTO order_history (order_id, action, performed_by, details)
        VALUES ($1, 'admin_update', $2, $3)`, [orderId, userId, JSON.stringify({
                 hasAdditionalInfo: !!additionalInformation,
                 attachmentCount: attachments ? attachments.length : 0
@@ -61,7 +58,7 @@ async function adminUpdate(req, res) {
         });
     }
     catch (error) {
-        (0, error_handling_1.handleControllerError)(error, res, 'adminUpdate');
+        handleControllerError(error, res, 'adminUpdate');
     }
 }
 //# sourceMappingURL=admin-update.js.map

@@ -105,3 +105,25 @@
 ## Super Admin (`/superadmin`)
 
 -   Endpoints corresponding to features outlined in `super_admin.md`. **(Super Admin Role ONLY)**
+
+### Prompt Templates (`/superadmin/prompts/templates`)
+
+-   `POST /superadmin/prompts/templates`: Create a new prompt template. **(Super Admin Role)**
+-   `GET /superadmin/prompts/templates`: List prompt templates with optional filtering (type, active, version). **(Super Admin Role)**
+-   `GET /superadmin/prompts/templates/{templateId}`: Get a specific prompt template by ID. **(Super Admin Role)**
+-   `PUT /superadmin/prompts/templates/{templateId}`: Update an existing prompt template. **(Super Admin Role)**
+-   `DELETE /superadmin/prompts/templates/{templateId}`: Delete (soft delete) a prompt template. **(Super Admin Role)**
+
+### Prompt Assignments (`/superadmin/prompts/assignments`)
+
+-   `POST /superadmin/prompts/assignments`: Create a new prompt assignment, assigning a template to a physician. **(Super Admin Role)**
+-   `GET /superadmin/prompts/assignments`: List prompt assignments with optional filtering (physician_id, prompt_id, is_active, ab_group). **(Super Admin Role)**
+-   `GET /superadmin/prompts/assignments/{assignmentId}`: Get a specific prompt assignment by ID. **(Super Admin Role)**
+-   `PUT /superadmin/prompts/assignments/{assignmentId}`: Update an existing prompt assignment. **(Super Admin Role)**
+-   `DELETE /superadmin/prompts/assignments/{assignmentId}`: Delete a prompt assignment. **(Super Admin Role)**
+
+### System Logs (`/superadmin/logs`)
+
+-   `GET /superadmin/logs/validation`: List LLM validation logs with optional filtering (organization_id, user_id, date range, status, llm_provider, model_name). **(Super Admin Role)**
+-   `GET /superadmin/logs/credits`: List credit usage logs with optional filtering (organization_id, user_id, date range, action_type). **(Super Admin Role)**
+-   `GET /superadmin/logs/purgatory`: List purgatory events with optional filtering (organization_id, date range, status, reason). **(Super Admin Role)**

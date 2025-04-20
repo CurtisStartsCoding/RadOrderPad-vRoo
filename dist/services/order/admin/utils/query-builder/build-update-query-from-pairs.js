@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildUpdateQueryFromPairs = buildUpdateQueryFromPairs;
 /**
  * Build an SQL update query from a list of field/value pairs
  * @param tableName Name of the table to update
@@ -11,7 +8,7 @@ exports.buildUpdateQueryFromPairs = buildUpdateQueryFromPairs;
  * @param returnFields Fields to return (default: ['id'])
  * @returns Object containing the query string and parameter values
  */
-function buildUpdateQueryFromPairs(tableName, fieldValuePairs, idField = 'id', idValue, includeTimestamp = true, returnFields = ['id']) {
+export function buildUpdateQueryFromPairs(tableName, fieldValuePairs, idField = 'id', idValue, includeTimestamp = true, returnFields = ['id']) {
     const updateFields = [];
     const updateValues = [];
     let valueIndex = 1;

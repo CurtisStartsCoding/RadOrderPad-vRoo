@@ -1,20 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleSubscriptionDeleted = handleSubscriptionDeleted;
-const db_1 = require("../../../../config/db");
-const services_1 = require("../../../../services/notification/services");
+import { getMainDbClient } from '../../../../config/db';
+import { generalNotifications } from '../../../../services/notification/services';
+import { StripeWebhookError, OrganizationNotFoundError, DatabaseOperationError } from './errors';
 /**
  * Handle customer.subscription.deleted event
  * This is triggered when a subscription is canceled
  */
-async function handleSubscriptionDeleted(event) {
+export async function handleSubscriptionDeleted(event) {
     const subscription = event.data.object;
     const customerId = subscription.customer;
     if (!customerId) {
         throw new Error('Missing customer ID in subscription');
     }
     // Get the organization by Stripe customer ID
-    const client = await (0, db_1.getMainDbClient)();
+    const client = await getMainDbClient();
     try {
         await client.query('BEGIN');
         // Find the organization by Stripe customer ID
@@ -22,7 +20,7 @@ async function handleSubscriptionDeleted(event) {
        FROM organizations 
        WHERE billing_id = $1`, [customerId]);
         if (orgResult.rowCount === 0) {
-            throw new Error(`Organization with Stripe customer ID ${customerId} not found`);
+            throw new OrganizationNotFoundError(customerId);
         }
         const organization = orgResult.rows[0];
         const orgId = organization.id;
@@ -39,9 +37,9 @@ async function handleSubscriptionDeleted(event) {
         ]);
         // If the organization is not already in purgatory, put it in purgatory
         if (currentStatus !== 'purgatory') {
-            // 1. Update organization status
-            await client.query(`UPDATE organizations 
-         SET status = 'purgatory' 
+            // 1. Update organization status and set subscription_tier to null
+            await client.query(`UPDATE organizations
+         SET status = 'purgatory', subscription_tier = NULL
          WHERE id = $1`, [orgId]);
             // 2. Create purgatory event
             await client.query(`INSERT INTO purgatory_events 
@@ -63,14 +61,20 @@ async function handleSubscriptionDeleted(event) {
          AND role IN ('admin_referring', 'admin_radiology')`, [orgId]);
             // 5. Send notifications to all admin users
             for (const admin of adminUsersResult.rows) {
-                await services_1.generalNotifications.sendNotificationEmail(admin.email, 'IMPORTANT: Subscription Canceled', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
-                    `We regret to inform you that your organization's subscription (${orgName}) ` +
-                    `has been canceled, and your account has been placed on hold.\n\n` +
-                    `While your account is on hold, you will have limited access to RadOrderPad features. ` +
-                    `To restore full access, please renew your subscription in your account settings ` +
-                    `or contact our support team for assistance.\n\n` +
-                    `Best regards,\n` +
-                    `The RadOrderPad Team`);
+                try {
+                    await generalNotifications.sendNotificationEmail(admin.email, 'IMPORTANT: Subscription Canceled', `Dear ${admin.first_name} ${admin.last_name},\n\n` +
+                        `We regret to inform you that your organization's subscription (${orgName}) ` +
+                        `has been canceled, and your account has been placed on hold.\n\n` +
+                        `While your account is on hold, you will have limited access to RadOrderPad features. ` +
+                        `To restore full access, please renew your subscription in your account settings ` +
+                        `or contact our support team for assistance.\n\n` +
+                        `Best regards,\n` +
+                        `The RadOrderPad Team`);
+                }
+                catch (notificationError) {
+                    console.error(`Failed to send notification to ${admin.email}:`, notificationError);
+                    // Continue processing other admins even if one notification fails
+                }
             }
             console.log(`Organization ${orgId} placed in purgatory mode due to subscription cancellation`);
         }
@@ -80,7 +84,16 @@ async function handleSubscriptionDeleted(event) {
     catch (error) {
         await client.query('ROLLBACK');
         console.error('Error processing subscription deletion:', error);
-        throw error;
+        // Rethrow as a more specific error if possible
+        if (error instanceof StripeWebhookError) {
+            throw error;
+        }
+        else if (error instanceof Error) {
+            throw new DatabaseOperationError('subscription deletion', error);
+        }
+        else {
+            throw new Error(`Unknown error during subscription deletion: ${String(error)}`);
+        }
     }
     finally {
         client.release();
