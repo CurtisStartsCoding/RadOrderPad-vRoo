@@ -1,4 +1,4 @@
-import { EmailContent, EmailTemplateData } from '../../types.js';
+import { EmailContent, ConnectionTerminationEmailData } from '../../types.js';
 import { BaseEmailTemplate } from '../email-template-base.js';
 /**
  * Template for connection termination emails
@@ -9,7 +9,7 @@ export declare class ConnectionTerminationEmailTemplate extends BaseEmailTemplat
      * @param data Connection termination data
      * @returns Email content
      */
-    generateContent(data: EmailTemplateData): EmailContent;
+    generateContent(data: ConnectionTerminationEmailData): EmailContent;
 }
 declare const _default: ConnectionTerminationEmailTemplate;
 export default _default;

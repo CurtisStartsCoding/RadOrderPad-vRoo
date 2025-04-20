@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only --esm src/index.ts",
     "test": "jest",
     "test:stripe-webhooks": "node tests/stripe-webhooks.test.js",
     "test:e2e": "node tests/e2e/run-all-e2e-tests.js",

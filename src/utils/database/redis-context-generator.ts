@@ -41,6 +41,12 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
       }
       console.log('Redis connection successful, proceeding with RedisSearch');
       logger.info('CONTEXT_PATH: Using RedisSearch as primary path');
+      // Add more detailed logging for monitoring and testing
+      logger.debug({
+        message: 'Using RedisSearch for database context generation',
+        keywords,
+        timestamp: new Date().toISOString()
+      });
     } catch (pingError) {
       console.error('Redis connection test error:', pingError);
       console.log('Falling back to PostgreSQL for context generation...');
@@ -119,6 +125,14 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
  */
 async function fallbackToPostgres(keywords: string[]): Promise<string> {
   logger.info('CONTEXT_PATH: Executing PostgreSQL fallback path');
+  
+  // Add more detailed logging for monitoring and testing
+  logger.debug({
+    message: 'Using PostgreSQL fallback for database context generation',
+    keywords,
+    timestamp: new Date().toISOString(),
+    reason: 'Redis unavailable or error'
+  });
   
   try {
     // Categorize keywords for more targeted queries

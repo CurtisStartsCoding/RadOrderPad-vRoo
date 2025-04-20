@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import config from './config/config';
-import routes from './routes';
-import { testDatabaseConnections, closeDatabaseConnections } from './config/db';
+import config from './config/config.js';
+import routes from './routes/index.js';
+import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';
 
 // Create Express app
 const app = express();

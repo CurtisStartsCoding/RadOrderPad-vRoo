@@ -1,0 +1,5266 @@
+{
+  "totalFiles": 481,
+  "totalImportsWithoutExtensions": 790,
+  "filesWithImportsWithoutExtensions": [
+    {
+      "file": "src\\routes\\index.ts",
+      "imports": [
+        {
+          "importPath": "./auth.routes",
+          "fullMatch": "import authRoutes from './auth.routes.js';"
+        },
+        {
+          "importPath": "./orders.routes",
+          "fullMatch": "import orderRoutes from './orders.routes.js';"
+        },
+        {
+          "importPath": "./admin-orders.routes",
+          "fullMatch": "import adminOrderRoutes from './admin-orders.routes.js';"
+        },
+        {
+          "importPath": "./radiology-orders.routes",
+          "fullMatch": "import radiologyOrderRoutes from './radiology-orders.routes.js';"
+        },
+        {
+          "importPath": "./uploads.routes",
+          "fullMatch": "import uploadsRoutes from './uploads.routes.js';"
+        },
+        {
+          "importPath": "./connection.routes",
+          "fullMatch": "import connectionRoutes from './connection.routes.js';"
+        },
+        {
+          "importPath": "./webhooks.routes",
+          "fullMatch": "import webhooksRoutes from './webhooks.routes.js';"
+        },
+        {
+          "importPath": "./organization.routes",
+          "fullMatch": "import organizationRoutes from './organization.routes.js';"
+        },
+        {
+          "importPath": "./user-location.routes",
+          "fullMatch": "import userLocationRoutes from './user-location.routes.js';"
+        },
+        {
+          "importPath": "./superadmin.routes",
+          "fullMatch": "import superadminRoutes from './superadmin.routes.js';"
+        },
+        {
+          "importPath": "./billing.routes",
+          "fullMatch": "import billingRoutes from './billing.routes.js';"
+        }
+      ],
+      "count": 11
+    },
+    {
+      "file": "src\\services\\auth\\organization\\register-organization.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { OrganizationRegistrationDTO, UserRegistrationDTO, RegistrationResponse } from '../types';"
+        },
+        {
+          "importPath": "./verify-registration-key",
+          "fullMatch": "import { verifyRegistrationKey } from './verify-registration-key';"
+        },
+        {
+          "importPath": "./create-organization",
+          "fullMatch": "import { createOrganization } from './create-organization';"
+        },
+        {
+          "importPath": "./create-stripe-customer",
+          "fullMatch": "import { createStripeCustomer } from './create-stripe-customer';"
+        },
+        {
+          "importPath": "./create-admin-user",
+          "fullMatch": "import { createAdminUser } from './create-admin-user';"
+        },
+        {
+          "importPath": "../user/format-user-response",
+          "fullMatch": "import { formatUserResponse } from '../user/format-user-response';"
+        },
+        {
+          "importPath": "../token/generate-token",
+          "fullMatch": "import { generateToken } from '../token/generate-token';"
+        }
+      ],
+      "count": 8
+    },
+    {
+      "file": "src\\services\\order\\radiology\\details\\get-order-details.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { OrderDetails } from '../types';"
+        },
+        {
+          "importPath": "./fetch-order",
+          "fullMatch": "import { fetchOrder } from './fetch-order';"
+        },
+        {
+          "importPath": "./fetch-patient",
+          "fullMatch": "import { fetchPatient } from './fetch-patient';"
+        },
+        {
+          "importPath": "./fetch-insurance",
+          "fullMatch": "import { fetchInsurance } from './fetch-insurance';"
+        },
+        {
+          "importPath": "./fetch-clinical-records",
+          "fullMatch": "import { fetchClinicalRecords } from './fetch-clinical-records';"
+        },
+        {
+          "importPath": "./fetch-document-uploads",
+          "fullMatch": "import { fetchDocumentUploads } from './fetch-document-uploads';"
+        },
+        {
+          "importPath": "./fetch-validation-attempts",
+          "fullMatch": "import { fetchValidationAttempts } from './fetch-validation-attempts';"
+        },
+        {
+          "importPath": "./fetch-order-history",
+          "fullMatch": "import { fetchOrderHistory } from './fetch-order-history';"
+        }
+      ],
+      "count": 8
+    },
+    {
+      "file": "src\\services\\order\\finalize\\transaction\\execute-transaction.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getPhiDbClient } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../models",
+          "fullMatch": "import { Order, OrderStatus } from '../../../../models';"
+        },
+        {
+          "importPath": "../../../patient.service",
+          "fullMatch": "import PatientService from '../../../patient.service';"
+        },
+        {
+          "importPath": "../../../order-history.service",
+          "fullMatch": "import OrderHistoryService from '../../../order-history.service';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { FinalizeOrderPayload, FinalizeOrderResponse, TransactionContext } from '../types';"
+        },
+        {
+          "importPath": "../authorization",
+          "fullMatch": "import { verifyUserAuthorization } from '../authorization';"
+        },
+        {
+          "importPath": "../update",
+          "fullMatch": "import { updateOrderWithFinalData } from '../update';"
+        }
+      ],
+      "count": 7
+    },
+    {
+      "file": "src\\services\\validation\\run-validation.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { ValidationResult } from '../../models';"
+        },
+        {
+          "importPath": "../../utils/text-processing",
+          "fullMatch": "import { stripPHI, extractMedicalKeywords } from '../../utils/text-processing';"
+        },
+        {
+          "importPath": "../../utils/llm",
+          "fullMatch": "import { callLLMWithFallback } from '../../utils/llm';"
+        },
+        {
+          "importPath": "../../utils/database",
+          "fullMatch": "import {\r\n  getActivePromptTemplate,\r\n  generateDatabaseContextWithRedis,\r\n  constructPrompt,\r\n  getUserSpecialty,\r\n  getSpecialtyWordCount\r\n} from '../../utils/database';"
+        },
+        {
+          "importPath": "../../utils/response",
+          "fullMatch": "import { processLLMResponse } from '../../utils/response';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { ValidationContext, ValidationOptions } from './types';"
+        },
+        {
+          "importPath": "./logging",
+          "fullMatch": "import { logValidationAttempt } from './logging';"
+        }
+      ],
+      "count": 7
+    },
+    {
+      "file": "src\\utils\\database\\redis-context-generator.ts",
+      "imports": [
+        {
+          "importPath": "./context-formatter",
+          "fullMatch": "import { formatDatabaseContext } from './context-formatter';"
+        },
+        {
+          "importPath": "./keyword-categorizer",
+          "fullMatch": "import { categorizeKeywords } from './keyword-categorizer';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { ICD10Row, CPTRow, MappingRow, MarkdownRow } from './types';"
+        },
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        },
+        {
+          "importPath": "../redis/search",
+          "fullMatch": "import {\r\n  searchICD10Codes,\r\n  searchCPTCodes,\r\n  getMappings,\r\n  getMarkdownDocs\r\n} from '../redis/search';"
+        },
+        {
+          "importPath": "../../config/redis",
+          "fullMatch": "import { getRedisClient, testRedisConnection } from '../../config/redis';"
+        },
+        {
+          "importPath": "../../utils/logger",
+          "fullMatch": "import logger from '../../utils/logger.js';"
+        }
+      ],
+      "count": 7
+    },
+    {
+      "file": "src\\controllers\\admin-order\\index.ts",
+      "imports": [
+        {
+          "importPath": "./paste-summary.controller",
+          "fullMatch": "import handlePasteSummary from './paste-summary.controller';"
+        },
+        {
+          "importPath": "./paste-supplemental.controller",
+          "fullMatch": "import handlePasteSupplemental from './paste-supplemental.controller';"
+        },
+        {
+          "importPath": "./send-to-radiology.controller",
+          "fullMatch": "import sendToRadiology from './send-to-radiology.controller';"
+        },
+        {
+          "importPath": "./update-patient.controller",
+          "fullMatch": "import updatePatientInfo from './update-patient.controller';"
+        },
+        {
+          "importPath": "./update-insurance.controller",
+          "fullMatch": "import updateInsuranceInfo from './update-insurance.controller';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { AdminOrderControllerInterface } from './types';"
+        }
+      ],
+      "count": 6
+    },
+    {
+      "file": "src\\controllers\\radiology\\index.ts",
+      "imports": [
+        {
+          "importPath": "./incoming-orders.controller",
+          "fullMatch": "import getIncomingOrders from './incoming-orders.controller';"
+        },
+        {
+          "importPath": "./order-details.controller",
+          "fullMatch": "import getOrderDetails from './order-details.controller';"
+        },
+        {
+          "importPath": "./export-order.controller",
+          "fullMatch": "import exportOrder from './export-order.controller';"
+        },
+        {
+          "importPath": "./update-status.controller",
+          "fullMatch": "import updateOrderStatus from './update-status.controller';"
+        },
+        {
+          "importPath": "./request-information.controller",
+          "fullMatch": "import requestInformation from './request-information.controller';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { RadiologyOrderControllerInterface } from './types';"
+        }
+      ],
+      "count": 6
+    },
+    {
+      "file": "src\\services\\auth\\user\\login.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { UserLoginDTO, LoginResponse } from '../types';"
+        },
+        {
+          "importPath": "./find-user-by-email",
+          "fullMatch": "import { findUserByEmail } from './find-user-by-email';"
+        },
+        {
+          "importPath": "./verify-password",
+          "fullMatch": "import { verifyPassword } from './verify-password';"
+        },
+        {
+          "importPath": "./update-last-login",
+          "fullMatch": "import { updateLastLogin } from './update-last-login';"
+        },
+        {
+          "importPath": "./format-user-response",
+          "fullMatch": "import { formatUserResponse } from './format-user-response';"
+        },
+        {
+          "importPath": "../token/generate-token",
+          "fullMatch": "import { generateToken } from '../token/generate-token';"
+        }
+      ],
+      "count": 6
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-subscription-updated\\handle-subscription-updated.ts",
+      "imports": [
+        {
+          "importPath": "../../../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../../../config/db';"
+        },
+        {
+          "importPath": "./map-price-id-to-tier",
+          "fullMatch": "import { mapPriceIdToTier } from './map-price-id-to-tier';"
+        },
+        {
+          "importPath": "../../../../../services/billing/credit-management",
+          "fullMatch": "import { replenishCreditsForTier } from '../../../../../services/billing/credit-management';"
+        },
+        {
+          "importPath": "./status-transitions",
+          "fullMatch": "import { handlePurgatoryTransition, handleReactivationTransition } from './status-transitions';"
+        },
+        {
+          "importPath": "./notifications",
+          "fullMatch": "import { sendTierChangeNotifications } from './notifications';"
+        },
+        {
+          "importPath": "../errors",
+          "fullMatch": "import {\r\n  StripeWebhookError,\r\n  OrganizationNotFoundError,\r\n  DatabaseOperationError\r\n} from '../errors';"
+        }
+      ],
+      "count": 6
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-subscription-updated.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../services/notification/services",
+          "fullMatch": "import { generalNotifications } from '../../../../services/notification/services';"
+        },
+        {
+          "importPath": "../../../../utils/billing/map-price-id-to-tier",
+          "fullMatch": "import { mapPriceIdToTier } from '../../../../utils/billing/map-price-id-to-tier';"
+        },
+        {
+          "importPath": "../../credit/replenish-credits-for-tier",
+          "fullMatch": "import { replenishCreditsForTier } from '../../credit/replenish-credits-for-tier';"
+        },
+        {
+          "importPath": "../../../../utils/logger",
+          "fullMatch": "import logger from '../../../../utils/logger';"
+        },
+        {
+          "importPath": "./errors",
+          "fullMatch": "import {\r\n  StripeWebhookError,\r\n  OrganizationNotFoundError,\r\n  DatabaseOperationError\r\n} from './errors';"
+        }
+      ],
+      "count": 6
+    },
+    {
+      "file": "src\\services\\location\\queries\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list",
+          "fullMatch": "import { listLocations } from './list';"
+        },
+        {
+          "importPath": "./create",
+          "fullMatch": "import { createLocation } from './create';"
+        },
+        {
+          "importPath": "./get",
+          "fullMatch": "import { getLocation } from './get';"
+        },
+        {
+          "importPath": "./update",
+          "fullMatch": "import { updateLocation } from './update';"
+        },
+        {
+          "importPath": "./deactivate",
+          "fullMatch": "import { deactivateLocation } from './deactivate';"
+        },
+        {
+          "importPath": "./user",
+          "fullMatch": "import { \r\n  listUserLocations,\r\n  assignUserToLocation,\r\n  unassignUserFromLocation\r\n} from './user';"
+        }
+      ],
+      "count": 6
+    },
+    {
+      "file": "src\\services\\location\\services\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list-locations",
+          "fullMatch": "import { listLocations } from './list-locations';"
+        },
+        {
+          "importPath": "./create-location",
+          "fullMatch": "import { createLocation } from './create-location';"
+        },
+        {
+          "importPath": "./get-location",
+          "fullMatch": "import { getLocation } from './get-location';"
+        },
+        {
+          "importPath": "./update-location",
+          "fullMatch": "import { updateLocation } from './update-location';"
+        },
+        {
+          "importPath": "./deactivate-location",
+          "fullMatch": "import { deactivateLocation } from './deactivate-location';"
+        },
+        {
+          "importPath": "./user-location-management/",
+          "fullMatch": "import {\r\n  listUserLocations,\r\n  assignUserToLocation,\r\n  unassignUserFromLocation\r\n} from './user-location-management/';"
+        }
+      ],
+      "count": 6
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\order-builder\\filter-orchestrator.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { OrderFilters } from '../../types';"
+        },
+        {
+          "importPath": "./status-filter",
+          "fullMatch": "import { applyStatusFilter } from './status-filter';"
+        },
+        {
+          "importPath": "./organization-filter",
+          "fullMatch": "import { applyReferringOrgFilter } from './organization-filter';"
+        },
+        {
+          "importPath": "./metadata-filters",
+          "fullMatch": "import { applyPriorityFilter, applyModalityFilter } from './metadata-filters';"
+        },
+        {
+          "importPath": "./date-filters",
+          "fullMatch": "import { applyDateRangeFilter } from './date-filters';"
+        },
+        {
+          "importPath": "./validation-filter",
+          "fullMatch": "import { applyValidationStatusFilter } from './validation-filter';"
+        }
+      ],
+      "count": 6
+    },
+    {
+      "file": "src\\controllers\\connection\\approve.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/connection",
+          "fullMatch": "import connectionService from '../../services/connection';"
+        },
+        {
+          "importPath": "../../services/connection/types",
+          "fullMatch": "import { ApproveConnectionParams } from '../../services/connection/types';"
+        },
+        {
+          "importPath": "./auth-utils",
+          "fullMatch": "import { authenticateUser } from './auth-utils';"
+        },
+        {
+          "importPath": "./error-utils",
+          "fullMatch": "import { handleConnectionError } from './error-utils';"
+        },
+        {
+          "importPath": "./validation-utils",
+          "fullMatch": "import { validateRelationshipId } from './validation-utils';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\controllers\\connection\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list",
+          "fullMatch": "import { listConnections, listIncomingRequests } from './list';"
+        },
+        {
+          "importPath": "./request.controller",
+          "fullMatch": "import { requestConnection } from './request.controller';"
+        },
+        {
+          "importPath": "./approve.controller",
+          "fullMatch": "import { approveConnection } from './approve.controller';"
+        },
+        {
+          "importPath": "./reject.controller",
+          "fullMatch": "import { rejectConnection } from './reject.controller';"
+        },
+        {
+          "importPath": "./terminate.controller",
+          "fullMatch": "import { terminateConnection } from './terminate.controller';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\controllers\\connection\\reject.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/connection",
+          "fullMatch": "import connectionService from '../../services/connection';"
+        },
+        {
+          "importPath": "../../services/connection/types",
+          "fullMatch": "import { RejectConnectionParams } from '../../services/connection/types';"
+        },
+        {
+          "importPath": "./auth-utils",
+          "fullMatch": "import { authenticateUser } from './auth-utils';"
+        },
+        {
+          "importPath": "./error-utils",
+          "fullMatch": "import { handleConnectionError } from './error-utils';"
+        },
+        {
+          "importPath": "./validation-utils",
+          "fullMatch": "import { validateRelationshipId } from './validation-utils';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\controllers\\connection\\request.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/connection",
+          "fullMatch": "import connectionService from '../../services/connection';"
+        },
+        {
+          "importPath": "../../services/connection/types",
+          "fullMatch": "import { RequestConnectionParams } from '../../services/connection/types';"
+        },
+        {
+          "importPath": "./auth-utils",
+          "fullMatch": "import { authenticateUser } from './auth-utils';"
+        },
+        {
+          "importPath": "./error-utils",
+          "fullMatch": "import { handleConnectionError } from './error-utils';"
+        },
+        {
+          "importPath": "./validation-utils",
+          "fullMatch": "import { validateTargetOrgId } from './validation-utils';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\controllers\\connection\\terminate.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/connection",
+          "fullMatch": "import connectionService from '../../services/connection';"
+        },
+        {
+          "importPath": "../../services/connection/types",
+          "fullMatch": "import { TerminateConnectionParams } from '../../services/connection/types';"
+        },
+        {
+          "importPath": "./auth-utils",
+          "fullMatch": "import { authenticateUser } from './auth-utils';"
+        },
+        {
+          "importPath": "./error-utils",
+          "fullMatch": "import { handleConnectionError } from './error-utils';"
+        },
+        {
+          "importPath": "./validation-utils",
+          "fullMatch": "import { validateRelationshipId } from './validation-utils';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\controllers\\location\\organization\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list-locations",
+          "fullMatch": "import listLocations from './list-locations';"
+        },
+        {
+          "importPath": "./create-location",
+          "fullMatch": "import createLocation from './create-location';"
+        },
+        {
+          "importPath": "./get-location",
+          "fullMatch": "import getLocation from './get-location';"
+        },
+        {
+          "importPath": "./update-location",
+          "fullMatch": "import updateLocation from './update-location';"
+        },
+        {
+          "importPath": "./deactivate-location",
+          "fullMatch": "import deactivateLocation from './deactivate-location';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\services\\billing\\index.ts",
+      "imports": [
+        {
+          "importPath": "./credit",
+          "fullMatch": "import { burnCredit, hasCredits } from './credit';"
+        },
+        {
+          "importPath": "./stripe",
+          "fullMatch": "import { createSubscription } from './stripe';"
+        },
+        {
+          "importPath": "./errors",
+          "fullMatch": "import { InsufficientCreditsError } from './errors';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { BurnCreditParams, CreateStripeCustomerParams, CreditActionType } from './types';"
+        },
+        {
+          "importPath": "./stripe/webhooks",
+          "fullMatch": "import {\r\n  verifyWebhookSignature,\r\n  handleCheckoutSessionCompleted,\r\n  handleInvoicePaymentSucceeded,\r\n  handleInvoicePaymentFailed,\r\n  handleSubscriptionUpdated,\r\n  handleSubscriptionDeleted\r\n} from './stripe/webhooks';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-invoice-payment-succeeded.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../services/notification/services",
+          "fullMatch": "import { generalNotifications } from '../../../../services/notification/services';"
+        },
+        {
+          "importPath": "../../credit/replenish-credits-for-tier",
+          "fullMatch": "import { replenishCreditsForTier } from '../../credit/replenish-credits-for-tier';"
+        },
+        {
+          "importPath": "../../../../utils/logger",
+          "fullMatch": "import logger from '../../../../utils/logger';"
+        },
+        {
+          "importPath": "./errors",
+          "fullMatch": "import {\r\n  StripeWebhookError,\r\n  OrganizationNotFoundError,\r\n  DatabaseOperationError\r\n} from './errors';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\services\\connection\\services\\reject-connection.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        },
+        {
+          "importPath": "../../notification",
+          "fullMatch": "import notificationManager from '../../notification';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { RejectConnectionParams, ConnectionOperationResponse } from '../types';"
+        },
+        {
+          "importPath": "../queries/approve",
+          "fullMatch": "import { GET_RELATIONSHIP_FOR_APPROVAL_QUERY } from '../queries/approve';"
+        },
+        {
+          "importPath": "../queries/reject",
+          "fullMatch": "import { REJECT_RELATIONSHIP_QUERY } from '../queries/reject';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\services\\order\\admin\\handlers\\index.ts",
+      "imports": [
+        {
+          "importPath": "./paste-summary",
+          "fullMatch": "import handlePasteSummary from './paste-summary';"
+        },
+        {
+          "importPath": "./paste-supplemental",
+          "fullMatch": "import handlePasteSupplemental from './paste-supplemental';"
+        },
+        {
+          "importPath": "./update-patient",
+          "fullMatch": "import updatePatientInfo from './update-patient';"
+        },
+        {
+          "importPath": "./update-insurance",
+          "fullMatch": "import updateInsuranceInfo from './update-insurance';"
+        },
+        {
+          "importPath": "./send-to-radiology",
+          "fullMatch": "import sendToRadiology from './send-to-radiology';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\services\\order\\radiology\\index.ts",
+      "imports": [
+        {
+          "importPath": "./incoming-orders.service",
+          "fullMatch": "import { getIncomingOrders } from './incoming-orders.service';"
+        },
+        {
+          "importPath": "./order-details.service",
+          "fullMatch": "import { getOrderDetails } from './order-details.service';"
+        },
+        {
+          "importPath": "./order-export",
+          "fullMatch": "import { exportOrder } from './order-export';"
+        },
+        {
+          "importPath": "./order-status.service",
+          "fullMatch": "import { updateOrderStatus } from './order-status.service';"
+        },
+        {
+          "importPath": "./information-request.service",
+          "fullMatch": "import { requestInformation } from './information-request.service';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\order-builder\\index.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { OrderFilters } from '../../types';"
+        },
+        {
+          "importPath": "./base-query",
+          "fullMatch": "import { createBaseQuery } from './base-query';"
+        },
+        {
+          "importPath": "./filter-orchestrator",
+          "fullMatch": "import { applyAllFilters } from './filter-orchestrator';"
+        },
+        {
+          "importPath": "./sorting",
+          "fullMatch": "import { applySorting } from './sorting';"
+        },
+        {
+          "importPath": "./pagination",
+          "fullMatch": "import { applyPagination } from './pagination';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\services\\order\\validation\\handler.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/validation",
+          "fullMatch": "import ValidationService from '../../../services/validation';"
+        },
+        {
+          "importPath": "../../../models",
+          "fullMatch": "import { ValidationResult } from '../../../models';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { \r\n  ValidationContext, \r\n  ValidationRequestResponse, \r\n  PatientInfo\r\n} from './types';"
+        },
+        {
+          "importPath": "./draft-order",
+          "fullMatch": "import { createDraftOrder } from './draft-order';"
+        },
+        {
+          "importPath": "./attempt-tracking",
+          "fullMatch": "import { getNextAttemptNumber, logValidationAttempt } from './attempt-tracking';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\utils\\text-processing\\medical-terms\\index.ts",
+      "imports": [
+        {
+          "importPath": "./anatomy",
+          "fullMatch": "import { anatomyTerms, isAnatomyTerm } from './anatomy';"
+        },
+        {
+          "importPath": "./modalities",
+          "fullMatch": "import { modalityTerms, isModalityTerm } from './modalities';"
+        },
+        {
+          "importPath": "./symptoms",
+          "fullMatch": "import { symptomTerms, isSymptomTerm } from './symptoms';"
+        },
+        {
+          "importPath": "./abbreviations",
+          "fullMatch": "import { abbreviationTerms, isAbbreviationTerm } from './abbreviations';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { MedicalKeywordCategory } from '../types';"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "file": "src\\controllers\\order-management\\handlers\\finalize-order.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/order.service",
+          "fullMatch": "import OrderService from '../../../services/order.service';"
+        },
+        {
+          "importPath": "../validation",
+          "fullMatch": "import { validateOrderId, validateFinalizePayload, validateUserAuth } from '../validation';"
+        },
+        {
+          "importPath": "../error-handling",
+          "fullMatch": "import { handleControllerError } from '../error-handling';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { FinalizeOrderPayload } from '../types';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\auth\\index.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { User, UserRegistrationDTO, UserLoginDTO, OrganizationRegistrationDTO, LoginResponse, RegistrationResponse } from './types';"
+        },
+        {
+          "importPath": "./user",
+          "fullMatch": "import { login } from './user';"
+        },
+        {
+          "importPath": "./organization",
+          "fullMatch": "import { registerOrganization } from './organization';"
+        },
+        {
+          "importPath": "./token",
+          "fullMatch": "import { generateToken } from './token';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\billing\\credit\\burn-credit.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        },
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        },
+        {
+          "importPath": "../errors",
+          "fullMatch": "import { InsufficientCreditsError } from '../errors';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { CreditActionType } from '../types';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\create-credit-checkout-session-facade.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "./stripe.service",
+          "fullMatch": "import stripeService from './stripe.service';"
+        },
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        },
+        {
+          "importPath": "./create-credit-checkout-session",
+          "fullMatch": "import { createCreditCheckoutSession } from './create-credit-checkout-session';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-subscription-deleted.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../services/notification/services",
+          "fullMatch": "import { generalNotifications } from '../../../../services/notification/services';"
+        },
+        {
+          "importPath": "../../../../utils/logger",
+          "fullMatch": "import logger from '../../../../utils/logger';"
+        },
+        {
+          "importPath": "./errors",
+          "fullMatch": "import {\r\n  StripeWebhookError,\r\n  OrganizationNotFoundError,\r\n  DatabaseOperationError\r\n} from './errors';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\connection\\services\\approve-connection.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        },
+        {
+          "importPath": "../../notification",
+          "fullMatch": "import notificationManager from '../../notification';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { ApproveConnectionParams, ConnectionOperationResponse } from '../types';"
+        },
+        {
+          "importPath": "../queries/approve",
+          "fullMatch": "import {\r\n  GET_RELATIONSHIP_FOR_APPROVAL_QUERY,\r\n  APPROVE_RELATIONSHIP_QUERY\r\n} from '../queries/approve';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\connection\\services\\request-connection.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { ConnectionOperationResponse, RequestConnectionParams } from '../types';"
+        },
+        {
+          "importPath": "../queries/request",
+          "fullMatch": "import {\r\n  CHECK_ORGANIZATIONS_QUERY,\r\n  CHECK_EXISTING_RELATIONSHIP_QUERY\r\n} from '../queries/request';"
+        },
+        {
+          "importPath": "./request-connection-helpers",
+          "fullMatch": "import { \r\n  updateExistingRelationship, \r\n  createNewRelationship \r\n} from './request-connection-helpers';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\connection\\services\\terminate-connection.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        },
+        {
+          "importPath": "../../notification",
+          "fullMatch": "import notificationManager from '../../notification';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { TerminateConnectionParams, ConnectionOperationResponse } from '../types';"
+        },
+        {
+          "importPath": "../queries/terminate",
+          "fullMatch": "import {\r\n  GET_RELATIONSHIP_FOR_TERMINATION_QUERY,\r\n  TERMINATE_RELATIONSHIP_QUERY\r\n} from '../queries/terminate';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\index.ts",
+      "imports": [
+        {
+          "importPath": "./request/",
+          "fullMatch": "import { sendConnectionRequest } from './request/';"
+        },
+        {
+          "importPath": "./approval",
+          "fullMatch": "import { sendConnectionApproved } from './approval';"
+        },
+        {
+          "importPath": "./rejection",
+          "fullMatch": "import { sendConnectionRejected } from './rejection';"
+        },
+        {
+          "importPath": "./termination",
+          "fullMatch": "import { sendConnectionTerminated } from './termination';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection-notifications\\approval.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/config",
+          "fullMatch": "import config from '../../../../config/config.js';"
+        },
+        {
+          "importPath": "../../templates/index",
+          "fullMatch": "import { connectionApprovalTemplate } from '../../templates/index.js';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { ConnectionApprovalEmailData } from '../../types.js';"
+        },
+        {
+          "importPath": "./send-email",
+          "fullMatch": "import sendTemplatedEmail from './send-email.js';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection-notifications\\index.ts",
+      "imports": [
+        {
+          "importPath": "./request",
+          "fullMatch": "import sendConnectionRequest from './request';"
+        },
+        {
+          "importPath": "./approval",
+          "fullMatch": "import sendConnectionApproved from './approval';"
+        },
+        {
+          "importPath": "./rejection",
+          "fullMatch": "import sendConnectionRejected from './rejection';"
+        },
+        {
+          "importPath": "./termination",
+          "fullMatch": "import sendConnectionTerminated from './termination';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection-notifications\\rejection.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/config",
+          "fullMatch": "import config from '../../../../config/config.js';"
+        },
+        {
+          "importPath": "../../templates/index",
+          "fullMatch": "import { connectionRejectionTemplate } from '../../templates/index.js';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { ConnectionRejectionEmailData } from '../../types.js';"
+        },
+        {
+          "importPath": "./send-email",
+          "fullMatch": "import sendTemplatedEmail from './send-email.js';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection-notifications\\request.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/config",
+          "fullMatch": "import config from '../../../../config/config.js';"
+        },
+        {
+          "importPath": "../../templates/index",
+          "fullMatch": "import { connectionRequestTemplate } from '../../templates/index.js';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { ConnectionRequestEmailData } from '../../types.js';"
+        },
+        {
+          "importPath": "./send-email",
+          "fullMatch": "import sendTemplatedEmail from './send-email.js';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection-notifications\\termination.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/config",
+          "fullMatch": "import config from '../../../../config/config.js';"
+        },
+        {
+          "importPath": "../../templates/index",
+          "fullMatch": "import { connectionTerminationTemplate } from '../../templates/index.js';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { ConnectionTerminationEmailData } from '../../types.js';"
+        },
+        {
+          "importPath": "./send-email",
+          "fullMatch": "import sendTemplatedEmail from './send-email.js';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection-notifications.ts",
+      "imports": [
+        {
+          "importPath": "./connection-notifications/request",
+          "fullMatch": "import sendConnectionRequest from './connection-notifications/request.js';"
+        },
+        {
+          "importPath": "./connection-notifications/approval",
+          "fullMatch": "import sendConnectionApproved from './connection-notifications/approval.js';"
+        },
+        {
+          "importPath": "./connection-notifications/rejection",
+          "fullMatch": "import sendConnectionRejected from './connection-notifications/rejection.js';"
+        },
+        {
+          "importPath": "./connection-notifications/termination",
+          "fullMatch": "import sendConnectionTerminated from './connection-notifications/termination.js';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\templates\\connection\\index.ts",
+      "imports": [
+        {
+          "importPath": "./request-template",
+          "fullMatch": "import requestTemplate from './request-template.js';"
+        },
+        {
+          "importPath": "./approval-template",
+          "fullMatch": "import approvalTemplate from './approval-template.js';"
+        },
+        {
+          "importPath": "./rejection-template",
+          "fullMatch": "import rejectionTemplate from './rejection-template.js';"
+        },
+        {
+          "importPath": "./termination-template",
+          "fullMatch": "import terminationTemplate from './termination-template.js';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\notification\\templates\\index.ts",
+      "imports": [
+        {
+          "importPath": "./invite-template",
+          "fullMatch": "import inviteTemplate from './invite-template.js';"
+        },
+        {
+          "importPath": "./password-reset-template",
+          "fullMatch": "import passwordResetTemplate from './password-reset-template.js';"
+        },
+        {
+          "importPath": "./general-notification-template",
+          "fullMatch": "import generalNotificationTemplate from './general-notification-template.js';"
+        },
+        {
+          "importPath": "./connection/index",
+          "fullMatch": "import {\r\n  requestTemplate as connectionRequestTemplate,\r\n  approvalTemplate as connectionApprovalTemplate,\r\n  rejectionTemplate as connectionRejectionTemplate,\r\n  terminationTemplate as connectionTerminationTemplate\r\n} from './connection/index.js';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\order\\radiology\\order-export\\export-order.ts",
+      "imports": [
+        {
+          "importPath": "../export",
+          "fullMatch": "import { generateCsvExport, generatePdfExport } from '../export';"
+        },
+        {
+          "importPath": "../order-details.service",
+          "fullMatch": "import { getOrderDetails } from '../order-details.service';"
+        },
+        {
+          "importPath": "./validate-export-format",
+          "fullMatch": "import { validateExportFormat } from './validate-export-format';"
+        },
+        {
+          "importPath": "./export-as-json",
+          "fullMatch": "import { exportAsJson } from './export-as-json';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\order.service.ts",
+      "imports": [
+        {
+          "importPath": "../models",
+          "fullMatch": "import { ValidationResult, Order } from '../models';"
+        },
+        {
+          "importPath": "./order/validation",
+          "fullMatch": "import { handleValidationRequest } from './order/validation';"
+        },
+        {
+          "importPath": "./order/finalize",
+          "fullMatch": "import { handleFinalizeOrder } from './order/finalize';"
+        },
+        {
+          "importPath": "./order/get-order",
+          "fullMatch": "import { getOrderById } from './order/get-order';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\upload\\index.ts",
+      "imports": [
+        {
+          "importPath": "./s3-client.service",
+          "fullMatch": "import { s3ClientSingleton } from './s3-client.service';"
+        },
+        {
+          "importPath": "./presigned-url.service",
+          "fullMatch": "import getUploadUrl from './presigned-url.service';"
+        },
+        {
+          "importPath": "./document-upload.service",
+          "fullMatch": "import confirmUpload from './document-upload.service';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { PresignedUrlResponse, UploadConfirmationResponse } from './types';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\upload\\presigned-url.service.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../config/db';"
+        },
+        {
+          "importPath": "../../config/config",
+          "fullMatch": "import config from '../../config/config';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { PresignedUrlResponse } from './types';"
+        },
+        {
+          "importPath": "./s3-client.service",
+          "fullMatch": "import s3ClientSingleton from './s3-client.service';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\services\\validation\\logging.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { ValidationResult } from '../../models';"
+        },
+        {
+          "importPath": "../../utils/llm",
+          "fullMatch": "import { LLMResponse } from '../../utils/llm';"
+        },
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../config/db';"
+        },
+        {
+          "importPath": "./llm-logging",
+          "fullMatch": "import { logLLMUsage } from './llm-logging';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\utils\\database\\context-generator.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        },
+        {
+          "importPath": "./keyword-categorizer",
+          "fullMatch": "import { categorizeKeywords } from './keyword-categorizer';"
+        },
+        {
+          "importPath": "./context-formatter",
+          "fullMatch": "import { formatDatabaseContext } from './context-formatter';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { ICD10Row, CPTRow, MappingRow, MarkdownRow } from './types';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\utils\\response\\processor.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { ValidationResult, ValidationStatus } from '../../models';"
+        },
+        {
+          "importPath": "./normalizer",
+          "fullMatch": "import { normalizeResponseFields, normalizeCodeArray } from './normalizer';"
+        },
+        {
+          "importPath": "./validator",
+          "fullMatch": "import { validateRequiredFields, validateValidationStatus } from './validator';"
+        },
+        {
+          "importPath": "./extractor",
+          "fullMatch": "import { extractPartialInformation } from './extractor';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\utils\\text-processing\\keyword-extractor\\extract-categorized-medical-keywords.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { MedicalKeyword, MedicalKeywordCategory } from '../types';"
+        },
+        {
+          "importPath": "../medical-terms",
+          "fullMatch": "import { isMedicalTerm, getMedicalTermCategory } from '../medical-terms';"
+        },
+        {
+          "importPath": "../code-extractor",
+          "fullMatch": "import { isMedicalCode } from '../code-extractor';"
+        },
+        {
+          "importPath": "./extract-medical-keywords",
+          "fullMatch": "import { extractMedicalKeywords } from './extract-medical-keywords';"
+        }
+      ],
+      "count": 4
+    },
+    {
+      "file": "src\\controllers\\auth\\login.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/auth",
+          "fullMatch": "import authService from '../../services/auth';"
+        },
+        {
+          "importPath": "../../services/auth",
+          "fullMatch": "import { UserLoginDTO } from '../../services/auth';"
+        },
+        {
+          "importPath": "./error-handler",
+          "fullMatch": "import { handleAuthError, loginErrorMap } from './error-handler';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\auth\\register.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/auth",
+          "fullMatch": "import authService from '../../services/auth';"
+        },
+        {
+          "importPath": "../../services/auth",
+          "fullMatch": "import { UserRegistrationDTO, OrganizationRegistrationDTO } from '../../services/auth';"
+        },
+        {
+          "importPath": "./error-handler",
+          "fullMatch": "import { handleAuthError, registrationErrorMap } from './error-handler';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\connection\\list\\list-connections.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/connection",
+          "fullMatch": "import connectionService from '../../../services/connection';"
+        },
+        {
+          "importPath": "../auth-utils",
+          "fullMatch": "import { authenticateUser } from '../auth-utils';"
+        },
+        {
+          "importPath": "../error-utils",
+          "fullMatch": "import { handleConnectionError } from '../error-utils';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\connection\\list\\list-incoming-requests.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/connection",
+          "fullMatch": "import connectionService from '../../../services/connection';"
+        },
+        {
+          "importPath": "../auth-utils",
+          "fullMatch": "import { authenticateUser } from '../auth-utils';"
+        },
+        {
+          "importPath": "../error-utils",
+          "fullMatch": "import { handleConnectionError } from '../error-utils';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\location\\user\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list-user-locations",
+          "fullMatch": "import listUserLocations from './list-user-locations';"
+        },
+        {
+          "importPath": "./assign-user-to-location",
+          "fullMatch": "import assignUserToLocation from './assign-user-to-location';"
+        },
+        {
+          "importPath": "./unassign-user-from-location",
+          "fullMatch": "import unassignUserFromLocation from './unassign-user-from-location';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\order-management\\handlers\\admin-update.ts",
+      "imports": [
+        {
+          "importPath": "../error-handling",
+          "fullMatch": "import { handleControllerError } from '../error-handling';"
+        },
+        {
+          "importPath": "../validation",
+          "fullMatch": "import { validateOrderId } from '../validation';"
+        },
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb, queryPhiDb } from '../../../config/db';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\order-management\\handlers\\get-order.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/order.service",
+          "fullMatch": "import OrderService from '../../../services/order.service';"
+        },
+        {
+          "importPath": "../validation",
+          "fullMatch": "import { validateOrderId, validateUserAuth } from '../validation';"
+        },
+        {
+          "importPath": "../error-handling",
+          "fullMatch": "import { handleControllerError } from '../error-handling';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\superadmin\\prompts\\assignments.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/superadmin",
+          "fullMatch": "import { prompts } from '../../../services/superadmin';"
+        },
+        {
+          "importPath": "../../../types/prompt",
+          "fullMatch": "import { \r\n  CreatePromptAssignmentInput, \r\n  UpdatePromptAssignmentInput \r\n} from '../../../types/prompt';"
+        },
+        {
+          "importPath": "../../../utils/logger",
+          "fullMatch": "import logger from '../../../utils/logger';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\superadmin\\prompts\\templates.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/superadmin",
+          "fullMatch": "import { prompts } from '../../../services/superadmin';"
+        },
+        {
+          "importPath": "../../../types/prompt",
+          "fullMatch": "import { CreatePromptTemplateInput, UpdatePromptTemplateInput } from '../../../types/prompt';"
+        },
+        {
+          "importPath": "../../../utils/logger",
+          "fullMatch": "import logger from '../../../utils/logger';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\uploads\\confirm-upload.ts",
+      "imports": [
+        {
+          "importPath": "../../services/upload",
+          "fullMatch": "import FileUploadService from '../../services/upload';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { AuthenticatedRequest, ConfirmUploadRequestBody, ConfirmUploadResponse } from './types';"
+        },
+        {
+          "importPath": "./validate-confirm-upload-request",
+          "fullMatch": "import { validateConfirmUploadRequest } from './validate-confirm-upload-request';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\uploads\\get-presigned-url.ts",
+      "imports": [
+        {
+          "importPath": "../../services/upload",
+          "fullMatch": "import FileUploadService from '../../services/upload';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { AuthenticatedRequest, PresignedUrlRequestBody, PresignedUrlResponse } from './types';"
+        },
+        {
+          "importPath": "./validate-presigned-url-request",
+          "fullMatch": "import { validatePresignedUrlRequest } from './validate-presigned-url-request';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\index.ts",
+      "imports": [
+        {
+          "importPath": "./config/config",
+          "fullMatch": "import config from './config/config.js';"
+        },
+        {
+          "importPath": "./routes/index",
+          "fullMatch": "import routes from './routes/index.js';"
+        },
+        {
+          "importPath": "./config/db",
+          "fullMatch": "import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\middleware\\auth\\index.ts",
+      "imports": [
+        {
+          "importPath": "./authenticate-jwt",
+          "fullMatch": "import { authenticateJWT } from './authenticate-jwt';"
+        },
+        {
+          "importPath": "./authorize-role",
+          "fullMatch": "import { authorizeRole } from './authorize-role';"
+        },
+        {
+          "importPath": "./authorize-organization",
+          "fullMatch": "import { authorizeOrganization } from './authorize-organization';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\routes\\orders.routes.ts",
+      "imports": [
+        {
+          "importPath": "../controllers/order-validation.controller",
+          "fullMatch": "import orderValidationController from '../controllers/order-validation.controller';"
+        },
+        {
+          "importPath": "../controllers/order-management",
+          "fullMatch": "import orderManagementController from '../controllers/order-management';"
+        },
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\create-credit-checkout-session.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "./stripe.service",
+          "fullMatch": "import stripeService from './stripe.service';"
+        },
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-invoice-payment-failed\\handle-invoice-payment-failed.ts",
+      "imports": [
+        {
+          "importPath": "../../../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../../services/notification/services",
+          "fullMatch": "import { generalNotifications } from '../../../../../services/notification/services';"
+        },
+        {
+          "importPath": "./should-enter-purgatory",
+          "fullMatch": "import { shouldEnterPurgatory } from './should-enter-purgatory';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\connection\\services\\list-connections.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { Connection, IncomingRequest } from '../types';"
+        },
+        {
+          "importPath": "../queries/list",
+          "fullMatch": "import { LIST_CONNECTIONS_QUERY, LIST_INCOMING_REQUESTS_QUERY } from '../queries/list';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\connection\\services\\request-connection-helpers\\create-new-relationship.ts",
+      "imports": [
+        {
+          "importPath": "../../../notification",
+          "fullMatch": "import notificationManager from '../../../notification';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { ConnectionOperationResponse } from '../../types';"
+        },
+        {
+          "importPath": "../../queries/request",
+          "fullMatch": "import { CREATE_RELATIONSHIP_QUERY } from '../../queries/request';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\connection\\services\\request-connection-helpers\\update-existing-relationship.ts",
+      "imports": [
+        {
+          "importPath": "../../../notification",
+          "fullMatch": "import notificationManager from '../../../notification';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { ConnectionOperationResponse } from '../../types';"
+        },
+        {
+          "importPath": "../../queries/request",
+          "fullMatch": "import { UPDATE_RELATIONSHIP_TO_PENDING_QUERY } from '../../queries/request';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\location\\index.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { LocationData, LocationResponse } from './types';"
+        },
+        {
+          "importPath": "./manager",
+          "fullMatch": "import { locationManager, userLocationManager } from './manager';"
+        },
+        {
+          "importPath": "./services",
+          "fullMatch": "import {\r\n  listLocations,\r\n  createLocation,\r\n  getLocation,\r\n  updateLocation,\r\n  deactivateLocation,\r\n  listUserLocations,\r\n  assignUserToLocation,\r\n  unassignUserFromLocation\r\n} from './services';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\location\\queries\\user\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list-locations",
+          "fullMatch": "import { listUserLocations } from './list-locations';"
+        },
+        {
+          "importPath": "./assign-user",
+          "fullMatch": "import { assignUserToLocation } from './assign-user';"
+        },
+        {
+          "importPath": "./unassign-user",
+          "fullMatch": "import { unassignUserFromLocation } from './unassign-user';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\location\\services\\user-location-management\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list-user-locations",
+          "fullMatch": "import { listUserLocations } from './list-user-locations';"
+        },
+        {
+          "importPath": "./assign-user-to-location",
+          "fullMatch": "import { assignUserToLocation } from './assign-user-to-location';"
+        },
+        {
+          "importPath": "./unassign-user-from-location",
+          "fullMatch": "import { unassignUserFromLocation } from './unassign-user-from-location';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\location\\user\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list-user-locations",
+          "fullMatch": "import { listUserLocations } from './list-user-locations';"
+        },
+        {
+          "importPath": "./assign-user-to-location",
+          "fullMatch": "import { assignUserToLocation } from './assign-user-to-location';"
+        },
+        {
+          "importPath": "./unassign-user-from-location",
+          "fullMatch": "import { unassignUserFromLocation } from './unassign-user-from-location';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\email-sender\\send.ts",
+      "imports": [
+        {
+          "importPath": "./client",
+          "fullMatch": "import { sesClient } from './client';"
+        },
+        {
+          "importPath": "./test-mode",
+          "fullMatch": "import { handleTestMode } from './test-mode';"
+        },
+        {
+          "importPath": "./params-builder",
+          "fullMatch": "import { buildEmailParams } from './params-builder';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\manager\\index.ts",
+      "imports": [
+        {
+          "importPath": "./account",
+          "fullMatch": "import accountManager from './account';"
+        },
+        {
+          "importPath": "./general",
+          "fullMatch": "import generalManager from './general';"
+        },
+        {
+          "importPath": "./connection",
+          "fullMatch": "import connectionManager from './connection';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\services\\account-notifications.ts",
+      "imports": [
+        {
+          "importPath": "../email-sender",
+          "fullMatch": "import emailSender from '../email-sender.js';"
+        },
+        {
+          "importPath": "../templates/index",
+          "fullMatch": "import { inviteTemplate, passwordResetTemplate } from '../templates/index.js';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { InvitationEmailData, PasswordResetEmailData } from '../types.js';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\approval\\send-connection-approved.ts",
+      "imports": [
+        {
+          "importPath": "../../../email-sender",
+          "fullMatch": "import emailSender from '../../../email-sender';"
+        },
+        {
+          "importPath": "../../../templates",
+          "fullMatch": "import { connectionApprovalTemplate } from '../../../templates';"
+        },
+        {
+          "importPath": "./prepare-connection-approval-data",
+          "fullMatch": "import { prepareConnectionApprovalData } from './prepare-connection-approval-data';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\rejection\\send-connection-rejected.ts",
+      "imports": [
+        {
+          "importPath": "../../../email-sender",
+          "fullMatch": "import emailSender from '../../../email-sender';"
+        },
+        {
+          "importPath": "../../../templates",
+          "fullMatch": "import { connectionRejectionTemplate } from '../../../templates';"
+        },
+        {
+          "importPath": "./prepare-connection-rejection-data",
+          "fullMatch": "import { prepareConnectionRejectionData } from './prepare-connection-rejection-data';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\request\\index.ts",
+      "imports": [
+        {
+          "importPath": "./get-frontend-url",
+          "fullMatch": "import { getFrontendUrl } from './get-frontend-url';"
+        },
+        {
+          "importPath": "./prepare-connection-request-data",
+          "fullMatch": "import { prepareConnectionRequestData } from './prepare-connection-request-data';"
+        },
+        {
+          "importPath": "./send-connection-request",
+          "fullMatch": "import { sendConnectionRequest } from './send-connection-request';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\request\\send-connection-request.ts",
+      "imports": [
+        {
+          "importPath": "../../../email-sender",
+          "fullMatch": "import emailSender from '../../../email-sender';"
+        },
+        {
+          "importPath": "../../../templates",
+          "fullMatch": "import { connectionRequestTemplate } from '../../../templates';"
+        },
+        {
+          "importPath": "./prepare-connection-request-data",
+          "fullMatch": "import { prepareConnectionRequestData } from './prepare-connection-request-data';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\termination\\send-connection-terminated.ts",
+      "imports": [
+        {
+          "importPath": "../../../email-sender",
+          "fullMatch": "import emailSender from '../../../email-sender';"
+        },
+        {
+          "importPath": "../../../templates",
+          "fullMatch": "import { connectionTerminationTemplate } from '../../../templates';"
+        },
+        {
+          "importPath": "./prepare-connection-termination-data",
+          "fullMatch": "import { prepareConnectionTerminationData } from './prepare-connection-termination-data';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\services\\general-notifications.ts",
+      "imports": [
+        {
+          "importPath": "../email-sender",
+          "fullMatch": "import emailSender from '../email-sender.js';"
+        },
+        {
+          "importPath": "../templates/index",
+          "fullMatch": "import { generalNotificationTemplate } from '../templates/index.js';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { NotificationEmailData } from '../types.js';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\notification\\services\\index.ts",
+      "imports": [
+        {
+          "importPath": "./account-notifications",
+          "fullMatch": "import accountNotifications from './account-notifications.js';"
+        },
+        {
+          "importPath": "./general-notifications",
+          "fullMatch": "import generalNotifications from './general-notifications.js';"
+        },
+        {
+          "importPath": "./connection-notifications",
+          "fullMatch": "import connectionNotifications from './connection-notifications.js';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\admin\\clinical-record-manager\\index.ts",
+      "imports": [
+        {
+          "importPath": "./save-emr-summary",
+          "fullMatch": "import { saveEmrSummary } from './save-emr-summary';"
+        },
+        {
+          "importPath": "./save-supplemental-document",
+          "fullMatch": "import { saveSupplementalDocument } from './save-supplemental-document';"
+        },
+        {
+          "importPath": "./verify-order-status",
+          "fullMatch": "import { verifyOrderStatus } from './verify-order-status';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\admin\\handlers\\paste-summary.ts",
+      "imports": [
+        {
+          "importPath": "../utils/transaction",
+          "fullMatch": "import { withTransaction } from '../utils/transaction';"
+        },
+        {
+          "importPath": "../emr-parser",
+          "fullMatch": "import parseEmrSummary from '../emr-parser';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { EmrSummaryResult } from '../types';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\admin\\handlers\\send-to-radiology.ts",
+      "imports": [
+        {
+          "importPath": "../utils/transaction",
+          "fullMatch": "import { withTransaction } from '../utils/transaction';"
+        },
+        {
+          "importPath": "../../../../services/billing",
+          "fullMatch": "import BillingService, { InsufficientCreditsError } from '../../../../services/billing';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { SendToRadiologyResult } from '../types';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\admin\\order-status-manager\\index.ts",
+      "imports": [
+        {
+          "importPath": "./update-order-status",
+          "fullMatch": "import { updateOrderStatusToRadiology } from './update-order-status';"
+        },
+        {
+          "importPath": "./validate-patient-data",
+          "fullMatch": "import { validatePatientData } from './validate-patient-data';"
+        },
+        {
+          "importPath": "./validate-insurance-data",
+          "fullMatch": "import { validateInsuranceData } from './validate-insurance-data';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\admin\\patient-manager\\update-patient-info.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { PatientUpdateData } from '../types';"
+        },
+        {
+          "importPath": "../utils",
+          "fullMatch": "import { buildUpdateQuery } from '../utils';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\admin\\utils\\query-builder\\index.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { UpdateQueryResult } from './types';"
+        },
+        {
+          "importPath": "./build-update-query",
+          "fullMatch": "import { buildUpdateQuery } from './build-update-query';"
+        },
+        {
+          "importPath": "./build-update-query-from-pairs",
+          "fullMatch": "import { buildUpdateQueryFromPairs } from './build-update-query-from-pairs';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\radiology\\incoming-orders.service.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { OrderFilters, IncomingOrdersResult } from './types';"
+        },
+        {
+          "importPath": "./query",
+          "fullMatch": "import { buildOrderQuery, buildCountQuery, createPaginationResult } from './query';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\radiology\\order-export\\index.ts",
+      "imports": [
+        {
+          "importPath": "./validate-export-format",
+          "fullMatch": "import { validateExportFormat } from './validate-export-format';"
+        },
+        {
+          "importPath": "./export-as-json",
+          "fullMatch": "import { exportAsJson } from './export-as-json';"
+        },
+        {
+          "importPath": "./export-order",
+          "fullMatch": "import { exportOrder } from './export-order';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\index.ts",
+      "imports": [
+        {
+          "importPath": "./order-builder",
+          "fullMatch": "import buildOrderQuery from './order-builder';"
+        },
+        {
+          "importPath": "./count-query-builder",
+          "fullMatch": "import buildCountQuery from './count-query-builder';"
+        },
+        {
+          "importPath": "./pagination-helper",
+          "fullMatch": "import createPaginationResult from './pagination-helper';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\order\\validation\\draft-order.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb, queryPhiDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "../../../models",
+          "fullMatch": "import { OrderStatus, OrderPriority } from '../../../models';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { PatientInfo } from './types';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\services\\validation\\index.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { ValidationResult } from '../../models';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { ValidationContext, ValidationOptions } from './types';"
+        },
+        {
+          "importPath": "./run-validation",
+          "fullMatch": "import { runValidation } from './run-validation';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\utils\\cache\\cache-utils.ts",
+      "imports": [
+        {
+          "importPath": "../../config/redis",
+          "fullMatch": "import { getRedisClient, cacheDataWithRedisJson, getCachedDataWithRedisJson } from '../../config/redis';"
+        },
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        },
+        {
+          "importPath": "../../utils/logger",
+          "fullMatch": "import logger from '../../utils/logger';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\utils\\text-processing\\index.ts",
+      "imports": [
+        {
+          "importPath": "./phi-sanitizer",
+          "fullMatch": "import { stripPHI } from './phi-sanitizer';"
+        },
+        {
+          "importPath": "./keyword-extractor",
+          "fullMatch": "import {\r\n  extractMedicalKeywords,\r\n  extractCategorizedMedicalKeywords\r\n} from './keyword-extractor';"
+        },
+        {
+          "importPath": "./code-extractor",
+          "fullMatch": "import { extractMedicalCodes } from './code-extractor';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\utils\\text-processing\\keyword-extractor\\index.ts",
+      "imports": [
+        {
+          "importPath": "./extract-medical-keywords",
+          "fullMatch": "import { extractMedicalKeywords } from './extract-medical-keywords';"
+        },
+        {
+          "importPath": "./extract-categorized-medical-keywords",
+          "fullMatch": "import { extractCategorizedMedicalKeywords } from './extract-categorized-medical-keywords';"
+        },
+        {
+          "importPath": "./extract-keywords-by-category",
+          "fullMatch": "import { extractKeywordsByCategory } from './extract-keywords-by-category';"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "file": "src\\controllers\\admin-order\\paste-summary.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/admin",
+          "fullMatch": "import AdminOrderService from '../../services/order/admin';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { handleControllerError } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\admin-order\\paste-supplemental.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/admin",
+          "fullMatch": "import AdminOrderService from '../../services/order/admin';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { handleControllerError } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\admin-order\\send-to-radiology.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/admin",
+          "fullMatch": "import AdminOrderService from '../../services/order/admin';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { handleControllerError } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\admin-order\\update-insurance.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/admin",
+          "fullMatch": "import AdminOrderService from '../../services/order/admin';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { handleControllerError } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\admin-order\\update-patient.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/admin",
+          "fullMatch": "import AdminOrderService from '../../services/order/admin';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { handleControllerError } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\auth\\index.ts",
+      "imports": [
+        {
+          "importPath": "./register.controller",
+          "fullMatch": "import registerController from './register.controller';"
+        },
+        {
+          "importPath": "./login.controller",
+          "fullMatch": "import loginController from './login.controller';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\connection\\list\\index.ts",
+      "imports": [
+        {
+          "importPath": "./list-connections",
+          "fullMatch": "import { listConnections } from './list-connections';"
+        },
+        {
+          "importPath": "./list-incoming-requests",
+          "fullMatch": "import { listIncomingRequests } from './list-incoming-requests';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\connection\\validation-utils\\index.ts",
+      "imports": [
+        {
+          "importPath": "./validate-relationship-id",
+          "fullMatch": "import { validateRelationshipId } from './validate-relationship-id';"
+        },
+        {
+          "importPath": "./validate-target-org-id",
+          "fullMatch": "import { validateTargetOrgId } from './validate-target-org-id';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\location\\organization\\create-location.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/location",
+          "fullMatch": "import locationService from '../../../services/location';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { \r\n  AuthenticatedRequest, \r\n  ControllerHandler,\r\n  checkAuthentication,\r\n  handleControllerError\r\n} from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\location\\organization\\deactivate-location.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/location",
+          "fullMatch": "import locationService from '../../../services/location';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { \r\n  AuthenticatedRequest, \r\n  ControllerHandler,\r\n  checkAuthentication,\r\n  validateLocationId,\r\n  handleControllerError\r\n} from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\location\\organization\\get-location.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/location",
+          "fullMatch": "import locationService from '../../../services/location';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { \r\n  AuthenticatedRequest, \r\n  ControllerHandler,\r\n  checkAuthentication,\r\n  validateLocationId,\r\n  handleControllerError\r\n} from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\location\\organization\\list-locations.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/location",
+          "fullMatch": "import locationService from '../../../services/location';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { \r\n  AuthenticatedRequest, \r\n  ControllerHandler,\r\n  checkAuthentication,\r\n  handleControllerError\r\n} from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\location\\organization\\update-location.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/location",
+          "fullMatch": "import locationService from '../../../services/location';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { \r\n  AuthenticatedRequest, \r\n  ControllerHandler,\r\n  checkAuthentication,\r\n  validateLocationId,\r\n  handleControllerError\r\n} from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\location\\user\\assign-user-to-location.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/location",
+          "fullMatch": "import locationService from '../../../services/location';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { \r\n  AuthenticatedRequest, \r\n  ControllerHandler,\r\n  checkAuthentication,\r\n  validateUserAndLocationIds,\r\n  handleControllerError\r\n} from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\location\\user\\list-user-locations.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/location",
+          "fullMatch": "import locationService from '../../../services/location';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { \r\n  AuthenticatedRequest, \r\n  ControllerHandler,\r\n  checkAuthentication,\r\n  validateUserId,\r\n  handleControllerError\r\n} from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\location\\user\\unassign-user-from-location.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/location",
+          "fullMatch": "import locationService from '../../../services/location';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { \r\n  AuthenticatedRequest, \r\n  ControllerHandler,\r\n  checkAuthentication,\r\n  validateUserAndLocationIds,\r\n  handleControllerError\r\n} from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\order-management\\validation\\validate-finalize-payload.ts",
+      "imports": [
+        {
+          "importPath": "../../../models",
+          "fullMatch": "import { ValidationStatus } from '../../../models';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { FinalizeOrderPayload } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\radiology\\incoming-orders.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/radiology",
+          "fullMatch": "import RadiologyOrderService from '../../services/order/radiology';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { OrderFilters } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\superadmin\\logs.ts",
+      "imports": [
+        {
+          "importPath": "../../services/superadmin",
+          "fullMatch": "import { logs } from '../../services/superadmin';"
+        },
+        {
+          "importPath": "../../utils/logger",
+          "fullMatch": "import logger from '../../utils/logger';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\uploads\\index.ts",
+      "imports": [
+        {
+          "importPath": "./get-presigned-url",
+          "fullMatch": "import { getPresignedUrl } from './get-presigned-url';"
+        },
+        {
+          "importPath": "./confirm-upload",
+          "fullMatch": "import { confirmUpload } from './confirm-upload';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\controllers\\uploads\\validate-confirm-upload-request.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { ConfirmUploadRequestBody, AuthenticatedRequest } from './types';"
+        },
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../config/db';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\models\\Auth.ts",
+      "imports": [
+        {
+          "importPath": "./User",
+          "fullMatch": "import { User, UserResponse } from './User';"
+        },
+        {
+          "importPath": "./Organization",
+          "fullMatch": "import { Organization } from './Organization';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\models\\order\\request-types.ts",
+      "imports": [
+        {
+          "importPath": "./validation-types",
+          "fullMatch": "import { ValidationStatus } from './validation-types';"
+        },
+        {
+          "importPath": "./patient-types",
+          "fullMatch": "import { PatientInfo } from './patient-types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\routes\\admin-orders.routes.ts",
+      "imports": [
+        {
+          "importPath": "../controllers/admin-order",
+          "fullMatch": "import adminOrderController from '../controllers/admin-order';"
+        },
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\routes\\billing.routes.ts",
+      "imports": [
+        {
+          "importPath": "../controllers/billing",
+          "fullMatch": "import { createCheckoutSession, createSubscription } from '../controllers/billing';"
+        },
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\routes\\connection.routes.ts",
+      "imports": [
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        },
+        {
+          "importPath": "../controllers/connection",
+          "fullMatch": "import connectionController from '../controllers/connection';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\routes\\organization.routes.ts",
+      "imports": [
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        },
+        {
+          "importPath": "../controllers/location",
+          "fullMatch": "import locationController from '../controllers/location';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\routes\\radiology-orders.routes.ts",
+      "imports": [
+        {
+          "importPath": "../controllers/radiology",
+          "fullMatch": "import radiologyOrderController from '../controllers/radiology';"
+        },
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\routes\\superadmin.routes.ts",
+      "imports": [
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        },
+        {
+          "importPath": "../controllers/superadmin",
+          "fullMatch": "import {\r\n  listAllOrganizationsController,\r\n  getOrganizationByIdController,\r\n  listAllUsersController,\r\n  getUserByIdController,\r\n  prompts,\r\n  logs\r\n} from '../controllers/superadmin';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\routes\\uploads.routes.ts",
+      "imports": [
+        {
+          "importPath": "../controllers/uploads",
+          "fullMatch": "import { UploadsController } from '../controllers/uploads';"
+        },
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\routes\\user-location.routes.ts",
+      "imports": [
+        {
+          "importPath": "../middleware/auth",
+          "fullMatch": "import { authenticateJWT, authorizeRole } from '../middleware/auth';"
+        },
+        {
+          "importPath": "../controllers/location",
+          "fullMatch": "import locationController from '../controllers/location';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\scripts\\create-redis-indexes.ts",
+      "imports": [
+        {
+          "importPath": "../utils/redis/redis-index-manager",
+          "fullMatch": "import { createRedisSearchIndexes } from '../utils/redis/redis-index-manager';"
+        },
+        {
+          "importPath": "../config/redis",
+          "fullMatch": "import { closeRedisConnection } from '../config/redis';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\auth\\token\\generate-token.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { User } from '../types';"
+        },
+        {
+          "importPath": "../../../utils/token.utils",
+          "fullMatch": "import { generateToken as generateJwtToken } from '../../../utils/token.utils';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\auth\\user\\find-user-by-email.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { User } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\create-customer.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "./stripe.service",
+          "fullMatch": "import stripeService from './stripe.service';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\createSubscription.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        },
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\stripe.service.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        },
+        {
+          "importPath": "./create-checkout-session-internal",
+          "fullMatch": "import { createCheckoutSessionInternal } from './create-checkout-session-internal';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\connection\\connection-manager.ts",
+      "imports": [
+        {
+          "importPath": "./services",
+          "fullMatch": "import {\r\n  listConnectionsService,\r\n  requestConnectionService,\r\n  approveConnectionService,\r\n  rejectConnectionService,\r\n  terminateConnectionService\r\n} from './services';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import {\r\n  Connection,\r\n  IncomingRequest,\r\n  ConnectionOperationResponse,\r\n  RequestConnectionParams,\r\n  ApproveConnectionParams,\r\n  RejectConnectionParams,\r\n  TerminateConnectionParams\r\n} from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\connection\\services\\request-connection-helpers\\index.ts",
+      "imports": [
+        {
+          "importPath": "./update-existing-relationship",
+          "fullMatch": "import { updateExistingRelationship } from './update-existing-relationship';"
+        },
+        {
+          "importPath": "./create-new-relationship",
+          "fullMatch": "import { createNewRelationship } from './create-new-relationship';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\create-location.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { LocationData, LocationResponse } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\get-location.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { LocationResponse } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\list-locations.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { LocationResponse } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\manager\\index.ts",
+      "imports": [
+        {
+          "importPath": "./location-manager",
+          "fullMatch": "import locationManager from './location-manager';"
+        },
+        {
+          "importPath": "./user-location-manager",
+          "fullMatch": "import userLocationManager from './user-location-manager';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\manager\\location-manager.ts",
+      "imports": [
+        {
+          "importPath": "../services",
+          "fullMatch": "import { \r\n  listLocations,\r\n  createLocation,\r\n  getLocation,\r\n  updateLocation,\r\n  deactivateLocation\r\n} from '../services';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LocationData, LocationResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\manager\\user-location-manager.ts",
+      "imports": [
+        {
+          "importPath": "../services",
+          "fullMatch": "import { \r\n  listUserLocations,\r\n  assignUserToLocation,\r\n  unassignUserFromLocation\r\n} from '../services';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LocationResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\queries\\create\\location.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { LocationData, LocationResponse } from '../../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\queries\\get\\location.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { LocationResponse } from '../../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\queries\\list\\locations.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { LocationResponse } from '../../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\queries\\update\\location.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { LocationData, LocationResponse } from '../../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\queries\\user\\list-locations.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { LocationResponse } from '../../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\services\\create-location.ts",
+      "imports": [
+        {
+          "importPath": "../queries",
+          "fullMatch": "import { createLocation as createLocationQuery } from '../queries';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LocationData, LocationResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\services\\get-location.ts",
+      "imports": [
+        {
+          "importPath": "../queries",
+          "fullMatch": "import { getLocation as getLocationQuery } from '../queries';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LocationResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\services\\list-locations.ts",
+      "imports": [
+        {
+          "importPath": "../queries",
+          "fullMatch": "import { listLocations as listLocationsQuery } from '../queries';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LocationResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\services\\update-location.ts",
+      "imports": [
+        {
+          "importPath": "../queries",
+          "fullMatch": "import { updateLocation as updateLocationQuery } from '../queries';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LocationData, LocationResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\services\\user-location-management\\list-user-locations.ts",
+      "imports": [
+        {
+          "importPath": "../../queries",
+          "fullMatch": "import { listUserLocations as listUserLocationsQuery } from '../../queries';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { LocationResponse } from '../../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\update-location.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { LocationData, LocationResponse } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\location\\user\\list-user-locations.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LocationResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\email-sender\\index.ts",
+      "imports": [
+        {
+          "importPath": "./send",
+          "fullMatch": "import { sendEmail } from './send';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { EmailSender } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\email-sender\\test-mode\\index.ts",
+      "imports": [
+        {
+          "importPath": "./is-test-mode-enabled",
+          "fullMatch": "import { isTestModeEnabled } from './is-test-mode-enabled';"
+        },
+        {
+          "importPath": "./handle-test-mode",
+          "fullMatch": "import { handleTestMode } from './handle-test-mode';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\email-sender.ts",
+      "imports": [
+        {
+          "importPath": "../../config/config",
+          "fullMatch": "import config from '../../config/config.js';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { EmailSender } from './types.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\approval\\index.ts",
+      "imports": [
+        {
+          "importPath": "./prepare-connection-approval-data",
+          "fullMatch": "import { prepareConnectionApprovalData } from './prepare-connection-approval-data';"
+        },
+        {
+          "importPath": "./send-connection-approved",
+          "fullMatch": "import { sendConnectionApproved } from './send-connection-approved';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\approval\\prepare-connection-approval-data.ts",
+      "imports": [
+        {
+          "importPath": "../../../types",
+          "fullMatch": "import { ConnectionApprovalEmailData } from '../../../types';"
+        },
+        {
+          "importPath": "../request",
+          "fullMatch": "import { getFrontendUrl } from '../request';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\rejection\\index.ts",
+      "imports": [
+        {
+          "importPath": "./prepare-connection-rejection-data",
+          "fullMatch": "import { prepareConnectionRejectionData } from './prepare-connection-rejection-data';"
+        },
+        {
+          "importPath": "./send-connection-rejected",
+          "fullMatch": "import { sendConnectionRejected } from './send-connection-rejected';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\rejection\\prepare-connection-rejection-data.ts",
+      "imports": [
+        {
+          "importPath": "../../../types",
+          "fullMatch": "import { ConnectionRejectionEmailData } from '../../../types';"
+        },
+        {
+          "importPath": "../request",
+          "fullMatch": "import { getFrontendUrl } from '../request';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\request\\prepare-connection-request-data.ts",
+      "imports": [
+        {
+          "importPath": "../../../types",
+          "fullMatch": "import { ConnectionRequestEmailData } from '../../../types';"
+        },
+        {
+          "importPath": "./get-frontend-url",
+          "fullMatch": "import { getFrontendUrl } from './get-frontend-url';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\termination\\index.ts",
+      "imports": [
+        {
+          "importPath": "./prepare-connection-termination-data",
+          "fullMatch": "import { prepareConnectionTerminationData } from './prepare-connection-termination-data';"
+        },
+        {
+          "importPath": "./send-connection-terminated",
+          "fullMatch": "import { sendConnectionTerminated } from './send-connection-terminated';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\termination\\prepare-connection-termination-data.ts",
+      "imports": [
+        {
+          "importPath": "../../../types",
+          "fullMatch": "import { ConnectionTerminationEmailData } from '../../../types';"
+        },
+        {
+          "importPath": "../request",
+          "fullMatch": "import { getFrontendUrl } from '../request';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection-notifications\\send-email.ts",
+      "imports": [
+        {
+          "importPath": "../../email-sender",
+          "fullMatch": "import emailSender from '../../email-sender.js';"
+        },
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { EmailTemplate, EmailTemplateData } from '../../types.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\templates\\connection\\approval-template.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { EmailContent, ConnectionApprovalEmailData } from '../../types.js';"
+        },
+        {
+          "importPath": "../email-template-base",
+          "fullMatch": "import { BaseEmailTemplate } from '../email-template-base.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\templates\\connection\\rejection-template.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { EmailContent, ConnectionRejectionEmailData } from '../../types.js';"
+        },
+        {
+          "importPath": "../email-template-base",
+          "fullMatch": "import { BaseEmailTemplate } from '../email-template-base.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\templates\\connection\\request-template.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { EmailContent, ConnectionRequestEmailData } from '../../types.js';"
+        },
+        {
+          "importPath": "../email-template-base",
+          "fullMatch": "import { BaseEmailTemplate } from '../email-template-base.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\templates\\connection\\termination-template.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { EmailContent, ConnectionTerminationEmailData } from '../../types.js';"
+        },
+        {
+          "importPath": "../email-template-base",
+          "fullMatch": "import { BaseEmailTemplate } from '../email-template-base.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\templates\\general-notification-template.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { EmailContent, EmailTemplateData, NotificationEmailData } from '../types.js';"
+        },
+        {
+          "importPath": "./email-template-base",
+          "fullMatch": "import { BaseEmailTemplate } from './email-template-base.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\templates\\invite-template.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { EmailContent, EmailTemplateData, InvitationEmailData } from '../types.js';"
+        },
+        {
+          "importPath": "./email-template-base",
+          "fullMatch": "import { BaseEmailTemplate } from './email-template-base.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\notification\\templates\\password-reset-template.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { EmailContent, EmailTemplateData, PasswordResetEmailData } from '../types.js';"
+        },
+        {
+          "importPath": "./email-template-base",
+          "fullMatch": "import { BaseEmailTemplate } from './email-template-base.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\clinical-record-manager\\verify-order-status.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { OrderData } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\insurance\\index.ts",
+      "imports": [
+        {
+          "importPath": "./update-info",
+          "fullMatch": "import { updateInsuranceInfo } from './update-info';"
+        },
+        {
+          "importPath": "./update-from-emr",
+          "fullMatch": "import { updateInsuranceFromEmr } from './update-from-emr';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\insurance\\update-from-emr.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { ParsedInsuranceInfo } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\insurance\\update-info.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { InsuranceUpdateData } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\order-status-manager\\update-order-status.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getPhiDbClient } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../models",
+          "fullMatch": "import { OrderStatus } from '../../../../models';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\patient\\index.ts",
+      "imports": [
+        {
+          "importPath": "./update-info",
+          "fullMatch": "import updatePatientInfo from './update-info';"
+        },
+        {
+          "importPath": "./update-from-emr",
+          "fullMatch": "import updatePatientFromEmr from './update-from-emr';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\patient\\update-info.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { PatientUpdateData } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\patient-manager\\index.ts",
+      "imports": [
+        {
+          "importPath": "./update-patient-info",
+          "fullMatch": "import { updatePatientInfo } from './update-patient-info';"
+        },
+        {
+          "importPath": "./update-patient-from-emr",
+          "fullMatch": "import { updatePatientFromEmr } from './update-patient-from-emr';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\patient-manager\\update-patient-from-emr.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../utils",
+          "fullMatch": "import { buildUpdateQuery } from '../utils';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\validation\\index.ts",
+      "imports": [
+        {
+          "importPath": "./patient",
+          "fullMatch": "import { getPatientForValidation, validatePatientFields } from './patient';"
+        },
+        {
+          "importPath": "./insurance",
+          "fullMatch": "import { getPrimaryInsurance, validateInsuranceFields } from './insurance';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\validation\\insurance\\get-primary-insurance.ts",
+      "imports": [
+        {
+          "importPath": "../../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { InsuranceData } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\admin\\validation\\patient\\get-patient-for-validation.ts",
+      "imports": [
+        {
+          "importPath": "../../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../../config/db';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { PatientData } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\finalize\\handler.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { FinalizeOrderPayload, FinalizeOrderResponse } from './types';"
+        },
+        {
+          "importPath": "./transaction",
+          "fullMatch": "import { executeTransaction } from './transaction';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\finalize\\update\\update-order-with-final-data.ts",
+      "imports": [
+        {
+          "importPath": "../../../../models",
+          "fullMatch": "import { OrderStatus } from '../../../../models';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { FinalizeOrderPayload } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\get-order.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb, queryPhiDb } from '../../config/db';"
+        },
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { Order } from '../../models';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\radiology\\export\\index.ts",
+      "imports": [
+        {
+          "importPath": "./csv-export",
+          "fullMatch": "import generateCsvExport from './csv-export';"
+        },
+        {
+          "importPath": "./pdf-export",
+          "fullMatch": "import generatePdfExport from './pdf-export';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\radiology\\information-request.service.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { InformationRequestResult } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\radiology\\order-details.service.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { OrderDetails } from './types';"
+        },
+        {
+          "importPath": "./details",
+          "fullMatch": "import { getOrderDetails } from './details';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\radiology\\order-status.service.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getPhiDbClient } from '../../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { OrderStatusUpdateResult } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\count-query-builder.ts",
+      "imports": [
+        {
+          "importPath": "../../../../models",
+          "fullMatch": "import { OrderStatus } from '../../../../models';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { OrderFilters } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\order-builder\\metadata-filters\\index.ts",
+      "imports": [
+        {
+          "importPath": "./apply-priority-filter",
+          "fullMatch": "import { applyPriorityFilter } from './apply-priority-filter';"
+        },
+        {
+          "importPath": "./apply-modality-filter",
+          "fullMatch": "import { applyModalityFilter } from './apply-modality-filter';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\validation\\attempt-tracking\\index.ts",
+      "imports": [
+        {
+          "importPath": "./get-next-attempt-number",
+          "fullMatch": "import { getNextAttemptNumber } from './get-next-attempt-number';"
+        },
+        {
+          "importPath": "./log-validation-attempt",
+          "fullMatch": "import { logValidationAttempt } from './log-validation-attempt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\order\\validation\\attempt-tracking\\log-validation-attempt.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../models",
+          "fullMatch": "import { ValidationResult } from '../../../../models';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\logs\\listCreditUsageLogs.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "../../../types/logs",
+          "fullMatch": "import { CreditUsageLog, CreditUsageLogFilters, PaginatedResponse } from '../../../types/logs';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\logs\\listLlmValidationLogs.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "../../../types/logs",
+          "fullMatch": "import { LlmValidationLog, LlmValidationLogFilters, PaginatedResponse } from '../../../types/logs';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\logs\\listPurgatoryEvents.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        },
+        {
+          "importPath": "../../../types/logs",
+          "fullMatch": "import { PurgatoryEvent, PurgatoryEventFilters, PaginatedResponse } from '../../../types/logs';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\assignments\\createPromptAssignment.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb, getMainDbClient } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptAssignment, CreatePromptAssignmentInput } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\assignments\\deletePromptAssignment.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptAssignment } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\assignments\\getPromptAssignmentById.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptAssignmentWithDetails } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\assignments\\listPromptAssignments.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptAssignmentWithDetails, PromptAssignmentFilters } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\assignments\\updatePromptAssignment.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb, getMainDbClient } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptAssignment, UpdatePromptAssignmentInput } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\templates\\createPromptTemplate.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptTemplate, CreatePromptTemplateInput } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\templates\\deletePromptTemplate.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptTemplate } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\templates\\getPromptTemplateById.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptTemplate } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\templates\\listPromptTemplates.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptTemplate, PromptTemplateFilters } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\superadmin\\prompts\\templates\\updatePromptTemplate.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        },
+        {
+          "importPath": "../../../../types/prompt",
+          "fullMatch": "import { PromptTemplate, UpdatePromptTemplateInput } from '../../../../types/prompt';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\upload\\document-upload.service.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { UploadConfirmationResponse } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\upload\\s3-client.service.ts",
+      "imports": [
+        {
+          "importPath": "../../config/config",
+          "fullMatch": "import config from '../../config/config';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { S3ClientSingleton } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\validation\\llm-logging.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../config/db';"
+        },
+        {
+          "importPath": "../../utils/llm",
+          "fullMatch": "import { LLMResponse } from '../../utils/llm';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\services\\validation\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { ValidationResult } from '../../models';"
+        },
+        {
+          "importPath": "../../utils/llm",
+          "fullMatch": "import { LLMResponse } from '../../utils/llm';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\database\\prompt-template.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        },
+        {
+          "importPath": "./types",
+          "fullMatch": "import { PromptTemplate } from './types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\llm\\client.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { LLMResponse } from './types';"
+        },
+        {
+          "importPath": "./providers",
+          "fullMatch": "import { callClaude, callGrok, callGPT } from './providers';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\llm\\providers\\anthropic.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LLMProvider, LLMResponse, AnthropicResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\llm\\providers\\grok.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LLMProvider, LLMResponse, GrokResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\llm\\providers\\openai.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { LLMProvider, LLMResponse, OpenAIResponse } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\redis\\redis-index-manager.ts",
+      "imports": [
+        {
+          "importPath": "../../config/redis",
+          "fullMatch": "import { getRedisClient } from '../../config/redis.js';"
+        },
+        {
+          "importPath": "../../utils/logger",
+          "fullMatch": "import logger from '../../utils/logger.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\redis\\search\\common.ts",
+      "imports": [
+        {
+          "importPath": "../../database/types",
+          "fullMatch": "import { ICD10Row, CPTRow, MappingRow, MarkdownRow, CategorizedKeywords } from '../../database/types.js';"
+        },
+        {
+          "importPath": "../../logger",
+          "fullMatch": "import logger from '../../logger.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\redis\\search\\cpt-search.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/redis",
+          "fullMatch": "import { getRedisClient, getCachedDataWithRedisJson, cacheDataWithRedisJson } from '../../../config/redis.js';"
+        },
+        {
+          "importPath": "./common",
+          "fullMatch": "import {\r\n  CPTRow,\r\n  CategorizedKeywords,\r\n  processSearchTerms,\r\n  processRedisSearchResults,\r\n  extractKeyFromRedisKey,\r\n  logMissingRedisKey,\r\n  handleRedisSearchError\r\n} from './common.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\redis\\search\\icd10-search.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/redis",
+          "fullMatch": "import { getRedisClient, getCachedDataWithRedisJson, cacheDataWithRedisJson } from '../../../config/redis.js';"
+        },
+        {
+          "importPath": "./common",
+          "fullMatch": "import {\r\n  ICD10Row,\r\n  CategorizedKeywords,\r\n  processSearchTerms,\r\n  processRedisSearchResults,\r\n  extractKeyFromRedisKey,\r\n  logMissingRedisKey,\r\n  handleRedisSearchError\r\n} from './common.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\redis\\search\\mapping-search.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/redis",
+          "fullMatch": "import { getRedisClient, getCachedDataWithRedisJson, cacheDataWithRedisJson } from '../../../config/redis.js';"
+        },
+        {
+          "importPath": "./common",
+          "fullMatch": "import {\r\n  ICD10Row,\r\n  CPTRow,\r\n  MappingRow,\r\n  handleRedisSearchError\r\n} from './common.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\redis\\search\\markdown-search.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/redis",
+          "fullMatch": "import { getRedisClient, getCachedDataWithRedisJson, cacheDataWithRedisJson } from '../../../config/redis.js';"
+        },
+        {
+          "importPath": "./common",
+          "fullMatch": "import {\r\n  ICD10Row,\r\n  MarkdownRow,\r\n  handleRedisSearchError\r\n} from './common.js';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\response\\normalizer\\index.ts",
+      "imports": [
+        {
+          "importPath": "./normalize-response-fields",
+          "fullMatch": "import { normalizeResponseFields } from './normalize-response-fields';"
+        },
+        {
+          "importPath": "./normalize-code-array",
+          "fullMatch": "import { normalizeCodeArray } from './normalize-code-array';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\response\\validator\\index.ts",
+      "imports": [
+        {
+          "importPath": "./validate-required-fields",
+          "fullMatch": "import { validateRequiredFields } from './validate-required-fields';"
+        },
+        {
+          "importPath": "./validate-validation-status",
+          "fullMatch": "import { validateValidationStatus } from './validate-validation-status';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\response\\validator\\validate-validation-status.ts",
+      "imports": [
+        {
+          "importPath": "../../../models",
+          "fullMatch": "import { ValidationStatus } from '../../../models';"
+        },
+        {
+          "importPath": "../types",
+          "fullMatch": "import { StatusMap } from '../types';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\text-processing\\code-extractor\\common\\extract-medical-codes.ts",
+      "imports": [
+        {
+          "importPath": "../icd10/extract-icd10-codes",
+          "fullMatch": "import { extractICD10Codes } from '../icd10/extract-icd10-codes';"
+        },
+        {
+          "importPath": "../cpt/extract-cpt-codes",
+          "fullMatch": "import { extractCPTCodes } from '../cpt/extract-cpt-codes';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\text-processing\\code-extractor\\common\\get-medical-code-category.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { MedicalKeywordCategory } from '../../types';"
+        },
+        {
+          "importPath": "./is-medical-code",
+          "fullMatch": "import { isMedicalCode } from './is-medical-code';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\text-processing\\keyword-extractor\\extract-keywords-by-category.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { MedicalKeywordCategory } from '../types';"
+        },
+        {
+          "importPath": "./extract-categorized-medical-keywords",
+          "fullMatch": "import { extractCategorizedMedicalKeywords } from './extract-categorized-medical-keywords';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\utils\\text-processing\\keyword-extractor\\extract-medical-keywords.ts",
+      "imports": [
+        {
+          "importPath": "../medical-terms",
+          "fullMatch": "import { \r\n  anatomyTerms, \r\n  modalityTerms, \r\n  symptomTerms, \r\n  abbreviationTerms\r\n} from '../medical-terms';"
+        },
+        {
+          "importPath": "../code-extractor",
+          "fullMatch": "import { extractMedicalCodes } from '../code-extractor';"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "file": "src\\config\\db-utils.ts",
+      "imports": [
+        {
+          "importPath": "./db-config",
+          "fullMatch": "import { mainDbPool, phiDbPool } from './db-config';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\config\\db.ts",
+      "imports": [
+        {
+          "importPath": "./db-utils",
+          "fullMatch": "import { \r\n  getMainDbClient, \r\n  getPhiDbClient, \r\n  queryMainDb, \r\n  queryPhiDb, \r\n  testDatabaseConnections, \r\n  closeDatabaseConnections \r\n} from './db-utils';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\config\\memorydb.ts",
+      "imports": [
+        {
+          "importPath": "../utils/logger",
+          "fullMatch": "import logger from '../utils/logger.js';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\config\\redis.ts",
+      "imports": [
+        {
+          "importPath": "../utils/logger",
+          "fullMatch": "import logger from '../utils/logger.js';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\auth.controller.ts",
+      "imports": [
+        {
+          "importPath": "./auth",
+          "fullMatch": "import authController from './auth';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\billing\\create-checkout-session.ts",
+      "imports": [
+        {
+          "importPath": "../../services/billing",
+          "fullMatch": "import BillingService from '../../services/billing';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\billing\\create-subscription.ts",
+      "imports": [
+        {
+          "importPath": "../../services/billing",
+          "fullMatch": "import BillingService from '../../services/billing';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\location\\index.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { AuthenticatedRequest } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\order-management\\index.ts",
+      "imports": [
+        {
+          "importPath": "./handlers",
+          "fullMatch": "import { finalizeOrder, getOrder, adminUpdate } from './handlers';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\order-management\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { ValidationStatus } from '../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\order-validation.controller.ts",
+      "imports": [
+        {
+          "importPath": "../services/order.service",
+          "fullMatch": "import OrderService from '../services/order.service';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\radiology\\export-order.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/radiology",
+          "fullMatch": "import RadiologyOrderService from '../../services/order/radiology';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\radiology\\order-details.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/radiology",
+          "fullMatch": "import RadiologyOrderService from '../../services/order/radiology';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\radiology\\request-information.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/radiology",
+          "fullMatch": "import RadiologyOrderService from '../../services/order/radiology';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\radiology\\update-status.controller.ts",
+      "imports": [
+        {
+          "importPath": "../../services/order/radiology",
+          "fullMatch": "import RadiologyOrderService from '../../services/order/radiology';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\superadmin\\organizations\\get-organization-by-id.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/superadmin",
+          "fullMatch": "import { getOrganizationById } from '../../../services/superadmin';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\superadmin\\organizations\\list-all-organizations.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/superadmin",
+          "fullMatch": "import { listAllOrganizations } from '../../../services/superadmin';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\superadmin\\users\\get-user-by-id.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/superadmin",
+          "fullMatch": "import { getUserById } from '../../../services/superadmin';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\superadmin\\users\\list-all-users.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/superadmin",
+          "fullMatch": "import { listAllUsers } from '../../../services/superadmin';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\uploads\\validate-presigned-url-request.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { PresignedUrlRequestBody, AuthenticatedRequest } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\controllers\\webhook.controller.ts",
+      "imports": [
+        {
+          "importPath": "../services/billing",
+          "fullMatch": "import BillingService from '../services/billing';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\middleware\\auth\\authenticate-jwt.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { AuthTokenPayload } from '../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\middleware\\auth\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { AuthTokenPayload } from '../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\models\\order\\order-types.ts",
+      "imports": [
+        {
+          "importPath": "./validation-types",
+          "fullMatch": "import { ValidationStatus } from './validation-types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\routes\\auth.routes.ts",
+      "imports": [
+        {
+          "importPath": "../controllers/auth.controller",
+          "fullMatch": "import authController from '../controllers/auth.controller.js';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\routes\\webhooks.routes.ts",
+      "imports": [
+        {
+          "importPath": "../controllers/webhook.controller",
+          "fullMatch": "import WebhookController from '../controllers/webhook.controller';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\auth\\organization\\create-admin-user.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { UserRegistrationDTO, User, DatabaseClient } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\auth\\organization\\create-organization.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { OrganizationRegistrationDTO, Organization, DatabaseClient, OrganizationStatus } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\auth\\organization\\create-stripe-customer.ts",
+      "imports": [
+        {
+          "importPath": "../../../services/billing",
+          "fullMatch": "import BillingService from '../../../services/billing';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\auth\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import {\r\n  User,\r\n  UserRegistrationDTO,\r\n  UserLoginDTO,\r\n  Organization,\r\n  OrganizationRegistrationDTO,\r\n  AuthTokenPayload,\r\n  LoginResponse,\r\n  RegistrationResponse,\r\n  UserResponse,\r\n  OrganizationStatus\r\n} from '../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\auth\\user\\format-user-response.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { User, UserResponse } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\auth\\user\\update-last-login.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\billing\\credit\\has-credits.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\billing\\credit\\replenish-credits-for-tier.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\create-checkout-session-internal.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-checkout-session-completed.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-invoice-payment-failed\\index.ts",
+      "imports": [
+        {
+          "importPath": "./handle-invoice-payment-failed",
+          "fullMatch": "import { handleInvoicePaymentFailed } from './handle-invoice-payment-failed';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-subscription-updated\\notifications.ts",
+      "imports": [
+        {
+          "importPath": "../../../../../services/notification/services",
+          "fullMatch": "import { generalNotifications } from '../../../../../services/notification/services';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\handle-subscription-updated\\status-transitions.ts",
+      "imports": [
+        {
+          "importPath": "../../../../../services/notification/services",
+          "fullMatch": "import { generalNotifications } from '../../../../../services/notification/services';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\billing\\stripe\\webhooks\\verify-signature.ts",
+      "imports": [
+        {
+          "importPath": "./utils",
+          "fullMatch": "import { stripe } from './utils';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\deactivate-location.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\queries\\create\\index.ts",
+      "imports": [
+        {
+          "importPath": "./location",
+          "fullMatch": "import { createLocation } from './location';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\queries\\deactivate\\index.ts",
+      "imports": [
+        {
+          "importPath": "./location",
+          "fullMatch": "import { deactivateLocation } from './location';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\queries\\deactivate\\location.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\queries\\get\\index.ts",
+      "imports": [
+        {
+          "importPath": "./location",
+          "fullMatch": "import { getLocation } from './location';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\queries\\list\\index.ts",
+      "imports": [
+        {
+          "importPath": "./locations",
+          "fullMatch": "import { listLocations } from './locations';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\queries\\update\\index.ts",
+      "imports": [
+        {
+          "importPath": "./location",
+          "fullMatch": "import { updateLocation } from './location';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\queries\\user\\assign-user.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\queries\\user\\unassign-user.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\services\\deactivate-location.ts",
+      "imports": [
+        {
+          "importPath": "../queries",
+          "fullMatch": "import { deactivateLocation as deactivateLocationQuery } from '../queries';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\services\\user-location-management\\assign-user-to-location.ts",
+      "imports": [
+        {
+          "importPath": "../../queries",
+          "fullMatch": "import { assignUserToLocation as assignUserToLocationQuery } from '../../queries';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\services\\user-location-management\\unassign-user-from-location.ts",
+      "imports": [
+        {
+          "importPath": "../../queries",
+          "fullMatch": "import { unassignUserFromLocation as unassignUserFromLocationQuery } from '../../queries';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\user\\assign-user-to-location.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\location\\user\\unassign-user-from-location.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { getMainDbClient } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\email-sender\\client.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\email-sender\\params-builder.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/config",
+          "fullMatch": "import config from '../../../config/config';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\email-sender\\test-mode\\handle-test-mode.ts",
+      "imports": [
+        {
+          "importPath": "./is-test-mode-enabled",
+          "fullMatch": "import { isTestModeEnabled } from './is-test-mode-enabled';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\email-sender\\test-mode\\is-test-mode-enabled.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/config",
+          "fullMatch": "import config from '../../../../config/config';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\index.ts",
+      "imports": [
+        {
+          "importPath": "./manager",
+          "fullMatch": "import notificationManager from './manager';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\manager\\account.ts",
+      "imports": [
+        {
+          "importPath": "../services",
+          "fullMatch": "import { accountNotifications } from '../services';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\manager\\connection.ts",
+      "imports": [
+        {
+          "importPath": "../services",
+          "fullMatch": "import { connectionNotifications } from '../services';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\manager\\general.ts",
+      "imports": [
+        {
+          "importPath": "../services",
+          "fullMatch": "import { generalNotifications } from '../services';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\notification-manager.ts",
+      "imports": [
+        {
+          "importPath": "./services/index",
+          "fullMatch": "import {\r\n  accountNotifications,\r\n  generalNotifications,\r\n  connectionNotifications\r\n} from './services/index.js';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\services\\connection\\request\\get-frontend-url.ts",
+      "imports": [
+        {
+          "importPath": "../../../../../config/config",
+          "fullMatch": "import config from '../../../../../config/config';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\templates\\email-template-base.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { EmailContent, EmailTemplate, EmailTemplateData } from '../types.js';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\notification\\test-notification.ts",
+      "imports": [
+        {
+          "importPath": "./notification-manager",
+          "fullMatch": "import notificationManager from './notification-manager';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\clinical-record-manager\\save-emr-summary.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\clinical-record-manager\\save-supplemental-document.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\emr-parser.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { ParsedEmrData } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\handlers\\paste-supplemental.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { SupplementalDocResult } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\handlers\\update-insurance.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { InsuranceUpdateData, InsuranceUpdateResult } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\handlers\\update-patient.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { PatientUpdateData, PatientUpdateResult } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\index.ts",
+      "imports": [
+        {
+          "importPath": "./handlers",
+          "fullMatch": "import {\r\n  handlePasteSummary,\r\n  handlePasteSupplemental,\r\n  updatePatientInfo,\r\n  updateInsuranceInfo,\r\n  sendToRadiology\r\n} from './handlers';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\insurance-manager.ts",
+      "imports": [
+        {
+          "importPath": "./insurance",
+          "fullMatch": "import { updateInsuranceInfo, updateInsuranceFromEmr } from './insurance';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\patient\\update-from-emr.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\test-emr-parser.ts",
+      "imports": [
+        {
+          "importPath": "./emr-parser",
+          "fullMatch": "import { parseEmrSummary } from './emr-parser';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\types\\order-types.ts",
+      "imports": [
+        {
+          "importPath": "../../../../models",
+          "fullMatch": "import { OrderStatus } from '../../../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\utils\\query-builder\\build-update-query-from-pairs.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { UpdateQueryResult } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\utils\\query-builder\\build-update-query.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { UpdateQueryResult } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\utils\\transaction.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { getPhiDbClient } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\validation\\insurance\\validate-insurance-fields.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { InsuranceData } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\validation\\patient\\validate-patient-fields.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { PatientData } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\admin\\validation\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../admin/types",
+          "fullMatch": "import { PatientData, InsuranceData } from '../../admin/types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\finalize\\authorization\\verify-user-authorization.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\finalize\\signature\\handle-signature-upload.ts",
+      "imports": [
+        {
+          "importPath": "../../../upload",
+          "fullMatch": "import { getUploadUrl, confirmUpload } from '../../../upload';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\finalize\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../../models",
+          "fullMatch": "import { Order, OrderStatus, ValidationStatus } from '../../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\details\\fetch-clinical-records.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\details\\fetch-document-uploads.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\details\\fetch-insurance.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\details\\fetch-order-history.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\details\\fetch-order.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\details\\fetch-patient.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\details\\fetch-validation-attempts.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\export\\csv-export\\generate-csv-export.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { OrderDetails } from '../../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\export\\csv-export\\index.ts",
+      "imports": [
+        {
+          "importPath": "./generate-csv-export",
+          "fullMatch": "import { generateCsvExport } from './generate-csv-export';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\export\\pdf-export.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { OrderDetails } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\order-builder\\base-query.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { OrderFilters } from '../../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\order-builder\\sorting.ts",
+      "imports": [
+        {
+          "importPath": "../../types",
+          "fullMatch": "import { OrderFilters } from '../../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\order-builder\\status-filter.ts",
+      "imports": [
+        {
+          "importPath": "../../../../../models",
+          "fullMatch": "import { OrderStatus } from '../../../../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\query\\pagination-helper.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { PaginationResult } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\radiology\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../../models",
+          "fullMatch": "import { OrderStatus } from '../../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\validation\\attempt-tracking\\get-next-attempt-number.ts",
+      "imports": [
+        {
+          "importPath": "../../../../config/db",
+          "fullMatch": "import { queryPhiDb } from '../../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\validation\\index.ts",
+      "imports": [
+        {
+          "importPath": "./handler",
+          "fullMatch": "import { handleValidationRequest } from './handler';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\order\\validation\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../../models",
+          "fullMatch": "import { ValidationResult } from '../../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\superadmin\\organizations\\get-organization-by-id.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\superadmin\\organizations\\list-all-organizations.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\superadmin\\users\\get-user-by-id.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\services\\superadmin\\users\\list-all-users.ts",
+      "imports": [
+        {
+          "importPath": "../../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\database\\context-formatter.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { ICD10Row, CPTRow, MappingRow, MarkdownRow } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\database\\get-specialty-word-count.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\database\\get-user-specialty.ts",
+      "imports": [
+        {
+          "importPath": "../../config/db",
+          "fullMatch": "import { queryMainDb } from '../../config/db';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\database\\keyword-categorizer.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { CategorizedKeywords } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\response\\extractor.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { PartialInformation } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\response\\normalizer\\normalize-response-fields.ts",
+      "imports": [
+        {
+          "importPath": "../types",
+          "fullMatch": "import { FieldMap } from '../types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\response\\types.ts",
+      "imports": [
+        {
+          "importPath": "../../models",
+          "fullMatch": "import { ValidationResult, ValidationStatus } from '../../models';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\text-processing\\phi-sanitizer.ts",
+      "imports": [
+        {
+          "importPath": "./types",
+          "fullMatch": "import { PHISanitizerOptions } from './types';"
+        }
+      ],
+      "count": 1
+    },
+    {
+      "file": "src\\utils\\token.utils.ts",
+      "imports": [
+        {
+          "importPath": "../models",
+          "fullMatch": "import { User, AuthTokenPayload } from '../models';"
+        }
+      ],
+      "count": 1
+    }
+  ]
+}

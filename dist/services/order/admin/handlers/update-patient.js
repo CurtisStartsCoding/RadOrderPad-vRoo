@@ -12,6 +12,7 @@ export async function updatePatientInfo(orderId, patientData, userId) {
         // 1. Verify order exists and has status 'pending_admin'
         const order = await clinicalRecordManager.verifyOrderStatus(orderId);
         // 2. Update patient information
+        // Note: userId is not used in the patientManager.updatePatientInfo function
         const patientId = await patientManager.updatePatientInfo(order.patient_id, patientData);
         return {
             success: true,

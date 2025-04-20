@@ -27,8 +27,8 @@ const redisOptions = {
   host: redisHost,
   port: redisPort,
   password: redisPassword,
-  // Always enable TLS for Redis Cloud
-  tls: {},
+  // Only enable TLS for Redis Cloud, not for localhost
+  tls: redisHost !== 'localhost' ? {} : undefined,
   // Reconnect strategy
   retryStrategy: (times: number): number => {
     // Maximum retry time is 3 minutes

@@ -19,6 +19,7 @@ export async function updateInsuranceInfo(
     const order = await clinicalRecordManager.verifyOrderStatus(orderId);
     
     // 2. Update insurance information
+    // Note: userId is not used in the insuranceManager.updateInsuranceInfo function
     const insuranceId = await insuranceManager.updateInsuranceInfo(order.patient_id, insuranceData);
     
     return {

@@ -1,6 +1,6 @@
 # Redis Cloud Integration
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2025-04-20
 
 This document describes the implementation of Redis Cloud integration in the RadOrderPad application, focusing on the use of RedisJSON and RedisSearch modules for efficient data storage, retrieval, and searching.
@@ -89,6 +89,7 @@ If Redis Cloud is unavailable, the application falls back to PostgreSQL for data
 1. Connection test is performed before each Redis operation
 2. If the connection fails, the application gracefully falls back to PostgreSQL
 3. Detailed error messages are logged to help diagnose connection issues
+4. The application logs which path is being used with `CONTEXT_PATH` markers
 
 ## Security Considerations
 
@@ -108,11 +109,11 @@ The Redis Cloud instance is currently configured to only accept connections from
 
 Alternatively, you can use a proxy or VPN to route your traffic through the allowed IP address.
 
-### Testing Redis Cloud Connection
+## Testing
+
+### Basic Connection Test
 
 To test your connection to Redis Cloud and check if your IP address is properly allowlisted, you can use the provided test scripts:
-
-#### Basic Connection Test
 
 ```bash
 # Windows
@@ -127,7 +128,7 @@ This script will:
 2. Test the connection to Redis Cloud
 3. Provide guidance on how to update the IP allowlist if the connection fails
 
-#### Redis Functionality Test
+### Redis Functionality Test
 
 Once your connection is working, you can run a more comprehensive test that verifies Redis functionality:
 
@@ -145,13 +146,48 @@ This test will:
 3. Verify the indexes were created
 4. Test basic Redis operations (set, get, delete)
 
-The test includes a 30-second timeout to prevent it from hanging indefinitely if there are connection issues.
+### RedisSearch Test
+
+To test the RedisSearch functionality for context generation:
+
+```bash
+# Windows
+.\run-redis-search-test.bat
+
+# Unix/Linux/macOS
+./run-redis-search-test.sh
+```
+
+This test will:
+1. Create RedisSearch indexes
+2. Verify the indexes were created
+3. Call the validation endpoint with a sample dictation
+4. Check if the returned codes exist in Redis
+
+### Enhanced RedisSearch Test with Fallback Testing
+
+To test both the RedisSearch functionality and the PostgreSQL fallback mechanism:
+
+```bash
+# Windows
+.\run-redis-search-with-fallback-test.bat
+
+# Unix/Linux/macOS
+# (Create an equivalent shell script if needed)
+```
+
+This enhanced test:
+1. First tests the normal RedisSearch path to ensure it works correctly
+2. Then simulates a Redis connection failure to test the PostgreSQL fallback path
+3. Verifies which path was used by checking the application logs
+4. Reports the results of both tests
 
 ## Maintenance and Monitoring
 
 - **Index Creation**: The `create-redis-indexes.ts` script creates and updates RedisSearch indexes
 - **Connection Testing**: The `testRedisConnection` function can be used to test the Redis Cloud connection
 - **Error Logging**: Comprehensive error logging helps diagnose issues
+- **Path Logging**: The application logs which path is being used (Redis or PostgreSQL) with `CONTEXT_PATH` markers
 
 ## References
 

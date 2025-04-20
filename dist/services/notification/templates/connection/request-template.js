@@ -9,8 +9,7 @@ export class ConnectionRequestEmailTemplate extends BaseEmailTemplate {
      * @returns Email content
      */
     generateContent(data) {
-        const requestData = data;
-        const { requestingOrgName } = requestData;
+        const { requestingOrgName } = data;
         // Create the connections link
         const frontendUrl = this.getFrontendUrl(data);
         const connectionsLink = `${frontendUrl}/connections/requests`;

@@ -1,5 +1,16 @@
 /**
  * Base class for email templates
+ *
+ * This abstract class provides common functionality for all email templates,
+ * including HTML styling, email signatures, and utility methods for generating
+ * consistent email content. All specific email templates should extend this class
+ * and implement the generateContent method.
+ *
+ * Features:
+ * - Consistent HTML styling across all emails
+ * - Common header and footer elements
+ * - Standard email signature
+ * - Utility methods for frontend URL handling
  */
 export class BaseEmailTemplate {
     /**

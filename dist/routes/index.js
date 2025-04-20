@@ -1,15 +1,15 @@
 import { Router } from 'express';
-import authRoutes from './auth.routes';
-import orderRoutes from './orders.routes';
-import adminOrderRoutes from './admin-orders.routes';
-import radiologyOrderRoutes from './radiology-orders.routes';
-import uploadsRoutes from './uploads.routes';
-import connectionRoutes from './connection.routes';
-import webhooksRoutes from './webhooks.routes';
-import organizationRoutes from './organization.routes';
-import userLocationRoutes from './user-location.routes';
-import superadminRoutes from './superadmin.routes';
-import billingRoutes from './billing.routes';
+import authRoutes from './auth.routes.js';
+import orderRoutes from './orders.routes.js';
+import adminOrderRoutes from './admin-orders.routes.js';
+import radiologyOrderRoutes from './radiology-orders.routes.js';
+import uploadsRoutes from './uploads.routes.js';
+import connectionRoutes from './connection.routes.js';
+import webhooksRoutes from './webhooks.routes.js';
+import organizationRoutes from './organization.routes.js';
+import userLocationRoutes from './user-location.routes.js';
+import superadminRoutes from './superadmin.routes.js';
+import billingRoutes from './billing.routes.js';
 const router = Router();
 // Mount routes
 router.use('/auth', authRoutes);
