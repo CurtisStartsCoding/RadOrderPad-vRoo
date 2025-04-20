@@ -104,8 +104,16 @@ async function testRedisSearchPath() {
     const response = await axios.post(
       `${baseUrl}/api/orders/validate`,
       {
-        text: sampleDictation,
-        testMode: true
+        dictationText: sampleDictation,
+        patientInfo: {
+          id: 12345,
+          firstName: "John",
+          lastName: "Doe",
+          dateOfBirth: "1980-01-01",
+          gender: "male"
+        },
+        testMode: true,
+        skipDatabaseOperations: true
       },
       {
         headers: {
@@ -167,8 +175,16 @@ async function testPostgreSQLFallbackPath() {
     const response = await axios.post(
       `${baseUrl}/api/orders/validate`,
       {
-        text: sampleDictation,
-        testMode: true
+        dictationText: sampleDictation,
+        patientInfo: {
+          id: 12345,
+          firstName: "John",
+          lastName: "Doe",
+          dateOfBirth: "1980-01-01",
+          gender: "male"
+        },
+        testMode: true,
+        skipDatabaseOperations: true
       },
       {
         headers: {

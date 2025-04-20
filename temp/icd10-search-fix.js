@@ -1,18 +1,44 @@
+
+// Common functions
+function processSearchTerms(keywords) {
+  return keywords.map(kw => kw.replace(/[^a-zA-Z0-9]/g, ' ')).join('|');
+}
+
+function extractKeyFromRedisKey(key) {
+  return key.split(':')[1];
+}
+
+function processRedisSearchResults(results, processor) {
+  const processedResults = [];
+  
+  // Skip the first element (count) and process the rest
+  if (results && results.length > 1) {
+    for (let i = 1; i < results.length; i += 2) {
+      const key = results[i];
+      const data = results[i + 1];
+      processedResults.push(processor(key, data));
+    }
+  }
+  
+  return processedResults;
+}
+
+// Get Redis client
+import { getRedisClient } from '../dist/config/redis.js';
 /**
  * ICD-10 code search using RedisSearch
  */
-import { getRedisClient } from '../../../config/redis';
-import { ICD10Row } from '../../database/types';
-import { CategorizedKeywords } from '../../database/types';
-import { processSearchTerms, processRedisSearchResults, extractKeyFromRedisKey } from './common';
+
+
+
+
 
 /**
  * Search for ICD-10 codes using RedisSearch
  * @param keywords Keywords to search for
- * @param categorizedKeywords Optional pre-categorized keywords
  * @returns Array of ICD-10 codes
  */
-export async function searchICD10Codes(keywords: string[], categorizedKeywords?: CategorizedKeywords): Promise<ICD10Row[]> {
+export async function searchICD10Codes(keywords)10Row[]> {
   try {
     // Get Redis client
     const client = getRedisClient();
@@ -20,38 +46,36 @@ export async function searchICD10Codes(keywords: string[], categorizedKeywords?:
     // Process search terms
     const searchTerms = processSearchTerms(keywords);
     
-    // Categorize keywords if not provided
-    if (!categorizedKeywords) {
-      categorizedKeywords = {
-        anatomyTerms: keywords.filter(kw => 
-          ['head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger', 
-           'chest', 'thorax', 'abdomen', 'pelvis', 'hip', 'leg', 'knee', 'ankle', 'foot', 'toe',
-           'brain', 'spine', 'cervical', 'thoracic', 'lumbar', 'sacral', 'skull',
-           'liver', 'kidney', 'spleen', 'pancreas', 'gallbladder', 'bladder', 'uterus', 'ovary', 'prostate',
-           'lung', 'heart', 'aorta', 'artery', 'vein'].includes(kw.toLowerCase())
-        ),
-        modalities: keywords.filter(kw => 
-          ['x-ray', 'xray', 'radiograph', 'ct', 'cat scan', 'computed tomography',
-           'mri', 'magnetic resonance', 'ultrasound', 'sonogram', 'pet', 'nuclear',
-           'angiogram', 'angiography', 'mammogram', 'mammography', 'dexa', 'bone density'].includes(kw.toLowerCase())
-        ),
-        symptoms: keywords.filter(kw => 
-          !['head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger', 
-            'chest', 'thorax', 'abdomen', 'pelvis', 'hip', 'leg', 'knee', 'ankle', 'foot', 'toe',
-            'brain', 'spine', 'cervical', 'thoracic', 'lumbar', 'sacral', 'skull',
-            'liver', 'kidney', 'spleen', 'pancreas', 'gallbladder', 'bladder', 'uterus', 'ovary', 'prostate',
-            'lung', 'heart', 'aorta', 'artery', 'vein',
-            'x-ray', 'xray', 'radiograph', 'ct', 'cat scan', 'computed tomography',
-            'mri', 'magnetic resonance', 'ultrasound', 'sonogram', 'pet', 'nuclear',
-            'angiogram', 'angiography', 'mammogram', 'mammography', 'dexa', 'bone density'].includes(kw.toLowerCase())
-        ),
-        codes: keywords.filter(kw => kw.match(/^[A-Z]\d{2}(\.\d{1,2})?$/))
-      };
-    }
+    // Categorize keywords
+    const categorizedKeywords = {
+      anatomyTerms.filter(kw => 
+        ['head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger', 
+         'chest', 'thorax', 'abdomen', 'pelvis', 'hip', 'leg', 'knee', 'ankle', 'foot', 'toe',
+         'brain', 'spine', 'cervical', 'thoracic', 'lumbar', 'sacral', 'skull',
+         'liver', 'kidney', 'spleen', 'pancreas', 'gallbladder', 'bladder', 'uterus', 'ovary', 'prostate',
+         'lung', 'heart', 'aorta', 'artery', 'vein'].includes(kw.toLowerCase())
+      ),
+      modalities.filter(kw => 
+        ['x-ray', 'xray', 'radiograph', 'ct', 'cat scan', 'computed tomography',
+         'mri', 'magnetic resonance', 'ultrasound', 'sonogram', 'pet', 'nuclear',
+         'angiogram', 'angiography', 'mammogram', 'mammography', 'dexa', 'bone density'].includes(kw.toLowerCase())
+      ),
+      symptoms.filter(kw => 
+        !['head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger', 
+          'chest', 'thorax', 'abdomen', 'pelvis', 'hip', 'leg', 'knee', 'ankle', 'foot', 'toe',
+          'brain', 'spine', 'cervical', 'thoracic', 'lumbar', 'sacral', 'skull',
+          'liver', 'kidney', 'spleen', 'pancreas', 'gallbladder', 'bladder', 'uterus', 'ovary', 'prostate',
+          'lung', 'heart', 'aorta', 'artery', 'vein',
+          'x-ray', 'xray', 'radiograph', 'ct', 'cat scan', 'computed tomography',
+          'mri', 'magnetic resonance', 'ultrasound', 'sonogram', 'pet', 'nuclear',
+          'angiogram', 'angiography', 'mammogram', 'mammography', 'dexa', 'bone density'].includes(kw.toLowerCase())
+      ),
+      codes.filter(kw => kw.match(/^[A-Z]\d{2}(\.\d{1,2})$/))
+    };
     
     // Add code filter if we have specific codes
     if (categorizedKeywords.codes.length > 0) {
-      const codes = categorizedKeywords.codes.filter(c => c.match(/^[A-Z]\d{2}(\.\d{1,2})?$/));
+      const codes = categorizedKeywords.codes.filter(c => c.match(/^[A-Z]\d{2}(\.\d{1,2})$/));
       if (codes.length > 0) {
         // If we have specific ICD-10 codes, search for those directly
         return await getICD10CodesByIds(codes);
@@ -59,7 +83,7 @@ export async function searchICD10Codes(keywords: string[], categorizedKeywords?:
     }
     
     // Create an array to store all results
-    const allResults: ICD10Row[] = [];
+    const allResults10Row[] = [];
     
     // Search by description and keywords
     let descriptionQuery = `@description:(${searchTerms})`;
@@ -83,12 +107,12 @@ export async function searchICD10Codes(keywords: string[], categorizedKeywords?:
     
     // Process description results
     const descriptionRows = processRedisSearchResults<ICD10Row>(descriptionResults, (key, data) => {
-      // Extract the ICD-10 code from the key (format: icd10:CODE)
+      // Extract the ICD-10 code from the key (format10:CODE)
       const icd10Code = extractKeyFromRedisKey(key);
       
       // Create an ICD10Row object
-      const row: ICD10Row = {
-        icd10_code: icd10Code,
+      const row10Row = {
+        icd10_code10Code,
         description: '',
         clinical_notes: '',
         imaging_modalities: '',
@@ -141,12 +165,12 @@ export async function searchICD10Codes(keywords: string[], categorizedKeywords?:
       
       // Process anatomy results
       const anatomyRows = processRedisSearchResults<ICD10Row>(anatomyResults, (key, data) => {
-        // Extract the ICD-10 code from the key (format: icd10:CODE)
+        // Extract the ICD-10 code from the key (format10:CODE)
         const icd10Code = extractKeyFromRedisKey(key);
         
         // Create an ICD10Row object
-        const row: ICD10Row = {
-          icd10_code: icd10Code,
+        const row10Row = {
+          icd10_code10Code,
           description: '',
           clinical_notes: '',
           imaging_modalities: '',
@@ -200,13 +224,13 @@ export async function searchICD10Codes(keywords: string[], categorizedKeywords?:
  * @param icd10Codes Array of ICD-10 codes
  * @returns Array of ICD-10 codes
  */
-export async function getICD10CodesByIds(icd10Codes: string[]): Promise<ICD10Row[]> {
+async function getICD10CodesByIds(icd10Codes)10Row[]> {
   try {
     // Get Redis client
     const client = getRedisClient();
     
     // Create an array to store the results
-    const results: ICD10Row[] = [];
+    const results10Row[] = [];
     
     // Get each ICD-10 code
     for (const icd10Code of icd10Codes) {
@@ -218,12 +242,12 @@ export async function getICD10CodesByIds(icd10Codes: string[]): Promise<ICD10Row
         const parsedData = JSON.parse(data);
         
         // Create an ICD10Row object
-        const row: ICD10Row = {
-          icd10_code: parsedData.icd10_code || icd10Code,
-          description: parsedData.description || '',
-          clinical_notes: parsedData.clinical_notes || '',
-          imaging_modalities: parsedData.imaging_modalities || '',
-          primary_imaging: parsedData.primary_imaging || ''
+        const row10Row = {
+          icd10_code.icd10_code || icd10Code,
+          description.description || '',
+          clinical_notes.clinical_notes || '',
+          imaging_modalities.imaging_modalities || '',
+          primary_imaging.primary_imaging || ''
         };
         
         // Add the row to the results

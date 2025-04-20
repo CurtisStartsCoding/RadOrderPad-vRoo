@@ -1,18 +1,44 @@
+
+// Common functions
+function processSearchTerms(keywords) {
+  return keywords.map(kw => kw.replace(/[^a-zA-Z0-9]/g, ' ')).join('|');
+}
+
+function extractKeyFromRedisKey(key) {
+  return key.split(':')[1];
+}
+
+function processRedisSearchResults(results, processor) {
+  const processedResults = [];
+  
+  // Skip the first element (count) and process the rest
+  if (results && results.length > 1) {
+    for (let i = 1; i < results.length; i += 2) {
+      const key = results[i];
+      const data = results[i + 1];
+      processedResults.push(processor(key, data));
+    }
+  }
+  
+  return processedResults;
+}
+
+// Get Redis client
+import { getRedisClient } from '../dist/config/redis.js';
 /**
  * CPT code search using RedisSearch
  */
-import { getRedisClient } from '../../../config/redis';
-import { CPTRow } from '../../database/types';
-import { CategorizedKeywords } from '../../database/types';
-import { processSearchTerms, processRedisSearchResults, extractKeyFromRedisKey } from './common';
+
+
+
+
 
 /**
  * Search for CPT codes using RedisSearch
  * @param keywords Keywords to search for
- * @param categorizedKeywords Optional pre-categorized keywords
  * @returns Array of CPT codes
  */
-export async function searchCPTCodes(keywords: string[], categorizedKeywords?: CategorizedKeywords): Promise<CPTRow[]> {
+export async function searchCPTCodes(keywords) {
   try {
     // Get Redis client
     const client = getRedisClient();
@@ -20,34 +46,32 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
     // Process search terms
     const searchTerms = processSearchTerms(keywords);
     
-    // Categorize keywords if not provided
-    if (!categorizedKeywords) {
-      categorizedKeywords = {
-        anatomyTerms: keywords.filter(kw => 
-          ['head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger', 
-           'chest', 'thorax', 'abdomen', 'pelvis', 'hip', 'leg', 'knee', 'ankle', 'foot', 'toe',
-           'brain', 'spine', 'cervical', 'thoracic', 'lumbar', 'sacral', 'skull',
-           'liver', 'kidney', 'spleen', 'pancreas', 'gallbladder', 'bladder', 'uterus', 'ovary', 'prostate',
-           'lung', 'heart', 'aorta', 'artery', 'vein'].includes(kw.toLowerCase())
-        ),
-        modalities: keywords.filter(kw => 
-          ['x-ray', 'xray', 'radiograph', 'ct', 'cat scan', 'computed tomography',
-           'mri', 'magnetic resonance', 'ultrasound', 'sonogram', 'pet', 'nuclear',
-           'angiogram', 'angiography', 'mammogram', 'mammography', 'dexa', 'bone density'].includes(kw.toLowerCase())
-        ),
-        symptoms: keywords.filter(kw => 
-          !['head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger', 
-            'chest', 'thorax', 'abdomen', 'pelvis', 'hip', 'leg', 'knee', 'ankle', 'foot', 'toe',
-            'brain', 'spine', 'cervical', 'thoracic', 'lumbar', 'sacral', 'skull',
-            'liver', 'kidney', 'spleen', 'pancreas', 'gallbladder', 'bladder', 'uterus', 'ovary', 'prostate',
-            'lung', 'heart', 'aorta', 'artery', 'vein',
-            'x-ray', 'xray', 'radiograph', 'ct', 'cat scan', 'computed tomography',
-            'mri', 'magnetic resonance', 'ultrasound', 'sonogram', 'pet', 'nuclear',
-            'angiogram', 'angiography', 'mammogram', 'mammography', 'dexa', 'bone density'].includes(kw.toLowerCase())
-        ),
-        codes: keywords.filter(kw => kw.match(/^\d{5}$/))
-      };
-    }
+    // Categorize keywords
+    const categorizedKeywords = {
+      anatomyTerms.filter(kw => 
+        ['head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger', 
+         'chest', 'thorax', 'abdomen', 'pelvis', 'hip', 'leg', 'knee', 'ankle', 'foot', 'toe',
+         'brain', 'spine', 'cervical', 'thoracic', 'lumbar', 'sacral', 'skull',
+         'liver', 'kidney', 'spleen', 'pancreas', 'gallbladder', 'bladder', 'uterus', 'ovary', 'prostate',
+         'lung', 'heart', 'aorta', 'artery', 'vein'].includes(kw.toLowerCase())
+      ),
+      modalities.filter(kw => 
+        ['x-ray', 'xray', 'radiograph', 'ct', 'cat scan', 'computed tomography',
+         'mri', 'magnetic resonance', 'ultrasound', 'sonogram', 'pet', 'nuclear',
+         'angiogram', 'angiography', 'mammogram', 'mammography', 'dexa', 'bone density'].includes(kw.toLowerCase())
+      ),
+      symptoms.filter(kw => 
+        !['head', 'neck', 'shoulder', 'arm', 'elbow', 'wrist', 'hand', 'finger', 
+          'chest', 'thorax', 'abdomen', 'pelvis', 'hip', 'leg', 'knee', 'ankle', 'foot', 'toe',
+          'brain', 'spine', 'cervical', 'thoracic', 'lumbar', 'sacral', 'skull',
+          'liver', 'kidney', 'spleen', 'pancreas', 'gallbladder', 'bladder', 'uterus', 'ovary', 'prostate',
+          'lung', 'heart', 'aorta', 'artery', 'vein',
+          'x-ray', 'xray', 'radiograph', 'ct', 'cat scan', 'computed tomography',
+          'mri', 'magnetic resonance', 'ultrasound', 'sonogram', 'pet', 'nuclear',
+          'angiogram', 'angiography', 'mammogram', 'mammography', 'dexa', 'bone density'].includes(kw.toLowerCase())
+      ),
+      codes.filter(kw => kw.match(/^\d{5}$/))
+    };
     
     // Add code filter if we have specific codes
     if (categorizedKeywords.codes.length > 0) {
@@ -59,7 +83,7 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
     }
     
     // Create an array to store all results
-    const allResults: CPTRow[] = [];
+    const allResults = [];
     
     // Search by description
     const descriptionQuery = `@description:(${searchTerms})`;
@@ -75,12 +99,12 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
     
     // Process description results
     const descriptionRows = processRedisSearchResults<CPTRow>(descriptionResults, (key, data) => {
-      // Extract the CPT code from the key (format: cpt:CODE)
+      // Extract the CPT code from the key (format:CODE)
       const cptCode = extractKeyFromRedisKey(key);
       
       // Create a CPTRow object
-      const row: CPTRow = {
-        cpt_code: cptCode,
+      const row = {
+        cpt_code,
         description: '',
         modality: '',
         body_part: ''
@@ -127,12 +151,12 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
       
       // Process modality results
       const modalityRows = processRedisSearchResults<CPTRow>(modalityResults, (key, data) => {
-        // Extract the CPT code from the key (format: cpt:CODE)
+        // Extract the CPT code from the key (format:CODE)
         const cptCode = extractKeyFromRedisKey(key);
         
         // Create a CPTRow object
-        const row: CPTRow = {
-          cpt_code: cptCode,
+        const row = {
+          cpt_code,
           description: '',
           modality: '',
           body_part: ''
@@ -185,12 +209,12 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
       
       // Process body part results
       const bodyPartRows = processRedisSearchResults<CPTRow>(bodyPartResults, (key, data) => {
-        // Extract the CPT code from the key (format: cpt:CODE)
+        // Extract the CPT code from the key (format:CODE)
         const cptCode = extractKeyFromRedisKey(key);
         
         // Create a CPTRow object
-        const row: CPTRow = {
-          cpt_code: cptCode,
+        const row = {
+          cpt_code,
           description: '',
           modality: '',
           body_part: ''
@@ -240,13 +264,13 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
  * @param cptCodes Array of CPT codes
  * @returns Array of CPT codes
  */
-export async function getCPTCodesByIds(cptCodes: string[]): Promise<CPTRow[]> {
+async function getCPTCodesByIds(cptCodes) {
   try {
     // Get Redis client
     const client = getRedisClient();
     
     // Create an array to store the results
-    const results: CPTRow[] = [];
+    const results = [];
     
     // Get each CPT code
     for (const cptCode of cptCodes) {
@@ -258,11 +282,11 @@ export async function getCPTCodesByIds(cptCodes: string[]): Promise<CPTRow[]> {
         const parsedData = JSON.parse(data);
         
         // Create a CPTRow object
-        const row: CPTRow = {
-          cpt_code: parsedData.cpt_code || cptCode,
-          description: parsedData.description || '',
-          modality: parsedData.modality || '',
-          body_part: parsedData.body_part || ''
+        const row = {
+          cpt_code.cpt_code || cptCode,
+          description.description || '',
+          modality.modality || '',
+          body_part.body_part || ''
         };
         
         // Add the row to the results
