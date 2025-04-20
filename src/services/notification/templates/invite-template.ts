@@ -1,5 +1,5 @@
-import { EmailContent, EmailTemplateData, InvitationEmailData } from '../types';
-import { BaseEmailTemplate } from './email-template-base';
+import { EmailContent, EmailTemplateData, InvitationEmailData } from '../types.js';
+import { BaseEmailTemplate } from './email-template-base.js';
 
 /**
  * Template for invitation emails

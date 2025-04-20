@@ -1,4 +1,4 @@
-import { BaseEmailTemplate } from '../email-template-base';
+import { BaseEmailTemplate } from '../email-template-base.js';
 /**
  * Template for connection rejection emails
  */

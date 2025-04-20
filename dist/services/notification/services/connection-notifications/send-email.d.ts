@@ -1,4 +1,4 @@
-import { EmailTemplate, EmailTemplateData } from '../../types';
+import { EmailTemplate, EmailTemplateData } from '../../types.js';
 /**
  * Common function to send an email using a template
  * @param email Email address to send to

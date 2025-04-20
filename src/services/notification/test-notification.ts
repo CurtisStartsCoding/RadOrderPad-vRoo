@@ -6,11 +6,9 @@ import notificationManager from './notification-manager';
 
 async function testNotificationService(): Promise<void> {
   try {
-    // eslint-disable-next-line no-console
     console.log('Testing Notification Service with Refactored Modules...');
     
     // Test invitation email
-    // eslint-disable-next-line no-console
     console.log('\nTesting invitation email:');
     await notificationManager.sendInviteEmail(
       'test@example.com',
@@ -20,7 +18,6 @@ async function testNotificationService(): Promise<void> {
     );
     
     // Test password reset email
-    // eslint-disable-next-line no-console
     console.log('\nTesting password reset email:');
     await notificationManager.sendPasswordResetEmail(
       'test@example.com',
@@ -28,7 +25,6 @@ async function testNotificationService(): Promise<void> {
     );
     
     // Test general notification email
-    // eslint-disable-next-line no-console
     console.log('\nTesting general notification email:');
     await notificationManager.sendNotificationEmail(
       'test@example.com',
@@ -37,7 +33,6 @@ async function testNotificationService(): Promise<void> {
     );
     
     // Test connection request email
-    // eslint-disable-next-line no-console
     console.log('\nTesting connection request email:');
     await notificationManager.sendConnectionRequest(
       'test@example.com',
@@ -45,7 +40,6 @@ async function testNotificationService(): Promise<void> {
     );
     
     // Test connection approval email
-    // eslint-disable-next-line no-console
     console.log('\nTesting connection approval email:');
     await notificationManager.sendConnectionApproved(
       'test@example.com',
@@ -53,7 +47,6 @@ async function testNotificationService(): Promise<void> {
     );
     
     // Test connection rejection email
-    // eslint-disable-next-line no-console
     console.log('\nTesting connection rejection email:');
     await notificationManager.sendConnectionRejected(
       'test@example.com',
@@ -61,7 +54,6 @@ async function testNotificationService(): Promise<void> {
     );
     
     // Test connection termination email
-    // eslint-disable-next-line no-console
     console.log('\nTesting connection termination email:');
     await notificationManager.sendConnectionTerminated(
       'test@example.com',
@@ -69,10 +61,8 @@ async function testNotificationService(): Promise<void> {
       'Terminating Organization'
     );
     
-    // eslint-disable-next-line no-console
     console.log('\nAll tests completed successfully!');
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Error testing notification service:', error);
   }
 }

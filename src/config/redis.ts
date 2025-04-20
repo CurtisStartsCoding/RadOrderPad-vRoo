@@ -8,6 +8,10 @@ import logger from '../utils/logger.js';
  * This file configures and exports the Redis client instance for Redis Cloud.
  * Redis Cloud is used for caching frequently accessed medical reference data and
  * for RedisSearch and RedisJSON capabilities to enable fast context generation.
+ *
+ * For detailed documentation, see:
+ * - Docs/redis_integration.md - High-level Redis integration strategy
+ * - Docs/implementation/redis-integration.md - Detailed implementation documentation
  */
 
 // Load environment variables

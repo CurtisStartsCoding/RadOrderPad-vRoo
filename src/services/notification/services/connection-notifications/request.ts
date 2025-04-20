@@ -1,7 +1,7 @@
-import config from '../../../../config/config';
-import { connectionRequestTemplate } from '../../templates';
-import { ConnectionRequestEmailData } from '../../types';
-import sendTemplatedEmail from './send-email';
+import config from '../../../../config/config.js';
+import { connectionRequestTemplate } from '../../templates/index.js';
+import { ConnectionRequestEmailData } from '../../types.js';
+import sendTemplatedEmail from './send-email.js';
 
 /**
  * Send a connection request notification to an organization

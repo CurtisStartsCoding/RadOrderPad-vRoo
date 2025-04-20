@@ -1,4 +1,4 @@
-import { EmailSender } from './types';
+import { EmailSender } from './types.js';
 /**
  * AWS SES Email Sender implementation
  */

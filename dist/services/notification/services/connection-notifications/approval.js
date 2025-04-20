@@ -1,6 +1,6 @@
-import config from '../../../../config/config';
-import { connectionApprovalTemplate } from '../../templates';
-import sendTemplatedEmail from './send-email';
+import config from '../../../../config/config.js';
+import { connectionApprovalTemplate } from '../../templates/index.js';
+import sendTemplatedEmail from './send-email.js';
 /**
  * Send a connection approval notification
  * @param email Email address of the requesting organization admin

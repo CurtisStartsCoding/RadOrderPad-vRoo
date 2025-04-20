@@ -79,3 +79,9 @@ This document outlines how **Redis Cloud (hosted on AWS)**, leveraging the **Red
 -   **Index Management:** Implement logic (e.g., a script `create-redis-indexes.ts`) to create (`FT.CREATE`) and update RedisSearch indexes when the underlying reference data in PostgreSQL changes or during initial data load to Redis Cloud.
 -   **VPC/Network Access:** Ensure the application environment (e.g., EC2 instance, Lambda function) has network access to the Redis Cloud endpoint. This typically involves configuring Security Groups and potentially NAT Gateways or VPC Endpoints, and allow-listing the application's egress IP in the Redis Cloud database settings.
 -   **Monitoring:** Monitor **Redis Cloud metrics** (via the Redis Cloud UI/API) for performance, memory usage, latency, and command execution. Monitor application-level metrics (cache hit/miss rates) and relevant AWS infrastructure metrics (EC2/Lambda CPU/Network, NAT Gateway traffic) via CloudWatch.
+
+## 7. Implementation Documentation
+
+For detailed implementation information, including code examples, configuration details, and testing procedures, please refer to the following document:
+
+- [Redis Integration Implementation](./implementation/redis-integration.md) - Comprehensive documentation of the Redis Cloud integration implementation, including Redis client configuration, RedisJSON and RedisSearch integration, data models, search indexes, testing, and security considerations.

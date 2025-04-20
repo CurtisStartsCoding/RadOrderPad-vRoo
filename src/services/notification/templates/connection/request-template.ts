@@ -1,5 +1,5 @@
-import { EmailContent, EmailTemplateData, ConnectionRequestEmailData } from '../../types';
-import { BaseEmailTemplate } from '../email-template-base';
+import { EmailContent, ConnectionRequestEmailData } from '../../types.js';
+import { BaseEmailTemplate } from '../email-template-base.js';
 
 /**
  * Template for connection request emails
@@ -10,9 +10,8 @@ export class ConnectionRequestEmailTemplate extends BaseEmailTemplate {
    * @param data Connection request data
    * @returns Email content
    */
-  generateContent(data: EmailTemplateData): EmailContent {
-    const requestData = data as ConnectionRequestEmailData;
-    const { requestingOrgName } = requestData;
+  generateContent(data: ConnectionRequestEmailData): EmailContent {
+    const { requestingOrgName } = data;
     
     // Create the connections link
     const frontendUrl = this.getFrontendUrl(data);

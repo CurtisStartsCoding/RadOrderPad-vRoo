@@ -1,6 +1,6 @@
-import config from '../../../../config/config';
-import { connectionRejectionTemplate } from '../../templates';
-import sendTemplatedEmail from './send-email';
+import config from '../../../../config/config.js';
+import { connectionRejectionTemplate } from '../../templates/index.js';
+import sendTemplatedEmail from './send-email.js';
 /**
  * Send a connection rejection notification
  * @param email Email address of the requesting organization admin

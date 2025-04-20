@@ -1,5 +1,5 @@
-import { EmailContent, EmailTemplateData, ConnectionApprovalEmailData } from '../../types';
-import { BaseEmailTemplate } from '../email-template-base';
+import { EmailContent, ConnectionApprovalEmailData } from '../../types.js';
+import { BaseEmailTemplate } from '../email-template-base.js';
 
 /**
  * Template for connection approval emails
@@ -10,7 +10,10 @@ export class ConnectionApprovalEmailTemplate extends BaseEmailTemplate {
    * @param data Connection approval data
    * @returns Email content
    */
-  generateContent(data: EmailTemplateData): EmailContent {
+  generateContent(data: ConnectionApprovalEmailData): EmailContent {
+    // Extract data
+    const { approvedOrgName } = data;
+    
     // Create the connections link
     const frontendUrl = this.getFrontendUrl(data);
     const connectionsLink = `${frontendUrl}/connections`;
@@ -19,7 +22,7 @@ export class ConnectionApprovalEmailTemplate extends BaseEmailTemplate {
     const textBody = `
 Hello,
 
-Your connection request to partner with another organization has been approved.
+Your connection request to partner with ${approvedOrgName} has been approved.
 
 You can now view and manage your connections in your RadOrderPad account:
 ${connectionsLink}
@@ -29,7 +32,7 @@ ${this.getEmailSignature()}
     
     // Create the HTML email body
     const htmlContent = `
-      <p>Your connection request to partner with another organization has been approved.</p>
+      <p>Your connection request to partner with <strong>${approvedOrgName}</strong> has been approved.</p>
       <p>You can now view and manage your connections in your RadOrderPad account:</p>
       <p><a href="${connectionsLink}" class="button">View Connections</a></p>
       <p>Or copy and paste this link into your browser:</p>

@@ -36,5 +36,13 @@ export default tseslint.config(
         'ts-expect-error': 'allow-with-description'
       }]
     },
+  },
+  // Override for notification service files
+  {
+    files: ['**/src/services/notification/**/*.ts'],
+    rules: {
+      // Allow console statements in notification service files
+      'no-console': 'off'
+    }
   }
 );

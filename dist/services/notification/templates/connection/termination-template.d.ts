@@ -1,5 +1,5 @@
-import { EmailContent, EmailTemplateData } from '../../types';
-import { BaseEmailTemplate } from '../email-template-base';
+import { EmailContent, EmailTemplateData } from '../../types.js';
+import { BaseEmailTemplate } from '../email-template-base.js';
 /**
  * Template for connection termination emails
  */

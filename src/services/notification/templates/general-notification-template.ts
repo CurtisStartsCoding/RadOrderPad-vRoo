@@ -1,5 +1,5 @@
-import { EmailContent, EmailTemplateData, NotificationEmailData } from '../types';
-import { BaseEmailTemplate } from './email-template-base';
+import { EmailContent, EmailTemplateData, NotificationEmailData } from '../types.js';
+import { BaseEmailTemplate } from './email-template-base.js';
 
 /**
  * Template for general notification emails

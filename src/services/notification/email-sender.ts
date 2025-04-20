@@ -1,6 +1,6 @@
 import { SESClient, SendEmailCommand, SendEmailCommandInput } from '@aws-sdk/client-ses';
-import config from '../../config/config';
-import { EmailSender } from './types';
+import config from '../../config/config.js';
+import { EmailSender } from './types.js';
 
 /**
  * AWS SES Email Sender implementation

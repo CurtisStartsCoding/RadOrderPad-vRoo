@@ -1,6 +1,6 @@
-import emailSender from '../email-sender';
-import { generalNotificationTemplate } from '../templates';
-import { NotificationEmailData } from '../types';
+import emailSender from '../email-sender.js';
+import { generalNotificationTemplate } from '../templates/index.js';
+import { NotificationEmailData } from '../types.js';
 
 /**
  * Service for handling general notifications

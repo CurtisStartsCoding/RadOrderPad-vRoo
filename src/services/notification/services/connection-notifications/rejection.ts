@@ -1,7 +1,7 @@
-import config from '../../../../config/config';
-import { connectionRejectionTemplate } from '../../templates';
-import { ConnectionRejectionEmailData } from '../../types';
-import sendTemplatedEmail from './send-email';
+import config from '../../../../config/config.js';
+import { connectionRejectionTemplate } from '../../templates/index.js';
+import { ConnectionRejectionEmailData } from '../../types.js';
+import sendTemplatedEmail from './send-email.js';
 
 /**
  * Send a connection rejection notification

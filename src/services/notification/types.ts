@@ -1,5 +1,3 @@
-import { SendEmailCommandInput } from '@aws-sdk/client-ses';
-
 /**
  * Email recipient configuration
  */

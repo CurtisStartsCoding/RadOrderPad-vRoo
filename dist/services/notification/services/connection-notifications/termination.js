@@ -1,6 +1,6 @@
-import config from '../../../../config/config';
-import { connectionTerminationTemplate } from '../../templates';
-import sendTemplatedEmail from './send-email';
+import config from '../../../../config/config.js';
+import { connectionTerminationTemplate } from '../../templates/index.js';
+import sendTemplatedEmail from './send-email.js';
 /**
  * Send a connection termination notification
  * @param email Email address of the partner organization admin

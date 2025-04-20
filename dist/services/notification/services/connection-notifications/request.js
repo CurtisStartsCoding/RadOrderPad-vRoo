@@ -1,6 +1,6 @@
-import config from '../../../../config/config';
-import { connectionRequestTemplate } from '../../templates';
-import sendTemplatedEmail from './send-email';
+import config from '../../../../config/config.js';
+import { connectionRequestTemplate } from '../../templates/index.js';
+import sendTemplatedEmail from './send-email.js';
 /**
  * Send a connection request notification to an organization
  * @param email Email address of the target organization admin

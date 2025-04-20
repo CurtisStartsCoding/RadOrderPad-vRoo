@@ -1,5 +1,5 @@
-import { EmailContent, EmailTemplateData, PasswordResetEmailData } from '../types';
-import { BaseEmailTemplate } from './email-template-base';
+import { EmailContent, EmailTemplateData, PasswordResetEmailData } from '../types.js';
+import { BaseEmailTemplate } from './email-template-base.js';
 
 /**
  * Template for password reset emails

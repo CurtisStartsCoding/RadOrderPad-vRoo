@@ -88,4 +88,10 @@ The Notification Service is invoked by other backend services upon events such a
 -   `email_verification_tokens` (Main DB) (Token for link)
 -   `password_reset_tokens` (Main DB) (Token for link)
 -   `user_invitations` (Main DB) (Token for link)
--   AWS SES API (External)
+- AWS SES API (External)
+
+---
+
+## Implementation
+
+For detailed implementation information, see [Notification Service Implementation](./implementation/notification-service-implementation.md).

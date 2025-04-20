@@ -1,7 +1,7 @@
-import config from '../../../../config/config';
-import { connectionApprovalTemplate } from '../../templates';
-import { ConnectionApprovalEmailData } from '../../types';
-import sendTemplatedEmail from './send-email';
+import config from '../../../../config/config.js';
+import { connectionApprovalTemplate } from '../../templates/index.js';
+import { ConnectionApprovalEmailData } from '../../types.js';
+import sendTemplatedEmail from './send-email.js';
 
 /**
  * Send a connection approval notification

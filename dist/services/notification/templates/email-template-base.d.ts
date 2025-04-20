@@ -1,4 +1,4 @@
-import { EmailContent, EmailTemplate, EmailTemplateData } from '../types';
+import { EmailContent, EmailTemplate, EmailTemplateData } from '../types.js';
 /**
  * Base class for email templates
  */

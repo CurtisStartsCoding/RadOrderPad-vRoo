@@ -7,5 +7,7 @@ echo "Running All Tests..."
 ./test-superadmin-prompts.sh
 ./test-superadmin-prompt-assignments.sh
 ./test-superadmin-logs.sh
+./test-notifications.sh
+./test-ses-email.sh
 
 echo "All tests completed."

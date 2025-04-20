@@ -1,7 +1,7 @@
-import sendConnectionRequest from './connection-notifications/request';
-import sendConnectionApproved from './connection-notifications/approval';
-import sendConnectionRejected from './connection-notifications/rejection';
-import sendConnectionTerminated from './connection-notifications/termination';
+import sendConnectionRequest from './connection-notifications/request.js';
+import sendConnectionApproved from './connection-notifications/approval.js';
+import sendConnectionRejected from './connection-notifications/rejection.js';
+import sendConnectionTerminated from './connection-notifications/termination.js';
 /**
  * Service for handling connection-related notifications
  */

@@ -1,300 +1,178 @@
 # Notification Service Implementation
 
-**Date:** 2025-04-13
-**Author:** Roo
-**Status:** Complete
+**Version:** 1.1
+**Date:** 2025-04-20
+**Last Updated:** 2025-04-20
+
+This document describes the implementation of the notification service in the RadOrderPad application, focusing on the use of AWS Simple Email Service (SES) for sending transactional emails.
 
 ## Overview
 
-This document details the implementation of the Notification Service, which is responsible for sending transactional emails to users via AWS Simple Email Service (SES). The implementation follows the requirements specified in the `notification_service.md` documentation.
+The notification service is responsible for sending various types of transactional emails to users, such as:
 
-## Components Implemented
+- User invitations
+- Email verification
+- Password reset requests
+- Connection requests and responses
+- Account status notifications
 
-### 1. AWS SES Integration
-
-- Installed the AWS SDK v3 SES Client: `@aws-sdk/client-ses`
-- Configured the SES client with AWS credentials and region from the environment variables
-- Implemented email sending functionality using the `SendEmailCommand`
-
-### 2. Configuration Updates
-
-- Updated `src/config/config.ts` to include SES configuration:
-  ```typescript
-  aws: {
-    // ... existing config
-    ses: {
-      fromEmail: process.env.SES_FROM_EMAIL || 'no-reply@radorderpad.com'
-    }
-  }
-  ```
-- Added `SES_FROM_EMAIL` to the `.env` file
-
-### 3. Email Templates
-
-Implemented HTML and plain text templates for the following email types:
-
-1. **User Invitation** (`sendInviteEmail`)
-   - Sends an invitation link to join an organization
-   - Includes organization name and inviter name
-
-2. **Password Reset** (`sendPasswordResetEmail`)
-   - Sends a password reset link
-   - Includes security information
-
-3. **General Notification** (`sendNotificationEmail`)
-   - Generic notification with customizable subject and message
-
-4. **Connection Request** (`sendConnectionRequest`)
-   - Notifies organization admins of a new connection request
-   - Includes requesting organization name and link to review
-
-5. **Connection Approval** (`sendConnectionApproved`)
-   - Notifies the requesting organization that their connection request was approved
-   - Includes link to view connections
-
-6. **Connection Rejection** (`sendConnectionRejected`)
-   - Notifies the requesting organization that their connection request was rejected
-   - Includes link to view connections
-
-7. **Connection Termination** (`sendConnectionTerminated`)
-   - Notifies an organization that a partner has terminated their connection
-   - Includes terminating organization name and link to view connections
+The service uses AWS SES to send emails reliably and efficiently, with proper error handling and logging.
 
 ## Implementation Details
 
-### Email Sending Logic
+### 1. Architecture
 
-The core of the implementation is the private `sendEmail` method, which:
+The notification service follows a modular design with clear separation of concerns:
 
-1. Constructs the email parameters (sender, recipient, subject, body)
-2. Creates a `SendEmailCommand` with these parameters
-3. Sends the command using the SES client
-4. Logs the result (success or failure)
+- **Email Sender**: Core component that handles the actual sending of emails using AWS SES
+- **Notification Manager**: Facade that provides a simple interface for other services to send notifications
+- **Email Templates**: Reusable templates for different types of emails
+- **Notification Services**: Specialized services for different notification categories (account, connection, etc.)
+
+### 2. AWS SES Integration
+
+The AWS SES integration is implemented in `src/services/notification/email-sender.ts` with the following features:
+
+- **AWS SDK v3**: Uses the latest AWS SDK v3 for SES (`@aws-sdk/client-ses`)
+- **TLS Encryption**: All connections to AWS SES use TLS encryption
+- **Error Handling**: Comprehensive error handling with informative messages
+- **Test Mode**: Support for a test mode that logs email details without actually sending emails
+
+### 3. Email Templates
+
+Email templates are implemented using a base template class and specialized templates for different types of emails:
+
+- **Base Template**: Provides common functionality like HTML wrapping, styling, and signatures
+- **Specialized Templates**: Implement specific content for different types of emails
+- **Template Data**: Templates accept data objects to populate dynamic content
+
+### 4. Configuration
+
+The notification service is configured via environment variables:
+
+- `AWS_ACCESS_KEY_ID`: AWS access key ID for SES
+- `AWS_SECRET_ACCESS_KEY`: AWS secret access key for SES
+- `AWS_REGION`: AWS region for SES (default: us-east-2)
+- `SES_FROM_EMAIL`: Email address to use as the sender
+- `EMAIL_TEST_MODE`: Whether to enable test mode (true/false)
+
+### 5. Testing
+
+The notification service can be tested using the provided test scripts:
+
+### Main Notification Service Test
+
+```bash
+# Windows
+.\test-notifications.bat
+
+# Unix/Linux/macOS
+./test-notifications.sh
+```
+
+This script tests sending various types of emails through the notification service:
+
+- Invitation emails
+- Password reset emails
+- General notification emails
+- Connection request emails
+
+### Direct AWS SES Test
+
+```bash
+# Windows
+.\test-ses-email.bat
+
+# Unix/Linux/macOS
+./test-ses-email.sh
+```
+
+This script tests sending an email directly using AWS SES, bypassing the notification service. It's useful for verifying that the AWS credentials and SES configuration are correct.
+
+Both test scripts support a test mode that logs email details without actually sending emails, which is useful for development and testing. Set `EMAIL_TEST_MODE=true` in your `.env` file to enable test mode.
+
+## Usage Examples
+
+### Sending an Invitation Email
 
 ```typescript
-private async sendEmail(
-  to: string,
-  subject: string,
-  textBody: string,
-  htmlBody?: string
-): Promise<void> {
-  try {
-    // Construct the email parameters
-    const params: SendEmailCommandInput = {
-      Source: this.fromEmail,
-      Destination: {
-        ToAddresses: [to]
-      },
-      Message: {
-        Subject: {
-          Data: subject,
-          Charset: 'UTF-8'
-        },
-        Body: {
-          Text: {
-            Data: textBody,
-            Charset: 'UTF-8'
-          },
-          ...(htmlBody && {
-            Html: {
-              Data: htmlBody,
-              Charset: 'UTF-8'
-            }
-          })
-        }
-      }
-    };
+import notificationManager from '../services/notification/notification-manager';
 
-    // Send the email
-    const command = new SendEmailCommand(params);
-    await this.sesClient.send(command);
-    
-    // Log success
-    console.log(`[NOTIFICATION] Email sent successfully to ${to}`);
-  } catch (error) {
-    // Log error
-    console.error(`[NOTIFICATION] Failed to send email to ${to}:`, error);
-    throw error;
-  }
-}
+await notificationManager.sendInviteEmail(
+  'user@example.com',
+  'invitation-token-123',
+  'Example Organization',
+  'Admin User'
+);
 ```
 
-### Email Templates
-
-All email templates follow a consistent structure:
-
-1. **Plain Text Version**: Simple, readable text with clear instructions and links
-2. **HTML Version**: Styled HTML with:
-   - Consistent header with RadOrderPad branding
-   - Content section with the message and action buttons
-   - Footer with additional information
-   - Responsive design for mobile devices
-
-Example HTML template structure:
-
-```html
-<html>
-<head>
-  <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background-color: #0066cc; color: white; padding: 10px 20px; }
-    .content { padding: 20px; }
-    .button { display: inline-block; background-color: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; }
-    .footer { font-size: 12px; color: #666; margin-top: 30px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h2>Email Title</h2>
-    </div>
-    <div class="content">
-      <p>Hello,</p>
-      <p>Main message content...</p>
-      <p><a href="${actionLink}" class="button">Action Button</a></p>
-      <p>Or copy and paste this link into your browser:</p>
-      <p>${actionLink}</p>
-      <p>Best regards,<br>The RadOrderPad Team</p>
-    </div>
-    <div class="footer">
-      <p>This is an automated message, please do not reply to this email.</p>
-    </div>
-  </div>
-</body>
-</html>
-```
-
-## Error Handling
-
-The implementation includes comprehensive error handling:
-
-1. **Try-Catch Blocks**: All AWS SES API calls are wrapped in try-catch blocks
-2. **Error Logging**: Detailed error messages are logged to the console
-3. **Error Propagation**: Errors are thrown to allow calling code to handle them appropriately
-
-## Test Mode Implementation
-
-The NotificationService includes a test mode feature that allows automated tests to run without actually sending emails:
+### Sending a Password Reset Email
 
 ```typescript
-private async sendEmail(
-  to: string,
-  subject: string,
-  textBody: string,
-  htmlBody?: string
-): Promise<void> {
-  try {
-    // Log the test mode configuration
-    console.log(`[NOTIFICATION] Email test mode is: ${config.aws.ses.testMode ? 'ENABLED' : 'DISABLED'}`);
-    
-    // Check if test mode is enabled
-    if (config.aws.ses.testMode) {
-      // In test mode, just log the email details and return successfully
-      console.log(`[TEST MODE] Email send skipped for recipient: ${to}, subject: ${subject}`);
-      console.log(`[TEST MODE] Email body would have been: ${textBody.substring(0, 100)}...`);
-      return;
-    }
-    
-    // Regular email sending logic...
-  }
-}
+import notificationManager from '../services/notification/notification-manager';
+
+await notificationManager.sendPasswordResetEmail(
+  'user@example.com',
+  'reset-token-123'
+);
 ```
 
-This test mode is controlled by the `EMAIL_TEST_MODE` environment variable, which is set to `true` in the `.env` file for development and testing environments.
-
-When test mode is enabled, the service logs the email details but doesn't actually send the email, allowing tests to run without requiring AWS SES credentials or permissions.
-
-## Refactoring Implementation
-
-The notification service has been refactored into a modular architecture to improve maintainability and extensibility. The refactoring was completed on 2025-04-13.
-
-### Refactoring Approach
-
-The refactoring followed these key principles:
-
-1. **Single Responsibility Principle**: Each module has a clear, focused purpose
-2. **Separation of Concerns**: Email sending, templating, and business logic are separated
-3. **Modularity**: Smaller, more maintainable files (most under 50 lines)
-4. **Type Safety**: Comprehensive TypeScript interfaces for all notification data
-
-### Refactored Directory Structure
-
-```
-src/services/
-└── notification/
-    ├── types.ts                         (91 lines)  - Type definitions
-    ├── email-sender.ts                  (85 lines)  - AWS SES integration
-    ├── templates/
-    │   ├── email-template-base.ts       (76 lines)  - Base template
-    │   ├── invite-template.ts           (53 lines)  - Invitation emails
-    │   ├── password-reset-template.ts   (51 lines)  - Password reset emails
-    │   ├── general-notification-template.ts (38 lines) - General notifications
-    │   ├── connection/
-    │   │   ├── request-template.ts      (50 lines)  - Connection requests
-    │   │   ├── approval-template.ts     (45 lines)  - Connection approvals
-    │   │   ├── rejection-template.ts    (45 lines)  - Connection rejections
-    │   │   ├── termination-template.ts  (50 lines)  - Connection terminations
-    │   │   └── index.ts                 (13 lines)  - Connection template exports
-    │   └── index.ts                     (19 lines)  - Template exports
-    ├── services/
-    │   ├── account-notifications.ts     (65 lines)  - Account-related notifications
-    │   ├── general-notifications.ts     (39 lines)  - General notifications
-    │   ├── connection-notifications.ts  (135 lines) - Connection-related notifications
-    │   └── index.ts                     (11 lines)  - Service exports
-    ├── notification-manager.ts          (106 lines) - Facade for services
-    ├── index.ts                         (5 lines)   - Public API
-    └── test-notification.js             (69 lines)  - Test script
-```
-
-### Key Refactoring Components
-
-1. **Email Sender Module** (`email-sender.ts`)
-   - Encapsulates AWS SES integration
-   - Handles test mode for development environments
-   - Provides consistent error handling and logging
-
-2. **Template System**
-   - Base template class with common HTML/text formatting
-   - Specialized templates for each notification type
-   - Connection templates broken down into individual files
-   - Consistent styling across all email types
-
-3. **Specialized Services**
-   - Account notifications service for user management
-   - General notifications service for system messages
-   - Connection notifications service for organization relationships
-
-4. **Facade Pattern**
-   - Notification manager acts as a simple facade
-   - Delegates to specialized services
-   - Maintains the same API for backward compatibility
-
-### Integration with Existing Code
-
-The connection service has been updated to use the notification manager directly:
+### Sending a Connection Request
 
 ```typescript
-// Before refactoring
-import notificationService from './notification.service';
+import notificationManager from '../services/notification/notification-manager';
 
-// After refactoring
-import notificationManager from './notification/notification-manager';
+await notificationManager.sendConnectionRequest(
+  'admin@partner-org.com',
+  'Requesting Organization'
+);
 ```
 
-All tests continue to pass with the refactored implementation, confirming backward compatibility.
+## Security Considerations
+
+- **AWS Credentials**: AWS credentials are stored securely in environment variables
+- **TLS Encryption**: All connections to AWS SES use TLS encryption
+- **Email Verification**: The sender email address must be verified in AWS SES
+- **Rate Limiting**: AWS SES enforces rate limits to prevent abuse
+
+## Recent Improvements (2025-04-20)
+
+The notification service has been improved with the following changes:
+
+1. **Fixed Lint Errors**:
+   - Removed unused imports from template files
+   - Updated method signatures to use specific data types instead of generic ones
+   - Configured ESLint to allow console statements in notification service files
+   - Removed unnecessary ESLint directives
+
+2. **Enhanced Email Templates**:
+   - Updated connection templates to use all available data properties
+   - Added organization names to connection emails for better context
+   - Improved HTML formatting with proper emphasis on organization names
+
+3. **Improved Documentation**:
+   - Enhanced class-level documentation for BaseEmailTemplate
+   - Added comprehensive method documentation
+   - Improved code organization and readability
+
+4. **Type Safety**:
+   - Replaced generic EmailTemplateData with specific types
+   - Eliminated type casting in template files
+   - Ensured proper type usage throughout the codebase
+
+These improvements have enhanced the maintainability, readability, and type safety of the notification service while ensuring all tests continue to pass successfully.
 
 ## Future Enhancements
 
-1. **Email Templates Management**: Move templates to a database or file system for easier management
-2. **Localization**: Add support for multiple languages
-3. **Email Analytics**: Track email opens, clicks, and other metrics
-4. **Bounce and Complaint Handling**: Implement handling of bounces and complaints via SNS notifications
-5. **Email Queuing**: Add a queue system for high-volume email sending
-6. **Template Customization**: Allow organizations to customize email templates with their branding
-7. **Additional Notification Channels**: Support for SMS, in-app notifications, and push notifications
+1. **Email Bounce Handling**: Implement handling of email bounces and complaints via SNS notifications
+2. **Email Analytics**: Track email open and click rates
+3. **HTML Email Templates**: Further enhance HTML email templates with better styling and responsive design
+4. **Localization**: Add support for multiple languages
+5. **Email Scheduling**: Add support for scheduling emails to be sent at a specific time
+6. **Additional Template Types**: Implement templates for other notification types
 
-## Related Documentation
+## References
 
-- [Notification Service Requirements](../../Docs/notification_service.md)
 - [AWS SES Documentation](https://docs.aws.amazon.com/ses/latest/dg/Welcome.html)
+- [AWS SDK v3 for JavaScript](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-ses/index.html)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)

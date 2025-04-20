@@ -1,4 +1,4 @@
-import emailSender from '../../email-sender';
+import emailSender from '../../email-sender.js';
 /**
  * Common function to send an email using a template
  * @param email Email address to send to

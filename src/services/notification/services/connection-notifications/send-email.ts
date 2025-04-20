@@ -1,5 +1,5 @@
-import emailSender from '../../email-sender';
-import { EmailTemplate, EmailTemplateData } from '../../types';
+import emailSender from '../../email-sender.js';
+import { EmailTemplate, EmailTemplateData } from '../../types.js';
 
 /**
  * Common function to send an email using a template

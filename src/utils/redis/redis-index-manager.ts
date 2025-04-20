@@ -2,7 +2,11 @@
  * Redis Index Manager
  *
  * This utility is responsible for creating and managing RedisSearch indexes
- * on MemoryDB for medical codes and related data.
+ * on Redis Cloud for medical codes and related data.
+ *
+ * For detailed documentation, see:
+ * - Docs/redis_integration.md - High-level Redis integration strategy
+ * - Docs/implementation/redis-integration.md - Detailed implementation documentation
  */
 import { getRedisClient } from '../../config/redis.js';
 import { Redis } from 'ioredis';

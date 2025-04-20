@@ -62,6 +62,10 @@ export interface MarkdownRow {
  *
  * The data is stored in a structured JSON format that can be indexed by RedisSearch
  * for fast and efficient querying.
+ *
+ * For detailed documentation, see:
+ * - Docs/redis_integration.md - High-level Redis integration strategy
+ * - Docs/implementation/redis-integration.md - Detailed implementation documentation
  */
 
 /**

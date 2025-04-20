@@ -1,4 +1,4 @@
-import { accountNotifications, generalNotifications, connectionNotifications } from './services';
+import { accountNotifications, generalNotifications, connectionNotifications } from './services/index.js';
 /**
  * Manager for handling different types of notifications
  * This class serves as a facade for the underlying notification services

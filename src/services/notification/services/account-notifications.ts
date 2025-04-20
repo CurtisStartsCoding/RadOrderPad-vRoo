@@ -1,6 +1,6 @@
-import emailSender from '../email-sender';
-import { inviteTemplate, passwordResetTemplate } from '../templates';
-import { InvitationEmailData, PasswordResetEmailData } from '../types';
+import emailSender from '../email-sender.js';
+import { inviteTemplate, passwordResetTemplate } from '../templates/index.js';
+import { InvitationEmailData, PasswordResetEmailData } from '../types.js';
 
 /**
  * Service for handling account-related notifications

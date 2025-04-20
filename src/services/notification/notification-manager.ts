@@ -2,19 +2,43 @@ import {
   accountNotifications,
   generalNotifications,
   connectionNotifications
-} from './services';
+} from './services/index.js';
 
 /**
- * Manager for handling different types of notifications
- * This class serves as a facade for the underlying notification services
+ * NotificationManager - Central manager for all notification types
+ *
+ * This class serves as a facade for the underlying notification services,
+ * providing a simplified and unified API for sending various types of notifications.
+ * It abstracts away the implementation details of different notification services
+ * and presents a clean interface to the rest of the application.
+ *
+ * The manager handles three main categories of notifications:
+ * 1. Account notifications (invitations, password resets)
+ * 2. General notifications (system announcements, alerts)
+ * 3. Connection notifications (requests, approvals, rejections, terminations)
+ *
+ * All methods are asynchronous and return Promises that resolve when the
+ * notification has been successfully sent or reject with an error.
  */
 export class NotificationManager {
   /**
    * Send an invitation email to a user
+   *
+   * This method sends an email invitation to join an organization on RadOrderPad.
+   * The email includes a unique token that allows the recipient to create an account
+   * and automatically join the specified organization.
+   *
+   * The email contains:
+   * - Information about who sent the invitation
+   * - The organization they're being invited to
+   * - A link with the token to complete registration
+   *
    * @param email Email address to send the invitation to
-   * @param token Invitation token
-   * @param organizationName Name of the organization
+   * @param token Unique invitation token for secure registration
+   * @param organizationName Name of the organization the user is being invited to
    * @param inviterName Name of the user who sent the invitation
+   * @returns Promise that resolves when the email is sent successfully
+   * @throws Error if the email cannot be sent
    */
   async sendInviteEmail(
     email: string,
