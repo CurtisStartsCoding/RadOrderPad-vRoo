@@ -19,4 +19,19 @@ echo "=== Running HIPAA Compliance Export Test ==="
 ./test-hipaa-export.sh
 echo
 
+# Run Stripe Webhook CLI test
+echo "=== Running Stripe Webhook CLI Test ==="
+./test-stripe-webhooks-cli.sh
+echo
+
+# Run Stripe Webhook Unit Tests
+echo "=== Running Stripe Webhook Unit Tests ==="
+./test-stripe-webhook-unit.sh
+echo
+
+# Run Super Admin API test
+echo "=== Running Super Admin API Test ==="
+./test-superadmin-api.sh
+echo
+
 echo "All tests completed."

@@ -10,6 +10,8 @@ router.use((0, auth_1.authorizeRole)(['super_admin']));
 // Organization routes
 router.get('/organizations', superadmin_1.listAllOrganizationsController);
 router.get('/organizations/:orgId', superadmin_1.getOrganizationByIdController);
+router.put('/organizations/:orgId/status', superadmin_1.organizations.updateOrganizationStatusController);
+router.post('/organizations/:orgId/credits/adjust', superadmin_1.organizations.adjustOrganizationCreditsController);
 // User routes
 router.get('/users', superadmin_1.listAllUsersController);
 router.get('/users/:userId', superadmin_1.getUserByIdController);

@@ -6,7 +6,8 @@ import {
   listAllUsersController,
   getUserByIdController,
   prompts,
-  logs
+  logs,
+  organizations
 } from '../controllers/superadmin';
 
 const router = Router();
@@ -18,6 +19,8 @@ router.use(authorizeRole(['super_admin']));
 // Organization routes
 router.get('/organizations', listAllOrganizationsController);
 router.get('/organizations/:orgId', getOrganizationByIdController);
+router.put('/organizations/:orgId/status', organizations.updateOrganizationStatusController);
+router.post('/organizations/:orgId/credits/adjust', organizations.adjustOrganizationCreditsController);
 
 // User routes
 router.get('/users', listAllUsersController);

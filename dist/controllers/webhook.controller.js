@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookController = void 0;
 const billing_1 = __importDefault(require("../services/billing"));
+const logger_1 = __importDefault(require("../utils/logger"));
 /**
  * Controller for handling webhook events from external services
  */
@@ -23,38 +24,39 @@ class WebhookController {
             // req.body is a Buffer when using express.raw middleware
             const event = billing_1.default.verifyWebhookSignature(req.body, signature);
             // Log the event type
-            console.log(`Received Stripe webhook event: ${event.type}`);
+            logger_1.default.info(`Received Stripe webhook event: ${event.type}`);
             // Handle different event types
             switch (event.type) {
                 case 'checkout.session.completed':
-                    console.log('Received checkout.session.completed:', event.id);
+                    logger_1.default.info(`Received checkout.session.completed: ${event.id}`);
                     await billing_1.default.handleCheckoutSessionCompleted(event);
                     break;
                 case 'invoice.payment_succeeded':
-                    console.log('Received invoice.payment_succeeded:', event.id);
+                    logger_1.default.info(`Received invoice.payment_succeeded: ${event.id}`);
                     await billing_1.default.handleInvoicePaymentSucceeded(event);
                     break;
                 case 'invoice.payment_failed':
-                    console.log('Received invoice.payment_failed:', event.id);
+                    logger_1.default.info(`Received invoice.payment_failed: ${event.id}`);
                     await billing_1.default.handleInvoicePaymentFailed(event);
                     break;
                 case 'customer.subscription.updated':
-                    console.log('Received customer.subscription.updated:', event.id);
+                    logger_1.default.info(`Received customer.subscription.updated: ${event.id}`);
                     await billing_1.default.handleSubscriptionUpdated(event);
                     break;
                 case 'customer.subscription.deleted':
-                    console.log('Received customer.subscription.deleted:', event.id);
+                    logger_1.default.info(`Received customer.subscription.deleted: ${event.id}`);
                     await billing_1.default.handleSubscriptionDeleted(event);
                     break;
                 default:
-                    console.log(`Unhandled Stripe event type: ${event.type}`);
+                    logger_1.default.info(`Unhandled Stripe event type: ${event.type}`);
             }
             // Return a 200 response to acknowledge receipt of the event
             res.status(200).json({ received: true });
         }
         catch (error) {
-            console.error('Error handling Stripe webhook:', error.message);
-            res.status(400).json({ message: error.message });
+            const err = error;
+            logger_1.default.error(`Error handling Stripe webhook: ${err.message}`);
+            res.status(400).json({ message: err.message });
         }
     }
 }

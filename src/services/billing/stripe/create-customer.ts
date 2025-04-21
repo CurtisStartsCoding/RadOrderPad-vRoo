@@ -20,7 +20,7 @@ export async function createStripeCustomerForOrg(
     const customer = await stripeService.createCustomer(
       orgName,
       orgEmail,
-      { radorderpad_org_id: orgId }
+      { radorderpad_org_id: orgId.toString() }
     );
     
     const stripeCustomerId = customer.id;

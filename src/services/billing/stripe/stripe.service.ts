@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import config from '../../../config/config';
 import { createCheckoutSessionInternal } from './create-checkout-session-internal';
+import logger from '../../../utils/logger';
 
 /**
  * Service for interacting with the Stripe API
@@ -24,7 +25,7 @@ class StripeService {
   async createCustomer(
     name: string,
     email: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, string>
   ): Promise<Stripe.Customer> {
     try {
       const customer = await this.stripe.customers.create({
@@ -35,7 +36,7 @@ class StripeService {
 
       return customer;
     } catch (error) {
-      console.error('Error creating Stripe customer:', error);
+      logger.error(`Error creating Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
       throw new Error(`Failed to create Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
@@ -55,7 +56,7 @@ class StripeService {
       
       return customer as Stripe.Customer;
     } catch (error) {
-      console.error('Error retrieving Stripe customer:', error);
+      logger.error(`Error retrieving Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
       throw new Error(`Failed to retrieve Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
     }
   }

@@ -18,7 +18,7 @@ const stripe_service_1 = __importDefault(require("./stripe.service"));
 async function createStripeCustomerForOrg(orgId, orgName, orgEmail) {
     try {
         // Create Stripe customer
-        const customer = await stripe_service_1.default.createCustomer(orgName, orgEmail, { radorderpad_org_id: orgId });
+        const customer = await stripe_service_1.default.createCustomer(orgName, orgEmail, { radorderpad_org_id: orgId.toString() });
         const stripeCustomerId = customer.id;
         // Update organization with Stripe customer ID
         await (0, db_1.queryMainDb)(`UPDATE organizations SET billing_id = $1 WHERE id = $2`, [stripeCustomerId, orgId]);

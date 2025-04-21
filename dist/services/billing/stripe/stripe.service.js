@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const stripe_1 = __importDefault(require("stripe"));
 const config_1 = __importDefault(require("../../../config/config"));
 const create_checkout_session_internal_1 = require("./create-checkout-session-internal");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Service for interacting with the Stripe API
  */
@@ -32,7 +33,7 @@ class StripeService {
             return customer;
         }
         catch (error) {
-            console.error('Error creating Stripe customer:', error);
+            logger_1.default.error(`Error creating Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
             throw new Error(`Failed to create Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
@@ -50,7 +51,7 @@ class StripeService {
             return customer;
         }
         catch (error) {
-            console.error('Error retrieving Stripe customer:', error);
+            logger_1.default.error(`Error retrieving Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
             throw new Error(`Failed to retrieve Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
         }
     }

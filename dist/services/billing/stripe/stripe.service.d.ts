@@ -12,7 +12,7 @@ declare class StripeService {
      * @param metadata Additional metadata to store with the customer
      * @returns Promise<Stripe.Customer> The created customer
      */
-    createCustomer(name: string, email: string, metadata?: Record<string, any>): Promise<Stripe.Customer>;
+    createCustomer(name: string, email: string, metadata?: Record<string, string>): Promise<Stripe.Customer>;
     /**
      * Get a Stripe customer by ID
      * @param customerId Stripe customer ID
