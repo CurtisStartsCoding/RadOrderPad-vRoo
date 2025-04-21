@@ -131,6 +131,26 @@ The application uses Redis for caching and search functionality:
    - `REDIS_CLOUD_PORT`
    - `REDIS_CLOUD_PASSWORD`
 
+## Pre-Deployment Audit
+
+Before deploying the application, it's recommended to run the deployment configuration audit script to identify potential issues:
+
+```bash
+# For Windows
+debug-scripts\run-deployment-audit.bat
+
+# For Linux/macOS
+chmod +x debug-scripts/run-deployment-audit.sh
+./debug-scripts/run-deployment-audit.sh
+```
+
+This script will scan the codebase for:
+- Hardcoded URLs, hostnames, and ports
+- Environment variable usage
+- Configuration patterns that might cause issues in production
+
+The script generates a detailed report (`debug-scripts/deployment-audit-report.md`) with findings and recommendations. Review this report and address any issues before proceeding with deployment.
+
 ## Troubleshooting
 
 ### Module Resolution Issues
@@ -156,3 +176,62 @@ If you encounter database connection issues:
 - Set up CloudWatch Logs for monitoring application logs
 - Configure CloudWatch Alarms for key metrics
 - Use X-Ray for tracing (optional)
+
+## Deployment Scripts and Configuration Files
+
+We have created several scripts and configuration files to simplify the deployment process:
+
+### Configuration Files
+
+1. **`.ebextensions/nodecommand.config`**: Configuration for Elastic Beanstalk Node.js environment
+   - Sets Node.js version to 18
+   - Configures the proxy server to nginx
+   - Sets NODE_ENV to production
+
+2. **`Procfile`**: Specifies the command to start the application
+   - Contains `web: node dist/index.js`
+   - This is an alternative to using `npm start`
+
+3. **`eb-options.json`**: Sample configuration for AWS CLI deployment
+   - Contains environment variables and instance configuration
+   - Should be customized for your specific environment
+
+### Deployment Scripts
+
+1. **`create-deployment-package.bat`** (Windows): Creates a deployment package for AWS Elastic Beanstalk
+   - Builds the TypeScript code
+   - Installs production dependencies
+   - Copies necessary files to a deployment directory
+   - Creates a ZIP file for deployment
+
+2. **`create-deployment-package.sh`** (Linux/macOS): Unix version of the deployment script
+   - Performs the same steps as the Windows version
+
+### Deployment Documentation
+
+1. **`DEPLOYMENT_STEPS.md`**: Detailed instructions for deploying to AWS Elastic Beanstalk
+   - Includes prerequisites
+   - Step-by-step build and package instructions
+   - AWS CLI commands for deployment
+   - Environment variable configuration
+   - Monitoring and troubleshooting tips
+   - Rollback procedure
+
+## Using the Deployment Scripts
+
+To create a deployment package:
+
+1. For Windows:
+   ```
+   create-deployment-package.bat
+   ```
+
+2. For Linux/macOS:
+   ```
+   chmod +x create-deployment-package.sh
+   ./create-deployment-package.sh
+   ```
+
+This will create a `deployment.zip` file that can be uploaded to AWS Elastic Beanstalk.
+
+For detailed deployment instructions, refer to the `DEPLOYMENT_STEPS.md` file.

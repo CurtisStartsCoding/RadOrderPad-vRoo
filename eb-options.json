@@ -1,0 +1,67 @@
+[
+  {
+    "Namespace": "aws:elasticbeanstalk:application:environment",
+    "OptionName": "NODE_ENV",
+    "Value": "production"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:application:environment",
+    "OptionName": "MAIN_DATABASE_URL",
+    "Value": "postgresql://username:password@hostname:port/radorder_main"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:application:environment",
+    "OptionName": "PHI_DATABASE_URL",
+    "Value": "postgresql://username:password@hostname:port/radorder_phi"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:application:environment",
+    "OptionName": "REDIS_CLOUD_HOST",
+    "Value": "your-redis-host"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:application:environment",
+    "OptionName": "REDIS_CLOUD_PORT",
+    "Value": "your-redis-port"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:application:environment",
+    "OptionName": "REDIS_CLOUD_PASSWORD",
+    "Value": "your-redis-password"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:application:environment",
+    "OptionName": "JWT_SECRET",
+    "Value": "your-jwt-secret"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:container:nodejs",
+    "OptionName": "NodeVersion",
+    "Value": "18"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:container:nodejs",
+    "OptionName": "ProxyServer",
+    "Value": "nginx"
+  },
+  {
+    "Namespace": "aws:autoscaling:launchconfiguration",
+    "OptionName": "InstanceType",
+    "Value": "t3.small"
+  },
+  {
+    "Namespace": "aws:autoscaling:asg",
+    "OptionName": "MinSize",
+    "Value": "1"
+  },
+  {
+    "Namespace": "aws:autoscaling:asg",
+    "OptionName": "MaxSize",
+    "Value": "2"
+  },
+  {
+    "Namespace": "aws:elasticbeanstalk:environment",
+    "OptionName": "EnvironmentType",
+    "Value": "LoadBalanced"
+  }
+]
