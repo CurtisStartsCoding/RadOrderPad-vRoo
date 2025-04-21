@@ -1,0 +1,86 @@
+{
+  "passed": 16,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "Health Endpoint",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Authentication Endpoint",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Protected Endpoint with SuperAdmin Token",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Invalid Token Rejection",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/auth",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/orders",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/admin/orders",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/radiology/orders",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/uploads",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/webhooks",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/connections",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/organizations",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/users",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/superadmin",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/billing",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Vercel Environment Variables",
+      "passed": true,
+      "error": null
+    }
+  ]
+}

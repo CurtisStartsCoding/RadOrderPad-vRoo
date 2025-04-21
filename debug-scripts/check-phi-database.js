@@ -1,133 +1,123 @@
-/**
- * Script to check the PHI database
- */
-require('dotenv').config();
+// Script to check the PHI database
 const { Pool } = require('pg');
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env.production') });
 
-// Get database connection details from environment variables
-// Use the PHI database instead of the main database
-const DB_HOST = process.env.DB_HOST || 'localhost';
-const DB_PORT = process.env.DB_PORT || '5433';
-const DB_NAME = 'radorder_phi'; // Use the PHI database
-const DB_USER = process.env.DB_USER || 'postgres';
-const DB_PASSWORD = process.env.DB_PASSWORD || 'postgres123';
+// Get the database URL from environment variables
+const phiDbUrl = process.env.PROD_PHI_DATABASE_URL || process.env.PHI_DATABASE_URL;
 
-// Create a connection pool
+console.log('Environment variables loaded:');
+console.log('- PHI_DATABASE_URL:', process.env.PHI_DATABASE_URL ? 'Set' : 'Not set');
+console.log('- PROD_PHI_DATABASE_URL:', process.env.PROD_PHI_DATABASE_URL ? 'Set' : 'Not set');
+
+// Show which database URL we're using
+console.log('Using database URL from:', process.env.PROD_PHI_DATABASE_URL ? 'PROD_PHI_DATABASE_URL' : 'PHI_DATABASE_URL');
+
+// Create modified connection string with SSL verification disabled
+const noVerifyPhiDbUrl = phiDbUrl ? phiDbUrl.replace('?sslmode=require', '?sslmode=no-verify') : null;
+
+// Show more details about the connection string (masking password)
+const maskedUrl = noVerifyPhiDbUrl ? noVerifyPhiDbUrl.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@') : 'null';
+console.log(`Connection string: ${maskedUrl}`);
+
+console.log('=== PHI Database Check Tool ===');
+console.log('This tool will check the PHI database for orders table and columns.');
+
+// Create connection pool with SSL verification disabled
 const pool = new Pool({
-  host: DB_HOST,
-  port: DB_PORT,
-  database: DB_NAME,
-  user: DB_USER,
-  password: DB_PASSWORD
+  connectionString: noVerifyPhiDbUrl,
+  ssl: {
+    rejectUnauthorized: false, // Disable SSL certificate verification
+    sslmode: 'no-verify'
+  }
 });
 
-async function run() {
-  let client;
+// Function to check orders table schema
+async function checkOrdersTableSchema() {
+  console.log('\n=== Orders Table Schema ===');
   
   try {
-    console.log('Connecting to PHI database...');
-    client = await pool.connect();
-    console.log('Connected to PHI database');
-    
-    // List all tables in the PHI database
-    console.log('\nListing all tables in the PHI database...');
-    const tablesResult = await client.query(`
-      SELECT table_name
-      FROM information_schema.tables
-      WHERE table_schema = 'public'
-      ORDER BY table_name;
+    // Check if the orders table exists
+    const tableCheckResult = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'orders'
+      );
     `);
     
-    if (tablesResult.rows.length === 0) {
-      console.log('No tables found in the PHI database.');
-    } else {
-      console.log('Tables in the PHI database:');
-      tablesResult.rows.forEach(table => {
-        console.log(`- ${table.table_name}`);
-      });
+    if (!tableCheckResult.rows[0].exists) {
+      console.log('❌ The orders table does not exist.');
+      return;
     }
     
-    // Check for tables related to orders or validation
-    console.log('\nChecking for tables related to orders or validation...');
-    const orderTablesResult = await client.query(`
-      SELECT table_name
-      FROM information_schema.tables
-      WHERE table_schema = 'public'
-        AND (table_name LIKE '%order%' OR table_name LIKE '%validation%')
-      ORDER BY table_name;
+    console.log('✅ The orders table exists.');
+    
+    // Get the column names for the orders table
+    const columnsResult = await pool.query(`
+      SELECT column_name, data_type, is_nullable 
+      FROM information_schema.columns 
+      WHERE table_schema = 'public' 
+      AND table_name = 'orders'
+      ORDER BY ordinal_position;
     `);
     
-    if (orderTablesResult.rows.length === 0) {
-      console.log('No tables related to orders or validation found in the PHI database.');
-    } else {
-      console.log('Tables related to orders or validation in the PHI database:');
-      orderTablesResult.rows.forEach(table => {
-        console.log(`- ${table.table_name}`);
-      });
+    console.log(`Found ${columnsResult.rows.length} columns in the orders table:`);
+    
+    // Check if the referring_organization_name column exists
+    const hasReferringOrgName = columnsResult.rows.some(row => 
+      row.column_name === 'referring_organization_name'
+    );
+    
+    if (hasReferringOrgName) {
+      console.log('✅ The referring_organization_name column exists in the orders table.');
       
-      // For each order-related table, check the most recent entries
-      for (const table of orderTablesResult.rows) {
-        console.log(`\nChecking most recent entries in ${table.table_name}...`);
-        try {
-          const entriesResult = await client.query(`
-            SELECT *
-            FROM ${table.table_name}
-            ORDER BY created_at DESC
-            LIMIT 5;
-          `);
-          
-          if (entriesResult.rows.length === 0) {
-            console.log(`No entries found in ${table.table_name}.`);
-          } else {
-            console.log(`Most recent entries in ${table.table_name}:`);
-            entriesResult.rows.forEach(entry => {
-              console.log(`ID: ${entry.id}, Created: ${entry.created_at}`);
-              if (entry.status) {
-                console.log(`Status: ${entry.status}`);
-              }
-              if (entry.validation_status) {
-                console.log(`Validation Status: ${entry.validation_status}`);
-              }
-              console.log('---');
-            });
-          }
-        } catch (error) {
-          console.log(`Error checking ${table.table_name}: ${error.message}`);
-          
-          // Try to get the table structure
-          try {
-            const structureResult = await client.query(`
-              SELECT column_name, data_type
-              FROM information_schema.columns
-              WHERE table_name = '${table.table_name}'
-              ORDER BY ordinal_position;
-            `);
-            
-            if (structureResult.rows.length > 0) {
-              console.log(`Columns in ${table.table_name}:`);
-              structureResult.rows.forEach(column => {
-                console.log(`- ${column.column_name} (${column.data_type})`);
-              });
-            }
-          } catch (structureError) {
-            console.log(`Error getting structure of ${table.table_name}: ${structureError.message}`);
-          }
-        }
-      }
+      // Find the column details
+      const referringOrgNameColumn = columnsResult.rows.find(row => 
+        row.column_name === 'referring_organization_name'
+      );
+      
+      console.log(`  Data type: ${referringOrgNameColumn.data_type}`);
+      console.log(`  Nullable: ${referringOrgNameColumn.is_nullable}`);
+    } else {
+      console.log('❌ The referring_organization_name column does NOT exist in the orders table.');
+      console.log('This explains the error: "column \'referring_organization_name\' of relation \'orders\' does not exist"');
     }
     
-  } catch (error) {
-    console.error('Error:', error.message);
-  } finally {
-    if (client) {
-      client.release();
+    // List all columns
+    console.log('\nAll columns in the orders table:');
+    columnsResult.rows.forEach(col => {
+      const nullable = col.is_nullable === 'YES' ? 'NULL' : 'NOT NULL';
+      console.log(`  - ${col.column_name} (${col.data_type}, ${nullable})`);
+    });
+    
+    // Get row count for the table
+    try {
+      const countResult = await pool.query(`SELECT COUNT(*) FROM "orders"`);
+      console.log(`\nTotal orders: ${countResult.rows[0].count}`);
+    } catch (countErr) {
+      console.log(`Error getting row count: ${countErr.message}`);
     }
-    // Close the pool
-    await pool.end();
+  } catch (err) {
+    console.error('❌ Error querying the database:', err.message);
+    if (err.code) {
+      console.error('Error code:', err.code);
+    }
   }
 }
 
 // Run the function
-run().catch(err => {
-  console.error('Unhandled error:', err);
-});
+async function run() {
+  try {
+    await checkOrdersTableSchema();
+  } catch (err) {
+    console.error('Unexpected error:', err);
+  } finally {
+    // Close the database connection
+    await pool.end();
+  }
+}
+
+// Run the script
+run();

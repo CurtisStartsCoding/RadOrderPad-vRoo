@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node vercel-setup.js && node dist/index.js",
+    "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only --esm src/index.ts",
     "test": "jest",
     "test:stripe-webhooks": "node tests/stripe-webhooks.test.js",
@@ -18,8 +18,7 @@
     "test:e2e:scenario-f": "node tests/e2e/scenario-f-user-invite.js",
     "test:e2e:scenario-g": "node tests/e2e/scenario-g-file-upload.js",
     "test:llm-validation": "node tests/llm-validation-flow-test.js",
-    "test:llm-validation:random": "node tests/llm-validation-flow-test.js --random",
-    "vercel-setup": "node vercel-setup.js"
+    "test:llm-validation:random": "node tests/llm-validation-flow-test.js --random"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.787.0",
