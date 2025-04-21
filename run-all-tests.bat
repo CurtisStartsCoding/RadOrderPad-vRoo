@@ -14,5 +14,10 @@ echo === Running Radiology Export Test ===
 call test-radiology-export.bat
 echo.
 
+REM Run HIPAA Compliance Export test
+echo === Running HIPAA Compliance Export Test ===
+call test-hipaa-export.bat
+echo.
+
 echo All tests completed.
 pause

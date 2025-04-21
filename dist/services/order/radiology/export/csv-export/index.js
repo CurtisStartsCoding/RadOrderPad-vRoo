@@ -1,12 +1,13 @@
 "use strict";
 /**
- * CSV Export functions
+ * CSV export functionality for radiology orders
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateCsvExport = void 0;
-// Import functions
-const generate_csv_export_1 = require("./generate-csv-export");
-Object.defineProperty(exports, "generateCsvExport", { enumerable: true, get: function () { return generate_csv_export_1.generateCsvExport; } });
-// Default export for backward compatibility
-exports.default = generate_csv_export_1.generateCsvExport;
+const generate_csv_export_1 = __importDefault(require("./generate-csv-export"));
+exports.generateCsvExport = generate_csv_export_1.default;
+exports.default = generate_csv_export_1.default;
 //# sourceMappingURL=index.js.map

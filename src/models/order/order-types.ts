@@ -36,6 +36,52 @@ export interface Order {
   signature_date?: Date;
   created_at: Date;
   updated_at: Date;
+  
+  // Cached fields
+  referring_physician_name?: string;
+  referring_physician_npi?: string;
+  radiology_organization_name?: string;
+  
+  // HIPAA compliance fields - Referring Physician details
+  referring_physician_phone?: string;
+  referring_physician_email?: string;
+  referring_physician_fax?: string;
+  referring_physician_address?: string;
+  referring_physician_city?: string;
+  referring_physician_state?: string;
+  referring_physician_zip?: string;
+  referring_physician_specialty?: string;
+  referring_physician_license?: string;
+  
+  // HIPAA compliance fields - Referring Organization details
+  referring_organization_address?: string;
+  referring_organization_city?: string;
+  referring_organization_state?: string;
+  referring_organization_zip?: string;
+  referring_organization_phone?: string;
+  referring_organization_fax?: string;
+  referring_organization_email?: string;
+  referring_organization_tax_id?: string;
+  referring_organization_npi?: string;
+  
+  // HIPAA compliance fields - Radiology Organization details
+  radiology_organization_address?: string;
+  radiology_organization_city?: string;
+  radiology_organization_state?: string;
+  radiology_organization_zip?: string;
+  radiology_organization_phone?: string;
+  radiology_organization_fax?: string;
+  radiology_organization_email?: string;
+  radiology_organization_tax_id?: string;
+  radiology_organization_npi?: string;
+  
+  // HIPAA compliance fields - Consent and Authorization
+  patient_consent_obtained?: boolean;
+  patient_consent_date?: Date;
+  insurance_authorization_number?: string;
+  insurance_authorization_date?: Date;
+  insurance_authorization_contact?: string;
+  medical_necessity_documentation?: string;
 }
 
 /**

@@ -1,12 +1,11 @@
 /**
- * CSV Export functions
+ * CSV export functionality for radiology orders
  */
 
-// Import functions
-import { generateCsvExport } from './generate-csv-export';
+import generateCsvExport from './generate-csv-export';
 
-// Re-export functions
-export { generateCsvExport };
+export {
+  generateCsvExport
+};
 
-// Default export for backward compatibility
 export default generateCsvExport;

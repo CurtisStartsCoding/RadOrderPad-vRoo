@@ -27,6 +27,14 @@ export interface FinalizeOrderPayload {
     overrideJustification?: string;
     isUrgentOverride?: boolean;
     signatureData?: string;
+    referringOrganizationId?: number;
+    radiologyOrganizationId?: number;
+    patientConsentObtained?: boolean;
+    patientConsentDate?: Date;
+    insuranceAuthorizationNumber?: string;
+    insuranceAuthorizationDate?: Date;
+    insuranceAuthorizationContact?: string;
+    medicalNecessityDocumentation?: string;
 }
 /**
  * Response for finalize order operation

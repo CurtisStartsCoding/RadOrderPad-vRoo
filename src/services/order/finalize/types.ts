@@ -16,6 +16,7 @@ export interface PatientInfo {
  * Payload for finalizing an order
  */
 export interface FinalizeOrderPayload {
+  // Core validation fields
   finalValidationStatus: ValidationStatus;
   finalComplianceScore?: number;
   finalICD10Codes?: string[];
@@ -23,12 +24,30 @@ export interface FinalizeOrderPayload {
   finalCPTCode: string;
   finalCPTCodeDescription?: string;
   clinicalIndication: string;
+  
+  // Patient fields
   isTemporaryPatient?: boolean;
   patientInfo?: PatientInfo;
+  
+  // Override fields
   overridden?: boolean;
   overrideJustification?: string;
   isUrgentOverride?: boolean;
+  
+  // Signature data
   signatureData?: string;
+  
+  // Organization IDs
+  referringOrganizationId?: number;
+  radiologyOrganizationId?: number;
+  
+  // HIPAA compliance fields - Consent and Authorization
+  patientConsentObtained?: boolean;
+  patientConsentDate?: Date;
+  insuranceAuthorizationNumber?: string;
+  insuranceAuthorizationDate?: Date;
+  insuranceAuthorizationContact?: string;
+  medicalNecessityDocumentation?: string;
 }
 
 /**

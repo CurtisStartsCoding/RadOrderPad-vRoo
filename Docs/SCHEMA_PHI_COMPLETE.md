@@ -1,9 +1,9 @@
 # SCHEMA_PHI.md (Reconciled Definitive - COMPLETE)
 
-**Version:** 1.2 - Added Override Flag
-**Date:** 2025-04-11
+**Version:** 1.3 - Added HIPAA Compliance Fields
+**Date:** 2025-04-20
 
-This document defines the **authoritative and fully expanded reconciled schema** for the **`radorder_phi`** database (PHI-enabled). It includes all tables and columns based on the initial specification and later feature requirements, including the `overridden` flag for orders.
+This document defines the **authoritative and fully expanded reconciled schema** for the **`radorder_phi`** database (PHI-enabled). It includes all tables and columns based on the initial specification and later feature requirements, including the `overridden` flag for orders and HIPAA compliance fields.
 
 ---
 
@@ -108,6 +108,39 @@ This document defines the **authoritative and fully expanded reconciled schema**
 | `results_acknowledged_at`     | `timestamp without time zone` |                               | Timestamp when referring user acknowledged results            |
 | `created_at`                  | `timestamp without time zone` | `DEFAULT CURRENT_TIMESTAMP`   | Timestamp when order was initially created                      |
 | `updated_at`                  | `timestamp without time zone` | `DEFAULT CURRENT_TIMESTAMP`   | Timestamp when order was last updated                           |
+| `referring_physician_phone`   | `varchar(20)`               |                               | Referring physician phone number (HIPAA)                        |
+| `referring_physician_email`   | `varchar(100)`              |                               | Referring physician email address (HIPAA)                       |
+| `referring_physician_fax`     | `varchar(20)`               |                               | Referring physician fax number (HIPAA)                          |
+| `referring_physician_address` | `varchar(255)`              |                               | Referring physician address (HIPAA)                             |
+| `referring_physician_city`    | `varchar(100)`              |                               | Referring physician city (HIPAA)                                |
+| `referring_physician_state`   | `varchar(2)`                |                               | Referring physician state (HIPAA)                               |
+| `referring_physician_zip`     | `varchar(10)`               |                               | Referring physician zip code (HIPAA)                            |
+| `referring_physician_specialty` | `varchar(100)`            |                               | Referring physician specialty (HIPAA)                           |
+| `referring_physician_license` | `varchar(50)`               |                               | Referring physician license number (HIPAA)                      |
+| `referring_organization_address` | `varchar(255)`           |                               | Referring organization address (HIPAA)                          |
+| `referring_organization_city` | `varchar(100)`              |                               | Referring organization city (HIPAA)                             |
+| `referring_organization_state` | `varchar(2)`               |                               | Referring organization state (HIPAA)                            |
+| `referring_organization_zip`  | `varchar(10)`               |                               | Referring organization zip code (HIPAA)                         |
+| `referring_organization_phone` | `varchar(20)`              |                               | Referring organization phone number (HIPAA)                     |
+| `referring_organization_fax`  | `varchar(20)`               |                               | Referring organization fax number (HIPAA)                       |
+| `referring_organization_email` | `varchar(100)`             |                               | Referring organization email address (HIPAA)                    |
+| `referring_organization_tax_id` | `varchar(20)`             |                               | Referring organization tax ID (HIPAA)                           |
+| `referring_organization_npi`  | `varchar(10)`               |                               | Referring organization NPI (HIPAA)                              |
+| `radiology_organization_address` | `varchar(255)`           |                               | Radiology organization address (HIPAA)                          |
+| `radiology_organization_city` | `varchar(100)`              |                               | Radiology organization city (HIPAA)                             |
+| `radiology_organization_state` | `varchar(2)`               |                               | Radiology organization state (HIPAA)                            |
+| `radiology_organization_zip`  | `varchar(10)`               |                               | Radiology organization zip code (HIPAA)                         |
+| `radiology_organization_phone` | `varchar(20)`              |                               | Radiology organization phone number (HIPAA)                     |
+| `radiology_organization_fax`  | `varchar(20)`               |                               | Radiology organization fax number (HIPAA)                       |
+| `radiology_organization_email` | `varchar(100)`             |                               | Radiology organization email address (HIPAA)                    |
+| `radiology_organization_tax_id` | `varchar(20)`             |                               | Radiology organization tax ID (HIPAA)                           |
+| `radiology_organization_npi`  | `varchar(10)`               |                               | Radiology organization NPI (HIPAA)                              |
+| `patient_consent_obtained`    | `boolean`                   |                               | Whether patient consent was obtained (HIPAA)                    |
+| `patient_consent_date`        | `timestamp without time zone` |                               | Date patient consent was obtained (HIPAA)                       |
+| `insurance_authorization_number` | `varchar(50)`            |                               | Insurance authorization number (HIPAA)                          |
+| `insurance_authorization_date` | `timestamp without time zone` |                              | Date insurance authorization was obtained (HIPAA)               |
+| `insurance_authorization_contact` | `varchar(100)`          |                               | Insurance authorization contact person (HIPAA)                  |
+| `medical_necessity_documentation` | `text`                  |                               | Medical necessity documentation (HIPAA)                         |
 
 **Table: `validation_attempts`** *(NEW - For Validation History)*
 
