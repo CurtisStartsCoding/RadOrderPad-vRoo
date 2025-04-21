@@ -10,7 +10,7 @@
  */
 
 // Base URL for API requests
-const API_BASE_URL = 'https://radorderpad-8zi108wpf-capecomas-projects.vercel.app/api';
+const API_BASE_URL = 'https://radorderpad-fftrehu55-capecomas-projects.vercel.app/api';
 
 // Test credentials
 const TEST_CREDENTIALS = {
@@ -359,7 +359,7 @@ async function pasteSupplemental(token, orderId, supplementalText) {
  */
 async function sendToRadiology(token, orderId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/send-to-radiology`, {
+    const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/send-to-radiology-fixed`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

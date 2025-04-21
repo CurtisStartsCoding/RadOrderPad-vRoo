@@ -10,7 +10,7 @@
 // const fetch = require('node-fetch');
 
 // Configuration
-const API_BASE_URL = 'https://radorderpad-8zi108wpf-capecomas-projects.vercel.app/api';
+const API_BASE_URL = 'https://radorderpad-fftrehu55-capecomas-projects.vercel.app/api';
 const TEST_CREDENTIALS = {
   email: 'test.physician@example.com',
   password: 'password123'

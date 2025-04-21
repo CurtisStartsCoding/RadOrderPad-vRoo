@@ -5,7 +5,9 @@
       "src": "dist/index.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["logs/**", "vercel-setup.js"]
+        "includeFiles": ["logs/**", "vercel-setup.js"],
+        "memory": 1024,
+        "maxDuration": 10
       }
     }
   ],
@@ -15,11 +17,5 @@
       "dest": "dist/index.js"
     }
   ],
-  "functions": {
-    "dist/index.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
   "buildCommand": "node vercel-setup.js"
 }

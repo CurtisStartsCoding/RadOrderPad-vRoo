@@ -1,4 +1,4 @@
-# RadOrderPad Frontend Integration Documentation
+b# RadOrderPad Frontend Integration Documentation
 
 This directory contains technical documentation and code examples for frontend developers integrating with the RadOrderPad backend API, with a focus on the validation engine that processes clinical indications to assign CPT and ICD-10 codes.
 
@@ -46,7 +46,18 @@ A comprehensive debugging guide for the Admin Finalization workflow, focusing on
 - Recommended solution
 - Frontend implementation considerations
 
-### 5. [React Implementation Example](./react-implementation-example.jsx)
+### 5. [Admin Finalization API Guide](./admin-finalization-api-guide.md)
+
+A detailed API integration guide for the Admin Finalization workflow, focusing on the fixed "Send to Radiology" implementation. This document covers:
+
+- Complete workflow explanation
+- Database architecture overview
+- API endpoint details
+- Frontend integration code examples
+- Error handling strategies
+- Testing procedures
+
+### 6. [React Implementation Example](./react-implementation-example.jsx)
 
 A sample React implementation of the RadOrderPad validation workflow, demonstrating:
 
@@ -57,7 +68,7 @@ A sample React implementation of the RadOrderPad validation workflow, demonstrat
 - Order finalization
 - Error handling
 
-### 6. [PIDN Validation Test](./pidn-validation-test.js)
+### 7. [PIDN Validation Test](./pidn-validation-test.js)
 
 A test script that demonstrates how to properly use the Patient Identifier Number (PIDN) in the validation workflow:
 
@@ -66,7 +77,7 @@ A test script that demonstrates how to properly use the Patient Identifier Numbe
 - Includes error handling and logging
 - Can be run using the [run-pidn-validation-test.bat](./run-pidn-validation-test.bat) script
 
-### 7. Debug Scripts
+### 8. Debug Scripts
 
 A collection of scripts for debugging the Admin Finalization workflow:
 
@@ -98,8 +109,9 @@ When integrating with the RadOrderPad backend, pay special attention to:
 1. Review the API Workflow Guide to understand the overall flow
 2. Study the Validation Workflow Guide to understand the validation process
 3. Use the Validation Engine Integration guide for technical implementation details
-4. Reference the React Implementation Example for practical code patterns
-5. Run the PIDN Validation Test to verify correct handling of Patient Identifier Numbers:
+4. Read the Admin Finalization API Guide for details on the admin workflow
+5. Reference the React Implementation Example for practical code patterns
+6. Run the PIDN Validation Test to verify correct handling of Patient Identifier Numbers:
    ```
    # Windows
    cd frontend-explanation
@@ -110,7 +122,7 @@ When integrating with the RadOrderPad backend, pay special attention to:
    chmod +x run-pidn-validation-test.sh
    ./run-pidn-validation-test.sh
    ```
-6. Run the Admin Finalization Debug Tests to understand the admin workflow:
+7. Run the Admin Finalization Debug Tests to understand the admin workflow:
    ```
    # Windows
    cd frontend-explanation/debug-scripts
@@ -130,9 +142,10 @@ When integrating with the RadOrderPad backend, pay special attention to:
 4. Provide clear feedback to users during the validation process
 5. Use the Patient Identifier Number (PIDN) as the primary patient identifier
 6. When implementing the admin finalization workflow:
-   - Ensure proper database connection configuration
+   - Use the fixed send-to-radiology endpoint (`/api/admin/orders/:orderId/send-to-radiology-fixed`)
    - Handle 402 Payment Required errors (insufficient credits)
    - Validate all required fields (city, state, zip_code) before submission
+   - Implement proper error handling for all possible response codes
 
 ## Support
 
