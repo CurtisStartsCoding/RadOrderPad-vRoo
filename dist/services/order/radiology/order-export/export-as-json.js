@@ -7,6 +7,9 @@ exports.exportAsJson = exportAsJson;
  * @returns JSON object
  */
 function exportAsJson(orderDetails) {
+    // Simply return the complete order details object
+    // The controller will handle setting the Content-Type header to application/json
     return orderDetails;
 }
+exports.default = exportAsJson;
 //# sourceMappingURL=export-as-json.js.map

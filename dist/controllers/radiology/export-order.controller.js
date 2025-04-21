@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.exportOrder = exportOrder;
 const radiology_1 = __importDefault(require("../../services/order/radiology"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Export order data in specified format
  * @route GET /api/radiology/orders/:orderId/export/:format
@@ -12,7 +13,7 @@ const radiology_1 = __importDefault(require("../../services/order/radiology"));
 async function exportOrder(req, res) {
     try {
         const orderId = parseInt(req.params.orderId);
-        const format = req.params.format;
+        const format = req.params.format.toLowerCase();
         if (isNaN(orderId)) {
             res.status(400).json({ message: 'Invalid order ID' });
             return;
@@ -20,7 +21,9 @@ async function exportOrder(req, res) {
         // Validate format
         const validFormats = ['pdf', 'csv', 'json'];
         if (!validFormats.includes(format)) {
-            res.status(400).json({ message: `Invalid format. Supported formats: ${validFormats.join(', ')}` });
+            res.status(400).json({
+                message: `Invalid format. Supported formats: ${validFormats.join(', ')}`
+            });
             return;
         }
         // Get user information from the JWT token
@@ -29,6 +32,7 @@ async function exportOrder(req, res) {
             res.status(401).json({ message: 'User authentication required' });
             return;
         }
+        logger_1.default.info(`Exporting order ${orderId} in ${format} format for organization ${orgId}`);
         // Call the service to export the order
         const result = await radiology_1.default.exportOrder(orderId, format, orgId);
         // Set appropriate headers based on format
@@ -42,12 +46,15 @@ async function exportOrder(req, res) {
         }
         else if (format === 'json') {
             res.setHeader('Content-Type', 'application/json');
+            // For JSON, we can either suggest downloading or just display in browser
             res.setHeader('Content-Disposition', `attachment; filename="order-${orderId}.json"`);
         }
+        // Send the result
         res.status(200).send(result);
+        logger_1.default.info(`Successfully exported order ${orderId} in ${format} format`);
     }
     catch (error) {
-        console.error('Error in exportOrder controller:', error);
+        logger_1.default.error('Error in exportOrder controller:', error);
         if (error instanceof Error) {
             if (error.message.includes('not found')) {
                 res.status(404).json({ message: error.message });

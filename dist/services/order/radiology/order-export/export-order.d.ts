@@ -1,3 +1,4 @@
+import { OrderDetails } from '../types';
 /**
  * Export order data in specified format
  * @param orderId Order ID
@@ -5,4 +6,5 @@
  * @param orgId Radiology organization ID
  * @returns Promise with exported data
  */
-export declare function exportOrder(orderId: number, format: string, orgId: number): Promise<any>;
+export declare function exportOrder(orderId: number, format: string, orgId: number): Promise<OrderDetails | string | Buffer>;
+export default exportOrder;

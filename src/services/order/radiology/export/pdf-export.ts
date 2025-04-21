@@ -1,4 +1,5 @@
 import { OrderDetails } from '../types';
+import logger from '../../../../utils/logger';
 
 /**
  * Generate PDF export of order data
@@ -8,19 +9,40 @@ import { OrderDetails } from '../types';
 export function generatePdfExport(orderDetails: OrderDetails): Buffer {
   try {
     // This is a placeholder implementation
-    // In a real implementation, you would use a PDF generation library like jsPDF
-    // to create a properly formatted PDF document
+    // In a real implementation, you would use a PDF generation library like PDFKit or jsPDF
+    // to create a properly formatted PDF document with sections for:
+    // - Order header (ID, date, status)
+    // - Patient information
+    // - Insurance details
+    // - Clinical information (dictation, codes)
+    // - Validation summary
+    // - Document uploads
+    // - Order history
     
-    // For now, we'll just return a simple JSON representation as a string
-    // In a real implementation, this would be replaced with actual PDF generation code
+    // For now, we'll create a simple JSON representation with a note
+    const pdfStub = {
+      message: "PDF Export is not yet fully implemented",
+      timestamp: new Date().toISOString(),
+      orderId: orderDetails.order.id,
+      patientName: orderDetails.patient 
+        ? `${orderDetails.patient.first_name || ''} ${orderDetails.patient.last_name || ''}`.trim() 
+        : 'Unknown',
+      orderStatus: orderDetails.order.status,
+      // Include basic order data for testing
+      orderSummary: {
+        modality: orderDetails.order.modality,
+        cptCode: orderDetails.order.final_cpt_code,
+        icd10Codes: orderDetails.order.final_icd10_codes
+      }
+    };
     
-    // Placeholder for PDF generation
-    const pdfContent = JSON.stringify(orderDetails, null, 2);
+    // Convert to JSON string with formatting
+    const pdfContent = JSON.stringify(pdfStub, null, 2);
     
     // Convert string to Buffer (in a real implementation, this would be the PDF buffer)
     return Buffer.from(pdfContent);
   } catch (error) {
-    console.error('Error generating PDF export:', error);
+    logger.error('Error generating PDF export:', error instanceof Error ? error.message : String(error));
     throw new Error('Failed to generate PDF export');
   }
 }

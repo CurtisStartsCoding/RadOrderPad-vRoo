@@ -5,3 +5,4 @@ import { OrderDetails } from '../../types';
  * @returns CSV string
  */
 export declare function generateCsvExport(orderDetails: OrderDetails): string;
+export default generateCsvExport;

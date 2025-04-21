@@ -1,15 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.EXPORT_FORMAT = void 0;
 exports.validateExportFormat = validateExportFormat;
 /**
- * Validate the requested export format
- * @param format Export format to validate
- * @throws Error if format is not supported
+ * Export format constants
+ */
+exports.EXPORT_FORMAT = {
+    JSON: 'json',
+    CSV: 'csv',
+    PDF: 'pdf'
+};
+/**
+ * Validate export format
+ * @param format Format to validate
+ * @throws Error if format is invalid
  */
 function validateExportFormat(format) {
-    const supportedFormats = ['json', 'csv', 'pdf'];
-    if (!supportedFormats.includes(format)) {
-        throw new Error(`Unsupported export format: ${format}. Supported formats are: ${supportedFormats.join(', ')}`);
+    const validFormats = Object.values(exports.EXPORT_FORMAT);
+    if (!format || typeof format !== 'string') {
+        throw new Error('Export format must be provided');
+    }
+    const normalizedFormat = format.toLowerCase();
+    if (!validFormats.includes(normalizedFormat)) {
+        throw new Error(`Invalid export format: ${format}. Supported formats: ${validFormats.join(', ')}`);
     }
 }
+exports.default = validateExportFormat;
 //# sourceMappingURL=validate-export-format.js.map

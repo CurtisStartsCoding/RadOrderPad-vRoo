@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import RadiologyOrderService from '../../services/order/radiology';
+import logger from '../../utils/logger';
 
 /**
  * Export order data in specified format
@@ -8,7 +9,7 @@ import RadiologyOrderService from '../../services/order/radiology';
 export async function exportOrder(req: Request, res: Response): Promise<void> {
   try {
     const orderId = parseInt(req.params.orderId);
-    const format = req.params.format;
+    const format = req.params.format.toLowerCase();
     
     if (isNaN(orderId)) {
       res.status(400).json({ message: 'Invalid order ID' });
@@ -18,7 +19,9 @@ export async function exportOrder(req: Request, res: Response): Promise<void> {
     // Validate format
     const validFormats = ['pdf', 'csv', 'json'];
     if (!validFormats.includes(format)) {
-      res.status(400).json({ message: `Invalid format. Supported formats: ${validFormats.join(', ')}` });
+      res.status(400).json({ 
+        message: `Invalid format. Supported formats: ${validFormats.join(', ')}` 
+      });
       return;
     }
     
@@ -29,6 +32,8 @@ export async function exportOrder(req: Request, res: Response): Promise<void> {
       res.status(401).json({ message: 'User authentication required' });
       return;
     }
+    
+    logger.info(`Exporting order ${orderId} in ${format} format for organization ${orgId}`);
     
     // Call the service to export the order
     const result = await RadiologyOrderService.exportOrder(orderId, format, orgId);
@@ -42,12 +47,15 @@ export async function exportOrder(req: Request, res: Response): Promise<void> {
       res.setHeader('Content-Disposition', `attachment; filename="order-${orderId}.csv"`);
     } else if (format === 'json') {
       res.setHeader('Content-Type', 'application/json');
+      // For JSON, we can either suggest downloading or just display in browser
       res.setHeader('Content-Disposition', `attachment; filename="order-${orderId}.json"`);
     }
     
+    // Send the result
     res.status(200).send(result);
+    logger.info(`Successfully exported order ${orderId} in ${format} format`);
   } catch (error) {
-    console.error('Error in exportOrder controller:', error);
+    logger.error('Error in exportOrder controller:', error);
     
     if (error instanceof Error) {
       if (error.message.includes('not found')) {
