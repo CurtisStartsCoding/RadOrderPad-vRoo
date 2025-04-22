@@ -148,6 +148,16 @@ These scripts are related to frontend testing, debugging, and validation:
 | `run_update_field_names.bat` | Updates field names in the database |
 | `migrate-from-docker.bat` | Migrates the application from Docker |
 
+## Stripe-Related Scripts
+
+### Location: `scripts/stripe/`
+
+| Script | Description |
+|--------|-------------|
+| `test-webhook-handlers.js` | Tests Stripe webhook handlers with mock implementations |
+| `run-test-webhook-handlers.bat` | Windows batch script to run the webhook handlers test |
+| `run-test-webhook-handlers.sh` | Unix/Linux/macOS shell script to run the webhook handlers test |
+
 ## Organization Scripts
 
 ### Location: Root Directory

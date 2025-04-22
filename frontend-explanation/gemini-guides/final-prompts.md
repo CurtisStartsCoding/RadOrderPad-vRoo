@@ -100,7 +100,7 @@ Roo Code Prompt:
 --- START OF STANDARD PROMPT BLOCK (SRP FOCUSED) ---
 [Include the SRP-focused header block here]
 --- END OF STANDARD PROMPT BLOCK (SRP FOCUSED) ---
-
+```
 Objective: Implement the real data export logic for the Radiology Workflow service (`GET /api/radiology/orders/{orderId}/export/{format}`) to generate functional JSON and CSV files, replacing any existing stubs (PDF remains optional/stubbed).
 
 Background: The backend API for Radiology Workflow exists, including the export endpoint structure. The previous implementation might have returned stubbed data or basic JSON only. The `orders` table now contains comprehensive denormalized HIPAA-compliant data.
@@ -145,7 +145,7 @@ Roo Code Prompt:
 --- START OF STANDARD PROMPT BLOCK (SRP FOCUSED) ---
 [Include the SRP-focused header block here]
 --- END OF STANDARD PROMPT BLOCK (SRP FOCUSED) ---
-
+```
 Objective: Enhance the EMR summary parsing logic within the Admin Finalization workflow (`POST /admin/orders/{orderId}/paste-summary`) to more reliably extract patient demographics and insurance information, replacing the current basic stub/regex logic.
 
 Background: The admin finalization endpoint exists but uses basic parsing. More robust extraction is desired.
@@ -181,7 +181,7 @@ Roo Code Prompt:
 --- START OF STANDARD PROMPT BLOCK (SRP FOCUSED) ---
 [Include the SRP-focused header block here]
 --- END OF STANDARD PROMPT BLOCK (SRP FOCUSED) ---
-
+```
 Objective: Implement the following advanced Super Admin API endpoint(s): [CHOOSE ONE OR TWO - e.g., Detailed Log Viewing with Advanced Filtering, Prompt Assignment Management].
 
 Background: Basic Super Admin CRUD/view endpoints exist. We need additional capabilities for platform management.

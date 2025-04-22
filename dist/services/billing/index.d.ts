@@ -46,27 +46,42 @@ declare class BillingService {
      * Handle checkout.session.completed webhook event
      * @param event The Stripe event
      */
-    static handleCheckoutSessionCompleted(event: Stripe.Event): Promise<void>;
+    static handleCheckoutSessionCompleted(event: Stripe.Event): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     /**
      * Handle invoice.payment_succeeded webhook event
      * @param event The Stripe event
      */
-    static handleInvoicePaymentSucceeded(event: Stripe.Event): Promise<void>;
+    static handleInvoicePaymentSucceeded(event: Stripe.Event): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     /**
      * Handle invoice.payment_failed webhook event
      * @param event The Stripe event
      */
-    static handleInvoicePaymentFailed(event: Stripe.Event): Promise<void>;
+    static handleInvoicePaymentFailed(event: Stripe.Event): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     /**
      * Handle customer.subscription.updated webhook event
      * @param event The Stripe event
      */
-    static handleSubscriptionUpdated(event: Stripe.Event): Promise<void>;
+    static handleSubscriptionUpdated(event: Stripe.Event): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     /**
      * Handle customer.subscription.deleted webhook event
      * @param event The Stripe event
      */
-    static handleSubscriptionDeleted(event: Stripe.Event): Promise<void>;
+    static handleSubscriptionDeleted(event: Stripe.Event): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     /**
      * Create a Stripe customer for an organization
      * @param params Parameters for creating a Stripe customer

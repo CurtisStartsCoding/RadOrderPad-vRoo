@@ -73,7 +73,7 @@ class BillingService {
    * Handle checkout.session.completed webhook event
    * @param event The Stripe event
    */
-  static async handleCheckoutSessionCompleted(event: Stripe.Event): Promise<void> {
+  static async handleCheckoutSessionCompleted(event: Stripe.Event): Promise<{ success: boolean; message: string }> {
     return handleCheckoutSessionCompleted(event);
   }
 
@@ -81,7 +81,7 @@ class BillingService {
    * Handle invoice.payment_succeeded webhook event
    * @param event The Stripe event
    */
-  static async handleInvoicePaymentSucceeded(event: Stripe.Event): Promise<void> {
+  static async handleInvoicePaymentSucceeded(event: Stripe.Event): Promise<{ success: boolean; message: string }> {
     return handleInvoicePaymentSucceeded(event);
   }
 
@@ -89,7 +89,7 @@ class BillingService {
    * Handle invoice.payment_failed webhook event
    * @param event The Stripe event
    */
-  static async handleInvoicePaymentFailed(event: Stripe.Event): Promise<void> {
+  static async handleInvoicePaymentFailed(event: Stripe.Event): Promise<{ success: boolean; message: string }> {
     return handleInvoicePaymentFailed(event);
   }
 
@@ -97,7 +97,7 @@ class BillingService {
    * Handle customer.subscription.updated webhook event
    * @param event The Stripe event
    */
-  static async handleSubscriptionUpdated(event: Stripe.Event): Promise<void> {
+  static async handleSubscriptionUpdated(event: Stripe.Event): Promise<{ success: boolean; message: string }> {
     return handleSubscriptionUpdated(event);
   }
 
@@ -105,7 +105,7 @@ class BillingService {
    * Handle customer.subscription.deleted webhook event
    * @param event The Stripe event
    */
-  static async handleSubscriptionDeleted(event: Stripe.Event): Promise<void> {
+  static async handleSubscriptionDeleted(event: Stripe.Event): Promise<{ success: boolean; message: string }> {
     return handleSubscriptionDeleted(event);
   }
 
