@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const API_URL = 'https://radorderpad-jwtja60z4-capecomas-projects.vercel.app';
+const API_URL = 'https://api.radorderpad.com';
 
 // Test the health endpoint
 async function testHealthEndpoint() {

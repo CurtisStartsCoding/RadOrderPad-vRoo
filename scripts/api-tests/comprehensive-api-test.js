@@ -3,7 +3,7 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
 // Configuration
-const API_URL = 'https://radorderpad-8zi108wpf-capecomas-projects.vercel.app';
+const API_URL = 'https://api.radorderpad.com';
 const JWT_SECRET = process.env.JWT_SECRET || 'radorderpad-jwt-secret-for-development-and-testing-purposes-only';
 let authToken = '';
 

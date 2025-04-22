@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const API_URL = 'https://radorderpad-jwtja60z4-capecomas-projects.vercel.app';
+const API_URL = 'https://api.radorderpad.com';
 const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjk5OSwib3JnSWQiOjEsInJvbGUiOiJzdXBlcl9hZG1pbiIsImVtYWlsIjoidGVzdC5zdXBlcmFkbWluQGV4YW1wbGUuY29tIiwiaWF0IjoxNzQ1MzI0ODk0OSwiZXhwIjoxNzQ1MzM1MzQ5fQ.io-9ah6e0rcwU05oazBZw5C9ZZGVGXIc_KWd9jNywl4';
 
 // Create axios instance with auth header

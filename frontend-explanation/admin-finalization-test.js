@@ -10,7 +10,7 @@
  */
 
 // Base URL for API requests
-const API_BASE_URL = 'https://radorderpad-fftrehu55-capecomas-projects.vercel.app/api';
+const API_BASE_URL = 'https://api.radorderpad.com/api';
 
 // Test credentials
 const TEST_CREDENTIALS = {

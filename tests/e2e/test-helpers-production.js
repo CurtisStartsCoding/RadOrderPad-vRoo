@@ -12,7 +12,7 @@ const { execSync } = require('child_process');
 
 // Configuration
 const config = {
-  baseUrl: 'https://radorderpad-8zi108wpf-capecomas-projects.vercel.app/api',
+  baseUrl: 'https://api.radorderpad.com/api',
   resultsDir: path.join(__dirname, '../../test-results/e2e-production')
 };
 
