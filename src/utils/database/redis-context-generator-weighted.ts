@@ -14,6 +14,7 @@ import {
   getMappingsWithScores,
   getMarkdownDocsWithScores
 } from '../redis/search';
+import { generateDatabaseContextWithPostgresWeighted } from './postgres-weighted-search';
 import { testRedisConnection } from '../../config/redis';
 import logger from '../../utils/logger.js';
 
@@ -170,103 +171,134 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
  * @returns Formatted database context string
  */
 async function fallbackToPostgres(keywords: string[]): Promise<string> {
-  logger.info('CONTEXT_PATH: Executing PostgreSQL fallback path');
+  logger.info('CONTEXT_PATH: Executing PostgreSQL weighted search fallback path');
   
   // Add more detailed logging for monitoring and testing
   logger.debug({
-    message: 'Using PostgreSQL fallback for database context generation',
+    message: 'Using PostgreSQL weighted search fallback for database context generation',
     keywords,
     timestamp: new Date().toISOString(),
     reason: 'Redis unavailable or error'
   });
   
   try {
-    // Categorize keywords for more targeted queries
-    const categorizedKeywords = categorizeKeywords(keywords);
-    logger.debug('Categorized keywords for PostgreSQL fallback:', categorizedKeywords);
+    // Use the new PostgreSQL weighted search implementation
+    const result = await generateDatabaseContextWithPostgresWeighted(keywords);
     
-    // Simple query to find relevant ICD-10 codes
-    const icd10Query = `
-      SELECT icd10_code, description, clinical_notes, imaging_modalities, primary_imaging
-      FROM medical_icd10_codes
-      WHERE ${keywords.map((_, index) => 
-        `description ILIKE $${index + 1} OR 
-         clinical_notes ILIKE $${index + 1} OR 
-         keywords ILIKE $${index + 1}`
-      ).join(' OR ')}
-      LIMIT 10
-    `;
+    logger.info(`Found ${result.icd10Rows.length} ICD-10 codes, ${result.cptRows.length} CPT codes, ${result.mappingRows.length} mappings, and ${result.markdownRows.length} markdown docs with PostgreSQL weighted search`);
     
-    const icd10Params = keywords.map(keyword => `%${keyword}%`);
-    logger.debug('ICD-10 query params for PostgreSQL fallback:', icd10Params);
-    const icd10Result = await queryMainDb(icd10Query, icd10Params);
-    logger.info(`Found ${icd10Result.rows.length} relevant ICD-10 codes with PostgreSQL fallback`);
+    // Log the top results with scores for debugging
+    if (result.icd10Rows.length > 0) {
+      logger.debug('Top ICD-10 results with scores from PostgreSQL weighted search:');
+      result.icd10Rows.slice(0, 3).forEach(row => {
+        logger.debug(`${row.icd10_code}: ${row.description} (Score: ${row.score})`);
+      });
+    }
     
-    // Simple query to find relevant CPT codes
-    const cptQuery = `
-      SELECT cpt_code, description, modality, body_part
-      FROM medical_cpt_codes
-      WHERE ${keywords.map((_, index) => 
-        `description ILIKE $${index + 1} OR 
-         body_part ILIKE $${index + 1} OR 
-         modality ILIKE $${index + 1}`
-      ).join(' OR ')}
-      LIMIT 10
-    `;
+    if (result.cptRows.length > 0) {
+      logger.debug('Top CPT results with scores from PostgreSQL weighted search:');
+      result.cptRows.slice(0, 3).forEach(row => {
+        logger.debug(`${row.cpt_code}: ${row.description} (Score: ${row.score})`);
+      });
+    }
     
-    const cptParams = keywords.map(keyword => `%${keyword}%`);
-    logger.debug('CPT query params for PostgreSQL fallback:', cptParams);
-    const cptResult = await queryMainDb(cptQuery, cptParams);
-    logger.info(`Found ${cptResult.rows.length} relevant CPT codes with PostgreSQL fallback`);
-    
-    // Simple query to find relevant mappings
-    const mappingQuery = `
-      SELECT m.id, m.icd10_code, i.description as icd10_description, 
-             m.cpt_code, c.description as cpt_description, 
-             m.appropriateness, m.evidence_source, m.refined_justification
-      FROM medical_cpt_icd10_mappings m
-      JOIN medical_icd10_codes i ON m.icd10_code = i.icd10_code
-      JOIN medical_cpt_codes c ON m.cpt_code = c.cpt_code
-      WHERE ${keywords.map((_, index) => 
-        `i.description ILIKE $${index + 1} OR 
-         c.description ILIKE $${index + 1} OR 
-         c.body_part ILIKE $${index + 1} OR 
-         c.modality ILIKE $${index + 1}`
-      ).join(' OR ')}
-      LIMIT 10
-    `;
-    
-    const mappingParams = keywords.map(keyword => `%${keyword}%`);
-    logger.debug('Mapping query params for PostgreSQL fallback:', mappingParams);
-    const mappingResult = await queryMainDb(mappingQuery, mappingParams);
-    logger.info(`Found ${mappingResult.rows.length} relevant mappings with PostgreSQL fallback`);
-    
-    // Simple query to find relevant markdown docs
-    const markdownQuery = `
-      SELECT md.id, md.icd10_code, i.description as icd10_description, 
-             LEFT(md.content, 1000) as content_preview
-      FROM medical_icd10_markdown_docs md
-      JOIN medical_icd10_codes i ON md.icd10_code = i.icd10_code
-      WHERE ${keywords.map((_, index) => 
-        `i.description ILIKE $${index + 1} OR 
-         md.content ILIKE $${index + 1}`
-      ).join(' OR ')}
-      LIMIT 5
-    `;
-    
-    const markdownParams = keywords.map(keyword => `%${keyword}%`);
-    logger.debug('Markdown query params for PostgreSQL fallback:', markdownParams);
-    const markdownResult = await queryMainDb(markdownQuery, markdownParams);
-    logger.info(`Found ${markdownResult.rows.length} relevant markdown docs with PostgreSQL fallback`);
-    
+    // Format the database context
     return formatDatabaseContext(
-      icd10Result.rows as ICD10Row[], 
-      cptResult.rows as CPTRow[], 
-      mappingResult.rows as MappingRow[], 
-      markdownResult.rows as MarkdownRow[]
+      result.icd10Rows,
+      result.cptRows,
+      result.mappingRows,
+      result.markdownRows
     );
   } catch (error) {
-    logger.error('Error in PostgreSQL fallback for context generation:', error);
-    return 'Error generating database context. Please try again later.';
+    logger.error('Error in PostgreSQL weighted search fallback for context generation:', error);
+    
+    // If the weighted search fails, fall back to the original PostgreSQL search
+    logger.info('Falling back to original PostgreSQL search...');
+    
+    try {
+      // Categorize keywords for more targeted queries
+      const categorizedKeywords = categorizeKeywords(keywords);
+      logger.debug('Categorized keywords for original PostgreSQL fallback:', categorizedKeywords);
+      
+      // Simple query to find relevant ICD-10 codes
+      const icd10Query = `
+        SELECT icd10_code, description, clinical_notes, imaging_modalities, primary_imaging
+        FROM medical_icd10_codes
+        WHERE ${keywords.map((_, index) =>
+          `description ILIKE $${index + 1} OR
+           clinical_notes ILIKE $${index + 1} OR
+           keywords ILIKE $${index + 1}`
+        ).join(' OR ')}
+        LIMIT 10
+      `;
+      
+      const icd10Params = keywords.map(keyword => `%${keyword}%`);
+      const icd10Result = await queryMainDb(icd10Query, icd10Params);
+      logger.info(`Found ${icd10Result.rows.length} relevant ICD-10 codes with original PostgreSQL fallback`);
+      
+      // Simple query to find relevant CPT codes
+      const cptQuery = `
+        SELECT cpt_code, description, modality, body_part
+        FROM medical_cpt_codes
+        WHERE ${keywords.map((_, index) =>
+          `description ILIKE $${index + 1} OR
+           body_part ILIKE $${index + 1} OR
+           modality ILIKE $${index + 1}`
+        ).join(' OR ')}
+        LIMIT 10
+      `;
+      
+      const cptParams = keywords.map(keyword => `%${keyword}%`);
+      const cptResult = await queryMainDb(cptQuery, cptParams);
+      logger.info(`Found ${cptResult.rows.length} relevant CPT codes with original PostgreSQL fallback`);
+      
+      // Simple query to find relevant mappings
+      const mappingQuery = `
+        SELECT m.id, m.icd10_code, i.description as icd10_description,
+               m.cpt_code, c.description as cpt_description,
+               m.appropriateness, m.evidence_source, m.refined_justification
+        FROM medical_cpt_icd10_mappings m
+        JOIN medical_icd10_codes i ON m.icd10_code = i.icd10_code
+        JOIN medical_cpt_codes c ON m.cpt_code = c.cpt_code
+        WHERE ${keywords.map((_, index) =>
+          `i.description ILIKE $${index + 1} OR
+           c.description ILIKE $${index + 1} OR
+           c.body_part ILIKE $${index + 1} OR
+           c.modality ILIKE $${index + 1}`
+        ).join(' OR ')}
+        LIMIT 10
+      `;
+      
+      const mappingParams = keywords.map(keyword => `%${keyword}%`);
+      const mappingResult = await queryMainDb(mappingQuery, mappingParams);
+      logger.info(`Found ${mappingResult.rows.length} relevant mappings with original PostgreSQL fallback`);
+      
+      // Simple query to find relevant markdown docs
+      const markdownQuery = `
+        SELECT md.id, md.icd10_code, i.description as icd10_description,
+               LEFT(md.content, 1000) as content_preview
+        FROM medical_icd10_markdown_docs md
+        JOIN medical_icd10_codes i ON md.icd10_code = i.icd10_code
+        WHERE ${keywords.map((_, index) =>
+          `i.description ILIKE $${index + 1} OR
+           md.content ILIKE $${index + 1}`
+        ).join(' OR ')}
+        LIMIT 5
+      `;
+      
+      const markdownParams = keywords.map(keyword => `%${keyword}%`);
+      const markdownResult = await queryMainDb(markdownQuery, markdownParams);
+      logger.info(`Found ${markdownResult.rows.length} relevant markdown docs with original PostgreSQL fallback`);
+      
+      return formatDatabaseContext(
+        icd10Result.rows as ICD10Row[],
+        cptResult.rows as CPTRow[],
+        mappingResult.rows as MappingRow[],
+        markdownResult.rows as MarkdownRow[]
+      );
+    } catch (innerError) {
+      logger.error('Error in original PostgreSQL fallback for context generation:', innerError);
+      return 'Error generating database context. Please try again later.';
+    }
   }
 }

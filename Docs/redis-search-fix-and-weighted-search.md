@@ -188,6 +188,54 @@ for (const result of topResults) {
 
 This implementation will significantly improve the accuracy of your system when matching clinical indications to the right CPT and ICD-10 codes, as it leverages the weighted fields in your Redis indexes to provide more relevant results.
 
+## PostgreSQL Weighted Search Fallback
+
+To ensure consistent behavior and optimal performance even when Redis is unavailable, we've implemented a weighted search fallback for PostgreSQL that mirrors the Redis weighted search functionality:
+
+### Key Features
+
+1. **Weighted Field Scoring**
+   - Assigns weights to different fields (e.g., description, clinical notes, body part)
+   - Calculates relevance scores based on keyword matches and field weights
+   - Returns results sorted by relevance score
+
+2. **Multi-tier Fallback Strategy**
+   - Primary: Redis Weighted Search
+   - Secondary: PostgreSQL Weighted Search
+   - Tertiary: Original PostgreSQL Search (non-weighted)
+   - Quaternary: LLM without context
+
+3. **Consistent Result Format**
+   - Both Redis and PostgreSQL weighted search return results with scores
+   - Same data structure for seamless integration
+
+### Implementation Details
+
+The PostgreSQL weighted search uses SQL queries with CASE expressions to calculate scores:
+
+```sql
+SELECT
+  cpt_code,
+  description,
+  modality,
+  body_part,
+  (
+    5.0 * (CASE WHEN description ILIKE '%keyword%' THEN 1 ELSE 0 END) +
+    3.0 * (CASE WHEN body_part ILIKE '%keyword%' THEN 1 ELSE 0 END) +
+    3.0 * (CASE WHEN modality ILIKE '%keyword%' THEN 1 ELSE 0 END)
+  ) AS score
+FROM
+  medical_cpt_codes
+WHERE
+  description ILIKE '%keyword%' OR
+  body_part ILIKE '%keyword%' OR
+  modality ILIKE '%keyword%'
+ORDER BY
+  score DESC
+```
+
+This approach ensures that even when Redis is unavailable, the system still benefits from weighted search capabilities, maintaining high accuracy in matching clinical indications to the right CPT and ICD-10 codes.
+
 ## Code Quality Checks
 
 The implementation has been thoroughly tested for code quality:
@@ -206,7 +254,10 @@ The implementation has been thoroughly tested for code quality:
 
 4. **Automated Testing**
    - The implementation has been tested with automated tests
-   - Tests verify that the weighted search is working correctly
+   - Tests verify that both Redis and PostgreSQL weighted search are working correctly
    - Tests confirm that the validation engine is using the weighted search
+   - Tests validate the fallback mechanism
 
-A batch file `run-code-checks.bat` is provided to run all these checks in sequence.
+Two batch files are provided to run tests:
+- `run-code-checks.bat` - Runs all code quality checks in sequence
+- `run-postgres-weighted-search-test.bat` - Tests the PostgreSQL weighted search implementation
