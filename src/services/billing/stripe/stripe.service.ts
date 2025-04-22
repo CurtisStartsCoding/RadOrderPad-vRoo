@@ -16,6 +16,14 @@ class StripeService {
   }
 
   /**
+   * Get the Stripe instance for direct API access
+   * @returns The Stripe instance
+   */
+  getStripeInstance(): Stripe {
+    return this.stripe;
+  }
+
+  /**
    * Create a Stripe customer
    * @param name Customer name
    * @param email Customer email

@@ -11,6 +11,7 @@ import {
   handleSubscriptionUpdated,
   handleSubscriptionDeleted
 } from './stripe/webhooks';
+import { reportRadiologyOrderUsage } from './usage';
 
 /**
  * BillingService provides methods for managing billing-related operations
@@ -140,6 +141,24 @@ class BillingService {
     
     return sessionId;
   }
+
+  /**
+   * Report radiology organization order usage to Stripe for billing
+   *
+   * This function queries the orders table to count orders received by each radiology
+   * organization within the specified date range, categorizes them as standard or advanced
+   * imaging based on modality/CPT code, and creates Stripe invoice items for billing.
+   *
+   * @param startDate Start date for the reporting period
+   * @param endDate End date for the reporting period
+   * @returns Promise with array of usage reports
+   */
+  static async reportRadiologyOrderUsage(
+    startDate: Date,
+    endDate: Date
+  ): Promise<any> {
+    return reportRadiologyOrderUsage(startDate, endDate);
+  }
 }
 
 // Export the BillingService class as the default export
@@ -151,5 +170,6 @@ export {
   BurnCreditParams,
   CreateStripeCustomerParams,
   CreditActionType,
-  Stripe
+  Stripe,
+  reportRadiologyOrderUsage
 };

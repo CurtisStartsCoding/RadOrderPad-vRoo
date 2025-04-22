@@ -1,6 +1,7 @@
 import { InsufficientCreditsError } from './errors';
 import { BurnCreditParams, CreateStripeCustomerParams, CreditActionType } from './types';
 import Stripe from 'stripe';
+import { reportRadiologyOrderUsage } from './usage';
 /**
  * BillingService provides methods for managing billing-related operations
  */
@@ -97,6 +98,18 @@ declare class BillingService {
      * @throws Error if the organization doesn't have a billing_id or if there's an issue creating the checkout session
      */
     static createCreditCheckoutSession(orgId: number, priceId?: string): Promise<string>;
+    /**
+     * Report radiology organization order usage to Stripe for billing
+     *
+     * This function queries the orders table to count orders received by each radiology
+     * organization within the specified date range, categorizes them as standard or advanced
+     * imaging based on modality/CPT code, and creates Stripe invoice items for billing.
+     *
+     * @param startDate Start date for the reporting period
+     * @param endDate End date for the reporting period
+     * @returns Promise with array of usage reports
+     */
+    static reportRadiologyOrderUsage(startDate: Date, endDate: Date): Promise<any>;
 }
 export default BillingService;
-export { InsufficientCreditsError, BurnCreditParams, CreateStripeCustomerParams, CreditActionType, Stripe };
+export { InsufficientCreditsError, BurnCreditParams, CreateStripeCustomerParams, CreditActionType, Stripe, reportRadiologyOrderUsage };

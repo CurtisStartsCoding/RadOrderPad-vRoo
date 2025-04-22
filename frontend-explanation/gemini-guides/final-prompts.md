@@ -14,7 +14,7 @@ Let's consolidate the remaining backend prompts.
 
 Here are the prompts for the key remaining backend tasks, designed to be run sequentially.
 
-**Prompt 1: Finalize Stripe Webhook Logic (DB Updates)**
+**DONE Prompt 1: Finalize Stripe Webhook Logic (DB Updates)DONE**
 *(This ensures the database accurately reflects subscription/payment states)*
 
 ```prompt

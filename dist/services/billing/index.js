@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Stripe = exports.InsufficientCreditsError = void 0;
+exports.reportRadiologyOrderUsage = exports.Stripe = exports.InsufficientCreditsError = void 0;
 const credit_1 = require("./credit");
 const stripe_1 = require("./stripe");
 const errors_1 = require("./errors");
@@ -11,6 +11,8 @@ Object.defineProperty(exports, "InsufficientCreditsError", { enumerable: true, g
 const stripe_2 = __importDefault(require("stripe"));
 exports.Stripe = stripe_2.default;
 const webhooks_1 = require("./stripe/webhooks");
+const usage_1 = require("./usage");
+Object.defineProperty(exports, "reportRadiologyOrderUsage", { enumerable: true, get: function () { return usage_1.reportRadiologyOrderUsage; } });
 /**
  * BillingService provides methods for managing billing-related operations
  */
@@ -116,6 +118,20 @@ class BillingService {
         // Create a mock session ID
         const sessionId = `mock_cs_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
         return sessionId;
+    }
+    /**
+     * Report radiology organization order usage to Stripe for billing
+     *
+     * This function queries the orders table to count orders received by each radiology
+     * organization within the specified date range, categorizes them as standard or advanced
+     * imaging based on modality/CPT code, and creates Stripe invoice items for billing.
+     *
+     * @param startDate Start date for the reporting period
+     * @param endDate End date for the reporting period
+     * @returns Promise with array of usage reports
+     */
+    static async reportRadiologyOrderUsage(startDate, endDate) {
+        return (0, usage_1.reportRadiologyOrderUsage)(startDate, endDate);
     }
 }
 // Export the BillingService class as the default export

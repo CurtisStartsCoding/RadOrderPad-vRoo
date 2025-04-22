@@ -1,7 +1,7 @@
 # Billing & Credits System
 
-**Version:** 1.2 (Credit Consumption Refactoring)
-**Date:** 2025-04-14
+**Version:** 1.3 (Added Radiology Usage Reporting)
+**Date:** 2025-04-21
 
 This document outlines the billing structure, credit system, and payment handling for RadOrderPad, managed primarily through Stripe integration.
 
@@ -46,14 +46,19 @@ This document outlines the billing structure, credit system, and payment handlin
 -   **Customer Creation:** When an organization signs up, create a Stripe Customer object and store the ID (`organizations.billing_id`).
 -   **Payment Methods:** Securely collect and associate payment methods (credit cards) with the Stripe Customer using Stripe Elements or Checkout.
 -   **Referring Group Subscriptions:** Use Stripe Subscriptions to manage tiered monthly billing. Set up products and prices in Stripe corresponding to the tiers.
--   **Radiology Group Billing:** Use Stripe Invoicing or direct Charges API calls based on monthly usage tracked in RadOrderPad (aggregate orders received).
+-   **Radiology Group Billing:** Use Stripe Invoicing based on monthly usage tracked in RadOrderPad. The system automatically:
+    *   Counts orders received by each radiology group within a specified date range
+    *   Categorizes orders as standard or advanced imaging based on modality/CPT code
+    *   Creates Stripe invoice items for each category with appropriate pricing
+    *   Records billing events in the database
 -   **Credit Top-Ups:** Use Stripe Checkout or Charges API for ad-hoc credit bundle purchases.
 -   **Webhooks:** Implement webhook handlers (securely verified) for critical Stripe events:
     *   `invoice.payment_succeeded`: Update billing status, potentially replenish credits for referring groups.
     *   `invoice.payment_failed`: Trigger warnings, potentially initiate `purgatory_mode.md`.
     *   `customer.subscription.updated`: Handle tier changes.
     *   `checkout.session.completed`: Confirm successful top-up purchase, update `organizations.credit_balance`.
--   **Logging:** Record key billing actions (charges, top-ups, failures) in the `billing_events` table (Main DB).
+-   **Logging:** Record key billing actions (charges, top-ups, failures, usage reporting) in the `billing_events` table (Main DB).
+-   **Usage Reporting:** Scheduled job or manual trigger to report radiology order usage to Stripe for billing purposes. See `implementation/radiology-usage-reporting.md` for details.
 
 ## 4. Payment Failure & Purgatory Mode
 

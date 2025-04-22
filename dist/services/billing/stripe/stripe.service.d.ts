@@ -6,6 +6,11 @@ declare class StripeService {
     private stripe;
     constructor();
     /**
+     * Get the Stripe instance for direct API access
+     * @returns The Stripe instance
+     */
+    getStripeInstance(): Stripe;
+    /**
      * Create a Stripe customer
      * @param name Customer name
      * @param email Customer email
