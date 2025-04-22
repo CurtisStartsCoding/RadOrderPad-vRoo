@@ -1,0 +1,167 @@
+/**
+ * Weighted search for markdown documents
+ */
+import { getRedisClient } from '../../../config/redis.js';
+import {
+  ICD10Row,
+  MarkdownRow,
+  handleRedisSearchError
+} from './common.js';
+import logger from '../../../utils/logger.js';
+
+/**
+ * Extended markdown row interface with score and content
+ */
+export interface MarkdownRowWithScore extends MarkdownRow {
+  score: number;
+  content?: string; // Add content property
+}
+
+/**
+ * Search for markdown documents using RedisSearch with relevance scores
+ * @param searchTerms Keywords to search for
+ * @param limit Maximum number of results to return
+ * @returns Array of markdown documents with relevance scores
+ */
+export async function searchMarkdownDocsWithScores(
+  searchTerms: string[],
+  limit = 20
+): Promise<MarkdownRowWithScore[]> {
+  const client = getRedisClient();
+  
+  try {
+    // Process search terms
+    const query = searchTerms.join(' | ');
+    
+    // Execute the search with scores
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await (client as any).call(
+      'FT.SEARCH',
+      'markdown_index',
+      query,
+      'WITHSCORES',
+      'LIMIT', '0', limit.toString(),
+      'RETURN', '4', 
+      '$.icd10_code', 
+      '$.icd10_description', 
+      '$.content', 
+      '$.content_preview'
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ) as any[];
+    
+    // Process the results
+    const totalResults = result[0] as number;
+    logger.debug(`Found ${totalResults} markdown documents with weighted search`);
+    
+    const markdownRows: MarkdownRowWithScore[] = [];
+    
+    // Results format with WITHSCORES: [total, key1, score1, fields1, key2, score2, fields2, ...]
+    for (let i = 1; i < result.length; i += 3) {
+      const key = result[i] as string;
+      const score = parseFloat(result[i + 1] as string);
+      const data = result[i + 2] as string[];
+      
+      // Extract the ICD-10 code from the key (format: markdown:ICD10)
+      const keyParts = key.split(':');
+      const icd10Code = keyParts[1] || '';
+      
+      // Create a MarkdownRow object with score
+      const row: MarkdownRowWithScore = {
+        id: 0, // ID will be set later if available
+        icd10_code: icd10Code,
+        icd10_description: '',
+        content: '',
+        content_preview: '',
+        score: score
+      };
+      
+      // Process the returned fields
+      for (let j = 0; j < data.length; j += 2) {
+        const fieldName = data[j] as string;
+        const fieldValue = data[j + 1] as string;
+        
+        // Map the field names to the MarkdownRow properties
+        switch (fieldName) {
+          case '$.icd10_code':
+            row.icd10_code = fieldValue;
+            break;
+          case '$.icd10_description':
+            row.icd10_description = fieldValue;
+            break;
+          case '$.content':
+            row.content = fieldValue;
+            break;
+          case '$.content_preview':
+            row.content_preview = fieldValue;
+            break;
+        }
+      }
+      
+      // If content_preview is empty but content is available, create a preview
+      if (!row.content_preview && row.content) {
+        row.content_preview = row.content.substring(0, 1000);
+      }
+      
+      markdownRows.push(row);
+    }
+    
+    // Sort by score in descending order
+    markdownRows.sort((a, b) => b.score - a.score);
+    
+    return markdownRows;
+  } catch (error) {
+    handleRedisSearchError('searchMarkdownDocsWithScores', error);
+    return [];
+  }
+}
+
+/**
+ * Get markdown docs for ICD-10 codes with weighted search
+ * @param icd10Codes Array of ICD-10 codes
+ * @param searchTerms Additional search terms
+ * @returns Array of markdown docs with scores
+ */
+export async function getMarkdownDocsWithScores(
+  icd10Codes: ICD10Row[],
+  searchTerms: string[] = []
+): Promise<MarkdownRowWithScore[]> {
+  const client = getRedisClient();
+  const markdownDocs: MarkdownRowWithScore[] = [];
+  
+  try {
+    // If we have search terms, use weighted search
+    if (searchTerms.length > 0) {
+      return await searchMarkdownDocsWithScores(searchTerms);
+    }
+    
+    // Otherwise, get markdown docs for each ICD-10 code
+    for (const icd10 of icd10Codes) {
+      try {
+        const key = `markdown:${icd10.icd10_code}`;
+        // Use the Redis client's command method with proper type assertion
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data = await (client as any).call('GET', key) as string;
+        
+        if (data) {
+          const parsedData = JSON.parse(data);
+          markdownDocs.push({
+            id: parsedData.id || 0,
+            icd10_code: icd10.icd10_code,
+            icd10_description: icd10.description,
+            content: parsedData.content || '',
+            content_preview: parsedData.content_preview || parsedData.content?.substring(0, 1000) || '',
+            score: 1.0 // Default score for direct lookups
+          });
+        }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_err) {
+        // Skip markdown docs that don't exist
+      }
+    }
+    
+    return markdownDocs;
+  } catch (error) {
+    handleRedisSearchError('getMarkdownDocsWithScores', error);
+    return [];
+  }
+}

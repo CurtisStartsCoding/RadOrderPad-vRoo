@@ -61,13 +61,13 @@ export async function searchICD10Codes(keywords: string[], categorizedKeywords?:
     // Create an array to store all results
     const allResults: ICD10Row[] = [];
     
-    // Search by description and keywords
-    let descriptionQuery = `@description:(${searchTerms})`;
+    // Search by description and keywords - using simple format without field specifier
+    let descriptionQuery = searchTerms;
     
     // If we have symptoms, use them for a more targeted search
     if (categorizedKeywords.symptoms.length > 0) {
       const symptoms = processSearchTerms(categorizedKeywords.symptoms);
-      descriptionQuery = `@description:(${symptoms})`;
+      descriptionQuery = symptoms;
     }
     
     // Execute the search
@@ -126,7 +126,8 @@ export async function searchICD10Codes(keywords: string[], categorizedKeywords?:
     // If we have anatomy terms, search for them in the description
     if (categorizedKeywords.anatomyTerms.length > 0) {
       const anatomyTerms = processSearchTerms(categorizedKeywords.anatomyTerms);
-      const anatomyQuery = `@description:(${anatomyTerms})`;
+      // Use simple format without field specifier
+      const anatomyQuery = anatomyTerms;
       
       // Execute the search
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

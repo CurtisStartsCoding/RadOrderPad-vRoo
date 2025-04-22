@@ -14,8 +14,26 @@ export type {
   CategorizedKeywords
 } from './common.js';
 
-// Re-export search functions
-export { searchICD10Codes, getICD10CodesByIds } from './icd10-search.js';
-export { searchCPTCodes, getCPTCodesByIds } from './cpt-search.js';
+// Re-export search functions - using fixed versions
+export { searchICD10Codes, getICD10CodesByIds } from './icd10-search-fix.js';
+export { searchCPTCodes, getCPTCodesByIds } from './cpt-search-fix.js';
 export { getMappings } from './mapping-search.js';
 export { getMarkdownDocs } from './markdown-search.js';
+
+// Re-export weighted search functions
+export {
+  searchICD10CodesWithScores,
+  searchCPTCodesWithScores
+} from './weighted-search.js';
+
+export {
+  getMappingsWithScores,
+  searchMappingsWithScores,
+  MappingRowWithScore
+} from './mapping-search-weighted.js';
+
+export {
+  getMarkdownDocsWithScores,
+  searchMarkdownDocsWithScores,
+  MarkdownRowWithScore
+} from './markdown-search-weighted.js';

@@ -61,8 +61,8 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
     // Create an array to store all results
     const allResults: CPTRow[] = [];
     
-    // Search by description
-    const descriptionQuery = `@description:(${searchTerms})`;
+    // Search by description - using simple format without field specifier
+    const descriptionQuery = searchTerms;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const descriptionResults = await (client as any).call(
       'FT.SEARCH',
@@ -114,7 +114,8 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
     // Search by modality if we have modalities
     if (categorizedKeywords.modalities.length > 0) {
       const modalities = categorizedKeywords.modalities.join('|');
-      const modalityQuery = `@modality:{${modalities}}`;
+      // Use simple format without field specifier
+      const modalityQuery = modalities;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const modalityResults = await (client as any).call(
         'FT.SEARCH',
@@ -172,7 +173,8 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
     // Search by body part if we have anatomy terms
     if (categorizedKeywords.anatomyTerms.length > 0) {
       const bodyParts = categorizedKeywords.anatomyTerms.join('|');
-      const bodyPartQuery = `@body_part:{${bodyParts}}`;
+      // Use simple format without field specifier
+      const bodyPartQuery = bodyParts;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const bodyPartResults = await (client as any).call(
         'FT.SEARCH',
