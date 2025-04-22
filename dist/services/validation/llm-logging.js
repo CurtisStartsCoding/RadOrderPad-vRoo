@@ -32,7 +32,8 @@ async function logLLMUsage(llmResponse) {
         // If the table doesn't exist, log the error but don't fail the validation
         const err = error;
         if (err.message && err.message.includes('relation "llm_validation_logs" does not exist')) {
-            console.log('llm_validation_logs table does not exist. Skipping LLM usage logging.');
+            // eslint-disable-next-line no-console
+            console.log('Database setup: llm_validation_logs table does not exist');
             // Create the table if it doesn't exist
             try {
                 await (0, db_1.queryPhiDb)(`
@@ -47,14 +48,18 @@ async function logLLMUsage(llmResponse) {
             created_at TIMESTAMP NOT NULL DEFAULT NOW()
           )
         `);
-                console.log('Created llm_validation_logs table');
+                // eslint-disable-next-line no-console
+                console.log('Database setup: llm_validation_logs table created successfully');
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             }
-            catch (createError) {
-                console.error('Error creating llm_validation_logs table:', createError);
+            catch (_) {
+                // eslint-disable-next-line no-console
+                console.error('Database setup error: Failed to create llm_validation_logs table');
             }
         }
         else {
-            console.error('Error logging LLM usage:', error);
+            // eslint-disable-next-line no-console
+            console.error('LLM usage logging failed - check server logs for details');
         }
     }
 }

@@ -10,7 +10,9 @@ const extractor_1 = require("./extractor");
  */
 function processLLMResponse(responseContent) {
     try {
-        console.log("Processing LLM response:", responseContent.substring(0, 100) + "...");
+        // Log that we're processing a response without showing its content
+        // eslint-disable-next-line no-console
+        console.log("Processing LLM response (content redacted for privacy)");
         // Extract JSON from the response
         // The response might be wrapped in markdown code blocks like ```json ... ```
         let jsonContent = responseContent;
@@ -32,6 +34,7 @@ function processLLMResponse(responseContent) {
             parsedResponse = JSON.parse(jsonContent);
         }
         catch (error) {
+            // eslint-disable-next-line no-console
             console.error("Failed to parse JSON from LLM response:", error);
             throw new Error(`Failed to parse JSON from LLM response: ${error instanceof Error ? error.message : String(error)}`);
         }
@@ -55,8 +58,12 @@ function processLLMResponse(responseContent) {
         };
     }
     catch (error) {
+        // Log error without including the full raw response
+        // eslint-disable-next-line no-console
         console.error('Error processing LLM response:', error);
-        console.error('Raw response:', responseContent);
+        // Instead of logging the full raw response, log only that an error occurred
+        // eslint-disable-next-line no-console
+        console.error('Error occurred while processing LLM response - see error details above');
         // Try to extract any useful information from the response
         const extractedInfo = (0, extractor_1.extractPartialInformation)(responseContent);
         // Return a default error result with any extracted information

@@ -33,7 +33,9 @@ class OrderValidationController {
             res.status(200).json(result);
         }
         catch (error) {
-            console.error('Error in validateOrder controller:', error);
+            // Log error without including potentially sensitive details
+            // eslint-disable-next-line no-console
+            console.error('Error in validateOrder controller - check server logs for details');
             // Handle custom error object with status
             if (error && typeof error === 'object' && 'status' in error) {
                 const customError = error;

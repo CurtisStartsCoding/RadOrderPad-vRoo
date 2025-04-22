@@ -44,9 +44,12 @@ async function logValidationAttempt(originalText, validationResult, llmResponse,
         ]);
         // Log LLM usage details
         await (0, llm_logging_1.logLLMUsage)(llmResponse);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     }
-    catch (error) {
-        console.error('Error logging validation attempt:', error);
+    catch (_) {
+        // Log error without including potentially sensitive details
+        // eslint-disable-next-line no-console
+        console.error('Error logging validation attempt - check server logs for details');
         // Don't throw the error, just log it
         // We don't want to fail the validation process if logging fails
     }
