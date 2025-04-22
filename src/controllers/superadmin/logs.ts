@@ -4,6 +4,10 @@
 import { Request, Response } from 'express';
 import { logs } from '../../services/superadmin';
 import logger from '../../utils/logger';
+import { listLlmValidationLogsEnhancedController } from './logs/listLlmValidationLogsEnhanced';
+
+// Export the enhanced controller
+export { listLlmValidationLogsEnhancedController };
 
 /**
  * Parse a date string from query parameters

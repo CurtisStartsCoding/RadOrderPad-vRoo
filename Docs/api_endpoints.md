@@ -125,6 +125,7 @@
 
 ### System Logs (`/superadmin/logs`)
 
--   `GET /superadmin/logs/validation`: List LLM validation logs with optional filtering (organization_id, user_id, date range, status, llm_provider, model_name). **(Super Admin Role)**
--   `GET /superadmin/logs/credits`: List credit usage logs with optional filtering (organization_id, user_id, date range, action_type). **(Super Admin Role)**
--   `GET /superadmin/logs/purgatory`: List purgatory events with optional filtering (organization_id, date range, status, reason). **(Super Admin Role)**
+- `GET /superadmin/logs/validation`: List LLM validation logs with optional filtering (organization_id, user_id, date range, status, llm_provider, model_name). **(Super Admin Role)**
+- `GET /superadmin/logs/validation/enhanced`: List LLM validation logs with advanced filtering capabilities including multiple status selection, text search, date presets, and sorting options. **(Super Admin Role)**
+- `GET /superadmin/logs/credits`: List credit usage logs with optional filtering (organization_id, user_id, date range, action_type). **(Super Admin Role)**
+- `GET /superadmin/logs/purgatory`: List purgatory events with optional filtering (organization_id, date range, status, reason). **(Super Admin Role)**

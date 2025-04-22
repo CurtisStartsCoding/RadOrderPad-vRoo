@@ -106,6 +106,8 @@ This document specifies the features, capabilities, and access levels for the Su
 *(Platform intelligence and performance monitoring)*
 
 - **View LLM Logs:** Display `llm_validation_logs` with filters (org, user, model, status, date, llm_provider). Analyze fallback rates, latencies, token usage per model. API endpoint: `GET /api/superadmin/logs/validation` with pagination and comprehensive filtering options including date ranges.
+
+- **Enhanced Log Viewing:** Advanced filtering capabilities for LLM validation logs, including multiple status selection, text search, date presets, and sorting options. API endpoint: `GET /api/superadmin/logs/validation/enhanced`. For detailed information, see [Enhanced Log Viewing](./enhanced-log-viewing.md).
 - **View Validation Attempts:** (Requires **audited** access to PHI DB or aggregated non-PHI view) Analyze validation outcomes, scores, feedback effectiveness, override reasons (`validation_attempts` data). Filterable by org, physician, date range. **Access must adhere to minimum necessary principle.**
 
 - **Prompt Management:** Comprehensive interface for managing validation prompts:

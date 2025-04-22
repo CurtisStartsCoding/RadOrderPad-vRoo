@@ -29,6 +29,7 @@ router.put('/prompts/assignments/:assignmentId', superadmin_1.prompts.assignment
 router.delete('/prompts/assignments/:assignmentId', superadmin_1.prompts.assignments.deletePromptAssignmentController);
 // Log viewing routes
 router.get('/logs/validation', superadmin_1.logs.listLlmValidationLogsController);
+router.get('/logs/validation/enhanced', superadmin_1.logs.listLlmValidationLogsEnhancedController);
 router.get('/logs/credits', superadmin_1.logs.listCreditUsageLogsController);
 router.get('/logs/purgatory', superadmin_1.logs.listPurgatoryEventsController);
 exports.default = router;

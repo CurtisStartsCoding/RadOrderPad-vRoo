@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.withTransaction = withTransaction;
 const db_1 = require("../../../../config/db");
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Execute a function within a database transaction
  * @param callback Function to execute within transaction
@@ -21,7 +25,7 @@ async function withTransaction(callback) {
     catch (error) {
         // Rollback transaction on error
         await client.query('ROLLBACK');
-        console.error('Transaction error:', error);
+        logger_1.default.error('Transaction error:', error instanceof Error ? error.message : String(error));
         throw error;
     }
     finally {

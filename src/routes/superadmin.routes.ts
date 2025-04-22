@@ -42,6 +42,7 @@ router.delete('/prompts/assignments/:assignmentId', prompts.assignments.deletePr
 
 // Log viewing routes
 router.get('/logs/validation', logs.listLlmValidationLogsController);
+router.get('/logs/validation/enhanced', logs.listLlmValidationLogsEnhancedController);
 router.get('/logs/credits', logs.listCreditUsageLogsController);
 router.get('/logs/purgatory', logs.listPurgatoryEventsController);
 

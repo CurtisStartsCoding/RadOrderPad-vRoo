@@ -136,7 +136,7 @@ Output: Provide the updated TypeScript code for the export service logic (`expor
 
 ---
 
-**Prompt 4: Implement Real EMR Parsing Logic (Admin)**
+**DONE Prompt 4: Implement Real EMR Parsing Logic (Admin)**
 *(Optional - Skip if basic regex is sufficient for v1.0)*
 
 ```prompt
