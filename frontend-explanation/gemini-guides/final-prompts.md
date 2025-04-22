@@ -47,7 +47,7 @@ Output: Provide the **final, verified code** for the three service files (`handl
 
 ---
 
-**Prompt 2: Implement Radiology Usage Reporting (Stripe)**
+**DONE Prompt 2: Implement Radiology Usage Reporting (Stripe) DONE**
 *(Optional - Skip if not needed for V1.0)*
 
 ```prompt
@@ -92,7 +92,7 @@ Output: Provide the new TypeScript files for the usage reporting service logic a
 
 ---
 
-**Prompt 3: Implement Real Export Logic (Radiology)**
+**DONE Prompt 3: Implement Real Export Logic (Radiology)**
 
 ```prompt
 Roo Code Prompt:

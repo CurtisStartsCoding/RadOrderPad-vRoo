@@ -181,8 +181,21 @@ else
 fi
 echo
 
+echo "===== 14. Running Enhanced EMR Parser Tests ====="
+sleep 2
+./run-emr-parser-test.sh > test-results/emr-parser-tests.log 2>&1
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
+    echo "[PASS] Enhanced EMR Parser Tests"
+    ./update-test-audit-log.sh "Enhanced EMR Parser Tests" "PASS" "Improved EMR parsing functionality working correctly"
+else
+    echo "[FAIL] Enhanced EMR Parser Tests - Check test-results/emr-parser-tests.log for details"
+    ./update-test-audit-log.sh "Enhanced EMR Parser Tests" "FAIL" "Check test-results/emr-parser-tests.log for details"
+fi
+echo
+
 echo "===== Test Summary ====="
-echo "13 test suites executed."
+echo "14 test suites executed."
 echo "Test results have been saved to the test-results directory."
 echo "To view detailed logs, check the corresponding .log files."
 echo

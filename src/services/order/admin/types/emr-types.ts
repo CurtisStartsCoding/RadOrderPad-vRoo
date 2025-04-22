@@ -18,6 +18,8 @@ export interface ParsedInsuranceInfo {
   policyNumber?: string;
   groupNumber?: string;
   policyHolderName?: string;
+  relationship?: string;
+  authorizationNumber?: string;
 }
 
 /**

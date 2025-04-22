@@ -175,8 +175,20 @@ if %ERRORLEVEL% EQU 0 (
 )
 echo.
 
+echo ===== 14. Running Enhanced EMR Parser Tests =====
+timeout /t 2 /nobreak > nul
+call run-emr-parser-test.bat > test-results\emr-parser-tests.log 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo [PASS] Enhanced EMR Parser Tests
+    call update-test-audit-log.bat "Enhanced EMR Parser Tests" "PASS" "Improved EMR parsing functionality working correctly"
+) else (
+    echo [FAIL] Enhanced EMR Parser Tests - Check test-results\emr-parser-tests.log for details
+    call update-test-audit-log.bat "Enhanced EMR Parser Tests" "FAIL" "Check test-results\emr-parser-tests.log for details"
+)
+echo.
+
 echo ===== Test Summary =====
-echo 13 test suites executed.
+echo 14 test suites executed.
 echo Test results have been saved to the test-results directory.
 echo To view detailed logs, check the corresponding .log files.
 echo.

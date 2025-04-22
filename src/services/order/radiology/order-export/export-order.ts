@@ -1,4 +1,4 @@
-import { generateCsvExport } from '../export/csv-export';
+import { generateCsvExport } from './generate-csv-export';
 import { generatePdfExport } from '../export/pdf-export';
 import { getOrderDetails } from '../order-details.service';
 import { validateExportFormat } from './validate-export-format';
@@ -23,6 +23,7 @@ export async function exportOrder(
     validateExportFormat(format);
     
     // Get the complete order details with all related data
+    // This now includes all the denormalized HIPAA-compliant fields
     const orderDetails = await getOrderDetails(orderId, orgId);
     
     // Export based on format
