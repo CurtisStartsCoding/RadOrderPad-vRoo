@@ -39,6 +39,13 @@ __exportStar(require("./handlers"), exports);
  */
 class OrderManagementController {
     /**
+     * List orders
+     * @route GET /api/orders
+     */
+    async listOrders(req, res) {
+        return (0, handlers_1.listOrders)(req, res);
+    }
+    /**
      * Finalize an order
      * @route PUT /api/orders/:orderId
      */

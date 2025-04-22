@@ -18,6 +18,11 @@ export * from './handlers';
  */
 export declare class OrderManagementController {
     /**
+     * List orders
+     * @route GET /api/orders
+     */
+    listOrders(req: Request, res: Response): Promise<void>;
+    /**
      * Finalize an order
      * @route PUT /api/orders/:orderId
      */

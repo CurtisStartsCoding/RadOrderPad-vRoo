@@ -172,7 +172,7 @@ Output: Provide the updated TypeScript code for the EMR parsing utility/service 
 
 ---
 
-**Prompt 5: Implement Advanced Super Admin Features**
+**DONE Prompt 5: Implement Advanced Super Admin Features**
 *(Choose specific features needed for v1.0)*
 
 ```prompt

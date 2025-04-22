@@ -6,3 +6,4 @@
 export { finalizeOrder } from './finalize-order';
 export { getOrder } from './get-order';
 export { adminUpdate } from './admin-update';
+export { listOrders } from './list-orders';

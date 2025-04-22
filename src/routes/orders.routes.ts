@@ -6,6 +6,17 @@ import { authenticateJWT, authorizeRole } from '../middleware/auth';
 const router = Router();
 
 /**
+ * @route   GET /api/orders
+ * @desc    List orders
+ * @access  Private (Authenticated users)
+ */
+router.get(
+  '/',
+  authenticateJWT,
+  orderManagementController.listOrders
+);
+
+/**
  * @route   POST /api/orders/validate
  * @desc    Validate an order
  * @access  Private (Physician)

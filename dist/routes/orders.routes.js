@@ -9,6 +9,12 @@ const order_management_1 = __importDefault(require("../controllers/order-managem
 const auth_1 = require("../middleware/auth");
 const router = (0, express_1.Router)();
 /**
+ * @route   GET /api/orders
+ * @desc    List orders
+ * @access  Private (Authenticated users)
+ */
+router.get('/', auth_1.authenticateJWT, order_management_1.default.listOrders);
+/**
  * @route   POST /api/orders/validate
  * @desc    Validate an order
  * @access  Private (Physician)
