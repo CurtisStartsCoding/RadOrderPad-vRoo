@@ -64,7 +64,7 @@ async function createCptIndex(client: Redis): Promise<void> {
     // Using the raw command interface for Redis commands
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - The Redis client can actually accept this format at runtime
-    await (client as any).call(
+    await (client as RedisClient).call(
       'FT.CREATE',
       'cpt_index',
       'ON', 'JSON',
@@ -118,7 +118,7 @@ async function createIcd10Index(client: Redis): Promise<void> {
     // Using the raw command interface for Redis commands
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - The Redis client can actually accept this format at runtime
-    await (client as any).call(
+    await (client as RedisClient).call(
       'FT.CREATE',
       'icd10_index',
       'ON', 'JSON',
@@ -159,7 +159,7 @@ async function checkIndexExists(client: Redis, indexName: string): Promise<boole
     // Use FT.INFO to check if the index exists
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - The Redis client can actually accept this format at runtime
-    await (client as any).call('FT.INFO', indexName);
+    await (client as RedisClient).call('FT.INFO', indexName);
     return true;
   } catch (error) {
     // If the error is that the index doesn't exist, return false
@@ -190,7 +190,7 @@ export async function dropIndex(client: Redis, indexName: string): Promise<void>
     // Drop the index
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - The Redis client can actually accept this format at runtime
-    await (client as any).call('FT.DROPINDEX', indexName);
+    await (client as RedisClient).call('FT.DROPINDEX', indexName);
     logger.info(`Index ${indexName} dropped successfully`);
   } catch (error) {
     logger.error({
@@ -207,17 +207,17 @@ export async function dropIndex(client: Redis, indexName: string): Promise<void>
  * @param indexName Name of the index to get information about
  * @returns Information about the index
  */
-export async function getIndexInfo(indexName: string): Promise<Record<string, any>> {
+export async function getIndexInfo(indexName: string): Promise<Record<string, unknown>> {
   const client = getRedisClient();
   
   try {
     // Use FT.INFO to get information about the index
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - The Redis client can actually accept this format at runtime
-    const info = await (client as any).call('FT.INFO', indexName) as any[];
+    const info = await (client as RedisClient).call('FT.INFO', indexName) as string[];
     
     // Convert the array response to an object
-    const infoObj: Record<string, any> = {};
+    const infoObj: Record<string, unknown> = {};
     for (let i = 0; i < info.length; i += 2) {
       infoObj[info[i]] = info[i + 1];
     }

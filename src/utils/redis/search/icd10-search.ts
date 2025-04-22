@@ -5,6 +5,7 @@ import { getRedisClient } from '../../../config/redis';
 import { ICD10Row } from '../../database/types';
 import { CategorizedKeywords } from '../../database/types';
 import { processSearchTerms, processRedisSearchResults, extractKeyFromRedisKey } from './common';
+import logger from '../../../utils/logger.js';
 
 /**
  * Search for ICD-10 codes using RedisSearch
@@ -190,7 +191,7 @@ export async function searchICD10Codes(keywords: string[], categorizedKeywords?:
     // Return all results
     return allResults;
   } catch (error) {
-    console.error('Error searching ICD-10 codes with RedisSearch:', error);
+    logger.error('Error searching ICD-10 codes with RedisSearch:', error);
     return [];
   }
 }
@@ -229,13 +230,13 @@ export async function getICD10CodesByIds(icd10Codes: string[]): Promise<ICD10Row
         // Add the row to the results
         results.push(row);
       } catch (error) {
-        console.error(`Error getting ICD-10 code ${icd10Code}:`, error);
+        logger.error(`Error getting ICD-10 code ${icd10Code}:`, error);
       }
     }
     
     return results;
   } catch (error) {
-    console.error('Error getting ICD-10 codes by IDs:', error);
+    logger.error('Error getting ICD-10 codes by IDs:', error);
     return [];
   }
 }

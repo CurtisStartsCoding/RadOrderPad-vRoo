@@ -2,6 +2,7 @@
  * Get the specialty of a user from the database
  */
 import { queryMainDb } from '../../config/db';
+import logger from '../../utils/logger';
 
 /**
  * Get the specialty of a user
@@ -23,13 +24,13 @@ export async function getUserSpecialty(userId: number | undefined): Promise<stri
     );
     
     if (result.rows.length === 0) {
-      console.log(`No user found with ID ${userId}`);
+      logger.info(`No user found with ID ${userId}`);
       return null;
     }
     
     return result.rows[0].specialty;
   } catch (error) {
-    console.error(`Error getting specialty for user ${userId}:`, error);
+    logger.error(`Error getting specialty for user ${userId}:`, error);
     return null;
   }
 }

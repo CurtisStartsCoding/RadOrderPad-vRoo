@@ -14,7 +14,7 @@ import {
   getMappings,
   getMarkdownDocs
 } from '../redis/search';
-import { getRedisClient, testRedisConnection } from '../../config/redis';
+import { testRedisConnection } from '../../config/redis';
 import logger from '../../utils/logger.js';
 
 /**
@@ -28,18 +28,18 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
     return 'No specific medical context found in the input text.';
   }
   
-  console.log('Generating database context with RedisSearch using keywords:', keywords);
+  logger.info('Generating database context with RedisSearch using keywords:', keywords);
   
   try {
     // Check if Redis is available
     try {
       const isConnected = await testRedisConnection();
       if (!isConnected) {
-        console.log('Redis connection test failed, falling back to PostgreSQL...');
+        logger.info('Redis connection test failed, falling back to PostgreSQL...');
         logger.info('CONTEXT_PATH: Using PostgreSQL fallback (Redis connection failed)');
         return await fallbackToPostgres(keywords);
       }
-      console.log('Redis connection successful, proceeding with RedisSearch');
+      logger.info('Redis connection successful, proceeding with RedisSearch');
       logger.info('CONTEXT_PATH: Using RedisSearch as primary path');
       // Add more detailed logging for monitoring and testing
       logger.debug({
@@ -48,40 +48,40 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
         timestamp: new Date().toISOString()
       });
     } catch (pingError) {
-      console.error('Redis connection test error:', pingError);
-      console.log('Falling back to PostgreSQL for context generation...');
+      logger.error('Redis connection test error:', pingError);
+      logger.info('Falling back to PostgreSQL for context generation...');
       logger.info('CONTEXT_PATH: Using PostgreSQL fallback (Redis connection error)');
       return await fallbackToPostgres(keywords);
     }
     
     // Categorize keywords for more targeted queries
     const categorizedKeywords = categorizeKeywords(keywords);
-    console.log('Categorized keywords:', categorizedKeywords);
+    logger.info('Categorized keywords:', categorizedKeywords);
     
     // Search for ICD-10 codes using RedisSearch
-    console.log('Searching for ICD-10 codes with RedisSearch...');
+    logger.info('Searching for ICD-10 codes with RedisSearch...');
     const icd10Rows = await searchICD10Codes(keywords, categorizedKeywords);
-    console.log(`Found ${icd10Rows.length} relevant ICD-10 codes with RedisSearch`);
+    logger.info(`Found ${icd10Rows.length} relevant ICD-10 codes with RedisSearch`);
     
     // Search for CPT codes using RedisSearch
-    console.log('Searching for CPT codes with RedisSearch...');
+    logger.info('Searching for CPT codes with RedisSearch...');
     const cptRows = await searchCPTCodes(keywords, categorizedKeywords);
-    console.log(`Found ${cptRows.length} relevant CPT codes with RedisSearch`);
+    logger.info(`Found ${cptRows.length} relevant CPT codes with RedisSearch`);
     
     // Get mappings between ICD-10 and CPT codes
-    console.log('Getting mappings from Redis...');
+    logger.info('Getting mappings from Redis...');
     const mappingRows = await getMappings(icd10Rows, cptRows);
-    console.log(`Found ${mappingRows.length} relevant mappings from Redis`);
+    logger.info(`Found ${mappingRows.length} relevant mappings from Redis`);
     
     // Get markdown docs for ICD-10 codes
-    console.log('Getting markdown docs from Redis...');
+    logger.info('Getting markdown docs from Redis...');
     const markdownRows = await getMarkdownDocs(icd10Rows);
-    console.log(`Found ${markdownRows.length} relevant markdown docs from Redis`);
+    logger.info(`Found ${markdownRows.length} relevant markdown docs from Redis`);
     
     // Check if we have sufficient results from RedisSearch
     // If we don't have any ICD-10 or CPT codes, fall back to PostgreSQL
     if (icd10Rows.length === 0 && cptRows.length === 0) {
-      console.log('Insufficient results from RedisSearch, falling back to PostgreSQL...');
+      logger.info('Insufficient results from RedisSearch, falling back to PostgreSQL...');
       logger.info('CONTEXT_PATH: Using PostgreSQL fallback (insufficient RedisSearch results)');
       return await fallbackToPostgres(keywords);
     }
@@ -95,7 +95,6 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
     );
   } catch (error) {
     // If RedisSearch fails, fall back to PostgreSQL
-    console.error('Error using RedisSearch for context generation:', error);
     logger.error('Error using RedisSearch for context generation:', error);
     
     // Provide more informative messages for common errors
@@ -103,12 +102,6 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
         (error.message.includes('ETIMEDOUT') ||
          error.message.includes('ECONNREFUSED') ||
          error.message.includes('MaxRetriesPerRequestError'))) {
-      console.error('Connection to Redis Cloud failed. This is likely because:');
-      console.error('1. The Redis Cloud instance may not be accessible from your current network');
-      console.error('2. Your IP address may not be allowlisted in Redis Cloud');
-      console.error('3. Check your Redis Cloud configuration in the .env file');
-      console.error('See Docs/redis_integration.md for more details');
-      
       logger.error('Connection to Redis Cloud failed', {
         details: [
           'The Redis Cloud instance may not be accessible from your current network',
@@ -119,7 +112,7 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
       });
     }
     
-    console.log('Falling back to PostgreSQL for context generation...');
+    logger.info('Falling back to PostgreSQL for context generation...');
     logger.info('CONTEXT_PATH: Using PostgreSQL fallback (RedisSearch error)');
     
     return await fallbackToPostgres(keywords);
@@ -145,7 +138,7 @@ async function fallbackToPostgres(keywords: string[]): Promise<string> {
   try {
     // Categorize keywords for more targeted queries
     const categorizedKeywords = categorizeKeywords(keywords);
-    console.log('Categorized keywords for PostgreSQL fallback:', categorizedKeywords);
+    logger.info('Categorized keywords for PostgreSQL fallback:', categorizedKeywords);
     
     // Simple query to find relevant ICD-10 codes
     const icd10Query = `
@@ -160,9 +153,9 @@ async function fallbackToPostgres(keywords: string[]): Promise<string> {
     `;
     
     const icd10Params = keywords.map(keyword => `%${keyword}%`);
-    console.log('ICD-10 query params for PostgreSQL fallback:', icd10Params);
+    logger.info('ICD-10 query params for PostgreSQL fallback:', icd10Params);
     const icd10Result = await queryMainDb(icd10Query, icd10Params);
-    console.log(`Found ${icd10Result.rows.length} relevant ICD-10 codes with PostgreSQL fallback`);
+    logger.info(`Found ${icd10Result.rows.length} relevant ICD-10 codes with PostgreSQL fallback`);
     
     // Simple query to find relevant CPT codes
     const cptQuery = `
@@ -177,9 +170,9 @@ async function fallbackToPostgres(keywords: string[]): Promise<string> {
     `;
     
     const cptParams = keywords.map(keyword => `%${keyword}%`);
-    console.log('CPT query params for PostgreSQL fallback:', cptParams);
+    logger.info('CPT query params for PostgreSQL fallback:', cptParams);
     const cptResult = await queryMainDb(cptQuery, cptParams);
-    console.log(`Found ${cptResult.rows.length} relevant CPT codes with PostgreSQL fallback`);
+    logger.info(`Found ${cptResult.rows.length} relevant CPT codes with PostgreSQL fallback`);
     
     // Simple query to find relevant mappings
     const mappingQuery = `
@@ -199,9 +192,9 @@ async function fallbackToPostgres(keywords: string[]): Promise<string> {
     `;
     
     const mappingParams = keywords.map(keyword => `%${keyword}%`);
-    console.log('Mapping query params for PostgreSQL fallback:', mappingParams);
+    logger.info('Mapping query params for PostgreSQL fallback:', mappingParams);
     const mappingResult = await queryMainDb(mappingQuery, mappingParams);
-    console.log(`Found ${mappingResult.rows.length} relevant mappings with PostgreSQL fallback`);
+    logger.info(`Found ${mappingResult.rows.length} relevant mappings with PostgreSQL fallback`);
     
     // Simple query to find relevant markdown docs
     const markdownQuery = `
@@ -217,9 +210,9 @@ async function fallbackToPostgres(keywords: string[]): Promise<string> {
     `;
     
     const markdownParams = keywords.map(keyword => `%${keyword}%`);
-    console.log('Markdown query params for PostgreSQL fallback:', markdownParams);
+    logger.info('Markdown query params for PostgreSQL fallback:', markdownParams);
     const markdownResult = await queryMainDb(markdownQuery, markdownParams);
-    console.log(`Found ${markdownResult.rows.length} relevant markdown docs with PostgreSQL fallback`);
+    logger.info(`Found ${markdownResult.rows.length} relevant markdown docs with PostgreSQL fallback`);
     
     return formatDatabaseContext(
       icd10Result.rows as ICD10Row[], 
@@ -228,7 +221,6 @@ async function fallbackToPostgres(keywords: string[]): Promise<string> {
       markdownResult.rows as MarkdownRow[]
     );
   } catch (error) {
-    console.error('Error in PostgreSQL fallback for context generation:', error);
     logger.error('Error in PostgreSQL fallback for context generation:', error);
     return 'Error generating database context. Please try again later.';
   }

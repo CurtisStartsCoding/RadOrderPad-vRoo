@@ -9,6 +9,46 @@ import { queryMainDb } from '../../config/db';
 import { ICD10Row, CPTRow, MappingRow, MarkdownRow } from './types';
 import logger from '../../utils/logger.js';
 
+/**
+ * Database row types for PostgreSQL query results
+ */
+interface PostgresICD10Row {
+  icd10_code: string;
+  description: string;
+  clinical_notes: string | null;
+  imaging_modalities: string | null;
+  primary_imaging: string | null;
+  score: string;
+}
+
+interface PostgresCPTRow {
+  cpt_code: string;
+  description: string;
+  modality: string | null;
+  body_part: string | null;
+  score: string;
+}
+
+interface PostgresMappingRow {
+  id: number;
+  icd10_code: string;
+  icd10_description: string;
+  cpt_code: string;
+  cpt_description: string;
+  appropriateness: string;
+  evidence_source: string | null;
+  refined_justification: string | null;
+  score: string;
+}
+
+interface PostgresMarkdownRow {
+  id: number;
+  icd10_code: string;
+  icd10_description: string;
+  content_preview: string;
+  score: string;
+}
+
 // Define weights for different fields (similar to Redis weights)
 const WEIGHTS = {
   // ICD-10 weights
@@ -107,7 +147,7 @@ export async function searchICD10CodesWithScores(
     const result = await queryMainDb(query, params);
     
     // Convert the results to ICD10RowWithScore objects
-    const icd10Rows: ICD10RowWithScore[] = result.rows.map((row: any) => ({
+    const icd10Rows: ICD10RowWithScore[] = result.rows.map((row: PostgresICD10Row) => ({
       icd10_code: row.icd10_code,
       description: row.description,
       clinical_notes: row.clinical_notes,
@@ -179,7 +219,7 @@ export async function searchCPTCodesWithScores(
     const result = await queryMainDb(query, params);
     
     // Convert the results to CPTRowWithScore objects
-    const cptRows: CPTRowWithScore[] = result.rows.map((row: any) => ({
+    const cptRows: CPTRowWithScore[] = result.rows.map((row: PostgresCPTRow) => ({
       cpt_code: row.cpt_code,
       description: row.description,
       modality: row.modality,
@@ -264,7 +304,7 @@ export async function searchMappingsWithScores(
     const result = await queryMainDb(query, params);
     
     // Convert the results to MappingRowWithScore objects
-    const mappingRows: MappingRowWithScore[] = result.rows.map((row: any) => ({
+    const mappingRows: MappingRowWithScore[] = result.rows.map((row: PostgresMappingRow) => ({
       id: row.id,
       icd10_code: row.icd10_code,
       icd10_description: row.icd10_description,
@@ -337,7 +377,7 @@ export async function searchMarkdownDocsWithScores(
     const result = await queryMainDb(query, params);
     
     // Convert the results to MarkdownRowWithScore objects
-    const markdownRows: MarkdownRowWithScore[] = result.rows.map((row: any) => ({
+    const markdownRows: MarkdownRowWithScore[] = result.rows.map((row: PostgresMarkdownRow) => ({
       id: row.id,
       icd10_code: row.icd10_code,
       icd10_description: row.icd10_description,

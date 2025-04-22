@@ -1,7 +1,7 @@
 /**
  * Markdown document search functions using Redis
  */
-import { getRedisClient, getCachedDataWithRedisJson, cacheDataWithRedisJson } from '../../../config/redis.js';
+import { getRedisClient } from '../../../config/redis.js';
 import {
   ICD10Row,
   MarkdownRow,

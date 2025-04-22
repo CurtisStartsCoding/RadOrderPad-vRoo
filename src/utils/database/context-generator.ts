@@ -2,6 +2,7 @@ import { queryMainDb } from '../../config/db';
 import { categorizeKeywords } from './keyword-categorizer';
 import { formatDatabaseContext } from './context-formatter';
 import { ICD10Row, CPTRow, MappingRow, MarkdownRow } from './types';
+import logger from '../../utils/logger';
 
 /**
  * Generate database context based on extracted keywords
@@ -11,11 +12,11 @@ export async function generateDatabaseContext(keywords: string[]): Promise<strin
     return 'No specific medical context found in the input text.';
   }
   
-  console.log('Generating database context with keywords:', keywords);
+  logger.info('Generating database context with keywords:', keywords);
   
   // Categorize keywords for more targeted queries
   const categorizedKeywords = categorizeKeywords(keywords);
-  console.log('Categorized keywords:', categorizedKeywords);
+  logger.info('Categorized keywords:', categorizedKeywords);
   
   // Simple query to find relevant ICD-10 codes
   const icd10Query = `
@@ -30,9 +31,9 @@ export async function generateDatabaseContext(keywords: string[]): Promise<strin
   `;
   
   const icd10Params = keywords.map(keyword => `%${keyword}%`);
-  console.log('ICD-10 query params:', icd10Params);
+  logger.info('ICD-10 query params:', icd10Params);
   const icd10Result = await queryMainDb(icd10Query, icd10Params);
-  console.log(`Found ${icd10Result.rows.length} relevant ICD-10 codes`);
+  logger.info(`Found ${icd10Result.rows.length} relevant ICD-10 codes`);
   
   // Simple query to find relevant CPT codes
   const cptQuery = `
@@ -47,9 +48,9 @@ export async function generateDatabaseContext(keywords: string[]): Promise<strin
   `;
   
   const cptParams = keywords.map(keyword => `%${keyword}%`);
-  console.log('CPT query params:', cptParams);
+  logger.info('CPT query params:', cptParams);
   const cptResult = await queryMainDb(cptQuery, cptParams);
-  console.log(`Found ${cptResult.rows.length} relevant CPT codes`);
+  logger.info(`Found ${cptResult.rows.length} relevant CPT codes`);
   
   // Simple query to find relevant mappings
   const mappingQuery = `
@@ -69,9 +70,9 @@ export async function generateDatabaseContext(keywords: string[]): Promise<strin
   `;
   
   const mappingParams = keywords.map(keyword => `%${keyword}%`);
-  console.log('Mapping query params:', mappingParams);
+  logger.info('Mapping query params:', mappingParams);
   const mappingResult = await queryMainDb(mappingQuery, mappingParams);
-  console.log(`Found ${mappingResult.rows.length} relevant mappings`);
+  logger.info(`Found ${mappingResult.rows.length} relevant mappings`);
   
   // Simple query to find relevant markdown docs
   const markdownQuery = `
@@ -87,9 +88,9 @@ export async function generateDatabaseContext(keywords: string[]): Promise<strin
   `;
   
   const markdownParams = keywords.map(keyword => `%${keyword}%`);
-  console.log('Markdown query params:', markdownParams);
+  logger.info('Markdown query params:', markdownParams);
   const markdownResult = await queryMainDb(markdownQuery, markdownParams);
-  console.log(`Found ${markdownResult.rows.length} relevant markdown docs`);
+  logger.info(`Found ${markdownResult.rows.length} relevant markdown docs`);
   
   return formatDatabaseContext(
     icd10Result.rows as ICD10Row[], 

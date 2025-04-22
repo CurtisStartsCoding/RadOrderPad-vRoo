@@ -11,24 +11,26 @@ import logger from '../../utils/logger.js';
 /**
  * Format a RedisSearch query
  * @param {string} term - The search term
- * @param {string} field - The field to search in (optional)
+ * @param {string} _field - The field to search in (optional, currently unused)
  * @returns {string} - The formatted query
  */
-function formatSearchQuery(term, field = null) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function formatSearchQuery(term, _field = null) {
   // Use the simple format (no field specifier) which works
   return term;
   
   // Alternative: Use the escaped JSON path format if needed
-  // return field ? "@\$\." + field + ":(" + term + ")" : term;
+  // return _field ? "@\$\." + _field + ":(" + term + ")" : term;
 }
 
 /**
  * Search for ICD-10 codes using RedisSearch
  * @param {string[]} keywords - Keywords to search for
- * @param {Object} categorizedKeywords - Categorized keywords
+ * @param {Object} _categorizedKeywords - Categorized keywords (currently unused)
  * @returns {Promise<Array>} - Array of ICD-10 codes
  */
-export async function searchICD10Codes(keywords, categorizedKeywords) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function searchICD10Codes(keywords, _categorizedKeywords) {
   try {
     const client = getRedisClient();
     
@@ -49,7 +51,9 @@ export async function searchICD10Codes(keywords, categorizedKeywords) {
     
     // Results are returned as [total, key1, val1, key2, val2, ...]
     for (let i = 1; i < result.length; i += 2) {
-      const key = result[i];
+      // Key is available but not used in this implementation
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _key = result[i];
       const data = result[i + 1];
       
       // Parse the JSON data (remove the $, prefix)
@@ -71,10 +75,11 @@ export async function searchICD10Codes(keywords, categorizedKeywords) {
 /**
  * Search for CPT codes using RedisSearch
  * @param {string[]} keywords - Keywords to search for
- * @param {Object} categorizedKeywords - Categorized keywords
+ * @param {Object} _categorizedKeywords - Categorized keywords (currently unused)
  * @returns {Promise<Array>} - Array of CPT codes
  */
-export async function searchCPTCodes(keywords, categorizedKeywords) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function searchCPTCodes(keywords, _categorizedKeywords) {
   try {
     const client = getRedisClient();
     
@@ -95,7 +100,9 @@ export async function searchCPTCodes(keywords, categorizedKeywords) {
     
     // Results are returned as [total, key1, val1, key2, val2, ...]
     for (let i = 1; i < result.length; i += 2) {
-      const key = result[i];
+      // Key is available but not used in this implementation
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _key = result[i];
       const data = result[i + 1];
       
       // Parse the JSON data (remove the $, prefix)

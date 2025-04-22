@@ -1,7 +1,7 @@
 /**
  * CPT code search functions using RedisSearch
  */
-import { getRedisClient, getCachedDataWithRedisJson, cacheDataWithRedisJson } from '../../../config/redis.js';
+import { getRedisClient, getCachedDataWithRedisJson } from '../../../config/redis.js';
 import {
   CPTRow,
   CategorizedKeywords,
@@ -117,6 +117,7 @@ export async function getCPTCodesByIds(codes: string[]): Promise<CPTRow[]> {
     for (const code of codes) {
       try {
         // Use the new Redis JSON helper function
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = await getCachedDataWithRedisJson<any>(`cpt:${code}`);
         if (data) {
           results.push({

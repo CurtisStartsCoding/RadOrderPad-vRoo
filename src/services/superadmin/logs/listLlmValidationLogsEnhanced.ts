@@ -33,35 +33,40 @@ function processDatePreset(preset?: string): { start?: Date; end?: Date } {
       result.start = today;
       break;
       
-    case 'yesterday':
+    case 'yesterday': {
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
       result.start = yesterday;
       result.end = new Date(today);
       break;
+    }
       
-    case 'last_7_days':
+    case 'last_7_days': {
       const last7Days = new Date(today);
       last7Days.setDate(last7Days.getDate() - 7);
       result.start = last7Days;
       break;
+    }
       
-    case 'last_30_days':
+    case 'last_30_days': {
       const last30Days = new Date(today);
       last30Days.setDate(last30Days.getDate() - 30);
       result.start = last30Days;
       break;
+    }
       
-    case 'this_month':
+    case 'this_month': {
       result.start = new Date(now.getFullYear(), now.getMonth(), 1);
       break;
+    }
       
-    case 'last_month':
+    case 'last_month': {
       const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
       result.start = lastMonth;
       result.end = endOfLastMonth;
       break;
+    }
   }
   
   return result;

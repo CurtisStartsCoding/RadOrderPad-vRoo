@@ -2,6 +2,7 @@
  * Get the optimal word count for a specialty from the specialty_configurations table
  */
 import { queryMainDb } from '../../config/db';
+import logger from '../../utils/logger';
 
 /**
  * Get the optimal word count for a specialty
@@ -11,7 +12,7 @@ import { queryMainDb } from '../../config/db';
 export async function getSpecialtyWordCount(specialty: string | null | undefined): Promise<number> {
   if (!specialty) {
     // Default to 33 words if no specialty is provided
-    console.log('No specialty provided, defaulting to 33 words');
+    logger.info('No specialty provided, defaulting to 33 words');
     return 33;
   }
   
@@ -26,15 +27,15 @@ export async function getSpecialtyWordCount(specialty: string | null | undefined
     
     if (result.rows.length === 0) {
       // Specialty not found, default to 33 words
-      console.log(`Specialty "${specialty}" not found, defaulting to 33 words`);
+      logger.info(`Specialty "${specialty}" not found, defaulting to 33 words`);
       return 33;
     }
     
     return result.rows[0].optimal_word_count;
   } catch (error) {
-    console.error(`Error getting word count for specialty ${specialty}:`, error);
+    logger.error(`Error getting word count for specialty ${specialty}:`, error);
     // Default to 33 words if there's an error
-    console.log('Error occurred, defaulting to 33 words');
+    logger.info('Error occurred, defaulting to 33 words');
     return 33;
   }
 }

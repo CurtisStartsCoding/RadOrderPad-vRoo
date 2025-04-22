@@ -1,7 +1,7 @@
 /**
  * ICD-10 code search functions using RedisSearch
  */
-import { getRedisClient, getCachedDataWithRedisJson, cacheDataWithRedisJson } from '../../../config/redis.js';
+import { getRedisClient, getCachedDataWithRedisJson } from '../../../config/redis.js';
 import {
   ICD10Row,
   CategorizedKeywords,
@@ -116,6 +116,7 @@ export async function getICD10CodesByIds(codes: string[]): Promise<ICD10Row[]> {
     for (const code of codes) {
       try {
         // Use the new Redis JSON helper function
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = await getCachedDataWithRedisJson<any>(`icd10:${code}`);
         if (data) {
           results.push({

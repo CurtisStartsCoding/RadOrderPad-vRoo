@@ -5,6 +5,7 @@ import { getRedisClient } from '../../../config/redis';
 import { CPTRow } from '../../database/types';
 import { CategorizedKeywords } from '../../database/types';
 import { processSearchTerms, processRedisSearchResults, extractKeyFromRedisKey } from './common';
+import logger from '../../../utils/logger.js';
 
 /**
  * Search for CPT codes using RedisSearch
@@ -230,7 +231,7 @@ export async function searchCPTCodes(keywords: string[], categorizedKeywords?: C
     // Return all results
     return allResults;
   } catch (error) {
-    console.error('Error searching CPT codes with RedisSearch:', error);
+    logger.error('Error searching CPT codes with RedisSearch:', error);
     return [];
   }
 }
@@ -268,13 +269,13 @@ export async function getCPTCodesByIds(cptCodes: string[]): Promise<CPTRow[]> {
         // Add the row to the results
         results.push(row);
       } catch (error) {
-        console.error(`Error getting CPT code ${cptCode}:`, error);
+        logger.error(`Error getting CPT code ${cptCode}:`, error);
       }
     }
     
     return results;
   } catch (error) {
-    console.error('Error getting CPT codes by IDs:', error);
+    logger.error('Error getting CPT codes by IDs:', error);
     return [];
   }
 }
