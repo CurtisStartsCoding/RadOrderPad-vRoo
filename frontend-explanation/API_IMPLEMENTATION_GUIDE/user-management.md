@@ -276,7 +276,7 @@ The following user-related endpoints have path restrictions:
 
 ## Invite User
 
-**Endpoint:** `POST /api/users/invite`
+**Endpoint:** `POST /api/user-invites/invite`
 
 **Description:** Invites a new user to join the organization by sending an email with a secure invitation link.
 
@@ -315,3 +315,57 @@ The following user-related endpoints have path restrictions:
 - **Status:** Working
 - **Tested With:** test-invite-endpoint.js
 - **Notes:** Fully implemented and tested with comprehensive test cases including validation, authorization, and duplicate invitation handling.
+
+## Accept Invitation
+
+**Endpoint:** `POST /api/user-invites/accept-invitation`
+
+**Description:** Allows invited users to accept invitations and create their accounts.
+
+**Authentication:** None required (public endpoint)
+
+**Request Body:**
+```json
+{
+  "token": "invitation_token_from_email",
+  "password": "secure_password",
+  "first_name": "John",
+  "last_name": "Doe"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "token": "jwt_token_for_authentication",
+  "user": {
+    "id": 123,
+    "email": "john.doe@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "role": "physician",
+    "organization_id": 456,
+    "is_active": true,
+    "email_verified": true,
+    "created_at": "2025-04-23T17:30:00.000Z",
+    "updated_at": "2025-04-23T17:30:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the token is invalid or expired, or if required fields are missing
+- 409 Conflict: If a user with the email already exists
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used by invited users to complete their registration.
+- The token is provided in the invitation email.
+- The password must be at least 8 characters long.
+- Upon successful acceptance, the user is automatically logged in (JWT token is returned).
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-accept-invitation.bat, test-accept-invitation.sh
+- **Notes:** Fully implemented and tested with comprehensive test cases including token validation, password strength validation, and error handling.

@@ -27,7 +27,8 @@ router.use('/webhooks', webhooks_routes_js_1.default);
 router.use('/connections', connection_routes_js_1.default);
 router.use('/organizations', organization_routes_js_1.default);
 router.use('/users', user_location_routes_js_1.default);
-router.use('/users', user_invite_routes_js_1.default);
+// Mount user invite routes separately to avoid middleware conflicts
+router.use('/user-invites', user_invite_routes_js_1.default);
 router.use('/superadmin', superadmin_routes_js_1.default);
 router.use('/billing', billing_routes_js_1.default);
 exports.default = router;

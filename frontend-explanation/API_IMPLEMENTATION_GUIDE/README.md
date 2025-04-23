@@ -127,3 +127,57 @@ This documentation is based on comprehensive testing of the API. Some endpoints 
 - **Restricted** - Endpoint exists but has method or role restrictions
 
 See the [Status Summary](./status-summary.md) for a complete list of endpoint statuses.
+
+## Testing Tools
+
+### Token Generator
+
+A comprehensive token generator script is provided to simplify API testing across different user roles. This script generates authentication tokens for all roles in the system and saves them to separate files.
+
+#### Usage
+
+1. Run the token generator script:
+   ```
+   node generate-all-role-tokens.js
+   ```
+
+2. The script will:
+   - Generate tokens for all 7 roles (admin_staff, physician, admin_referring, super_admin, admin_radiology, scheduler, radiologist)
+   - Save each token to a separate file in the `tokens` directory
+   - Create convenience scripts for setting environment variables
+
+3. Use the generated tokens for testing endpoints with different role permissions:
+   ```javascript
+   // Example: Using the admin_referring token
+   const token = fs.readFileSync('tokens/admin_referring-token.txt', 'utf8');
+   
+   // Make API request with the token
+   const response = await axios.post('https://api.radorderpad.com/api/user-invites/invite',
+     { email: 'test.user@example.com', role: 'physician' },
+     { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } }
+   );
+   ```
+
+4. Alternatively, use the convenience scripts to set environment variables:
+   - Windows: `set-token-env-vars.bat`
+   - PowerShell: `Set-TokenEnvVars.ps1`
+
+### Testing User Invitation Endpoints
+
+The user invitation system has been thoroughly tested and fixed to ensure proper functionality. Here's how the endpoints were tested:
+
+1. **User Invite Endpoint (`POST /api/user-invites/invite`)**:
+   - Tested with admin_referring token (required role)
+   - Verified successful invitation creation (201 Created)
+   - Tested error cases: invalid email format, missing fields, insufficient permissions
+
+2. **Accept Invitation Endpoint (`POST /api/user-invites/accept-invitation`)**:
+   - Tested with various token scenarios
+   - Verified proper validation of invitation tokens
+   - Tested error cases: invalid token, missing required fields, weak password
+
+3. **Routing Configuration Fix**:
+   - Fixed middleware conflict by changing the mounting path for user-invite routes from '/users' to '/user-invites'
+   - This resolved authentication issues where the wrong middleware was being applied
+
+For detailed implementation information, see the [User Invitation Details](./user-invitation-details.md) document.

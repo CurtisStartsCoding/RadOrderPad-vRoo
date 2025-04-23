@@ -23,7 +23,8 @@ router.use('/webhooks', webhooksRoutes);
 router.use('/connections', connectionRoutes);
 router.use('/organizations', organizationRoutes);
 router.use('/users', userLocationRoutes);
-router.use('/users', userInviteRoutes);
+// Mount user invite routes separately to avoid middleware conflicts
+router.use('/user-invites', userInviteRoutes);
 router.use('/superadmin', superadminRoutes);
 router.use('/billing', billingRoutes);
 

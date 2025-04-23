@@ -4,13 +4,15 @@ import userInviteController from '../controllers/user-invite.controller';
 
 const router = express.Router();
 
-// Middleware to authenticate all routes
-router.use(authenticateJWT);
-
 // Only admin roles can invite users
 const adminRoles = ['admin_referring', 'admin_radiology'];
 
 // POST /invite - Invite a new user to the organization
-router.post('/invite', authorizeRole(adminRoles), userInviteController.inviteUser);
+// This route requires authentication and admin role
+router.post('/invite', authenticateJWT, authorizeRole(adminRoles), userInviteController.inviteUser);
+
+// POST /accept-invitation - Accept an invitation and create a user account
+// This route is public and doesn't require authentication
+router.post('/accept-invitation', userInviteController.acceptInvitation);
 
 export default router;

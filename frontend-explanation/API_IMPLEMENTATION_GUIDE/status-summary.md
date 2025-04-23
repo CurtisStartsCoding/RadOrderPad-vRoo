@@ -38,7 +38,8 @@ The following endpoints were tested and are working correctly in the production 
 - `GET /api/superadmin/users`: List all users (super_admin role only)
 
 ### User Management
-- `POST /api/users/invite`: Invite a new user to join the organization (tested with admin_referring role)
+- `POST /api/user-invites/invite`: Invite a new user to join the organization (tested with admin_referring role)
+- `POST /api/user-invites/accept-invitation`: Accept an invitation and create a user account (public endpoint)
 
 ### Billing Management
 - `POST /api/billing/create-checkout-session`: Create a Stripe checkout session for purchasing credit bundles
@@ -67,7 +68,7 @@ The following endpoints work correctly but are restricted to specific roles:
 - `GET /api/superadmin/users`: Works correctly and returns a list of all users (super_admin role only)
 - `GET /api/radiology/orders`: Works correctly but is restricted to scheduler and admin_radiology roles
 - `GET /api/connections`: Works correctly but is restricted to admin_referring and admin_radiology roles
-- `POST /api/users/invite`: Works correctly but is restricted to admin_referring and admin_radiology roles
+- `POST /api/user-invites/invite`: Works correctly but is restricted to admin_referring and admin_radiology roles
 
 ## Non-Working or Not Implemented Endpoints
 
@@ -105,11 +106,14 @@ Based on the testing results, frontend developers should:
    - Some endpoints may return 404 or 501 errors
    - Implement fallback behavior or disable features that rely on non-working endpoints
 
-6. **Implement user invitation functionality** for organization administrators:
-   - Use the `POST /api/users/invite` endpoint to invite new users
+6. **Implement user invitation and acceptance functionality**:
+   - Use the `POST /api/user-invites/invite` endpoint to invite new users
    - Ensure proper validation of email format and role
    - Handle 409 Conflict responses for duplicate invitations
-   - Restrict access to admin_referring and admin_radiology roles only
+   - Restrict invitation access to admin_referring and admin_radiology roles only
+   - Implement a form for invited users to accept invitations using the `POST /api/user-invites/accept-invitation` endpoint
+   - Validate password strength and required fields
+   - Store the JWT token returned upon successful acceptance for authentication
 |
 7. **Consider implementing the missing GET /api/billing endpoint** if billing information is needed:
    - This would require backend changes to add the endpoint
