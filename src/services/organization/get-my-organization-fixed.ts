@@ -23,7 +23,7 @@ export interface OrganizationResponse {
   billing_id?: string;
   credit_balance?: number;
   subscription_tier?: string;
-  status?: string; // Made optional since it doesn't exist in the database
+  status?: string; // Optional since it might not exist in all database instances
   created_at: string;
   updated_at: string;
 }
@@ -79,8 +79,8 @@ export async function getMyOrganization(orgId: number): Promise<{
   try {
     // First check if the status column exists in the organizations table
     const checkStatusColumn = await queryMainDb(
-      `SELECT column_name
-       FROM information_schema.columns
+      `SELECT column_name 
+       FROM information_schema.columns 
        WHERE table_name = 'organizations' AND column_name = 'status'`
     );
     
