@@ -18,7 +18,8 @@ class TerminateConnectionService {
      * @returns Promise with result
      */
     async terminateConnection(params) {
-        const { relationshipId, terminatingUserId, terminatingOrgId } = params;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { relationshipId, terminatingUserId: _terminatingUserId, terminatingOrgId } = params;
         const client = await (0, db_1.getMainDbClient)();
         try {
             await client.query('BEGIN');
@@ -34,7 +35,6 @@ class TerminateConnectionService {
             const isInitiator = relationship.organization_id === terminatingOrgId;
             // Notify the other organization
             const partnerEmail = isInitiator ? relationship.org2_email : relationship.org1_email;
-            const partnerName = isInitiator ? relationship.org2_name : relationship.org1_name;
             const terminatingOrgName = isInitiator ? relationship.org1_name : relationship.org2_name;
             if (partnerEmail) {
                 await notification_1.default.sendConnectionTerminated(partnerEmail, terminatingOrgName);

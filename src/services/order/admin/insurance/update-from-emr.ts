@@ -31,16 +31,14 @@ export async function updateInsuranceFromEmr(
        group_number = COALESCE($3, group_number),
        policy_holder_name = COALESCE($4, policy_holder_name),
        policy_holder_relationship = COALESCE($5, policy_holder_relationship),
-       authorization_number = COALESCE($6, authorization_number),
        updated_at = NOW()
-       WHERE id = $7`,
+       WHERE id = $6`,
       [
         insuranceInfo.insurerName || null,
         insuranceInfo.policyNumber || null,
         insuranceInfo.groupNumber || null,
         insuranceInfo.policyHolderName || null,
         insuranceInfo.relationship || null,
-        insuranceInfo.authorizationNumber || null,
         insuranceId
       ]
     );
@@ -49,9 +47,9 @@ export async function updateInsuranceFromEmr(
     const newInsuranceResult = await queryPhiDb(
       `INSERT INTO patient_insurance
        (patient_id, insurer_name, policy_number, group_number,
-        policy_holder_name, policy_holder_relationship, authorization_number,
+        policy_holder_name, policy_holder_relationship,
         is_primary, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, true, NOW(), NOW())
+       VALUES ($1, $2, $3, $4, $5, $6, true, NOW(), NOW())
        RETURNING id`,
       [
         patientId,
@@ -59,8 +57,7 @@ export async function updateInsuranceFromEmr(
         insuranceInfo.policyNumber || null,
         insuranceInfo.groupNumber || null,
         insuranceInfo.policyHolderName || null,
-        insuranceInfo.relationship || null,
-        insuranceInfo.authorizationNumber || null
+        insuranceInfo.relationship || null
       ]
     );
     

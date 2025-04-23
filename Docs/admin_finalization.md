@@ -44,9 +44,10 @@ This workflow involves *appending* necessary demographic, insurance, and clinica
         *   Clinical Data: Keywords, Labs (e.g., Creatinine), Diagnoses.
     *   The raw pasted text is stored in `patient_clinical_records` (PHI DB) with `record_type = 'emr_summary_paste'`.
     *   Extracted structured data updates corresponding fields in:
-        *   `patients` table (address, phone, email).
-        *   `patient_insurance` table (creates/updates insurance records).
+        *   `patients` table (address, city, state, zip_code, phone, email).
+        *   `patient_insurance` table (insurer_name, policy_number, group_number, policy_holder_name, policy_holder_relationship).
         *   Potentially adds structured data to `patient_clinical_records.parsed_data` (JSONB).
+        *   Note: Authorization numbers are handled by the radiology group and are not stored during this process.
 7.  **UI Update & Verification:** The UI refreshes, displaying the parsed information in dedicated fields (e.g., Insurance Card section, Patient Contact section). Admin staff visually verifies the accuracy of the parsed data and makes manual corrections if needed directly in the UI fields.
 
 ### 3. Handling Supplemental Documentation (Conditional)

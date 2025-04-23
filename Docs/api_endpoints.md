@@ -75,7 +75,7 @@
 
 ## Orders - Admin Actions (`/admin/orders`)
 
--   `POST /admin/orders/{orderId}/paste-summary`: Submit pasted EMR summary for parsing. **(Admin Staff Role)**
+-   `POST /admin/orders/{orderId}/paste-summary`: Submit pasted EMR summary for parsing. Updates patient contact information (address, phone, email) and insurance details (insurer, policy number, group number, policy holder). **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/paste-supplemental`: Submit pasted supplemental documents. **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/send-to-radiology`: Finalize and send the order to the radiology group (updates status). **This endpoint consumes one credit from the organization's balance and logs the credit usage.** If the organization has insufficient credits, returns a 402 Payment Required error. **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/send-to-radiology-fixed`: Fixed implementation of the send-to-radiology endpoint that properly handles database connections for PHI and Main databases. Functionally identical to the original endpoint. **(Admin Staff Role)**

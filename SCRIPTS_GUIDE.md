@@ -120,6 +120,8 @@ These scripts are related to frontend testing, debugging, and validation:
 | `reset-vercel-env-vars.bat` | Resets Vercel environment variables |
 | `delete-vercel-env-vars.bat` | Deletes Vercel environment variables |
 | `save-environment-details.bat` | Saves environment details to a file |
+| `set-captcha-env-server.bat/sh` | Sets CAPTCHA environment variables on the server |
+| `implement-captcha-test-mode.bat/sh` | Modifies server code to support CAPTCHA testing |
 
 ## Utility Scripts
 
@@ -134,6 +136,9 @@ These scripts are related to frontend testing, debugging, and validation:
 | `find-imports-without-extensions.js` | Finds import statements without extensions |
 | `organize-root-directory.js` | Organizes files in the root directory |
 | `organize-test-scripts.bat` | Organizes test scripts |
+| `delete-database-schema-fixes.bat` | Deletes the original database-schema-fixes.md file |
+| `cleanup-root-scripts.bat` | Cleans up scripts from the root directory |
+| `generate-all-role-tokens.js` | Generates authentication tokens for all roles in the system |
 | `organize-recent-scripts.bat` | Organizes recently created scripts |
 | `setup-github.js` | Sets up GitHub integration |
 | `setup-github.bat` | Runs GitHub setup script |
