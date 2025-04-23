@@ -1,7 +1,7 @@
-# API Endpoints Overview (Conceptual)
+  API Endpoints Overview (Conceptual)
 
-**Version:** 1.5 (Credit Consumption Refactoring)
-**Date:** 2025-04-14
+**Version:** 1.6 (User Invitation Implementation)
+**Date:** 2025-04-23
 
 **Note:** This document provides a conceptual list of API endpoints based on the defined workflows and schema map. A formal OpenAPI/Swagger specification is recommended for definitive contract details.
 
@@ -41,7 +41,7 @@
 -   `GET /users/me`: Get the authenticated user's profile. **(Authenticated)**
 -   `PUT /users/me`: Update the authenticated user's own profile (limited fields). **(Authenticated)**
 -   `GET /users`: List users within the admin's organization. **(Admin Role)**
--   `POST /users/invite`: Invite new users to the admin's organization. **(Admin Role)**
+-   `POST /users/invite`: Invite new users to the admin's organization. **(Admin Role)** [Implemented - See `implementation/user-invitation-implementation.md`]
 -   `POST /users/accept-invitation`: Endpoint for invited users to set password and activate account. **(Requires Valid Invitation Token)**
 -   `GET /users/{userId}`: Get details of a specific user within the admin's org. **(Admin Role)**
 -   `PUT /users/{userId}`: Update details of a specific user within the admin's org (including `primary_location_id`). **(Admin Role)**

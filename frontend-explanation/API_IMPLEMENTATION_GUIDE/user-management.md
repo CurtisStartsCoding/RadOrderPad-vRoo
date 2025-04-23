@@ -273,3 +273,45 @@ The following user-related endpoints have path restrictions:
 - `POST /api/users`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path.
 - `PUT /api/users/{userId}`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path.
 - `GET /api/users/me`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path.
+
+## Invite User
+
+**Endpoint:** `POST /api/users/invite`
+
+**Description:** Invites a new user to join the organization by sending an email with a secure invitation link.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**Request Body:**
+```json
+{
+  "email": "new.user@example.com",
+  "role": "physician"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Invitation sent successfully"
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the email format is invalid or the role is not valid
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role
+- 409 Conflict: If an invitation is already pending for this email address
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to invite new users to join the organization.
+- The invited user will receive an email with a secure link to complete their registration.
+- Valid roles are: physician, admin_staff, scheduler, radiologist.
+- The invitation token expires after 7 days.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-invite-endpoint.js
+- **Notes:** Fully implemented and tested with comprehensive test cases including validation, authorization, and duplicate invitation handling.

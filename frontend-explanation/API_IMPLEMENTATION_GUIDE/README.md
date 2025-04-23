@@ -14,6 +14,7 @@ The RadOrderPad API is organized into several logical sections:
 6. [Connection Management](./connection-management.md) - Managing connections between organizations
 7. [Organization Management](./organization-management.md) - Organization-related endpoints
 8. [User Management](./user-management.md) - User-related endpoints
+   - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature
 9. [Billing Management](./billing-management.md) - Billing and subscription endpoints
 10. [Validation Engine](./validation-engine.md) - Clinical indications processing and code assignment
 11. [Workflow Guide](./workflow-guide.md) - End-to-end API workflow examples

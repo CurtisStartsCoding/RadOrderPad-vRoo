@@ -13,6 +13,7 @@ const connection_routes_js_1 = __importDefault(require("./connection.routes.js")
 const webhooks_routes_js_1 = __importDefault(require("./webhooks.routes.js"));
 const organization_routes_js_1 = __importDefault(require("./organization.routes.js"));
 const user_location_routes_js_1 = __importDefault(require("./user-location.routes.js"));
+const user_invite_routes_js_1 = __importDefault(require("./user-invite.routes.js"));
 const superadmin_routes_js_1 = __importDefault(require("./superadmin.routes.js"));
 const billing_routes_js_1 = __importDefault(require("./billing.routes.js"));
 const router = (0, express_1.Router)();
@@ -26,6 +27,7 @@ router.use('/webhooks', webhooks_routes_js_1.default);
 router.use('/connections', connection_routes_js_1.default);
 router.use('/organizations', organization_routes_js_1.default);
 router.use('/users', user_location_routes_js_1.default);
+router.use('/users', user_invite_routes_js_1.default);
 router.use('/superadmin', superadmin_routes_js_1.default);
 router.use('/billing', billing_routes_js_1.default);
 exports.default = router;

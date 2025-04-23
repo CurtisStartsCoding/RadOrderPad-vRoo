@@ -37,6 +37,9 @@ The following endpoints were tested and are working correctly in the production 
 - `GET /api/superadmin/organizations`: List all organizations (super_admin role only)
 - `GET /api/superadmin/users`: List all users (super_admin role only)
 
+### User Management
+- `POST /api/users/invite`: Invite a new user to join the organization (tested with admin_referring role)
+
 ### Billing Management
 - `POST /api/billing/create-checkout-session`: Create a Stripe checkout session for purchasing credit bundles
 - `POST /api/billing/subscriptions`: Create a Stripe subscription for a specific pricing tier
@@ -64,6 +67,7 @@ The following endpoints work correctly but are restricted to specific roles:
 - `GET /api/superadmin/users`: Works correctly and returns a list of all users (super_admin role only)
 - `GET /api/radiology/orders`: Works correctly but is restricted to scheduler and admin_radiology roles
 - `GET /api/connections`: Works correctly but is restricted to admin_referring and admin_radiology roles
+- `POST /api/users/invite`: Works correctly but is restricted to admin_referring and admin_radiology roles
 
 ## Non-Working or Not Implemented Endpoints
 
@@ -82,6 +86,7 @@ Based on the testing results, frontend developers should:
    - Order validation (with CPT and ICD-10 code suggestions)
    - Order details retrieval
    - Sending orders to radiology
+   - User invitation
 
 2. **Be aware of role restrictions** when implementing features:
    - Ensure the user has the appropriate role before attempting to access role-restricted endpoints
@@ -100,6 +105,12 @@ Based on the testing results, frontend developers should:
    - Some endpoints may return 404 or 501 errors
    - Implement fallback behavior or disable features that rely on non-working endpoints
 
-6. **Consider implementing the missing GET /api/billing endpoint** if billing information is needed:
+6. **Implement user invitation functionality** for organization administrators:
+   - Use the `POST /api/users/invite` endpoint to invite new users
+   - Ensure proper validation of email format and role
+   - Handle 409 Conflict responses for duplicate invitations
+   - Restrict access to admin_referring and admin_radiology roles only
+|
+7. **Consider implementing the missing GET /api/billing endpoint** if billing information is needed:
    - This would require backend changes to add the endpoint
    - In the meantime, consider using alternative approaches to display billing information

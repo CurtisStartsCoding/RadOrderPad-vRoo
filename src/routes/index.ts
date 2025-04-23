@@ -8,6 +8,7 @@ import connectionRoutes from './connection.routes.js';
 import webhooksRoutes from './webhooks.routes.js';
 import organizationRoutes from './organization.routes.js';
 import userLocationRoutes from './user-location.routes.js';
+import userInviteRoutes from './user-invite.routes.js';
 import superadminRoutes from './superadmin.routes.js';
 import billingRoutes from './billing.routes.js';
 
@@ -22,6 +23,7 @@ router.use('/webhooks', webhooksRoutes);
 router.use('/connections', connectionRoutes);
 router.use('/organizations', organizationRoutes);
 router.use('/users', userLocationRoutes);
+router.use('/users', userInviteRoutes);
 router.use('/superadmin', superadminRoutes);
 router.use('/billing', billingRoutes);
 
