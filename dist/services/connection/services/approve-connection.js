@@ -7,6 +7,7 @@ exports.ApproveConnectionService = void 0;
 const db_1 = require("../../../config/db");
 const notification_1 = __importDefault(require("../../notification"));
 const approve_1 = require("../queries/approve");
+const enhanced_logger_1 = __importDefault(require("../../../utils/enhanced-logger"));
 /**
  * Service for approving connection requests
  */
@@ -42,7 +43,7 @@ class ApproveConnectionService {
         }
         catch (error) {
             await client.query('ROLLBACK');
-            console.error('Error in approveConnection:', error);
+            enhanced_logger_1.default.error('Error in approveConnection:', error);
             throw error;
         }
         finally {

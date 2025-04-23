@@ -32,7 +32,8 @@ export enum OrganizationStatus {
   ACTIVE = 'active',
   ON_HOLD = 'on_hold',
   PURGATORY = 'purgatory',
-  TERMINATED = 'terminated'
+  TERMINATED = 'terminated',
+  PENDING_VERIFICATION = 'pending_verification' // New status for email verification
 }
 
 export interface OrganizationRegistrationDTO {
@@ -49,7 +50,7 @@ export interface OrganizationRegistrationDTO {
   fax_number?: string;
   contact_email?: string;
   website?: string;
-  registration_key: string; // Special key required for registration
+  registration_key?: string; // Make registration key optional
 }
 
 export interface OrganizationResponse {

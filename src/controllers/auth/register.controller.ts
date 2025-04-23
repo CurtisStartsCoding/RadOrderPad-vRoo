@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import authService from '../../services/auth';
 import { UserRegistrationDTO, OrganizationRegistrationDTO } from '../../services/auth';
 import { handleAuthError, registrationErrorMap } from './error-handler';
+import { validateEmail } from '../../utils/validation';
+import { verifyCaptcha } from '../../utils/captcha';
 
 /**
  * Controller for handling organization and user registration
@@ -12,7 +14,7 @@ export class RegisterController {
    */
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { organization, user } = req.body;
+      const { organization, user, captchaToken } = req.body;
       
       // Validate request body
       if (!organization || !user) {
@@ -30,6 +32,30 @@ export class RegisterController {
         res.status(400).json({ message: 'User email, password, first name, last name, and role are required' });
         return;
       }
+
+      // Validate email format
+      if (!validateEmail(user.email)) {
+        res.status(400).json({ message: 'Invalid email format' });
+        return;
+      }
+      
+      // Validate password strength
+      if (user.password.length < 8) {
+        res.status(400).json({ message: 'Password must be at least 8 characters long' });
+        return;
+      }
+      
+      // Verify CAPTCHA token
+      if (!captchaToken) {
+        res.status(400).json({ message: 'CAPTCHA verification is required' });
+        return;
+      }
+      
+      const captchaValid = await verifyCaptcha(captchaToken);
+      if (!captchaValid) {
+        res.status(400).json({ message: 'CAPTCHA verification failed' });
+        return;
+      }
       
       const orgData: OrganizationRegistrationDTO = {
         name: organization.name,
@@ -44,8 +70,7 @@ export class RegisterController {
         phone_number: organization.phone_number,
         fax_number: organization.fax_number,
         contact_email: organization.contact_email,
-        website: organization.website,
-        registration_key: organization.registration_key
+        website: organization.website
       };
       
       const userData: UserRegistrationDTO = {

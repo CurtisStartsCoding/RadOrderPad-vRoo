@@ -1,83 +1,240 @@
-# Authentication
+# Authentication API
 
-All protected endpoints in the RadOrderPad API require a valid JWT token in the Authorization header.
+This document provides detailed information about the authentication endpoints in the RadOrderPad API.
 
-## Authentication Header
+## Overview
 
-Include the token in the Authorization header for all protected requests:
+The authentication API handles user registration, login, and token management. It provides endpoints for:
 
+- Self-service organization and admin user registration
+- User login
+- Token refresh
+- Email verification
+- Password reset
+
+## Endpoints
+
+### POST /api/auth/register
+
+**Description:** Registers a new organization and its admin user simultaneously. This endpoint implements a self-service registration flow with security measures including CAPTCHA verification and email verification.
+
+**Authentication:** None (public endpoint)
+
+**Request Body:**
+```json
+{
+  "organization": {
+    "name": "Organization Name",
+    "type": "referring_practice",
+    "npi": "1234567890",
+    "tax_id": "12-3456789",
+    "address_line1": "123 Main St",
+    "address_line2": "Suite 100",
+    "city": "San Francisco",
+    "state": "CA",
+    "zip_code": "94105",
+    "phone_number": "555-123-4567",
+    "fax_number": "555-123-4568",
+    "contact_email": "contact@example.com",
+    "website": "https://example.com"
+  },
+  "user": {
+    "email": "admin@example.com",
+    "password": "securePassword123!",
+    "first_name": "John",
+    "last_name": "Doe",
+    "role": "admin_referring",
+    "npi": "0987654321",
+    "specialty": "Family Medicine",
+    "phone_number": "555-987-6543"
+  },
+  "captchaToken": "recaptcha_verification_token"
+}
 ```
-Authorization: Bearer <token>
+
+**Response (201 Created):**
+```json
+{
+  "token": "jwt_token_for_authentication",
+  "user": {
+    "id": 123,
+    "email": "admin@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "role": "admin_referring",
+    "organization_id": 456,
+    "npi": "0987654321",
+    "specialty": "Family Medicine",
+    "is_active": true,
+    "email_verified": false,
+    "created_at": "2025-04-23T14:30:00.000Z",
+    "updated_at": "2025-04-23T14:30:00.000Z"
+  },
+  "organization": {
+    "id": 456,
+    "name": "Organization Name",
+    "type": "referring_practice",
+    "npi": "1234567890",
+    "address_line1": "123 Main St",
+    "city": "San Francisco",
+    "state": "CA",
+    "zip_code": "94105",
+    "phone_number": "555-123-4567",
+    "contact_email": "contact@example.com",
+    "website": "https://example.com",
+    "status": "pending_verification",
+    "created_at": "2025-04-23T14:30:00.000Z"
+  },
+  "message": "Registration successful. Please check your email to verify your account."
+}
 ```
 
-## Obtaining a Token
+**Error Responses:**
 
-**Endpoint:** `POST /api/auth/login`
+- 400 Bad Request: If required fields are missing or invalid
+  ```json
+  {
+    "message": "Organization name and type are required"
+  }
+  ```
+  or
+  ```json
+  {
+    "message": "User email, password, first name, last name, and role are required"
+  }
+  ```
+  or
+  ```json
+  {
+    "message": "Invalid email format"
+  }
+  ```
+  or
+  ```json
+  {
+    "message": "Password must be at least 8 characters long"
+  }
+  ```
+  or
+  ```json
+  {
+    "message": "CAPTCHA verification is required"
+  }
+  ```
+  or
+  ```json
+  {
+    "message": "CAPTCHA verification failed"
+  }
+  ```
+
+- 409 Conflict: If an organization with the same name already exists
+  ```json
+  {
+    "message": "Organization already exists"
+  }
+  ```
+  or
+  ```json
+  {
+    "message": "Email already in use"
+  }
+  ```
+
+- 500 Internal Server Error: If there is a server error
+
+### POST /api/auth/login
 
 **Description:** Authenticates a user and returns a JWT token.
 
-**Authentication:** None required
+**Authentication:** None (public endpoint)
 
 **Request Body:**
 ```json
 {
   "email": "user@example.com",
-  "password": "password123"
+  "password": "securePassword123!"
 }
 ```
 
-**Response:**
+**Response (200 OK):**
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token": "jwt_token_for_authentication",
   "user": {
-    "id": 3,
+    "id": 123,
     "email": "user@example.com",
-    "role": "physician",
-    "orgId": 1,
-    "firstName": "John",
-    "lastName": "Doe"
+    "first_name": "John",
+    "last_name": "Doe",
+    "role": "admin_referring",
+    "organization_id": 456,
+    "npi": "0987654321",
+    "specialty": "Family Medicine",
+    "is_active": true,
+    "email_verified": true,
+    "created_at": "2025-04-23T14:30:00.000Z",
+    "updated_at": "2025-04-23T14:30:00.000Z"
   }
 }
 ```
 
 **Error Responses:**
-- 401 Unauthorized: If the credentials are invalid
-- 404 Not Found: If the endpoint is accessed with GET method instead of POST
+
+- 401 Unauthorized: If the email or password is invalid
+  ```json
+  {
+    "message": "Invalid email or password"
+  }
+  ```
+  or
+  ```json
+  {
+    "message": "User account is inactive"
+  }
+  ```
+
 - 500 Internal Server Error: If there is a server error
 
-**Supported Roles:**
-This endpoint works for all roles in the system:
-- admin_staff
-- physician
-- admin_referring
-- super_admin
-- admin_radiology
-- scheduler
-- radiologist
+## Implementation Details
 
-## Token Structure
+### Self-Service Registration Process
 
-The returned JWT token contains the following claims:
-```json
-{
-  "userId": 4,
-  "orgId": 1,
-  "role": "admin_staff",
-  "email": "test.admin_staff@example.com",
-  "iat": 1745340763,
-  "exp": 1745427163
-}
-```
+1. The client submits a registration request with organization and user details, including a CAPTCHA token.
+2. The server validates the CAPTCHA token with the reCAPTCHA API.
+3. The server validates the required fields for both organization and user, including email format and password strength.
+4. The server begins a database transaction.
+5. The server checks for duplicate organization names and email addresses.
+6. The server creates a new organization record with status set to `pending_verification`.
+7. The server attempts to create a Stripe customer for the organization.
+8. The server creates a new admin user record with a hashed password.
+9. The server generates an email verification token and stores it in the database.
+10. The server commits the transaction.
+11. The server sends a verification email to the user's email address.
+12. The server generates a JWT token for the new user.
+13. The server returns the token, user details, organization details, and a message instructing the user to check their email.
 
-## Usage Notes
+### Security Considerations
 
-- The token should be included in the Authorization header for all subsequent requests.
-- The token contains information about the user's role and organization, which is used for authorization.
-- Token expiration is set to 24 hours by default.
-- This endpoint only accepts POST requests. GET requests will return a 404 error.
-- Response time is typically under 200ms for successful logins.
+- The registration endpoint is protected by CAPTCHA verification to prevent automated abuse.
+- Email verification ensures that users have access to the email addresses they register with.
+- Organizations start with a `pending_verification` status until the email is verified.
+- Passwords are hashed using bcrypt before storage.
+- Password strength validation ensures secure passwords.
+- Database transactions ensure atomicity of organization and user creation.
+- JWT tokens are signed with a secret key and have an expiration time.
 
-## Method Restrictions
+### Testing
 
-- `GET /api/auth/login`: Returns 404 "Route not found" error - This is by design as the login endpoint only accepts POST requests.
+To test the self-service registration endpoint, you can use the provided test scripts:
+
+- Windows: `debug-scripts/vercel-tests/test-register-modified.bat`
+- Unix: `debug-scripts/vercel-tests/test-register-modified.sh`
+
+These scripts test various scenarios including:
+1. Valid registration
+2. Duplicate organization name
+3. Missing required fields
+4. Invalid email format
+5. Missing CAPTCHA token
+
+The test scripts use a test CAPTCHA token that is accepted in development/test environments.

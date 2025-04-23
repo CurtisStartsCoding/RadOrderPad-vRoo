@@ -116,7 +116,7 @@ This section covers endpoints related to managing connections between referring 
 **Request Body:**
 ```json
 {
-  "targetOrganizationId": 2,
+  "targetOrgId": 2,
   "notes": "Connection request for testing"
 }
 ```

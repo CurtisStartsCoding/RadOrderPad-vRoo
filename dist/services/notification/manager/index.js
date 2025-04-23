@@ -1,82 +1,302 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.connectionManager = exports.generalManager = exports.accountManager = exports.NotificationManager = void 0;
-const account_1 = __importDefault(require("./account"));
-exports.accountManager = account_1.default;
-const general_1 = __importDefault(require("./general"));
-exports.generalManager = general_1.default;
-const connection_1 = __importDefault(require("./connection"));
-exports.connectionManager = connection_1.default;
+exports.NotificationManager = void 0;
+// Using AWS SES for email sending
+const client_ses_1 = require("@aws-sdk/client-ses");
 /**
- * Manager for handling different types of notifications
- * This class serves as a facade for the underlying notification managers
+ * Notification Manager for sending emails
  */
 class NotificationManager {
     /**
-     * Send an invitation email to a user
-     * @param email Email address to send the invitation to
-     * @param token Invitation token
-     * @param organizationName Name of the organization
-     * @param inviterName Name of the user who sent the invitation
+     * Initialize the notification manager
      */
-    async sendInviteEmail(email, token, organizationName, inviterName) {
-        return account_1.default.sendInviteEmail(email, token, organizationName, inviterName);
+    static initialize() {
+        this.sesClient = new client_ses_1.SESClient({
+            region: process.env.AWS_REGION || 'us-east-1'
+        });
+        this.fromEmail = process.env.SES_FROM_EMAIL || 'no-reply@radorderpad.com';
+        this.testMode = process.env.EMAIL_TEST_MODE === 'true';
+        this.testEmail = process.env.TEST_EMAIL || 'test@example.com';
     }
     /**
-     * Send a password reset email to a user
-     * @param email Email address to send the reset link to
-     * @param token Reset token
-     */
-    async sendPasswordResetEmail(email, token) {
-        return account_1.default.sendPasswordResetEmail(email, token);
-    }
-    /**
-     * Send a notification email
-     * @param email Email address to send the notification to
+     * Send an email
+     * @param to Recipient email address
      * @param subject Email subject
-     * @param message Email message
+     * @param htmlBody HTML email body
+     * @param textBody Plain text email body
      */
-    async sendNotificationEmail(email, subject, message) {
-        return general_1.default.sendNotificationEmail(email, subject, message);
+    static async sendEmail(to, subject, htmlBody, textBody) {
+        // In test mode, redirect all emails to the test email
+        const recipient = this.testMode ? this.testEmail : to;
+        const params = {
+            Source: this.fromEmail,
+            Destination: {
+                ToAddresses: [recipient]
+            },
+            Message: {
+                Subject: {
+                    Data: subject,
+                    Charset: 'UTF-8'
+                },
+                Body: {
+                    Html: {
+                        Data: htmlBody,
+                        Charset: 'UTF-8'
+                    },
+                    Text: {
+                        Data: textBody,
+                        Charset: 'UTF-8'
+                    }
+                }
+            }
+        };
+        try {
+            const command = new client_ses_1.SendEmailCommand(params);
+            await this.sesClient.send(command);
+            console.log(`Email sent successfully to ${recipient}`);
+        }
+        catch (error) {
+            console.error('Error sending email:', error);
+            throw error;
+        }
     }
     /**
-     * Send a connection request notification to an organization
-     * @param email Email address of the target organization admin
-     * @param requestingOrgName Name of the organization requesting the connection
+     * Send an invitation email
+     * @param to Recipient email address
+     * @param token Invitation token
+     * @param organizationName Organization name
+     * @param inviterName Name of the person who sent the invitation
      */
-    async sendConnectionRequest(email, requestingOrgName) {
-        return connection_1.default.sendConnectionRequest(email, requestingOrgName);
+    static async sendInviteEmail(to, token, organizationName, inviterName) {
+        const subject = `Invitation to join ${organizationName} on RadOrderPad`;
+        const invitationLink = `${process.env.FRONTEND_URL || 'https://app.radorderpad.com'}/accept-invitation?token=${token}`;
+        const htmlBody = `
+      <html>
+        <body>
+          <h1>You've been invited to join ${organizationName}</h1>
+          <p>Hello,</p>
+          <p>${inviterName} has invited you to join ${organizationName} on RadOrderPad.</p>
+          <p>Click the link below to accept the invitation and create your account:</p>
+          <p><a href="${invitationLink}">Accept Invitation</a></p>
+          <p>This invitation will expire in 7 days.</p>
+          <p>If you have any questions, please contact ${inviterName}.</p>
+          <p>Best regards,<br>The RadOrderPad Team</p>
+        </body>
+      </html>
+    `;
+        const textBody = `
+      You've been invited to join ${organizationName}
+      
+      Hello,
+      
+      ${inviterName} has invited you to join ${organizationName} on RadOrderPad.
+      
+      Click the link below to accept the invitation and create your account:
+      ${invitationLink}
+      
+      This invitation will expire in 7 days.
+      
+      If you have any questions, please contact ${inviterName}.
+      
+      Best regards,
+      The RadOrderPad Team
+    `;
+        await this.sendEmail(to, subject, htmlBody, textBody);
     }
     /**
-     * Send a connection approval notification
-     * @param email Email address of the requesting organization admin
-     * @param approvedOrgName Name of the organization that requested the connection
+     * Send a verification email
+     * @param to Recipient email address
+     * @param token Verification token
+     * @param data Additional data for the email
      */
-    async sendConnectionApproved(email, approvedOrgName) {
-        return connection_1.default.sendConnectionApproved(email, approvedOrgName);
+    static async sendVerificationEmail(to, token, data) {
+        const subject = 'Verify your email address for RadOrderPad';
+        const verificationLink = `${process.env.FRONTEND_URL || 'https://app.radorderpad.com'}/verify-email?token=${token}`;
+        const htmlBody = `
+      <html>
+        <body>
+          <h1>Verify your email address</h1>
+          <p>Hello ${data.firstName},</p>
+          <p>Thank you for registering ${data.organizationName} on RadOrderPad.</p>
+          <p>Please click the link below to verify your email address:</p>
+          <p><a href="${verificationLink}">Verify Email Address</a></p>
+          <p>This link will expire in 24 hours.</p>
+          <p>If you did not register for RadOrderPad, please ignore this email.</p>
+          <p>Best regards,<br>The RadOrderPad Team</p>
+        </body>
+      </html>
+    `;
+        const textBody = `
+      Verify your email address
+      
+      Hello ${data.firstName},
+      
+      Thank you for registering ${data.organizationName} on RadOrderPad.
+      
+      Please click the link below to verify your email address:
+      ${verificationLink}
+      
+      This link will expire in 24 hours.
+      
+      If you did not register for RadOrderPad, please ignore this email.
+      
+      Best regards,
+      The RadOrderPad Team
+    `;
+        await this.sendEmail(to, subject, htmlBody, textBody);
     }
     /**
-     * Send a connection rejection notification
-     * @param email Email address of the requesting organization admin
-     * @param rejectedOrgName Name of the organization that requested the connection
+     * Send a connection request notification
+     * @param to Recipient email address
+     * @param organizationName Organization name requesting connection
      */
-    async sendConnectionRejected(email, rejectedOrgName) {
-        return connection_1.default.sendConnectionRejected(email, rejectedOrgName);
+    static async sendConnectionRequest(to, organizationName) {
+        const subject = `Connection Request from ${organizationName} on RadOrderPad`;
+        const connectionLink = `${process.env.FRONTEND_URL || 'https://app.radorderpad.com'}/connections/pending`;
+        const htmlBody = `
+      <html>
+        <body>
+          <h1>New Connection Request</h1>
+          <p>Hello,</p>
+          <p>${organizationName} has requested to connect with your organization on RadOrderPad.</p>
+          <p>Please log in to your account to review and respond to this connection request:</p>
+          <p><a href="${connectionLink}">View Connection Request</a></p>
+          <p>Best regards,<br>The RadOrderPad Team</p>
+        </body>
+      </html>
+    `;
+        const textBody = `
+      New Connection Request
+      
+      Hello,
+      
+      ${organizationName} has requested to connect with your organization on RadOrderPad.
+      
+      Please log in to your account to review and respond to this connection request:
+      ${connectionLink}
+      
+      Best regards,
+      The RadOrderPad Team
+    `;
+        await this.sendEmail(to, subject, htmlBody, textBody);
     }
     /**
-     * Send a connection termination notification
-     * @param email Email address of the partner organization admin
-     * @param partnerOrgName Name of the partner organization
-     * @param terminatingOrgName Name of the organization terminating the connection
+     * Send a connection approved notification
+     * @param to Recipient email address
+     * @param organizationName Organization name that approved the connection
      */
-    async sendConnectionTerminated(email, partnerOrgName, terminatingOrgName) {
-        return connection_1.default.sendConnectionTerminated(email, partnerOrgName, terminatingOrgName);
+    static async sendConnectionApproved(to, organizationName) {
+        const subject = `Connection Approved with ${organizationName} on RadOrderPad`;
+        const connectionLink = `${process.env.FRONTEND_URL || 'https://app.radorderpad.com'}/connections`;
+        const htmlBody = `
+      <html>
+        <body>
+          <h1>Connection Request Approved</h1>
+          <p>Hello,</p>
+          <p>${organizationName} has approved your connection request on RadOrderPad.</p>
+          <p>You can now exchange orders and information with this organization.</p>
+          <p>Log in to your account to view your connections:</p>
+          <p><a href="${connectionLink}">View Connections</a></p>
+          <p>Best regards,<br>The RadOrderPad Team</p>
+        </body>
+      </html>
+    `;
+        const textBody = `
+      Connection Request Approved
+      
+      Hello,
+      
+      ${organizationName} has approved your connection request on RadOrderPad.
+      
+      You can now exchange orders and information with this organization.
+      
+      Log in to your account to view your connections:
+      ${connectionLink}
+      
+      Best regards,
+      The RadOrderPad Team
+    `;
+        await this.sendEmail(to, subject, htmlBody, textBody);
+    }
+    /**
+     * Send a connection rejected notification
+     * @param to Recipient email address
+     * @param organizationName Organization name that rejected the connection
+     */
+    static async sendConnectionRejected(to, organizationName) {
+        const subject = `Connection Request Declined by ${organizationName} on RadOrderPad`;
+        const connectionLink = `${process.env.FRONTEND_URL || 'https://app.radorderpad.com'}/connections`;
+        const htmlBody = `
+      <html>
+        <body>
+          <h1>Connection Request Declined</h1>
+          <p>Hello,</p>
+          <p>${organizationName} has declined your connection request on RadOrderPad.</p>
+          <p>If you believe this was in error, please contact the organization directly.</p>
+          <p>Log in to your account to view your connections:</p>
+          <p><a href="${connectionLink}">View Connections</a></p>
+          <p>Best regards,<br>The RadOrderPad Team</p>
+        </body>
+      </html>
+    `;
+        const textBody = `
+      Connection Request Declined
+      
+      Hello,
+      
+      ${organizationName} has declined your connection request on RadOrderPad.
+      
+      If you believe this was in error, please contact the organization directly.
+      
+      Log in to your account to view your connections:
+      ${connectionLink}
+      
+      Best regards,
+      The RadOrderPad Team
+    `;
+        await this.sendEmail(to, subject, htmlBody, textBody);
+    }
+    /**
+     * Send a connection terminated notification
+     * @param to Recipient email address
+     * @param organizationName Organization name that terminated the connection
+     */
+    static async sendConnectionTerminated(to, organizationName) {
+        const subject = `Connection Terminated by ${organizationName} on RadOrderPad`;
+        const connectionLink = `${process.env.FRONTEND_URL || 'https://app.radorderpad.com'}/connections`;
+        const htmlBody = `
+      <html>
+        <body>
+          <h1>Connection Terminated</h1>
+          <p>Hello,</p>
+          <p>${organizationName} has terminated their connection with your organization on RadOrderPad.</p>
+          <p>You will no longer be able to exchange orders and information with this organization.</p>
+          <p>Log in to your account to view your connections:</p>
+          <p><a href="${connectionLink}">View Connections</a></p>
+          <p>Best regards,<br>The RadOrderPad Team</p>
+        </body>
+      </html>
+    `;
+        const textBody = `
+      Connection Terminated
+      
+      Hello,
+      
+      ${organizationName} has terminated their connection with your organization on RadOrderPad.
+      
+      You will no longer be able to exchange orders and information with this organization.
+      
+      Log in to your account to view your connections:
+      ${connectionLink}
+      
+      Best regards,
+      The RadOrderPad Team
+    `;
+        await this.sendEmail(to, subject, htmlBody, textBody);
     }
 }
 exports.NotificationManager = NotificationManager;
-// Create and export a singleton instance
-exports.default = new NotificationManager();
+// Initialize the notification manager
+NotificationManager.initialize();
+exports.default = NotificationManager;
 //# sourceMappingURL=index.js.map

@@ -2,11 +2,14 @@ import { OrganizationRegistrationDTO, Organization, DatabaseClient, Organization
 
 /**
  * Create a new organization
+ * Modified version that accepts a status parameter
  */
 export async function createOrganization(
   client: DatabaseClient,
-  orgData: OrganizationRegistrationDTO
+  orgData: OrganizationRegistrationDTO & { status?: OrganizationStatus }
 ): Promise<Organization> {
+  const status = orgData.status || OrganizationStatus.ACTIVE;
+  
   const orgResult = await client.query(
     `INSERT INTO organizations 
     (name, type, npi, tax_id, address_line1, address_line2, city, state, zip_code, 
@@ -27,7 +30,7 @@ export async function createOrganization(
       orgData.fax_number || null,
       orgData.contact_email || null,
       orgData.website || null,
-      OrganizationStatus.ACTIVE,
+      status,
       0 // Initial credit balance
     ]
   );

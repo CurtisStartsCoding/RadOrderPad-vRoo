@@ -1,4 +1,4 @@
-import { User, UserResponse } from './User';
+import { UserResponse } from './User';
 import { Organization } from './Organization';
 
 export interface AuthTokenPayload {
@@ -17,6 +17,7 @@ export interface RegistrationResponse {
   token: string;
   user: UserResponse;
   organization: Organization;
+  message?: string; // Optional message field for additional information
 }
 
 export interface RefreshToken {

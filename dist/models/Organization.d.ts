@@ -30,7 +30,8 @@ export declare enum OrganizationStatus {
     ACTIVE = "active",
     ON_HOLD = "on_hold",
     PURGATORY = "purgatory",
-    TERMINATED = "terminated"
+    TERMINATED = "terminated",
+    PENDING_VERIFICATION = "pending_verification"
 }
 export interface OrganizationRegistrationDTO {
     name: string;
@@ -46,7 +47,7 @@ export interface OrganizationRegistrationDTO {
     fax_number?: string;
     contact_email?: string;
     website?: string;
-    registration_key: string;
+    registration_key?: string;
 }
 export interface OrganizationResponse {
     id: number;

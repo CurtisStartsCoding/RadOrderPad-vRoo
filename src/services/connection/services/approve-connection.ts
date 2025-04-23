@@ -5,6 +5,7 @@ import {
   GET_RELATIONSHIP_FOR_APPROVAL_QUERY,
   APPROVE_RELATIONSHIP_QUERY
 } from '../queries/approve';
+import enhancedLogger from '../../../utils/enhanced-logger';
 
 /**
  * Service for approving connection requests
@@ -56,7 +57,7 @@ export class ApproveConnectionService {
       };
     } catch (error) {
       await client.query('ROLLBACK');
-      console.error('Error in approveConnection:', error);
+      enhancedLogger.error('Error in approveConnection:', error);
       throw error;
     } finally {
       client.release();

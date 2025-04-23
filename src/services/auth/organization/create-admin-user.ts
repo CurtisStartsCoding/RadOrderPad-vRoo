@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { UserRegistrationDTO, User, DatabaseClient } from '../types';
 
 /**

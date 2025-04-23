@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegisterController = void 0;
 const auth_1 = __importDefault(require("../../services/auth"));
 const error_handler_1 = require("./error-handler");
+const validation_1 = require("../../utils/validation");
+const captcha_1 = require("../../utils/captcha");
 /**
  * Controller for handling organization and user registration
  */
@@ -15,7 +17,7 @@ class RegisterController {
      */
     async register(req, res) {
         try {
-            const { organization, user } = req.body;
+            const { organization, user, captchaToken } = req.body;
             // Validate request body
             if (!organization || !user) {
                 res.status(400).json({ message: 'Organization and user data are required' });
@@ -28,6 +30,26 @@ class RegisterController {
             }
             if (!user.email || !user.password || !user.first_name || !user.last_name || !user.role) {
                 res.status(400).json({ message: 'User email, password, first name, last name, and role are required' });
+                return;
+            }
+            // Validate email format
+            if (!(0, validation_1.validateEmail)(user.email)) {
+                res.status(400).json({ message: 'Invalid email format' });
+                return;
+            }
+            // Validate password strength
+            if (user.password.length < 8) {
+                res.status(400).json({ message: 'Password must be at least 8 characters long' });
+                return;
+            }
+            // Verify CAPTCHA token
+            if (!captchaToken) {
+                res.status(400).json({ message: 'CAPTCHA verification is required' });
+                return;
+            }
+            const captchaValid = await (0, captcha_1.verifyCaptcha)(captchaToken);
+            if (!captchaValid) {
+                res.status(400).json({ message: 'CAPTCHA verification failed' });
                 return;
             }
             const orgData = {
@@ -43,8 +65,7 @@ class RegisterController {
                 phone_number: organization.phone_number,
                 fax_number: organization.fax_number,
                 contact_email: organization.contact_email,
-                website: organization.website,
-                registration_key: organization.registration_key
+                website: organization.website
             };
             const userData = {
                 email: user.email,

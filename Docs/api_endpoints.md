@@ -13,7 +13,7 @@
 
 ## Authentication (`/auth`)
 
--   `POST /auth/register`: Initial Org + Admin registration. **(Restricted Access)**
+-   `POST /auth/register`: Self-service Org + Admin registration. Requires CAPTCHA verification. Creates organization (with pending_verification status) and admin user records, sends verification email. **(Public Access)**
 -   `POST /auth/login`: User login.
 -   `POST /auth/logout`: User logout (revoke tokens).
 -   `POST /auth/refresh`: Obtain new session token using refresh token.
@@ -55,9 +55,9 @@
 
 ## Connections (`/connections`)
 
--   `GET /connections`: List connections for the admin's organization. **(Admin Role)**
--   `POST /connections`: Request a connection to another organization. **(Admin Role)**
--   `GET /connections/requests`: List pending incoming connection requests. **(Admin Role)**
+- `GET /connections`: List connections for the admin's organization. **(Admin Role)**
+- `POST /connections`: Request a connection to another organization. Uses `targetOrgId` parameter. **(Admin Role)**
+- `GET /connections/requests`: List pending incoming connection requests. **(Admin Role)**
 -   `POST /connections/{relationshipId}/approve`: Approve a pending incoming request. **(Admin Role)**
 -   `POST /connections/{relationshipId}/reject`: Reject a pending incoming request. **(Admin Role)**
 -   `DELETE /connections/{relationshipId}`: Terminate an active connection. **(Admin Role)**

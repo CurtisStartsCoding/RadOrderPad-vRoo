@@ -12,6 +12,8 @@ The RadOrderPad API is organized into several logical sections:
 4. [Radiology Order Management](./radiology-order-management.md) - Endpoints for radiology orders
 5. [Superadmin Management](./superadmin-management.md) - Superadmin-specific endpoints
 6. [Connection Management](./connection-management.md) - Managing connections between organizations
+   - [Connection Management Details](./connection-management-details.md) - Detailed information about connection endpoints
+   - [Connection Testing](./connection-testing.md) - Guide for testing connection endpoints
 7. [Organization Management](./organization-management.md) - Organization-related endpoints
 8. [User Management](./user-management.md) - User-related endpoints
    - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature

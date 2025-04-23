@@ -7,6 +7,7 @@ exports.TerminateConnectionService = void 0;
 const db_1 = require("../../../config/db");
 const notification_1 = __importDefault(require("../../notification"));
 const terminate_1 = require("../queries/terminate");
+const enhanced_logger_1 = __importDefault(require("../../../utils/enhanced-logger"));
 /**
  * Service for terminating connections
  */
@@ -36,7 +37,7 @@ class TerminateConnectionService {
             const partnerName = isInitiator ? relationship.org2_name : relationship.org1_name;
             const terminatingOrgName = isInitiator ? relationship.org1_name : relationship.org2_name;
             if (partnerEmail) {
-                await notification_1.default.sendConnectionTerminated(partnerEmail, partnerName, terminatingOrgName);
+                await notification_1.default.sendConnectionTerminated(partnerEmail, terminatingOrgName);
             }
             await client.query('COMMIT');
             return {
@@ -47,7 +48,7 @@ class TerminateConnectionService {
         }
         catch (error) {
             await client.query('ROLLBACK');
-            console.error('Error in terminateConnection:', error);
+            enhanced_logger_1.default.error('Error in terminateConnection:', error);
             throw error;
         }
         finally {

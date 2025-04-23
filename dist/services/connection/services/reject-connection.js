@@ -8,6 +8,7 @@ const db_1 = require("../../../config/db");
 const notification_1 = __importDefault(require("../../notification"));
 const approve_1 = require("../queries/approve");
 const reject_1 = require("../queries/reject");
+const enhanced_logger_1 = __importDefault(require("../../../utils/enhanced-logger"));
 /**
  * Service for rejecting connection requests
  */
@@ -43,7 +44,7 @@ class RejectConnectionService {
         }
         catch (error) {
             await client.query('ROLLBACK');
-            console.error('Error in rejectConnection:', error);
+            enhanced_logger_1.default.error('Error in rejectConnection:', error);
             throw error;
         }
         finally {

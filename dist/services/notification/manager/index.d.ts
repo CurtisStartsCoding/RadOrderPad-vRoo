@@ -1,58 +1,64 @@
-import accountManager from './account';
-import generalManager from './general';
-import connectionManager from './connection';
 /**
- * Manager for handling different types of notifications
- * This class serves as a facade for the underlying notification managers
+ * Notification Manager for sending emails
  */
 export declare class NotificationManager {
+    private static sesClient;
+    private static fromEmail;
+    private static testMode;
+    private static testEmail;
     /**
-     * Send an invitation email to a user
-     * @param email Email address to send the invitation to
-     * @param token Invitation token
-     * @param organizationName Name of the organization
-     * @param inviterName Name of the user who sent the invitation
+     * Initialize the notification manager
      */
-    sendInviteEmail(email: string, token: string, organizationName: string, inviterName: string): Promise<void>;
+    static initialize(): void;
     /**
-     * Send a password reset email to a user
-     * @param email Email address to send the reset link to
-     * @param token Reset token
-     */
-    sendPasswordResetEmail(email: string, token: string): Promise<void>;
-    /**
-     * Send a notification email
-     * @param email Email address to send the notification to
+     * Send an email
+     * @param to Recipient email address
      * @param subject Email subject
-     * @param message Email message
+     * @param htmlBody HTML email body
+     * @param textBody Plain text email body
      */
-    sendNotificationEmail(email: string, subject: string, message: string): Promise<void>;
+    static sendEmail(to: string, subject: string, htmlBody: string, textBody: string): Promise<void>;
     /**
-     * Send a connection request notification to an organization
-     * @param email Email address of the target organization admin
-     * @param requestingOrgName Name of the organization requesting the connection
+     * Send an invitation email
+     * @param to Recipient email address
+     * @param token Invitation token
+     * @param organizationName Organization name
+     * @param inviterName Name of the person who sent the invitation
      */
-    sendConnectionRequest(email: string, requestingOrgName: string): Promise<void>;
+    static sendInviteEmail(to: string, token: string, organizationName: string, inviterName: string): Promise<void>;
     /**
-     * Send a connection approval notification
-     * @param email Email address of the requesting organization admin
-     * @param approvedOrgName Name of the organization that requested the connection
+     * Send a verification email
+     * @param to Recipient email address
+     * @param token Verification token
+     * @param data Additional data for the email
      */
-    sendConnectionApproved(email: string, approvedOrgName: string): Promise<void>;
+    static sendVerificationEmail(to: string, token: string, data: {
+        firstName: string;
+        organizationName: string;
+    }): Promise<void>;
     /**
-     * Send a connection rejection notification
-     * @param email Email address of the requesting organization admin
-     * @param rejectedOrgName Name of the organization that requested the connection
+     * Send a connection request notification
+     * @param to Recipient email address
+     * @param organizationName Organization name requesting connection
      */
-    sendConnectionRejected(email: string, rejectedOrgName: string): Promise<void>;
+    static sendConnectionRequest(to: string, organizationName: string): Promise<void>;
     /**
-     * Send a connection termination notification
-     * @param email Email address of the partner organization admin
-     * @param partnerOrgName Name of the partner organization
-     * @param terminatingOrgName Name of the organization terminating the connection
+     * Send a connection approved notification
+     * @param to Recipient email address
+     * @param organizationName Organization name that approved the connection
      */
-    sendConnectionTerminated(email: string, partnerOrgName: string, terminatingOrgName: string): Promise<void>;
+    static sendConnectionApproved(to: string, organizationName: string): Promise<void>;
+    /**
+     * Send a connection rejected notification
+     * @param to Recipient email address
+     * @param organizationName Organization name that rejected the connection
+     */
+    static sendConnectionRejected(to: string, organizationName: string): Promise<void>;
+    /**
+     * Send a connection terminated notification
+     * @param to Recipient email address
+     * @param organizationName Organization name that terminated the connection
+     */
+    static sendConnectionTerminated(to: string, organizationName: string): Promise<void>;
 }
-export { accountManager, generalManager, connectionManager };
-declare const _default: NotificationManager;
-export default _default;
+export default NotificationManager;

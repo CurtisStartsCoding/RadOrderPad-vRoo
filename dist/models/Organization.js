@@ -12,5 +12,6 @@ var OrganizationStatus;
     OrganizationStatus["ON_HOLD"] = "on_hold";
     OrganizationStatus["PURGATORY"] = "purgatory";
     OrganizationStatus["TERMINATED"] = "terminated";
+    OrganizationStatus["PENDING_VERIFICATION"] = "pending_verification"; // New status for email verification
 })(OrganizationStatus || (exports.OrganizationStatus = OrganizationStatus = {}));
 //# sourceMappingURL=Organization.js.map

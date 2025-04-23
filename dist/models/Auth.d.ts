@@ -14,6 +14,7 @@ export interface RegistrationResponse {
     token: string;
     user: UserResponse;
     organization: Organization;
+    message?: string;
 }
 export interface RefreshToken {
     id: number;

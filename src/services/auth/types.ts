@@ -2,14 +2,20 @@ import {
   User,
   UserRegistrationDTO,
   UserLoginDTO,
+  UserResponse
+} from '../../models/User';
+
+import {
   Organization,
   OrganizationRegistrationDTO,
+  OrganizationStatus
+} from '../../models/Organization';
+
+import {
   AuthTokenPayload,
   LoginResponse,
-  RegistrationResponse,
-  UserResponse,
-  OrganizationStatus
-} from '../../models';
+  RegistrationResponse
+} from '../../models/Auth';
 
 export {
   User,
@@ -17,11 +23,11 @@ export {
   UserLoginDTO,
   Organization,
   OrganizationRegistrationDTO,
+  OrganizationStatus,
   AuthTokenPayload,
   LoginResponse,
   RegistrationResponse,
-  UserResponse,
-  OrganizationStatus
+  UserResponse
 };
 
 export interface DatabaseClient {

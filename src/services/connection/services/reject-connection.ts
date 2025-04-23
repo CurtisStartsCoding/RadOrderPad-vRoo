@@ -3,6 +3,7 @@ import notificationManager from '../../notification';
 import { RejectConnectionParams, ConnectionOperationResponse } from '../types';
 import { GET_RELATIONSHIP_FOR_APPROVAL_QUERY } from '../queries/approve';
 import { REJECT_RELATIONSHIP_QUERY } from '../queries/reject';
+import enhancedLogger from '../../../utils/enhanced-logger';
 
 /**
  * Service for rejecting connection requests
@@ -54,7 +55,7 @@ export class RejectConnectionService {
       };
     } catch (error) {
       await client.query('ROLLBACK');
-      console.error('Error in rejectConnection:', error);
+      enhancedLogger.error('Error in rejectConnection:', error);
       throw error;
     } finally {
       client.release();

@@ -5,6 +5,7 @@ import {
   GET_RELATIONSHIP_FOR_TERMINATION_QUERY,
   TERMINATE_RELATIONSHIP_QUERY
 } from '../queries/terminate';
+import enhancedLogger from '../../../utils/enhanced-logger';
 
 /**
  * Service for terminating connections
@@ -16,7 +17,8 @@ export class TerminateConnectionService {
    * @returns Promise with result
    */
   async terminateConnection(params: TerminateConnectionParams): Promise<ConnectionOperationResponse> {
-    const { relationshipId, terminatingUserId, terminatingOrgId } = params;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { relationshipId, terminatingUserId: _terminatingUserId, terminatingOrgId } = params;
     const client = await getMainDbClient();
     
     try {
@@ -44,13 +46,11 @@ export class TerminateConnectionService {
       
       // Notify the other organization
       const partnerEmail = isInitiator ? relationship.org2_email : relationship.org1_email;
-      const partnerName = isInitiator ? relationship.org2_name : relationship.org1_name;
       const terminatingOrgName = isInitiator ? relationship.org1_name : relationship.org2_name;
       
       if (partnerEmail) {
         await notificationManager.sendConnectionTerminated(
           partnerEmail,
-          partnerName,
           terminatingOrgName
         );
       }
@@ -64,7 +64,7 @@ export class TerminateConnectionService {
       };
     } catch (error) {
       await client.query('ROLLBACK');
-      console.error('Error in terminateConnection:', error);
+      enhancedLogger.error('Error in terminateConnection:', error);
       throw error;
     } finally {
       client.release();
