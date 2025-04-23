@@ -8,6 +8,7 @@ export interface AdminOrderControllerInterface {
     sendToRadiology(req: Request, res: Response): Promise<void>;
     updatePatientInfo(req: Request, res: Response): Promise<void>;
     updateInsuranceInfo(req: Request, res: Response): Promise<void>;
+    listPendingAdminOrders(req: Request, res: Response): Promise<void>;
 }
 /**
  * Common error handling function type

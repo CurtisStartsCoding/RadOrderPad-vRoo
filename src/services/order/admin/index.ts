@@ -5,6 +5,10 @@ import {
   updateInsuranceInfo,
   sendToRadiology
 } from './handlers';
+import listPendingAdminOrders, {
+  ListOptions,
+  ListPendingAdminOrdersResponse
+} from './list-pending-admin.service';
 
 /**
  * Service for handling admin order operations
@@ -62,6 +66,16 @@ class AdminOrderService {
    */
   async sendToRadiology(orderId: number, userId: number) {
     return sendToRadiology(orderId, userId);
+  }
+  
+  /**
+   * List orders awaiting admin finalization
+   * @param orgId Organization ID
+   * @param options Pagination, sorting, and filtering options
+   * @returns Promise with orders and pagination info
+   */
+  async listPendingAdminOrders(orgId: number, options: ListOptions): Promise<ListPendingAdminOrdersResponse> {
+    return listPendingAdminOrders(orgId, options);
   }
 }
 

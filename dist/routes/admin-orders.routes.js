@@ -8,6 +8,12 @@ const admin_order_1 = __importDefault(require("../controllers/admin-order"));
 const auth_1 = require("../middleware/auth");
 const router = (0, express_1.Router)();
 /**
+ * @route   GET /api/admin/orders/queue
+ * @desc    List orders awaiting admin finalization
+ * @access  Private (Admin Staff)
+ */
+router.get('/queue', auth_1.authenticateJWT, (0, auth_1.authorizeRole)(['admin_staff']), admin_order_1.default.listPendingAdminOrders);
+/**
  * @route   POST /api/admin/orders/:orderId/paste-summary
  * @desc    Submit pasted EMR summary for parsing
  * @access  Private (Admin Staff)

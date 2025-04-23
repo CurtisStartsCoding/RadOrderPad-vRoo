@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const handlers_1 = require("./handlers");
+const list_pending_admin_service_1 = __importDefault(require("./list-pending-admin.service"));
 /**
  * Service for handling admin order operations
  */
@@ -53,6 +57,15 @@ class AdminOrderService {
      */
     async sendToRadiology(orderId, userId) {
         return (0, handlers_1.sendToRadiology)(orderId, userId);
+    }
+    /**
+     * List orders awaiting admin finalization
+     * @param orgId Organization ID
+     * @param options Pagination, sorting, and filtering options
+     * @returns Promise with orders and pagination info
+     */
+    async listPendingAdminOrders(orgId, options) {
+        return (0, list_pending_admin_service_1.default)(orgId, options);
     }
 }
 exports.default = new AdminOrderService();

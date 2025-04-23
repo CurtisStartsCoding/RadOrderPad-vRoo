@@ -4,6 +4,7 @@ import handlePasteSupplemental from './paste-supplemental.controller';
 import sendToRadiology from './send-to-radiology.controller';
 import updatePatientInfo from './update-patient.controller';
 import updateInsuranceInfo from './update-insurance.controller';
+import listPendingAdminOrders from './list-pending-admin.controller';
 import { AdminOrderControllerInterface } from './types';
 
 /**
@@ -49,6 +50,14 @@ export class AdminOrderController implements AdminOrderControllerInterface {
   async updateInsuranceInfo(req: Request, res: Response): Promise<void> {
     return updateInsuranceInfo(req, res);
   }
+  
+  /**
+   * List orders awaiting admin finalization
+   * @route GET /api/admin/orders/queue
+   */
+  async listPendingAdminOrders(req: Request, res: Response): Promise<void> {
+    return listPendingAdminOrders(req, res);
+  }
 }
 
 // Export a singleton instance
@@ -60,5 +69,6 @@ export {
   handlePasteSupplemental,
   sendToRadiology,
   updatePatientInfo,
-  updateInsuranceInfo
+  updateInsuranceInfo,
+  listPendingAdminOrders
 };

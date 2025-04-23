@@ -5,6 +5,18 @@ import { authenticateJWT, authorizeRole } from '../middleware/auth';
 const router = Router();
 
 /**
+ * @route   GET /api/admin/orders/queue
+ * @desc    List orders awaiting admin finalization
+ * @access  Private (Admin Staff)
+ */
+router.get(
+  '/queue',
+  authenticateJWT,
+  authorizeRole(['admin_staff']),
+  adminOrderController.listPendingAdminOrders
+);
+
+/**
  * @route   POST /api/admin/orders/:orderId/paste-summary
  * @desc    Submit pasted EMR summary for parsing
  * @access  Private (Admin Staff)

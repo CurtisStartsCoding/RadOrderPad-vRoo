@@ -75,6 +75,7 @@
 
 ## Orders - Admin Actions (`/admin/orders`)
 
+-   `GET /admin/orders/queue`: List orders awaiting admin finalization (status = 'pending_admin'). Supports pagination, sorting, and filtering. Returns orders with pagination metadata. **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/paste-summary`: Submit pasted EMR summary for parsing. Updates patient contact information (address, phone, email) and insurance details (insurer, policy number, group number, policy holder). **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/paste-supplemental`: Submit pasted supplemental documents. **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/send-to-radiology`: Finalize and send the order to the radiology group (updates status). **This endpoint consumes one credit from the organization's balance and logs the credit usage.** If the organization has insufficient credits, returns a 402 Payment Required error. **(Admin Staff Role)**

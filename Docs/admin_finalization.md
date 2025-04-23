@@ -23,7 +23,7 @@ This workflow involves *appending* necessary demographic, insurance, and clinica
 ### 1. Accessing the Queue
 
 1.  **Login:** Admin staff logs into the RadOrderPad platform.
-2.  **Dashboard/Queue View:** User navigates to the order queue, filtered to show orders with `status = 'pending_admin'` for their organization.
+2.  **Dashboard/Queue View:** User navigates to the order queue, filtered to show orders with `status = 'pending_admin'` for their organization. The frontend fetches this data from the `GET /api/admin/orders/queue` endpoint, which supports pagination, sorting, and filtering.
 3.  **Select Order:** User selects the order they need to process.
 
 ### 2. Adding EMR Context

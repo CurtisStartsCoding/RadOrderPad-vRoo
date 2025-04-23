@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateInsuranceInfo = exports.updatePatientInfo = exports.sendToRadiology = exports.handlePasteSupplemental = exports.handlePasteSummary = exports.AdminOrderController = void 0;
+exports.listPendingAdminOrders = exports.updateInsuranceInfo = exports.updatePatientInfo = exports.sendToRadiology = exports.handlePasteSupplemental = exports.handlePasteSummary = exports.AdminOrderController = void 0;
 const paste_summary_controller_1 = __importDefault(require("./paste-summary.controller"));
 exports.handlePasteSummary = paste_summary_controller_1.default;
 const paste_supplemental_controller_1 = __importDefault(require("./paste-supplemental.controller"));
@@ -14,6 +14,8 @@ const update_patient_controller_1 = __importDefault(require("./update-patient.co
 exports.updatePatientInfo = update_patient_controller_1.default;
 const update_insurance_controller_1 = __importDefault(require("./update-insurance.controller"));
 exports.updateInsuranceInfo = update_insurance_controller_1.default;
+const list_pending_admin_controller_1 = __importDefault(require("./list-pending-admin.controller"));
+exports.listPendingAdminOrders = list_pending_admin_controller_1.default;
 /**
  * Controller for handling admin order operations
  */
@@ -52,6 +54,13 @@ class AdminOrderController {
      */
     async updateInsuranceInfo(req, res) {
         return (0, update_insurance_controller_1.default)(req, res);
+    }
+    /**
+     * List orders awaiting admin finalization
+     * @route GET /api/admin/orders/queue
+     */
+    async listPendingAdminOrders(req, res) {
+        return (0, list_pending_admin_controller_1.default)(req, res);
     }
 }
 exports.AdminOrderController = AdminOrderController;

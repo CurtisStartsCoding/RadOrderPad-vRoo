@@ -1,3 +1,4 @@
+import { ListOptions, ListPendingAdminOrdersResponse } from './list-pending-admin.service';
 /**
  * Service for handling admin order operations
  */
@@ -41,6 +42,13 @@ declare class AdminOrderService {
      * @returns Promise with result
      */
     sendToRadiology(orderId: number, userId: number): Promise<import("./types").SendToRadiologyResult>;
+    /**
+     * List orders awaiting admin finalization
+     * @param orgId Organization ID
+     * @param options Pagination, sorting, and filtering options
+     * @returns Promise with orders and pagination info
+     */
+    listPendingAdminOrders(orgId: number, options: ListOptions): Promise<ListPendingAdminOrdersResponse>;
 }
 declare const _default: AdminOrderService;
 export default _default;
