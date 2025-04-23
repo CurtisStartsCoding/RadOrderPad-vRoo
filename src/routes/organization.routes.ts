@@ -1,18 +1,17 @@
 import express from 'express';
 import { authenticateJWT, authorizeRole } from '../middleware/auth';
-import locationController from '../controllers/location';
+import locationController from '../controllers/location/index.js';
+import organizationController from '../controllers/organization/index.js';
 
 const router = express.Router();
 
 // Middleware to authenticate all routes
 router.use(authenticateJWT);
 
-// Organization routes (to be implemented)
-router.get('/mine', authenticateJWT, (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
+// Organization routes
+router.get('/mine', organizationController.getMyOrganization);
 
-router.put('/mine', authenticateJWT, authorizeRole(['admin_referring', 'admin_radiology']), (req, res) => {
+router.put('/mine', authorizeRole(['admin_referring', 'admin_radiology']), (req, res) => {
   res.status(501).json({ message: 'Not implemented yet' });
 });
 

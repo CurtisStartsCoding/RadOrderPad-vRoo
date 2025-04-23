@@ -1,166 +1,143 @@
 /**
- * Check Order Status Script
+ * Script to check the status of specific order IDs
  * 
- * This script checks the status of specific orders in the database
- * to confirm whether they are in the pending_admin or pending_radiology queue.
+ * This script:
+ * 1. Authenticates as admin_staff
+ * 2. Checks the status of specific order IDs that worked with admin endpoints
+ * 3. Reports the status and other details of each order
  */
 
-// Base URL for API requests
-const API_BASE_URL = 'https://api.radorderpad.com/api';
+const axios = require('axios');
 
-// Test credentials
-const TEST_CREDENTIALS = {
-  email: 'test.physician@example.com',
+// --- Configuration ---
+const API_URL = process.env.API_URL || 'https://api.radorderpad.com';
+
+// Order IDs that worked with admin endpoints
+const ORDER_IDS_TO_CHECK = [600, 601, 603, 604, 609, 612];
+
+// Test user credentials
+const TEST_USER = {
+  role: 'admin_staff',
+  email: 'test.admin_staff@example.com',
   password: 'password123'
 };
 
-// Order IDs to check (from our test)
-const ORDER_IDS = [606, 607];
-
-/**
- * Main function to check order status
- */
-async function checkOrderStatus() {
-  console.log('=== CHECKING ORDER STATUS ===');
-  console.log(`API URL: ${API_BASE_URL}`);
-  console.log('============================\n');
-
+// Function to login and get a token
+async function getToken() {
   try {
-    // Step 1: Login
-    console.log('Step 1: Logging in...');
-    const authToken = await login(TEST_CREDENTIALS.email, TEST_CREDENTIALS.password);
-    console.log(`✅ Login successful!\n`);
-
-    // Step 2: Check each order
-    for (const orderId of ORDER_IDS) {
-      console.log(`Checking status for Order #${orderId}...`);
-      const orderDetails = await getOrderDetails(authToken, orderId);
-      
-      if (orderDetails.success) {
-        console.log(`✅ Order #${orderId} found`);
-        console.log(`Status: ${orderDetails.order.status}`);
-        console.log(`Created: ${new Date(orderDetails.order.created_at).toLocaleString()}`);
-        console.log(`Updated: ${new Date(orderDetails.order.updated_at).toLocaleString()}`);
-        
-        // Determine which queue the order is in
-        let queueStatus = '';
-        switch (orderDetails.order.status) {
-          case 'pending_validation':
-            queueStatus = 'Physician Validation Queue';
-            break;
-          case 'pending_admin':
-            queueStatus = 'Admin Staff Queue';
-            break;
-          case 'pending_radiology':
-            queueStatus = 'Radiology Queue';
-            break;
-          case 'scheduled':
-            queueStatus = 'Scheduled for Imaging';
-            break;
-          case 'completed':
-            queueStatus = 'Completed';
-            break;
-          default:
-            queueStatus = `Unknown Queue (${orderDetails.order.status})`;
-        }
-        
-        console.log(`Queue: ${queueStatus}`);
-        console.log(`Patient PIDN: ${orderDetails.order.patient_pidn || 'Not specified'}`);
-        console.log('');
-      } else {
-        console.log(`❌ Failed to retrieve Order #${orderId}`);
-        console.log(`Error: ${orderDetails.error}`);
-        if (orderDetails.status) {
-          console.log(`Status Code: ${orderDetails.status}`);
-        }
-        console.log('');
-      }
-    }
-
-    console.log('=== ORDER STATUS CHECK COMPLETE ===');
-
-  } catch (error) {
-    console.error('❌ Check failed with error:', error);
-  }
-}
-
-/**
- * Login to the API
- * @param {string} email - User email
- * @param {string} password - User password
- * @returns {Promise<string>} - Authentication token
- */
-async function login(email, password) {
-  const response = await fetch(`${API_BASE_URL}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password })
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Login failed: ${errorData.message || response.statusText}`);
-  }
-
-  const data = await response.json();
-  return data.token;
-}
-
-/**
- * Get order details
- * @param {string} token - Authentication token
- * @param {number} orderId - Order ID to check
- * @returns {Promise<Object>} - Order details
- */
-async function getOrderDetails(token, orderId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
-      method: 'GET',
+    console.log(`\n🔍 Logging in as ${TEST_USER.role} (${TEST_USER.email})...`);
+    const response = await axios.post(`${API_URL}/api/auth/login`, {
+      email: TEST_USER.email,
+      password: TEST_USER.password
+    }, {
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.log(`API Error: ${response.status} - ${JSON.stringify(errorData)}`);
-      return {
-        success: false,
-        error: errorData.message || response.statusText,
-        status: response.status,
-        details: errorData
-      };
+    
+    if (response.data.token) {
+      console.log(`✅ Login successful for ${TEST_USER.role}`);
+      return response.data.token;
+    } else {
+      console.log(`❌ Login failed for ${TEST_USER.role}: No token in response`);
+      return null;
     }
-
-    const data = await response.json();
-    return {
-      success: true,
-      order: data.order || data // Handle different response formats
-    };
   } catch (error) {
-    return {
-      success: false,
-      error: error.message
-    };
+    console.log(`❌ Login failed for ${TEST_USER.role}`);
+    if (error.response) {
+      console.log('Status:', error.response.status);
+      console.log('Error Data:', JSON.stringify(error.response.data, null, 2));
+    } else {
+      console.log('Error:', error.message);
+    }
+    return null;
   }
 }
 
-// Execute the check if this script is run directly
-if (typeof window === 'undefined') {
-  // Node.js environment
-  checkOrderStatus().catch(console.error);
-} else {
-  // Browser environment
-  console.log('To run this check, call checkOrderStatus() from your browser console');
+// Function to check order status
+async function checkOrderStatus(orderId, token) {
+  try {
+    console.log(`\n🔍 Checking status of order ${orderId}...`);
+    const response = await axios.get(`${API_URL}/api/orders/${orderId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    console.log(`✅ Order ${orderId} found`);
+    console.log('Status:', response.status);
+    
+    // Extract key information
+    const order = response.data.order;
+    const orderDetails = {
+      id: order.id,
+      status: order.status,
+      patientId: order.patient_id,
+      createdAt: order.created_at,
+      updatedAt: order.updated_at
+    };
+    
+    console.log('Order Details:', JSON.stringify(orderDetails, null, 2));
+    return orderDetails;
+  } catch (error) {
+    console.log(`❌ Failed to get order ${orderId}`);
+    if (error.response) {
+      console.log('Status:', error.response.status);
+      console.log('Error Data:', JSON.stringify(error.response.data, null, 2));
+    } else {
+      console.log('Error:', error.message);
+    }
+    return null;
+  }
 }
 
-// Export functions for use in other scripts
-if (typeof module !== 'undefined') {
-  module.exports = {
-    checkOrderStatus,
-    getOrderDetails
-  };
+// Main function
+async function checkOrders() {
+  console.log('=== CHECKING ORDER STATUS ===');
+  console.log(`Testing API at: ${API_URL}`);
+  console.log('===========================\n');
+  
+  // Get token
+  const token = await getToken();
+  if (!token) {
+    console.log('\n❌ Cannot proceed without authentication token. Exiting.');
+    return;
+  }
+  
+  // Check each order
+  const orderDetails = [];
+  for (const orderId of ORDER_IDS_TO_CHECK) {
+    const details = await checkOrderStatus(orderId, token);
+    if (details) {
+      orderDetails.push(details);
+    }
+  }
+  
+  // Print summary
+  console.log('\n=== ORDER STATUS SUMMARY ===');
+  console.log(`Total orders checked: ${ORDER_IDS_TO_CHECK.length}`);
+  console.log(`Orders found: ${orderDetails.length}`);
+  
+  // Group by status
+  const statusGroups = {};
+  for (const order of orderDetails) {
+    if (!statusGroups[order.status]) {
+      statusGroups[order.status] = [];
+    }
+    statusGroups[order.status].push(order.id);
+  }
+  
+  console.log('\nOrders by status:');
+  for (const [status, ids] of Object.entries(statusGroups)) {
+    console.log(`- ${status}: ${ids.join(', ')}`);
+  }
+  
+  console.log('\n=== SCRIPT COMPLETE ===');
 }
+
+// Run the script
+checkOrders().catch(error => {
+  console.error('\n--- UNEXPECTED SCRIPT ERROR ---');
+  console.error(error);
+});
