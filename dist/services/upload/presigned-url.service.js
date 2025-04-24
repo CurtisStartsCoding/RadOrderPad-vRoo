@@ -9,6 +9,7 @@ const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const db_1 = require("../../config/db");
 const config_1 = __importDefault(require("../../config/config"));
 const s3_client_service_1 = __importDefault(require("./s3-client.service"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Generate a presigned URL for uploading a file to S3
  * @param fileType The MIME type of the file
@@ -19,14 +20,25 @@ const s3_client_service_1 = __importDefault(require("./s3-client.service"));
  * @param documentType The type of document (e.g., 'signature', 'report', etc.)
  * @returns Object containing the presigned URL and the file key
  */
-async function getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType = 'signature') {
+async function getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType = 'signature', fileSize) {
     try {
+        logger_1.default.debug('Generating presigned URL', {
+            fileType,
+            fileName,
+            contentType,
+            orderId,
+            patientId,
+            documentType,
+            fileSize
+        });
         // Validate inputs
         if (!fileType || !fileName || !contentType) {
+            logger_1.default.warn('Missing required parameters for presigned URL generation');
             throw new Error('Missing required parameters: fileType, fileName, or contentType');
         }
         // Ensure AWS credentials are configured
         if (!config_1.default.aws.accessKeyId || !config_1.default.aws.secretAccessKey || !config_1.default.aws.s3.bucketName) {
+            logger_1.default.error('AWS credentials or S3 bucket name not configured');
             throw new Error('AWS credentials or S3 bucket name not configured');
         }
         // Validate file type
@@ -35,7 +47,18 @@ async function getUploadUrl(fileType, fileName, contentType, orderId, patientId,
             'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         ];
         if (!allowedFileTypes.includes(contentType)) {
+            logger_1.default.warn(`File type ${contentType} is not allowed`);
             throw new Error(`File type ${contentType} is not allowed. Allowed types: ${allowedFileTypes.join(', ')}`);
+        }
+        // Validate file size if provided
+        if (fileSize) {
+            const maxSizeBytes = contentType === 'application/pdf'
+                ? 20 * 1024 * 1024 // 20MB for PDFs
+                : 5 * 1024 * 1024; // 5MB for other files
+            if (fileSize > maxSizeBytes) {
+                logger_1.default.warn(`File size (${Math.round(fileSize / (1024 * 1024))}MB) exceeds the maximum allowed size (${Math.round(maxSizeBytes / (1024 * 1024))}MB)`);
+                throw new Error(`File size (${Math.round(fileSize / (1024 * 1024))}MB) exceeds the maximum allowed size (${Math.round(maxSizeBytes / (1024 * 1024))}MB)`);
+            }
         }
         // Generate a unique file key
         const timestamp = new Date().getTime();
@@ -48,10 +71,18 @@ async function getUploadUrl(fileType, fileName, contentType, orderId, patientId,
                 const orderResult = await (0, db_1.queryPhiDb)('SELECT referring_organization_id FROM orders WHERE id = $1', [orderId]);
                 if (orderResult.rows.length > 0) {
                     organizationId = orderResult.rows[0].referring_organization_id;
+                    logger_1.default.debug(`Found organization ID ${organizationId} for order ${orderId}`);
+                }
+                else {
+                    logger_1.default.warn(`No organization found for order ${orderId}`);
                 }
             }
             catch (error) {
-                console.error('[FileUploadService] Error getting organization ID:', error);
+                const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                logger_1.default.error('Error getting organization ID from order', {
+                    error: errorMessage,
+                    orderId
+                });
             }
         }
         // Create a path structure following the specification:
@@ -68,7 +99,11 @@ async function getUploadUrl(fileType, fileName, contentType, orderId, patientId,
         // Generate the presigned URL
         const s3Client = s3_client_service_1.default.getClient();
         const presignedUrl = await (0, s3_request_presigner_1.getSignedUrl)(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
-        console.log(`[FileUploadService] Generated presigned URL for ${fileKey}`);
+        logger_1.default.info(`Generated presigned URL for ${fileKey}`, {
+            fileKey,
+            expiresIn: 3600,
+            contentType
+        });
         return {
             success: true,
             presignedUrl,
@@ -76,7 +111,15 @@ async function getUploadUrl(fileType, fileName, contentType, orderId, patientId,
         };
     }
     catch (error) {
-        console.error(`[FileUploadService] Error generating presigned URL: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        logger_1.default.error('Error generating presigned URL', {
+            error: errorMessage,
+            stack: errorStack,
+            fileType,
+            fileName,
+            contentType
+        });
         throw error;
     }
 }

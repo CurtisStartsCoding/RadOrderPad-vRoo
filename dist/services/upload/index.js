@@ -30,8 +30,8 @@ class FileUploadService {
      * @param documentType The type of document (e.g., 'signature', 'report', etc.)
      * @returns Object containing the presigned URL and the file key
      */
-    static async getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType = 'signature') {
-        return (0, presigned_url_service_1.default)(fileType, fileName, contentType, orderId, patientId, documentType);
+    static async getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType = 'signature', fileSize) {
+        return (0, presigned_url_service_1.default)(fileType, fileName, contentType, orderId, patientId, documentType, fileSize);
     }
     /**
      * Confirm a file upload and record it in the database

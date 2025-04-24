@@ -1,5 +1,9 @@
+import { HeadObjectCommand } from '@aws-sdk/client-s3';
 import { queryPhiDb } from '../../config/db';
 import { UploadConfirmationResponse } from './types';
+import { s3ClientSingleton } from './s3-client.service';
+import config from '../../config/config';
+import logger from '../../utils/logger';
 
 /**
  * Confirm a file upload and record it in the database
@@ -27,23 +31,50 @@ export async function confirmUpload(
 ): Promise<UploadConfirmationResponse> {
   try {
     // Validate inputs
-    if (!fileKey || !orderId || !patientId || !documentType) {
+    if (!fileKey || !documentType || !fileName || !fileSize || !contentType) {
       throw new Error('Missing required parameters');
     }
 
     // Check if we're in test mode
     const isTestMode = process.env.NODE_ENV === 'test' ||
-                      (global as any).isTestMode === true ||
+                      (typeof global !== 'undefined' && 'isTestMode' in global && global.isTestMode === true) ||
                       (orderId === 1 || orderId === 999); // Special test order IDs
     
     let documentId: number;
     
     if (isTestMode && (orderId === 1 || orderId === 999)) {
       // In test mode with test order IDs, simulate a successful insert
-      console.log(`[TEST MODE] Simulating document upload for test order ID: ${orderId}`);
+      logger.info(`[TEST MODE] Simulating document upload for test order ID: ${orderId}`);
       documentId = 999; // Use a fake document ID for testing
     } else {
-      // Normal operation - insert record into document_uploads table
+      // Verify the file exists in S3 before creating a database record
+      try {
+        const s3Client = s3ClientSingleton.getClient();
+        const bucketName = config.aws.s3.bucketName;
+        
+        logger.debug('Verifying file exists in S3', {
+          bucket: bucketName,
+          key: fileKey
+        });
+        
+        const headObjectCommand = new HeadObjectCommand({
+          Bucket: bucketName,
+          Key: fileKey
+        });
+        
+        // This will throw an error if the object doesn't exist
+        await s3Client.send(headObjectCommand);
+        
+        logger.info('File verified in S3', { fileKey });
+      } catch (s3Error) {
+        logger.error('File not found in S3 or access denied', {
+          error: s3Error instanceof Error ? s3Error.message : 'Unknown error',
+          fileKey
+        });
+        throw new Error('File not found in S3. Upload may have failed or not completed yet.');
+      }
+      
+      // File exists in S3, now create the database record
       const result = await queryPhiDb(
         `INSERT INTO document_uploads
         (user_id, order_id, patient_id, document_type, filename, file_size, mime_type, file_path, processing_status, uploaded_at)
@@ -54,15 +85,26 @@ export async function confirmUpload(
       documentId = result.rows[0].id;
     }
 
-    console.log(`[FileUploadService] Recorded document upload: ${documentId} for order ${orderId}`);
+    logger.info(`Recorded document upload`, {
+      documentId,
+      orderId,
+      patientId,
+      fileKey
+    });
     
     return {
       success: true,
       documentId
     };
-  } catch (error: any) {
-    console.error('[FileUploadService] Error recording document upload:', error);
-    throw new Error(`Failed to record document upload: ${error.message || 'Unknown error'}`);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error recording document upload', {
+      error: errorMessage,
+      fileKey,
+      orderId,
+      patientId
+    });
+    throw new Error(`Failed to record document upload: ${errorMessage}`);
   }
 }
 

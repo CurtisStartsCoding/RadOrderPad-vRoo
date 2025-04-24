@@ -26,9 +26,13 @@ The RadOrderPad API is organized into several logical sections:
      - `PUT /api/users/{userId}` - Updates profile information for a specific user in the admin's organization
      - `DELETE /api/users/{userId}` - Deactivates a specific user in the admin's organization
 9. [Billing Management](./billing-management.md) - Billing and subscription endpoints
-10. [Validation Engine](./validation-engine.md) - Clinical indications processing and code assignment
-11. [Workflow Guide](./workflow-guide.md) - End-to-end API workflow examples
-12. [Status Summary](./status-summary.md) - Overview of working and non-working endpoints
+10. [Uploads Management](./uploads-management.md) - File upload endpoints
+   - **Key Endpoints**:
+     - `POST /api/uploads/presigned-url` - Generates a presigned URL for uploading a file to S3
+     - `POST /api/uploads/confirm` - Confirms a file upload and creates a database record
+11. [Validation Engine](./validation-engine.md) - Clinical indications processing and code assignment
+12. [Workflow Guide](./workflow-guide.md) - End-to-end API workflow examples
+13. [Status Summary](./status-summary.md) - Overview of working and non-working endpoints
 
 ## API Conventions
 
@@ -291,10 +295,11 @@ This section provides a comprehensive overview of the implementation status acro
   - GET /api/superadmin/users
 - Other superadmin endpoints may not be implemented or tested
 
-### 10. Uploads (0% Complete)
-- Blocked by S3 setup:
-  - POST /api/uploads/presigned-url
-  - POST /api/uploads/confirm
+### 10. Uploads Management (100% Complete)
+- Working endpoints:
+  - POST /api/uploads/presigned-url - Generates a presigned URL for direct S3 upload
+  - POST /api/uploads/confirm - Confirms successful S3 upload and creates a database record in the PHI database
+- Not implemented or tested:
   - GET /uploads/{documentId}/download-url
 
 ## Recent Fixes
@@ -493,6 +498,42 @@ The implementation follows the modular, single-responsibility approach with prop
    - Prevents administrators from deactivating their own accounts
    - Adds proper error handling with appropriate HTTP status codes (400, 401, 403, 404, 500)
    - Returns a 200 OK response with a success message on successful deactivation
+
+### File Upload Endpoints Implementation
+
+The file upload endpoints have been implemented and are now working correctly. These endpoints enable secure file uploads to AWS S3 using the presigned URL pattern.
+
+#### Implementation Details
+
+1. **POST /api/uploads/presigned-url**
+   - Generates a presigned URL for direct S3 upload
+   - Validates file type, size, and other parameters
+   - Returns a presigned URL and file key to the client
+   - Supports various document types (signature, insurance_card, lab_report, etc.)
+   - Implements file size limits (20MB for PDFs, 5MB for other file types)
+
+2. **POST /api/uploads/confirm**
+   - Confirms that a file has been successfully uploaded to S3
+   - Verifies the file exists in S3 before creating a database record
+   - Creates a record in the document_uploads table in the PHI database
+   - Associates the uploaded file with an order and/or patient
+   - Implements proper validation and error handling
+
+#### Security Considerations
+
+The implementation follows the presigned URL pattern for enhanced security:
+- The backend controls access and generates temporary, scoped credentials
+- S3 bucket remains private with no public access
+- Backend AWS credentials are not exposed to the client
+- File uploads go directly to S3, offloading the backend API servers
+- File type validation prevents uploading of potentially malicious files
+
+#### Testing
+
+Both endpoints have been tested using comprehensive test scripts:
+- test-uploads-presigned-url.js/bat/sh for testing the presigned URL endpoint
+- test-uploads-confirm.js/bat/sh for testing the confirm endpoint
+- Tests include various scenarios: valid requests, missing fields, invalid file types, file size limits, authentication requirements
 
 3. The user routes were updated to add the DELETE /:userId route with:
    - authenticateJWT middleware to ensure only authenticated users can access the endpoint

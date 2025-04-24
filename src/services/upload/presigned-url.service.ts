@@ -4,6 +4,7 @@ import { queryPhiDb } from '../../config/db';
 import config from '../../config/config';
 import { PresignedUrlResponse } from './types';
 import s3ClientSingleton from './s3-client.service';
+import logger from '../../utils/logger';
 
 /**
  * Generate a presigned URL for uploading a file to S3
@@ -21,16 +22,29 @@ export async function getUploadUrl(
   contentType: string,
   orderId?: number,
   patientId?: number,
-  documentType: string = 'signature'
+  documentType: string = 'signature',
+  fileSize?: number
 ): Promise<PresignedUrlResponse> {
   try {
+    logger.debug('Generating presigned URL', {
+      fileType,
+      fileName,
+      contentType,
+      orderId,
+      patientId,
+      documentType,
+      fileSize
+    });
+    
     // Validate inputs
     if (!fileType || !fileName || !contentType) {
+      logger.warn('Missing required parameters for presigned URL generation');
       throw new Error('Missing required parameters: fileType, fileName, or contentType');
     }
 
     // Ensure AWS credentials are configured
     if (!config.aws.accessKeyId || !config.aws.secretAccessKey || !config.aws.s3.bucketName) {
+      logger.error('AWS credentials or S3 bucket name not configured');
       throw new Error('AWS credentials or S3 bucket name not configured');
     }
 
@@ -41,7 +55,20 @@ export async function getUploadUrl(
     ];
     
     if (!allowedFileTypes.includes(contentType)) {
+      logger.warn(`File type ${contentType} is not allowed`);
       throw new Error(`File type ${contentType} is not allowed. Allowed types: ${allowedFileTypes.join(', ')}`);
+    }
+    
+    // Validate file size if provided
+    if (fileSize) {
+      const maxSizeBytes = contentType === 'application/pdf'
+        ? 20 * 1024 * 1024  // 20MB for PDFs
+        : 5 * 1024 * 1024;  // 5MB for other files
+        
+      if (fileSize > maxSizeBytes) {
+        logger.warn(`File size (${Math.round(fileSize / (1024 * 1024))}MB) exceeds the maximum allowed size (${Math.round(maxSizeBytes / (1024 * 1024))}MB)`);
+        throw new Error(`File size (${Math.round(fileSize / (1024 * 1024))}MB) exceeds the maximum allowed size (${Math.round(maxSizeBytes / (1024 * 1024))}MB)`);
+      }
     }
     
     // Generate a unique file key
@@ -60,9 +87,16 @@ export async function getUploadUrl(
         
         if (orderResult.rows.length > 0) {
           organizationId = orderResult.rows[0].referring_organization_id;
+          logger.debug(`Found organization ID ${organizationId} for order ${orderId}`);
+        } else {
+          logger.warn(`No organization found for order ${orderId}`);
         }
-      } catch (error: any) {
-        console.error('[FileUploadService] Error getting organization ID:', error);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        logger.error('Error getting organization ID from order', {
+          error: errorMessage,
+          orderId
+        });
       }
     }
     
@@ -84,7 +118,11 @@ export async function getUploadUrl(
     const s3Client = s3ClientSingleton.getClient();
     const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
 
-    console.log(`[FileUploadService] Generated presigned URL for ${fileKey}`);
+    logger.info(`Generated presigned URL for ${fileKey}`, {
+      fileKey,
+      expiresIn: 3600,
+      contentType
+    });
     
     return {
       success: true,
@@ -92,8 +130,17 @@ export async function getUploadUrl(
       filePath: fileKey
     };
     
-  } catch (error: any) {
-    console.error(`[FileUploadService] Error generating presigned URL: ${error.message}`);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
+    logger.error('Error generating presigned URL', {
+      error: errorMessage,
+      stack: errorStack,
+      fileType,
+      fileName,
+      contentType
+    });
     throw error;
   }
 }

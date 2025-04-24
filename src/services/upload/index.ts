@@ -1,3 +1,4 @@
+import { S3Client } from '@aws-sdk/client-s3';
 import { s3ClientSingleton } from './s3-client.service';
 import getUploadUrl from './presigned-url.service';
 import confirmUpload from './document-upload.service';
@@ -10,7 +11,7 @@ export class FileUploadService {
   /**
    * Initialize the S3 client
    */
-  private static getS3Client() {
+  private static getS3Client(): S3Client {
     return s3ClientSingleton.getClient();
   }
 
@@ -30,9 +31,10 @@ export class FileUploadService {
     contentType: string,
     orderId?: number,
     patientId?: number,
-    documentType: string = 'signature'
+    documentType: string = 'signature',
+    fileSize?: number
   ): Promise<PresignedUrlResponse> {
-    return getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType);
+    return getUploadUrl(fileType, fileName, contentType, orderId, patientId, documentType, fileSize);
   }
 
   /**

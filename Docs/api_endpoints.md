@@ -94,8 +94,8 @@
 
 ## File Uploads (`/uploads`)
 
--   `POST /uploads/presigned-url`: Request a presigned URL for direct S3 upload. **(Authenticated - Context specific roles)**
--   `POST /uploads/confirm`: Confirm successful S3 upload and create DB record. **(Authenticated - Context specific roles)**
+-   `POST /uploads/presigned-url`: Request a presigned URL for direct S3 upload. **(Authenticated - physician, admin_referring, admin_radiology, radiologist, admin_staff roles)** [Implemented]
+-   `POST /uploads/confirm`: Confirm successful S3 upload and create DB record. **(Authenticated - physician, admin_referring, admin_radiology, radiologist, admin_staff roles)** [Implemented]
 
 ## Billing (`/billing`)
 

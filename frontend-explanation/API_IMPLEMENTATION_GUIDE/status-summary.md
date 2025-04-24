@@ -61,6 +61,10 @@ The following endpoints were tested and are working correctly in the production 
 - `PUT /api/organizations/mine`: Update details of the authenticated user's organization (tested with admin_referring and admin_radiology roles)
 - `GET /api/organizations`: Search for potential partner organizations (tested with admin_referring and admin_radiology roles)
 
+### Uploads Management
+- `POST /api/uploads/presigned-url`: Generate a presigned URL for direct S3 upload (tested with admin_referring role)
+- `POST /api/uploads/confirm`: Confirm successful S3 upload and create database record (tested with admin_referring role)
+
 ## Endpoints with Method Restrictions
 
 The following endpoints have specific method restrictions by design:
@@ -130,7 +134,14 @@ Based on the testing results, frontend developers should:
    - Implement a form for invited users to accept invitations using the `POST /api/user-invites/accept-invitation` endpoint
    - Validate password strength and required fields
    - Store the JWT token returned upon successful acceptance for authentication
-|
-7. **Consider implementing the missing GET /api/billing endpoint** if billing information is needed:
-   - This would require backend changes to add the endpoint
-   - In the meantime, consider using alternative approaches to display billing information
+   
+   7. **Implement file upload functionality** using the presigned URL pattern:
+      - Use the `POST /api/uploads/presigned-url` endpoint to get a presigned URL for S3 upload
+      - Upload the file directly to S3 using the presigned URL
+      - Confirm the upload using the `POST /api/uploads/confirm` endpoint
+      - Handle file type validation and size limits (20MB for PDFs, 5MB for other file types)
+      - Implement proper error handling for S3 upload failures
+   
+   8. **Consider implementing the missing GET /api/billing endpoint** if billing information is needed:
+      - This would require backend changes to add the endpoint
+      - In the meantime, consider using alternative approaches to display billing information

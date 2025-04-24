@@ -8,7 +8,7 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (17)
+### 1. Working Endpoints (19)
 - **GET /api/organizations** - Fully functional, allows searching for potential partner organizations
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **PUT /api/organizations/mine** - Fully functional, allows admins to update their organization's profile
@@ -26,10 +26,10 @@ We have tested all the missing endpoints and documented their current status:
 - **GET /api/users/{userId}** - Fully functional, allows admins to view users in their organization
 - **PUT /api/users/{userId}** - Fully functional, allows admins to update users in their organization
 - **DELETE /api/users/{userId}** - Fully functional, allows admins to deactivate users in their organization
+- **POST /api/uploads/presigned-url** - Fully functional, generates a presigned URL for direct S3 upload
+- **POST /api/uploads/confirm** - Fully functional, confirms S3 upload and creates a database record
 
-### 2. Endpoints That Exist But Need Further Verification (3)
-- **POST /api/uploads/presigned-url** - Exists but has server-side configuration issue with AWS credentials
-- **POST /api/uploads/confirm** - Not tested (requires valid fileKey from previous step)
+### 2. Endpoints That Exist But Need Further Verification (1)
 - **POST /api/admin/orders/{orderId}/paste-summary** - Exists but has database schema issues ("column authorization_number does not exist")
 
 ### 3. Endpoints With Implementation Issues (0)
@@ -89,9 +89,15 @@ All endpoints have been documented in their respective files:
 - Authentication: all roles for GET /organizations/mine, admin_referring and admin_radiology roles for PUT, admin_referring role for POST
 
 ### 2. Uploads Management
-- The presigned-url endpoint exists but returns a 500 error with the message "AWS credentials or S3 bucket name not configured"
-- We identified that fileType is a required field in addition to fileName and contentType
-- The confirm endpoint could not be tested without a valid fileKey from the presigned-url endpoint
+- The POST /api/uploads/presigned-url endpoint is now fully functional
+- The endpoint generates a presigned URL for direct S3 upload
+- Required fields: fileName, fileType, contentType
+- Optional fields: documentType, orderId, patientId, fileSize
+- File size limits: 20MB for PDFs, 5MB for other file types
+- The POST /api/uploads/confirm endpoint is now fully functional
+- The endpoint verifies the file exists in S3 before creating a database record
+- Required fields: fileKey, orderId, patientId, documentType, fileName, fileSize, contentType
+- The endpoint creates a record in the document_uploads table in the PHI database
 
 ### 3. Admin Order Management
 - The paste-summary endpoint has a database schema issue with the "authorization_number" column
@@ -109,8 +115,9 @@ All endpoints have been documented in their respective files:
 
 Based on our comprehensive testing, here are the next steps to complete the API documentation:
 
-1. **Fix the uploads/presigned-url endpoint**
-   - Configure AWS credentials and S3 bucket name on the server
+1. ~~**Fix the uploads/presigned-url endpoint**~~ - COMPLETED
+   - ~~Configure AWS credentials and S3 bucket name on the server~~
+   - Both uploads/presigned-url and uploads/confirm endpoints are now fully functional
 
 2. **Fix the paste-summary endpoint**
    - Investigate the database schema issue with the "authorization_number" column

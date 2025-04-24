@@ -20,7 +20,7 @@ export declare class FileUploadService {
      * @param documentType The type of document (e.g., 'signature', 'report', etc.)
      * @returns Object containing the presigned URL and the file key
      */
-    static getUploadUrl(fileType: string, fileName: string, contentType: string, orderId?: number, patientId?: number, documentType?: string): Promise<PresignedUrlResponse>;
+    static getUploadUrl(fileType: string, fileName: string, contentType: string, orderId?: number, patientId?: number, documentType?: string, fileSize?: number): Promise<PresignedUrlResponse>;
     /**
      * Confirm a file upload and record it in the database
      * @param fileKey The S3 file key

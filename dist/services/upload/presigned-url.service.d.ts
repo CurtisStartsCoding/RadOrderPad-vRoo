@@ -9,5 +9,5 @@ import { PresignedUrlResponse } from './types';
  * @param documentType The type of document (e.g., 'signature', 'report', etc.)
  * @returns Object containing the presigned URL and the file key
  */
-export declare function getUploadUrl(fileType: string, fileName: string, contentType: string, orderId?: number, patientId?: number, documentType?: string): Promise<PresignedUrlResponse>;
+export declare function getUploadUrl(fileType: string, fileName: string, contentType: string, orderId?: number, patientId?: number, documentType?: string, fileSize?: number): Promise<PresignedUrlResponse>;
 export default getUploadUrl;
