@@ -8,8 +8,9 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (15)
+### 1. Working Endpoints (16)
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
+- **PUT /api/organizations/mine** - Fully functional, allows admins to update their organization's profile
 - **POST /api/organizations/mine/locations** - Fully functional, returns 201 with location data
 - **POST /api/admin/orders/{orderId}/paste-supplemental** - Works with order IDs 600, 601, 603, 604, 609, 612
 - **PUT /api/admin/orders/{orderId}/patient-info** - Works with order IDs 600, 601, 603, 604, 609, 612
@@ -43,6 +44,7 @@ All endpoints have been documented in their respective files:
 
 ### 1. Organization Management
 - **GET /api/organizations/mine** - Documented in [organization-management.md](./organization-management.md)
+- **PUT /api/organizations/mine** - Documented in [organization-management.md](./organization-management.md)
 - **POST /api/organizations/mine/locations** - Documented in [organization-management.md](./organization-management.md)
 
 ### 2. Uploads Management
@@ -73,9 +75,11 @@ All endpoints have been documented in their respective files:
 
 ### 1. Organization Management
 - The GET /api/organizations/mine endpoint is fully functional and returns organization details, locations, and users
+- The PUT /api/organizations/mine endpoint is fully functional and allows admins to update their organization's profile
+- The endpoint validates input data and prevents updates to restricted fields (id, type, status, credit_balance, billing_id, subscription_tier)
 - The POST /api/organizations/mine/locations endpoint is fully functional and returns a 201 status code with the created location data
 - Required fields for location creation: name, address_line1, city, state, zip_code
-- Authentication: all roles for GET, admin_referring role for POST
+- Authentication: all roles for GET, admin_referring and admin_radiology roles for PUT, admin_referring role for POST
 
 ### 2. Uploads Management
 - The presigned-url endpoint exists but returns a 500 error with the message "AWS credentials or S3 bucket name not configured"

@@ -12,9 +12,7 @@ const router = express_1.default.Router();
 router.use(auth_1.authenticateJWT);
 // Organization routes
 router.get('/mine', index_js_2.default.getMyOrganization);
-router.put('/mine', (0, auth_1.authorizeRole)(['admin_referring', 'admin_radiology']), (req, res) => {
-    res.status(501).json({ message: 'Not implemented yet' });
-});
+router.put('/mine', (0, auth_1.authorizeRole)(['admin_referring', 'admin_radiology']), index_js_2.default.updateMyOrganization);
 // Location routes
 // Only admin roles can manage locations
 const adminRoles = ['admin_referring', 'admin_radiology'];

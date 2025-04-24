@@ -274,12 +274,12 @@ This section provides a comprehensive overview of the implementation status acro
 - Missing or untested endpoints:
   - User location assignment endpoints
 
-### 8. Organization Management (40-50% Complete)
+### 8. Organization Management (50-60% Complete)
 - Working endpoints:
   - POST /api/organizations/mine/locations
   - GET /api/organizations/mine (fixed but may still have issues)
+  - PUT /api/organizations/mine (newly implemented)
 - Not working or untested:
-  - PUT /api/organizations/mine (returns 501 "Not implemented yet")
   - GET /api/organizations (by design)
   - GET /api/organizations/{organizationId} (by design)
   - PUT /api/organizations/{organizationId} (by design)
@@ -513,6 +513,49 @@ The implementation has been tested using the `test-deactivate-org-user.js` scrip
 - Tests organization boundary enforcement (cannot deactivate users in other organizations)
 - Tests self-deactivation prevention
 - Tests validation of input parameters
+- Tests authentication and authorization requirements
+
+Both batch (.bat) and shell (.sh) scripts have been created to run the test.
+
+### Organization Profile Update Endpoint Implementation
+
+The `PUT /api/organizations/mine` endpoint has been implemented and is now working correctly. This endpoint allows organization administrators to update their organization's profile information.
+
+#### Implementation Details
+
+The implementation follows the modular, single-responsibility approach with proper validation and error handling:
+
+1. A new service function `updateOrganizationProfile` was created in `src/services/organization/update-organization-profile.service.ts` that:
+   - Handles updating organization profile data
+   - Validates input fields
+   - Uses queryMainDb for database operations
+   - Returns the updated organization profile
+
+2. The organization controller was updated with an `updateMyOrganizationController` method that:
+   - Extracts allowed updatable fields from request body (name, npi, tax_id, address_line1, address_line2, city, state, zip_code, phone_number, fax_number, contact_email, website, logo_url)
+   - Implements validation for request body fields
+   - Adds proper error handling with appropriate HTTP status codes
+   - Returns a 200 OK response with the updated organization profile on success
+
+3. The organization routes were updated to add the PUT /mine route with:
+   - authenticateJWT middleware to ensure only authenticated users can access the endpoint
+   - authorizeRole middleware to restrict access to admin_referring and admin_radiology roles
+   - JSDoc comments for API documentation
+
+#### Security Considerations
+
+The endpoint is designed with security in mind:
+- Only allows administrators to update their own organization's profile
+- Restricts which fields can be updated (name, npi, tax_id, address_line1, address_line2, city, state, zip_code, phone_number, fax_number, contact_email, website, logo_url)
+- Explicitly prevents updating sensitive fields like id, type, status, credit_balance, billing_id, subscription_tier, assigned_account_manager_id
+- Validates email format and website URL format
+
+#### Testing
+
+The implementation has been tested using the `test-update-org-mine.js` script, which:
+- Tests successful organization profile updates
+- Tests validation of input fields
+- Tests handling of restricted fields
 - Tests authentication and authorization requirements
 
 Both batch (.bat) and shell (.sh) scripts have been created to run the test.

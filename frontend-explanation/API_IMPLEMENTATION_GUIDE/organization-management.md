@@ -322,8 +322,74 @@ The following organization-related endpoints have path restrictions:
 - `GET /api/organizations/{organizationId}`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path.
 - `PUT /api/organizations/{organizationId}`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path.
 
-## Not Implemented Endpoints
+## Update Current Organization
 
-The following organization-related endpoints are not fully implemented:
+**Endpoint:** `PUT /api/organizations/mine`
 
-- `PUT /api/organizations/mine`: Returns 501 "Not implemented yet" error - The endpoint exists but is not fully implemented.
+**Description:** Updates information about the current user's organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**Request Body:**
+```json
+{
+  "name": "Updated Medical Group",
+  "address_line1": "456 New St",
+  "address_line2": "Suite 200",
+  "city": "Newtown",
+  "state": "CA",
+  "zip_code": "54321",
+  "phone_number": "555-987-6543",
+  "fax_number": "555-987-6544",
+  "contact_email": "contact@updatedmedical.com",
+  "website": "https://updatedmedical.com",
+  "logo_url": "https://updatedmedical.com/logo.png",
+  "npi": "9876543210",
+  "tax_id": "98-7654321"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Organization profile updated successfully",
+  "data": {
+    "id": 1,
+    "name": "Updated Medical Group",
+    "type": "referring_practice",
+    "npi": "9876543210",
+    "address_line1": "456 New St",
+    "address_line2": "Suite 200",
+    "city": "Newtown",
+    "state": "CA",
+    "zip_code": "54321",
+    "phone_number": "555-987-6543",
+    "fax_number": "555-987-6544",
+    "contact_email": "contact@updatedmedical.com",
+    "website": "https://updatedmedical.com",
+    "logo_url": "https://updatedmedical.com/logo.png",
+    "tax_id": "98-7654321",
+    "status": "active",
+    "created_at": "2025-04-01T12:00:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role
+- 400 Bad Request: If the request body is invalid or empty
+- 404 Not Found: If the organization does not exist
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to update information about the current user's organization.
+- Use this endpoint when implementing the organization profile edit view.
+- Restricted fields (id, type, status, credit_balance, billing_id, subscription_tier) cannot be updated through this endpoint.
+- Email and website URLs are validated for proper format.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-update-org-mine.js
+- **Notes:** Successfully updates organization details for the authenticated admin's organization. Previously returned 501 "Not implemented yet" but has now been fully implemented.

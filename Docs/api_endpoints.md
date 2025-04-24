@@ -24,7 +24,7 @@
 ## Organizations (`/organizations`)
 
 -   `GET /organizations/mine`: Get details of the authenticated user's organization. **(Authenticated)**
--   `PUT /organizations/mine`: Update details of the authenticated user's organization. **(Admin Role)**
+-   `PUT /organizations/mine`: Update details of the authenticated user's organization. **(Admin Role)** [Implemented]
 -   `GET /organizations`: Search for potential partner organizations. **(Admin Role)**
 
 ### Organization Locations (`/organizations/.../locations`)

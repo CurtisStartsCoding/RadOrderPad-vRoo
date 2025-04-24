@@ -56,6 +56,10 @@ The following endpoints were tested and are working correctly in the production 
 - `POST /api/billing/create-checkout-session`: Create a Stripe checkout session for purchasing credit bundles
 - `POST /api/billing/subscriptions`: Create a Stripe subscription for a specific pricing tier
 
+### Organization Management
+- `GET /api/organizations/mine`: Get details of the authenticated user's organization
+- `PUT /api/organizations/mine`: Update details of the authenticated user's organization (tested with admin_referring and admin_radiology roles)
+
 ## Endpoints with Method Restrictions
 
 The following endpoints have specific method restrictions by design:
@@ -87,7 +91,6 @@ The following endpoints work correctly but are restricted to specific roles:
 
 The following endpoints were tested but are not currently working in the production deployment:
 
-- `GET /api/organizations/mine`: Returns 501 "Not implemented yet" error - The endpoint exists but is not fully implemented
 - `GET /api/billing`: Returns 404 "Route not found" error - The dist/routes/billing.routes.js file does not define a handler for the base GET / path. It only defines POST routes for creating checkout sessions and subscriptions.
 
 ## Implementation Recommendations for Frontend Developers

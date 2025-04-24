@@ -11,9 +11,7 @@ router.use(authenticateJWT);
 // Organization routes
 router.get('/mine', organizationController.getMyOrganization);
 
-router.put('/mine', authorizeRole(['admin_referring', 'admin_radiology']), (req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
+router.put('/mine', authorizeRole(['admin_referring', 'admin_radiology']), organizationController.updateMyOrganization);
 
 // Location routes
 // Only admin roles can manage locations
