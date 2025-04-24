@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.assignUserToLocation = assignUserToLocation;
 const db_1 = require("../../../../config/db");
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Assign a user to a location
  * @param userId User ID
@@ -41,7 +45,13 @@ async function assignUserToLocation(userId, locationId, orgId) {
     }
     catch (error) {
         await client.query('ROLLBACK');
-        console.error('Error in assignUserToLocation:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        logger_1.default.error('Error in assignUserToLocation', {
+            error: errorMessage,
+            userId,
+            locationId,
+            orgId
+        });
         throw error;
     }
     finally {

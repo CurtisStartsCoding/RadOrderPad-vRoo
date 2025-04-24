@@ -29,11 +29,11 @@
 
 ### Organization Locations (`/organizations/.../locations`)
 
--   `GET /organizations/mine/locations`: List locations for the user's own organization. **(Admin Role)**
--   `POST /organizations/mine/locations`: Add a new location to the user's own organization. **(Admin Role)**
--   `GET /organizations/mine/locations/{locationId}`: Get details of a specific location within the user's org. **(Admin Role)**
--   `PUT /organizations/mine/locations/{locationId}`: Update details of a specific location within the user's org. **(Admin Role)**
--   `DELETE /organizations/mine/locations/{locationId}`: Deactivate a location within the user's org (sets `is_active=false`). **(Admin Role)**
+-   `GET /organizations/mine/locations`: List locations for the user's own organization. **(Admin Role)** [Implemented]
+-   `POST /organizations/mine/locations`: Add a new location to the user's own organization. **(Admin Role)** [Implemented]
+-   `GET /organizations/mine/locations/{locationId}`: Get details of a specific location within the user's org. **(Admin Role)** [Implemented]
+-   `PUT /organizations/mine/locations/{locationId}`: Update details of a specific location within the user's org. **(Admin Role)** [Implemented]
+-   `DELETE /organizations/mine/locations/{locationId}`: Deactivate a location within the user's org (sets `is_active=false`). **(Admin Role)** [Implemented]
     *(Note: Consider if GET /organizations/{orgId}/locations is needed for SuperAdmin or specific partner visibility)*
 
 ## Users (`/users`)
@@ -47,11 +47,11 @@
 -   `PUT /users/{userId}`: Update details of a specific user within the admin's org (including name, role, specialty, active status). Enforces organization boundaries and role assignment restrictions. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 -   `DELETE /users/{userId}`: Deactivate a user within the admin's org. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 
-### User Location Assignments (`/users/.../locations`) - *If using user_locations join table*
+### User Location Assignments (`/user-locations/.../locations`) - *Using user_locations join table*
 
--   `GET /users/{userId}/locations`: List locations assigned to a specific user (within admin's org). **(Admin Role)**
--   `POST /users/{userId}/locations/{locationId}`: Assign a user to a location (within admin's org). **(Admin Role)**
--   `DELETE /users/{userId}/locations/{locationId}`: Unassign a user from a location (within admin's org). **(Admin Role)**
+-   `GET /user-locations/{userId}/locations`: List locations assigned to a specific user (within admin's org). **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `POST /user-locations/{userId}/locations/{locationId}`: Assign a user to a location (within admin's org). **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `DELETE /user-locations/{userId}/locations/{locationId}`: Unassign a user from a location (within admin's org). **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 
 ## Connections (`/connections`)
 

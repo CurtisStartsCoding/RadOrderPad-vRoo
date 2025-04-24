@@ -18,6 +18,7 @@ The RadOrderPad API is organized into several logical sections:
 7. [Organization Management](./organization-management.md) - Organization-related endpoints
 8. [User Management](./user-management.md) - User-related endpoints
    - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature
+   - [User Location Assignment Guide](./user-location-assignment-guide.md) - Detailed guide for implementing user location assignment functionality
    - **Key Endpoints**:
      - `GET /api/users/me` - Retrieves profile information for the authenticated user
      - `PUT /api/users/me` - Updates profile information for the authenticated user
@@ -265,29 +266,32 @@ This section provides a comprehensive overview of the implementation status acro
   - GET /api/billing/credit-usage (not implemented)
 - Internal webhook handling and credit management are implemented
 
-### 7. User Management (90-100% Complete)
+### 7. User Management (100% Complete)
 - Working endpoints:
   - GET /api/users/me
-  - PUT /api/users/me (newly implemented)
+  - PUT /api/users/me (implemented)
   - GET /api/users (admin_referring, admin_radiology roles only)
   - GET /api/users/{userId} (admin_referring, admin_radiology roles only)
   - PUT /api/users/{userId} (admin_referring, admin_radiology roles only)
   - POST /api/user-invites/invite
   - POST /api/user-invites/accept-invitation
-  - DELETE /api/users/{userId} (newly implemented)
-- Missing or untested endpoints:
-  - User location assignment endpoints
+  - DELETE /api/users/{userId} (implemented)
+  - GET /api/user-locations/{userId}/locations (implemented)
+  - POST /api/user-locations/{userId}/locations/{locationId} (implemented)
+  - DELETE /api/user-locations/{userId}/locations/{locationId} (implemented)
 
-### 8. Organization Management (60-70% Complete)
+### 8. Organization Management (80-90% Complete)
 - Working endpoints:
   - POST /api/organizations/mine/locations
   - GET /api/organizations/mine (fixed but may still have issues)
   - PUT /api/organizations/mine (implemented)
-  - GET /api/organizations (newly implemented - search for potential partner organizations)
+  - GET /api/organizations (implemented - search for potential partner organizations)
+  - GET /api/organizations/mine/locations/{locationId} (implemented)
+  - PUT /api/organizations/mine/locations/{locationId} (implemented)
+  - DELETE /api/organizations/mine/locations/{locationId} (implemented)
 - Not working or untested:
   - GET /api/organizations/{organizationId} (by design)
   - PUT /api/organizations/{organizationId} (by design)
-  - Location management endpoints (GET, PUT, DELETE)
 
 ### 9. Superadmin Management (50-60% Complete)
 - Working endpoints:

@@ -1,5 +1,6 @@
 import { queryMainDb } from '../../../../config/db';
 import { LocationResponse } from '../../types';
+import logger from '../../../../utils/logger';
 
 /**
  * List locations assigned to a user
@@ -31,7 +32,12 @@ export async function listUserLocations(userId: number, orgId: number): Promise<
     
     return result.rows;
   } catch (error) {
-    console.error('Error in listUserLocations:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error in listUserLocations', {
+      error: errorMessage,
+      userId,
+      orgId
+    });
     throw error;
   }
 }

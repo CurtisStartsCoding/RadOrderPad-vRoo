@@ -51,6 +51,9 @@ The following endpoints were tested and are working correctly in the production 
 - `GET /api/users`: List all users belonging to the authenticated administrator's organization (tested with admin_referring and admin_radiology roles)
 - `POST /api/user-invites/invite`: Invite a new user to join the organization (tested with admin_referring role)
 - `POST /api/user-invites/accept-invitation`: Accept an invitation and create a user account (public endpoint)
+- `GET /api/user-locations/{userId}/locations`: List locations assigned to a specific user (tested with admin_referring and admin_radiology roles)
+- `POST /api/user-locations/{userId}/locations/{locationId}`: Assign a user to a location (tested with admin_referring and admin_radiology roles)
+- `DELETE /api/user-locations/{userId}/locations/{locationId}`: Unassign a user from a location (tested with admin_referring and admin_radiology roles)
 
 ### Billing Management
 - `POST /api/billing/create-checkout-session`: Create a Stripe checkout session for purchasing credit bundles
@@ -142,6 +145,14 @@ Based on the testing results, frontend developers should:
       - Handle file type validation and size limits (20MB for PDFs, 5MB for other file types)
       - Implement proper error handling for S3 upload failures
    
-   8. **Consider implementing the missing GET /api/billing endpoint** if billing information is needed:
+   8. **Implement user location assignment functionality**:
+      - Use the `GET /api/user-locations/{userId}/locations` endpoint to retrieve locations assigned to a user
+      - Use the `POST /api/user-locations/{userId}/locations/{locationId}` endpoint to assign a user to a location
+      - Use the `DELETE /api/user-locations/{userId}/locations/{locationId}` endpoint to unassign a user from a location
+      - Implement a user location management interface for administrators
+      - Ensure proper error handling for 404 responses (user or location not found, or not in admin's organization)
+      - Use this functionality to restrict users to specific locations within their organization
+   
+   9. **Consider implementing the missing GET /api/billing endpoint** if billing information is needed:
       - This would require backend changes to add the endpoint
       - In the meantime, consider using alternative approaches to display billing information

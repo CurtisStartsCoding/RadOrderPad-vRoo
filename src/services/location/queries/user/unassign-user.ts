@@ -1,4 +1,5 @@
 import { getMainDbClient } from '../../../../config/db';
+import logger from '../../../../utils/logger';
 
 /**
  * Unassign a user from a location
@@ -47,7 +48,13 @@ export async function unassignUserFromLocation(userId: number, locationId: numbe
     return result.rowCount !== null && result.rowCount > 0;
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('Error in unassignUserFromLocation:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error in unassignUserFromLocation', {
+      error: errorMessage,
+      userId,
+      locationId,
+      orgId
+    });
     throw error;
   } finally {
     client.release();

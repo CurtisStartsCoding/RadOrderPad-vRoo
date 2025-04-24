@@ -421,3 +421,153 @@ The following organization-related endpoints have path restrictions:
 - **Status:** Working
 - **Tested With:** test-update-org-mine.js
 - **Notes:** Successfully updates organization details for the authenticated admin's organization. Previously returned 501 "Not implemented yet" but has now been fully implemented.
+
+## Get Location Details
+
+**Endpoint:** `GET /api/organizations/mine/locations/{locationId}`
+
+**Description:** Retrieves details of a specific location within the user's organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**URL Parameters:**
+- `locationId`: The ID of the location to retrieve
+
+**Response:**
+```json
+{
+  "location": {
+    "id": 1,
+    "organization_id": 1,
+    "name": "Main Office",
+    "address_line1": "123 Main St",
+    "address_line2": "Suite 100",
+    "city": "Anytown",
+    "state": "CA",
+    "zip_code": "12345",
+    "phone_number": "555-123-4567",
+    "is_active": true,
+    "created_at": "2025-04-01T12:00:00.000Z",
+    "updated_at": "2025-04-01T12:00:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the locationId is not a valid number
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role
+- 404 Not Found: If the location does not exist or does not belong to the user's organization
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to retrieve details of a specific location within the user's organization.
+- The location must belong to the user's organization and be active.
+- Use this endpoint when implementing the location detail view.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-location-management.js (with bat/sh wrappers)
+- **Notes:** Successfully retrieves location details for the authenticated admin's organization. Tests were implemented using a JavaScript script for more reliable testing.
+
+## Update Location
+
+**Endpoint:** `PUT /api/organizations/mine/locations/{locationId}`
+
+**Description:** Updates details of a specific location within the user's organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**URL Parameters:**
+- `locationId`: The ID of the location to update
+
+**Request Body:**
+```json
+{
+  "name": "Updated Office",
+  "address_line1": "456 New St",
+  "address_line2": "Suite 200",
+  "city": "Newtown",
+  "state": "CA",
+  "zip_code": "54321",
+  "phone_number": "555-987-6543"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Location updated successfully",
+  "location": {
+    "id": 1,
+    "organization_id": 1,
+    "name": "Updated Office",
+    "address_line1": "456 New St",
+    "address_line2": "Suite 200",
+    "city": "Newtown",
+    "state": "CA",
+    "zip_code": "54321",
+    "phone_number": "555-987-6543",
+    "is_active": true,
+    "created_at": "2025-04-01T12:00:00.000Z",
+    "updated_at": "2025-04-22T18:30:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the locationId is not a valid number or if the request body is invalid (e.g., missing required fields)
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role
+- 404 Not Found: If the location does not exist or does not belong to the user's organization
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to update details of a specific location within the user's organization.
+- The location must belong to the user's organization and be active.
+- Required fields: name
+- Optional fields: address_line1, address_line2, city, state, zip_code, phone_number
+- Use this endpoint when implementing the location edit view.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-location-management.js (with bat/sh wrappers)
+- **Notes:** Successfully updates location details for the authenticated admin's organization. Tests were implemented using a JavaScript script for more reliable testing.
+
+## Deactivate Location
+
+**Endpoint:** `DELETE /api/organizations/mine/locations/{locationId}`
+
+**Description:** Deactivates a location within the user's organization (sets `is_active=false`).
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**URL Parameters:**
+- `locationId`: The ID of the location to deactivate
+
+**Response:**
+```json
+{
+  "message": "Location deactivated successfully",
+  "locationId": 1
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the locationId is not a valid number
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role
+- 404 Not Found: If the location does not exist, does not belong to the user's organization, or is already deactivated
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to deactivate a location within the user's organization.
+- The location must belong to the user's organization and be active.
+- Deactivating a location sets its `is_active` flag to false but does not delete it from the database.
+- After deactivation, the location will no longer be returned by the GET /organizations/mine/locations endpoint.
+- Use this endpoint when implementing the location management view.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-location-management.js (with bat/sh wrappers)
+- **Notes:** Successfully deactivates locations for the authenticated admin's organization. Tests were implemented using a JavaScript script for more reliable testing.

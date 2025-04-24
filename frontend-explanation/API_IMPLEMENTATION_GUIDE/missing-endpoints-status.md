@@ -8,7 +8,7 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (19)
+### 1. Working Endpoints (25)
 - **GET /api/organizations** - Fully functional, allows searching for potential partner organizations
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **PUT /api/organizations/mine** - Fully functional, allows admins to update their organization's profile
@@ -28,6 +28,12 @@ We have tested all the missing endpoints and documented their current status:
 - **DELETE /api/users/{userId}** - Fully functional, allows admins to deactivate users in their organization
 - **POST /api/uploads/presigned-url** - Fully functional, generates a presigned URL for direct S3 upload
 - **POST /api/uploads/confirm** - Fully functional, confirms S3 upload and creates a database record
+- **GET /api/user-locations/{userId}/locations** - Fully functional, retrieves locations assigned to a user
+- **POST /api/user-locations/{userId}/locations/{locationId}** - Fully functional, assigns a user to a location
+- **DELETE /api/user-locations/{userId}/locations/{locationId}** - Fully functional, unassigns a user from a location
+- **GET /api/organizations/mine/locations/{locationId}** - Fully functional, retrieves details of a specific location
+- **PUT /api/organizations/mine/locations/{locationId}** - Fully functional, updates details of a specific location
+- **DELETE /api/organizations/mine/locations/{locationId}** - Fully functional, deactivates a location
 
 ### 2. Endpoints That Exist But Need Further Verification (1)
 - **POST /api/admin/orders/{orderId}/paste-summary** - Exists but has database schema issues ("column authorization_number does not exist")

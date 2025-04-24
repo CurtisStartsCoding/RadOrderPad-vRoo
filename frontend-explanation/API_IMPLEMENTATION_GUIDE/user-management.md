@@ -2,6 +2,155 @@
 
 This section covers endpoints related to user management in the RadOrderPad system.
 
+## User Location Assignments
+
+The following endpoints are used to manage user location assignments. These endpoints allow organization administrators to assign users to specific locations within their organization.
+
+**Note:** These endpoints are mounted at `/api/user-locations` instead of `/api/users` to avoid conflicts with other user-related endpoints.
+
+### List User Locations
+
+**Endpoint:** `GET /api/user-locations/{userId}/locations`
+
+**Description:** Retrieves a list of locations assigned to a specific user within the admin's organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**URL Parameters:**
+- `userId`: The ID of the user to retrieve locations for
+
+**Response:**
+```json
+{
+  "locations": [
+    {
+      "id": 1,
+      "organization_id": 1,
+      "name": "Main Office",
+      "address_line1": "123 Main St",
+      "address_line2": "Suite 100",
+      "city": "Anytown",
+      "state": "CA",
+      "zip_code": "12345",
+      "phone_number": "555-123-4567",
+      "is_active": true,
+      "created_at": "2025-04-01T12:00:00.000Z",
+      "updated_at": "2025-04-01T12:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "organization_id": 1,
+      "name": "Downtown Clinic",
+      "address_line1": "456 Center St",
+      "address_line2": null,
+      "city": "Anytown",
+      "state": "CA",
+      "zip_code": "12345",
+      "phone_number": "555-987-6543",
+      "is_active": true,
+      "created_at": "2025-04-01T12:00:00.000Z",
+      "updated_at": "2025-04-01T12:00:00.000Z"
+    }
+  ]
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the userId is not a valid number
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role
+- 404 Not Found: If the user does not exist or does not belong to the admin's organization
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to retrieve a list of locations assigned to a specific user.
+- The user must belong to the admin's organization.
+- Only active locations are returned.
+- Use this endpoint when implementing the user location management view.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-user-location-assignment.js (with bat/sh wrappers)
+- **Notes:** Successfully retrieves locations assigned to a user within the admin's organization.
+
+### Assign User to Location
+
+**Endpoint:** `POST /api/user-locations/{userId}/locations/{locationId}`
+
+**Description:** Assigns a user to a specific location within the admin's organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**URL Parameters:**
+- `userId`: The ID of the user to assign
+- `locationId`: The ID of the location to assign the user to
+
+**Response:**
+```json
+{
+  "message": "User assigned to location successfully",
+  "userId": 1,
+  "locationId": 2
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the userId or locationId is not a valid number
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role
+- 404 Not Found: If the user or location does not exist or does not belong to the admin's organization
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to assign a user to a specific location.
+- The user and location must belong to the admin's organization.
+- If the user is already assigned to the location, the endpoint will return a success response.
+- Use this endpoint when implementing the user location management view.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-user-location-assignment.js (with bat/sh wrappers)
+- **Notes:** Successfully assigns a user to a location within the admin's organization.
+
+### Unassign User from Location
+
+**Endpoint:** `DELETE /api/user-locations/{userId}/locations/{locationId}`
+
+**Description:** Unassigns a user from a specific location within the admin's organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**URL Parameters:**
+- `userId`: The ID of the user to unassign
+- `locationId`: The ID of the location to unassign the user from
+
+**Response:**
+```json
+{
+  "message": "User unassigned from location successfully",
+  "userId": 1,
+  "locationId": 2
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the userId or locationId is not a valid number
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role
+- 404 Not Found: If the user or location does not exist, does not belong to the admin's organization, or the user is not assigned to the location
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to unassign a user from a specific location.
+- The user and location must belong to the admin's organization.
+- If the user is not assigned to the location, the endpoint will return a 404 Not Found response.
+- Use this endpoint when implementing the user location management view.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-user-location-assignment.js (with bat/sh wrappers)
+- **Notes:** Successfully unassigns a user from a location within the admin's organization.
+
 ## Get Current User Profile
 
 **Endpoint:** `GET /api/users/me`
