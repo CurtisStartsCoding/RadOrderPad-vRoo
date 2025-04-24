@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getUserProfile, listUsersByOrganization } from '../services/user';
+import { getUserProfile, listUsersByOrganization, updateUserProfile } from '../services/user';
 import enhancedLogger from '../utils/enhanced-logger';
 
 /**
@@ -100,6 +100,113 @@ const userController = {
       res.status(500).json({
         success: false,
         message: 'Failed to list organization users',
+        error: (error as Error).message
+      });
+    }
+  },
+
+  /**
+   * Update the authenticated user's own profile
+   * @param req Express request object
+   * @param res Express response object
+   */
+  async updateMe(req: Request, res: Response): Promise<void> {
+    try {
+      // Get user ID from the authenticated user
+      const userId = req.user?.userId;
+      
+      if (!userId) {
+        res.status(401).json({
+          success: false,
+          message: 'User authentication required'
+        });
+        return;
+      }
+      
+      // Extract allowed updatable fields from request body
+      const { firstName, lastName, phoneNumber, specialty, npi } = req.body;
+      
+      // Create an object with only the fields that are provided
+      const updateData: Record<string, string> = {};
+      
+      if (firstName !== undefined) updateData.firstName = firstName;
+      if (lastName !== undefined) updateData.lastName = lastName;
+      if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
+      if (specialty !== undefined) updateData.specialty = specialty;
+      if (npi !== undefined) updateData.npi = npi;
+      
+      // Validate that we have at least one field to update
+      if (Object.keys(updateData).length === 0) {
+        res.status(400).json({
+          success: false,
+          message: 'No valid fields provided for update'
+        });
+        return;
+      }
+      
+      // Basic validation
+      if (firstName !== undefined && typeof firstName !== 'string') {
+        res.status(400).json({
+          success: false,
+          message: 'First name must be a string'
+        });
+        return;
+      }
+      
+      if (lastName !== undefined && typeof lastName !== 'string') {
+        res.status(400).json({
+          success: false,
+          message: 'Last name must be a string'
+        });
+        return;
+      }
+      
+      if (phoneNumber !== undefined && typeof phoneNumber !== 'string') {
+        res.status(400).json({
+          success: false,
+          message: 'Phone number must be a string'
+        });
+        return;
+      }
+      
+      if (specialty !== undefined && typeof specialty !== 'string') {
+        res.status(400).json({
+          success: false,
+          message: 'Specialty must be a string'
+        });
+        return;
+      }
+      
+      if (npi !== undefined && typeof npi !== 'string') {
+        res.status(400).json({
+          success: false,
+          message: 'NPI must be a string'
+        });
+        return;
+      }
+      
+      // Call the service to update the user profile
+      const updatedProfile = await updateUserProfile(userId, updateData);
+      
+      if (!updatedProfile) {
+        res.status(404).json({
+          success: false,
+          message: 'User profile not found'
+        });
+        return;
+      }
+      
+      // Return the updated user profile
+      res.status(200).json({
+        success: true,
+        message: 'User profile updated successfully',
+        data: updatedProfile
+      });
+    } catch (error) {
+      enhancedLogger.error('Error updating user profile:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update user profile',
         error: (error as Error).message
       });
     }

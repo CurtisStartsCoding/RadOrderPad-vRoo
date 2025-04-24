@@ -39,7 +39,7 @@
 ## Users (`/users`)
 
 -   `GET /users/me`: Get the authenticated user's profile information including role, organization, and personal details. **(Authenticated - Any Role)** [Implemented]
--   `PUT /users/me`: Update the authenticated user's own profile (limited fields). **(Authenticated)**
+-   `PUT /users/me`: Update the authenticated user's own profile (limited fields: firstName, lastName, phoneNumber, specialty, npi). **(Authenticated - Any Role)** [Implemented]
 -   `GET /users`: List users within the admin's organization with pagination, sorting, and filtering options. Supports filtering by role, status, and name search. Returns users with pagination metadata. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 -   `POST /users/invite`: Invite new users to the admin's organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented - See `implementation/user-invitation-implementation.md`]
 -   `POST /users/accept-invitation`: Endpoint for invited users to set password and activate account. Creates a new user account based on the invitation details. **(Public Endpoint - Requires Valid Invitation Token)** [Implemented]

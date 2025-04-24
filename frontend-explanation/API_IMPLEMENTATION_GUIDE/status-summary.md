@@ -36,6 +36,7 @@ The following endpoints were tested and are working correctly in the production 
 - `GET /api/connections/requests`: List pending incoming connection requests (tested with admin_referring role)
 - `POST /api/connections/{relationshipId}/approve`: Approve a pending connection request (tested with admin_radiology role)
 - `POST /api/connections/{relationshipId}/reject`: Reject a pending connection request (tested with admin_radiology role)
+- `DELETE /api/connections/{relationshipId}`: Terminate an active connection (tested with admin_radiology role)
 
 ### Superadmin Management
 - `GET /api/superadmin/organizations`: List all organizations (super_admin role only)
@@ -43,6 +44,7 @@ The following endpoints were tested and are working correctly in the production 
 
 ### User Management
 - `GET /api/users/me`: Get the profile of the currently authenticated user (tested with all roles)
+- `PUT /api/users/me`: Update the profile of the currently authenticated user (tested with all roles)
 - `GET /api/users`: List all users belonging to the authenticated administrator's organization (tested with admin_referring and admin_radiology roles)
 - `POST /api/user-invites/invite`: Invite a new user to join the organization (tested with admin_referring role)
 - `POST /api/user-invites/accept-invitation`: Accept an invitation and create a user account (public endpoint)

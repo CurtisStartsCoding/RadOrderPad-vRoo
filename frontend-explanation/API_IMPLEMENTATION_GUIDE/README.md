@@ -20,6 +20,7 @@ The RadOrderPad API is organized into several logical sections:
    - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature
    - **Key Endpoints**:
      - `GET /api/users/me` - Retrieves profile information for the authenticated user
+     - `PUT /api/users/me` - Updates profile information for the authenticated user
      - `GET /api/users` - Lists all users belonging to the authenticated administrator's organization
 9. [Billing Management](./billing-management.md) - Billing and subscription endpoints
 10. [Validation Engine](./validation-engine.md) - Clinical indications processing and code assignment
@@ -207,15 +208,14 @@ For detailed implementation information, see the [User Invitation Details](./use
 
 This section provides a comprehensive overview of the implementation status across all API areas:
 
-### 1. Connection Management (95% Complete)
+### 1. Connection Management (100% Complete)
 - Working endpoints:
   - GET /api/connections
   - GET /api/connections/requests
   - POST /api/connections
   - POST /api/connections/{relationshipId}/approve (fixed - previously returned 500 error)
   - POST /api/connections/{relationshipId}/reject (fixed - previously returned 500 error)
-- Endpoints with issues:
-  - DELETE /api/connections/{relationshipId} (returns 500 error)
+  - DELETE /api/connections/{relationshipId} (fixed - previously returned 500 error)
 
 ### 2. Authentication & User Invitation (100% Complete)
 - All endpoints are working and tested:
@@ -258,14 +258,14 @@ This section provides a comprehensive overview of the implementation status acro
   - GET /api/billing/credit-usage (not implemented)
 - Internal webhook handling and credit management are implemented
 
-### 7. User Management (70-80% Complete)
+### 7. User Management (80-90% Complete)
 - Working endpoints:
   - GET /api/users/me
+  - PUT /api/users/me (newly implemented)
   - GET /api/users (admin_referring, admin_radiology roles only)
   - POST /api/user-invites/invite
   - POST /api/user-invites/accept-invitation
 - Missing or untested endpoints:
-  - PUT /users/me
   - GET /users/{userId}
   - PUT /users/{userId}
   - DELETE /users/{userId}
@@ -350,3 +350,74 @@ This ensures that the endpoint properly validates that:
 
 #### Testing
 The fix has been tested using the `test-connection-reject.js` script, which successfully rejects a pending connection request. The test script has been updated to handle the expected 404 response when a relationship is not found, not in pending status, or the user is not authorized to reject it. Both batch (.bat) and shell (.sh) scripts have been created to run the test.
+
+### Connection Termination Endpoint Fix
+
+The `DELETE /api/connections/{relationshipId}` endpoint has been fixed and is now working correctly. This endpoint allows an admin (admin_referring, admin_radiology) to terminate an active connection between organizations.
+
+#### Issue Description
+The endpoint was previously returning a 500 Internal Server Error due to similar issues as the approval and rejection endpoints. The service needed additional debug logging, better error handling for notification failures, and improved transaction management.
+
+#### Fix Implementation
+The fix involved enhancing the `terminate-connection.ts` service with:
+
+1. Comprehensive debug logging throughout the service
+2. Better error handling for notification failures
+3. Improved transaction management
+4. Proper client release in the finally block
+5. Enhanced error handling in the rollback process
+
+The service uses the `GET_RELATIONSHIP_FOR_TERMINATION_QUERY` constant, which includes all necessary checks in a single SQL query:
+
+```sql
+WHERE r.id = $1 AND (r.organization_id = $2 OR r.related_organization_id = $2) AND r.status = 'active'
+```
+
+This ensures that the endpoint properly validates that:
+1. The relationship exists
+2. The user is authorized to terminate it (belongs to either organization in the relationship)
+3. The relationship is in 'active' status
+
+#### Testing
+The fix has been tested using the `test-connection-terminate.js` script, which successfully terminates an active connection. The test script has been created to handle the expected 404 response when a relationship is not found, not in active status, or the user is not authorized to terminate it. Both batch (.bat) and shell (.sh) scripts have been created to run the test.
+
+### User Profile Update Endpoint Implementation
+
+The `PUT /api/users/me` endpoint has been implemented and is now working correctly. This endpoint allows authenticated users to update their own profile information.
+
+#### Implementation Details
+
+The implementation follows the modular, single-responsibility approach with proper validation and error handling:
+
+1. A new service function `updateUserProfile` was created in `src/services/user/update-user-profile.service.ts` that:
+   - Handles updating user profile data
+   - Validates input fields
+   - Uses queryMainDb for database operations
+   - Returns the updated user profile
+
+2. The user controller was updated with an `updateMe` method that:
+   - Extracts allowed updatable fields from request body (firstName, lastName, phoneNumber, specialty, npi)
+   - Implements validation for request body fields
+   - Adds proper error handling with appropriate HTTP status codes
+   - Returns a 200 OK response with the updated user profile on success
+
+3. The user routes were updated to add the PUT /me route with:
+   - authenticateJWT middleware to ensure only authenticated users can access the endpoint
+   - JSDoc comments for API documentation
+
+#### Security Considerations
+
+The endpoint is designed with security in mind:
+- Only allows users to update their own profile
+- Restricts which fields can be updated (firstName, lastName, phoneNumber, specialty, npi)
+- Explicitly prevents updating sensitive fields like role, organization_id, is_active, email_verified, and email
+
+#### Testing
+
+The implementation has been tested using the `test-update-user-me.js` script, which:
+- Tests successful profile updates
+- Tests validation of input fields
+- Tests handling of restricted fields
+- Tests authentication requirements
+
+Both batch (.bat) and shell (.sh) scripts have been created to run the test.

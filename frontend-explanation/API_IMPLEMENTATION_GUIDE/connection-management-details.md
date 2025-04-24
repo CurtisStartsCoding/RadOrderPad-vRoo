@@ -156,11 +156,11 @@ This section covers endpoints related to managing connections between organizati
 - **Tested With:** test-connection-endpoints-production.js
 - **Notes:** Successfully tested with production data
 
-## Delete Connection
+## Terminate Connection
 
 **Endpoint:** `DELETE /api/connections/{relationshipId}`
 
-**Description:** Deletes an active connection between organizations.
+**Description:** Terminates an active connection between organizations.
 
 **Authentication:** Required (admin_radiology role)
 
@@ -171,7 +171,7 @@ This section covers endpoints related to managing connections between organizati
 ```json
 {
   "success": true,
-  "message": "Connection deleted successfully"
+  "message": "Connection terminated successfully"
 }
 ```
 
@@ -182,11 +182,20 @@ This section covers endpoints related to managing connections between organizati
 - 500 Internal Server Error: If the relationship is not in active status or other server error
 
 **Usage Notes:**
-- This endpoint is used to delete an active connection between organizations.
+- This endpoint is used to terminate an active connection between organizations.
 - The relationship must be in the "active" status.
 - The user's organization must be either the source or target organization of the relationship.
 
 **Implementation Status:**
 - **Status:** Working
-- **Tested With:** test-connection-endpoints-production.js
-- **Notes:** Successfully tested with production data
+- **Tested With:** test-connection-terminate.js
+- **Notes:** Fixed 500 error issue and successfully tested with production data
+
+**Fixed Issues:**
+- Previously, the endpoint was returning a 500 error due to insufficient debug logging and error handling
+- The service needed better error handling for notification failures and improved transaction management
+- The fix involved enhancing the `terminate-connection.ts` service with comprehensive debug logging, better error handling for notification failures, improved transaction management, and proper client release in the finally block
+- The service uses the `GET_RELATIONSHIP_FOR_TERMINATION_QUERY` constant, which includes all necessary checks in a single SQL query:
+  ```sql
+  WHERE r.id = $1 AND (r.organization_id = $2 OR r.related_organization_id = $2) AND r.status = 'active'
+  ```

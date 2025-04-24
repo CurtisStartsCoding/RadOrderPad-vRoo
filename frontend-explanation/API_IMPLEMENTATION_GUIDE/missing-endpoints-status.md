@@ -8,7 +8,7 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (10)
+### 1. Working Endpoints (12)
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **POST /api/organizations/mine/locations** - Fully functional, returns 201 with location data
 - **POST /api/admin/orders/{orderId}/paste-supplemental** - Works with order IDs 600, 601, 603, 604, 609, 612
@@ -18,15 +18,17 @@ We have tested all the missing endpoints and documented their current status:
 - **GET /api/connections/requests** - Fully functional, returns pending incoming connection requests
 - **POST /api/connections/{relationshipId}/approve** - Fully functional, approves a pending connection request
 - **POST /api/connections/{relationshipId}/reject** - Fully functional, rejects a pending connection request
+- **DELETE /api/connections/{relationshipId}** - Fully functional, terminates an active connection
 - **GET /api/users/me** - Fully functional, returns profile information for the authenticated user
+- **PUT /api/users/me** - Fully functional, allows users to update their own profile information
 
 ### 2. Endpoints That Exist But Need Further Verification (3)
 - **POST /api/uploads/presigned-url** - Exists but has server-side configuration issue with AWS credentials
 - **POST /api/uploads/confirm** - Not tested (requires valid fileKey from previous step)
 - **POST /api/admin/orders/{orderId}/paste-summary** - Exists but has database schema issues ("column authorization_number does not exist")
 
-### 3. Endpoints With Implementation Issues (1)
-- **DELETE /api/connections/{relationshipId}** - Returns 500 internal server error
+### 3. Endpoints With Implementation Issues (0)
+No endpoints currently have implementation issues.
 
 ### 4. Skipped Endpoints (2)
 - **POST /api/users/invite** - Skipped (sends email)

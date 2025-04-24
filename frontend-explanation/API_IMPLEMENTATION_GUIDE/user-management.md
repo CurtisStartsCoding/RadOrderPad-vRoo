@@ -46,6 +46,64 @@ This section covers endpoints related to user management in the RadOrderPad syst
 - **Status:** Working
 - **Tested With:** test-get-user-me.bat, test-get-user-me.sh
 
+## Update Current User Profile
+
+**Endpoint:** `PUT /api/users/me`
+
+**Description:** Updates the profile information for the currently authenticated user.
+
+**Authentication:** Required (any role)
+
+**Request Body:**
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNumber": "555-123-4567",
+  "specialty": "Cardiology",
+  "npi": "1234567890"
+}
+```
+All fields are optional. Only the fields that are provided will be updated.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "User profile updated successfully",
+  "data": {
+    "id": 1,
+    "email": "user@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "role": "physician",
+    "organization_id": 1,
+    "npi": "1234567890",
+    "specialty": "Cardiology",
+    "is_active": true,
+    "email_verified": true,
+    "created_at": "2025-04-01T12:00:00.000Z",
+    "updated_at": "2025-04-01T12:00:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If no valid fields are provided or if the provided fields are invalid
+- 401 Unauthorized: If the user is not authenticated
+- 404 Not Found: If the user profile is not found
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to update the profile information for the currently authenticated user.
+- Only the fields that are provided in the request body will be updated.
+- Restricted fields like `role`, `organization_id`, `is_active`, `email_verified`, and `email` cannot be updated through this endpoint.
+- This endpoint is useful for allowing users to update their own profile information.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-update-user-me.bat, test-update-user-me.sh
+
 ## List Organization Users
 
 **Endpoint:** `GET /api/users`
