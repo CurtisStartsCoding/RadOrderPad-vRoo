@@ -8,7 +8,7 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (25)
+### 1. Working Endpoints (27)
 - **GET /api/organizations** - Fully functional, allows searching for potential partner organizations
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **PUT /api/organizations/mine** - Fully functional, allows admins to update their organization's profile
@@ -34,6 +34,8 @@ We have tested all the missing endpoints and documented their current status:
 - **GET /api/organizations/mine/locations/{locationId}** - Fully functional, retrieves details of a specific location
 - **PUT /api/organizations/mine/locations/{locationId}** - Fully functional, updates details of a specific location
 - **DELETE /api/organizations/mine/locations/{locationId}** - Fully functional, deactivates a location
+- **GET /api/billing/credit-balance** - Fully functional, returns the current credit balance for the organization
+- **GET /api/billing/credit-usage** - Fully functional, returns credit usage history with pagination and filtering options
 
 ### 2. Endpoints That Exist But Need Further Verification (1)
 - **POST /api/admin/orders/{orderId}/paste-summary** - Exists but has database schema issues ("column authorization_number does not exist")
@@ -78,6 +80,10 @@ All endpoints have been documented in their respective files:
 - **GET /api/users/{userId}** - Documented in [user-management.md](./user-management.md)
 - **PUT /api/users/{userId}** - Documented in [user-management.md](./user-management.md)
 - **DELETE /api/users/{userId}** - Documented in [user-management.md](./user-management.md)
+
+### 6. Billing Management
+- **GET /api/billing/credit-balance** - Documented in [billing-management.md](./billing-management.md)
+- **GET /api/billing/credit-usage** - Documented in [billing-management.md](./billing-management.md)
 
 ## Specific Findings
 

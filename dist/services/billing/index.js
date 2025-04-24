@@ -5,11 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reportRadiologyOrderUsage = exports.Stripe = exports.InsufficientCreditsError = void 0;
 const credit_1 = require("./credit");
+const get_credit_balance_service_1 = require("./get-credit-balance.service");
+const get_credit_usage_history_service_1 = require("./get-credit-usage-history.service");
 const stripe_1 = require("./stripe");
 const errors_1 = require("./errors");
 Object.defineProperty(exports, "InsufficientCreditsError", { enumerable: true, get: function () { return errors_1.InsufficientCreditsError; } });
 const stripe_2 = __importDefault(require("stripe"));
 exports.Stripe = stripe_2.default;
+const enhanced_logger_1 = __importDefault(require("../../utils/enhanced-logger"));
 const webhooks_1 = require("./stripe/webhooks");
 const usage_1 = require("./usage");
 Object.defineProperty(exports, "reportRadiologyOrderUsage", { enumerable: true, get: function () { return usage_1.reportRadiologyOrderUsage; } });
@@ -38,6 +41,25 @@ class BillingService {
      */
     static async hasCredits(organizationId) {
         return (0, credit_1.hasCredits)(organizationId);
+    }
+    /**
+     * Get the credit balance for an organization
+     *
+     * @param orgId Organization ID
+     * @returns Promise with the credit balance or null if organization not found
+     */
+    static async getCreditBalance(orgId) {
+        return (0, get_credit_balance_service_1.getCreditBalance)(orgId);
+    }
+    /**
+     * Get credit usage history for an organization
+     *
+     * @param orgId Organization ID
+     * @param options Pagination, sorting, and filtering options
+     * @returns Promise with credit usage logs and pagination info
+     */
+    static async getCreditUsageHistory(orgId, options) {
+        return (0, get_credit_usage_history_service_1.getCreditUsageHistory)(orgId, options);
     }
     /**
      * Create a subscription for an organization
@@ -99,9 +121,10 @@ class BillingService {
      * @param params Parameters for creating a Stripe customer
      * @returns The Stripe customer ID
      */
-    static async createStripeCustomerForOrg(params) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static async createStripeCustomerForOrg(_params) {
         // This is a placeholder implementation
-        console.warn('Using placeholder implementation of createStripeCustomerForOrg');
+        enhanced_logger_1.default.warn('Using placeholder implementation of createStripeCustomerForOrg');
         return `cus_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
     }
     /**
@@ -112,9 +135,12 @@ class BillingService {
      * @returns Promise<string> Checkout session ID
      * @throws Error if the organization doesn't have a billing_id or if there's an issue creating the checkout session
      */
-    static async createCreditCheckoutSession(orgId, priceId) {
+    static async createCreditCheckoutSession(_orgId, _priceId) {
         // Temporary implementation until the actual implementation is restored
-        console.warn('Using temporary implementation of createCreditCheckoutSession');
+        enhanced_logger_1.default.warn('Using temporary implementation of createCreditCheckoutSession', {
+            orgId: _orgId,
+            priceId: _priceId
+        });
         // Create a mock session ID
         const sessionId = `mock_cs_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
         return sessionId;

@@ -58,6 +58,8 @@ The following endpoints were tested and are working correctly in the production 
 ### Billing Management
 - `POST /api/billing/create-checkout-session`: Create a Stripe checkout session for purchasing credit bundles
 - `POST /api/billing/subscriptions`: Create a Stripe subscription for a specific pricing tier
+- `GET /api/billing/credit-balance`: Get the current credit balance for the organization (tested with admin_referring role)
+- `GET /api/billing/credit-usage`: Get credit usage history for the organization (tested with admin_referring role)
 
 ### Organization Management
 - `GET /api/organizations/mine`: Get details of the authenticated user's organization

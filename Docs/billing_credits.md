@@ -39,7 +39,7 @@ This document outlines the billing structure, credit system, and payment handlin
 -   **Replenishment:**
     *   Credit balance is reset/topped-up to the tier's included amount at the start of each monthly billing cycle (handled via Stripe subscription webhooks or scheduled job).
     *   Admins can purchase additional credit bundles ("Top-Ups") via the UI (triggers Stripe charge).
--   **Visibility:** Admins can view current credit balance and usage history on their dashboard. Low credit warnings are displayed/emailed (`notification_service.md`).
+-   **Visibility:** Admins can view current credit balance via the `GET /api/billing/credit-balance` endpoint and usage history via the `GET /api/billing/credit-usage` endpoint. Low credit warnings are displayed/emailed (`notification_service.md`).
 
 ## 3. Stripe Integration
 

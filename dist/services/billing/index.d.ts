@@ -24,6 +24,47 @@ declare class BillingService {
      */
     static hasCredits(organizationId: number): Promise<boolean>;
     /**
+     * Get the credit balance for an organization
+     *
+     * @param orgId Organization ID
+     * @returns Promise with the credit balance or null if organization not found
+     */
+    static getCreditBalance(orgId: number): Promise<{
+        creditBalance: number;
+    } | null>;
+    /**
+     * Get credit usage history for an organization
+     *
+     * @param orgId Organization ID
+     * @param options Pagination, sorting, and filtering options
+     * @returns Promise with credit usage logs and pagination info
+     */
+    static getCreditUsageHistory(orgId: number, options: {
+        page: number;
+        limit: number;
+        sortBy?: string;
+        sortOrder?: string;
+        actionType?: string;
+        dateStart?: string;
+        dateEnd?: string;
+    }): Promise<{
+        usageLogs: Array<{
+            id: number;
+            userId: number;
+            userName: string;
+            orderId: number;
+            tokensBurned: number;
+            actionType: string;
+            createdAt: string;
+        }>;
+        pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            pages: number;
+        };
+    }>;
+    /**
      * Create a subscription for an organization
      *
      * @param orgId Organization ID
@@ -42,7 +83,7 @@ declare class BillingService {
      * @param signature The Stripe signature from the request headers
      * @returns The verified Stripe event
      */
-    static verifyWebhookSignature(payload: any, signature: string): Stripe.Event;
+    static verifyWebhookSignature(payload: Record<string, unknown>, signature: string): Stripe.Event;
     /**
      * Handle checkout.session.completed webhook event
      * @param event The Stripe event
@@ -88,7 +129,7 @@ declare class BillingService {
      * @param params Parameters for creating a Stripe customer
      * @returns The Stripe customer ID
      */
-    static createStripeCustomerForOrg(params: CreateStripeCustomerParams): Promise<string>;
+    static createStripeCustomerForOrg(_params: CreateStripeCustomerParams): Promise<string>;
     /**
      * Create a checkout session for purchasing credit bundles
      *
@@ -97,7 +138,7 @@ declare class BillingService {
      * @returns Promise<string> Checkout session ID
      * @throws Error if the organization doesn't have a billing_id or if there's an issue creating the checkout session
      */
-    static createCreditCheckoutSession(orgId: number, priceId?: string): Promise<string>;
+    static createCreditCheckoutSession(_orgId: number, _priceId?: string): Promise<string>;
     /**
      * Report radiology organization order usage to Stripe for billing
      *
@@ -109,7 +150,7 @@ declare class BillingService {
      * @param endDate End date for the reporting period
      * @returns Promise with array of usage reports
      */
-    static reportRadiologyOrderUsage(startDate: Date, endDate: Date): Promise<any>;
+    static reportRadiologyOrderUsage(startDate: Date, endDate: Date): Promise<unknown>;
 }
 export default BillingService;
 export { InsufficientCreditsError, BurnCreditParams, CreateStripeCustomerParams, CreditActionType, Stripe, reportRadiologyOrderUsage };

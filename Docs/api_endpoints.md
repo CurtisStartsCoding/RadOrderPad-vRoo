@@ -101,8 +101,8 @@
 
 -   `POST /billing/create-checkout-session`: Create a Stripe checkout session for purchasing credit bundles. **(Admin Referring Role)**
 -   `POST /billing/subscriptions`: Create a Stripe subscription for a specific pricing tier. Returns subscription details including client secret for payment confirmation if required. **(Admin Referring Role)**
--   `GET /billing/credit-balance`: Get the current credit balance for the organization. **(Admin Referring Role)**
--   `GET /billing/credit-usage`: Get credit usage history for the organization. **(Admin Referring Role)**
+-   `GET /billing/credit-balance`: Get the current credit balance for the organization. **(Admin Referring Role)** [Implemented]
+-   `GET /billing/credit-usage`: Get credit usage history for the organization. **(Admin Referring Role)** [Implemented]
 
 ## Super Admin (`/superadmin`)
 

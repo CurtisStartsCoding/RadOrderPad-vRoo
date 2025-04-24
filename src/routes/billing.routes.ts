@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createCheckoutSession, createSubscription } from '../controllers/billing';
+import { createCheckoutSession, createSubscription, getCreditBalance, getCreditUsageHistory } from '../controllers/billing';
 import { authenticateJWT, authorizeRole } from '../middleware/auth';
 
 const router = Router();
@@ -26,6 +26,30 @@ router.post(
   authenticateJWT,
   authorizeRole(['admin_referring']),
   createSubscription
+);
+
+/**
+ * @route GET /api/billing/credit-balance
+ * @desc Get the current credit balance for the organization
+ * @access Private - admin_referring role only
+ */
+router.get(
+  '/credit-balance',
+  authenticateJWT,
+  authorizeRole(['admin_referring']),
+  getCreditBalance
+);
+
+/**
+ * @route GET /api/billing/credit-usage
+ * @desc Get credit usage history for the organization
+ * @access Private - admin_referring role only
+ */
+router.get(
+  '/credit-usage',
+  authenticateJWT,
+  authorizeRole(['admin_referring']),
+  getCreditUsageHistory
 );
 
 export default router;

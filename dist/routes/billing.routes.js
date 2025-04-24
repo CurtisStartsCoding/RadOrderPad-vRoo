@@ -16,5 +16,17 @@ router.post('/create-checkout-session', auth_1.authenticateJWT, (0, auth_1.autho
  * @access Private - admin_referring role only
  */
 router.post('/subscriptions', auth_1.authenticateJWT, (0, auth_1.authorizeRole)(['admin_referring']), billing_1.createSubscription);
+/**
+ * @route GET /api/billing/credit-balance
+ * @desc Get the current credit balance for the organization
+ * @access Private - admin_referring role only
+ */
+router.get('/credit-balance', auth_1.authenticateJWT, (0, auth_1.authorizeRole)(['admin_referring']), billing_1.getCreditBalance);
+/**
+ * @route GET /api/billing/credit-usage
+ * @desc Get credit usage history for the organization
+ * @access Private - admin_referring role only
+ */
+router.get('/credit-usage', auth_1.authenticateJWT, (0, auth_1.authorizeRole)(['admin_referring']), billing_1.getCreditUsageHistory);
 exports.default = router;
 //# sourceMappingURL=billing.routes.js.map

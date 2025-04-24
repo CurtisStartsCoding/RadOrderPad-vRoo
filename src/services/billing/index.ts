@@ -1,8 +1,11 @@
 import { burnCredit, hasCredits } from './credit';
+import { getCreditBalance } from './get-credit-balance.service';
+import { getCreditUsageHistory } from './get-credit-usage-history.service';
 import { createSubscription } from './stripe';
 import { InsufficientCreditsError } from './errors';
 import { BurnCreditParams, CreateStripeCustomerParams, CreditActionType } from './types';
 import Stripe from 'stripe';
+import enhancedLogger from '../../utils/enhanced-logger';
 import {
   verifyWebhookSignature,
   handleCheckoutSessionCompleted,
@@ -42,6 +45,54 @@ class BillingService {
   }
 
   /**
+   * Get the credit balance for an organization
+   *
+   * @param orgId Organization ID
+   * @returns Promise with the credit balance or null if organization not found
+   */
+  static async getCreditBalance(orgId: number): Promise<{ creditBalance: number } | null> {
+    return getCreditBalance(orgId);
+  }
+
+  /**
+   * Get credit usage history for an organization
+   *
+   * @param orgId Organization ID
+   * @param options Pagination, sorting, and filtering options
+   * @returns Promise with credit usage logs and pagination info
+   */
+  static async getCreditUsageHistory(
+    orgId: number,
+    options: {
+      page: number;
+      limit: number;
+      sortBy?: string;
+      sortOrder?: string;
+      actionType?: string;
+      dateStart?: string;
+      dateEnd?: string;
+    }
+  ): Promise<{
+    usageLogs: Array<{
+      id: number;
+      userId: number;
+      userName: string;
+      orderId: number;
+      tokensBurned: number;
+      actionType: string;
+      createdAt: string;
+    }>;
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      pages: number;
+    };
+  }> {
+    return getCreditUsageHistory(orgId, options);
+  }
+
+  /**
    * Create a subscription for an organization
    *
    * @param orgId Organization ID
@@ -66,7 +117,7 @@ class BillingService {
    * @param signature The Stripe signature from the request headers
    * @returns The verified Stripe event
    */
-  static verifyWebhookSignature(payload: any, signature: string): Stripe.Event {
+  static verifyWebhookSignature(payload: Record<string, unknown>, signature: string): Stripe.Event {
     return verifyWebhookSignature(payload, signature);
   }
 
@@ -115,9 +166,10 @@ class BillingService {
    * @param params Parameters for creating a Stripe customer
    * @returns The Stripe customer ID
    */
-  static async createStripeCustomerForOrg(params: CreateStripeCustomerParams): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static async createStripeCustomerForOrg(_params: CreateStripeCustomerParams): Promise<string> {
     // This is a placeholder implementation
-    console.warn('Using placeholder implementation of createStripeCustomerForOrg');
+    enhancedLogger.warn('Using placeholder implementation of createStripeCustomerForOrg');
     return `cus_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
   }
 
@@ -130,11 +182,14 @@ class BillingService {
    * @throws Error if the organization doesn't have a billing_id or if there's an issue creating the checkout session
    */
   static async createCreditCheckoutSession(
-    orgId: number,
-    priceId?: string
+    _orgId: number,
+    _priceId?: string
   ): Promise<string> {
     // Temporary implementation until the actual implementation is restored
-    console.warn('Using temporary implementation of createCreditCheckoutSession');
+    enhancedLogger.warn('Using temporary implementation of createCreditCheckoutSession', {
+      orgId: _orgId,
+      priceId: _priceId
+    });
     
     // Create a mock session ID
     const sessionId = `mock_cs_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
@@ -156,7 +211,7 @@ class BillingService {
   static async reportRadiologyOrderUsage(
     startDate: Date,
     endDate: Date
-  ): Promise<any> {
+  ): Promise<unknown> {
     return reportRadiologyOrderUsage(startDate, endDate);
   }
 }

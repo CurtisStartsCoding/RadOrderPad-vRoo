@@ -256,14 +256,14 @@ This section provides a comprehensive overview of the implementation status acro
   - PUT /api/admin/orders/{orderId}/patient-info
   - PUT /api/admin/orders/{orderId}/insurance-info
 
-### 6. Billing Management (60-70% Complete)
+### 6. Billing Management (70-80% Complete)
 - Core endpoints are working:
   - POST /api/billing/create-checkout-session
   - POST /api/billing/subscriptions
+  - GET /api/billing/credit-balance (implemented)
 - Missing endpoints:
   - GET /api/billing (not implemented)
-  - GET /api/billing/credit-balance (not implemented)
-  - GET /api/billing/credit-usage (not implemented)
+  - GET /api/billing/credit-usage (implemented)
 - Internal webhook handling and credit management are implemented
 
 ### 7. User Management (100% Complete)
