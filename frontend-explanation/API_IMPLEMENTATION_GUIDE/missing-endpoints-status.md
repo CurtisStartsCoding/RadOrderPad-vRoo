@@ -8,7 +8,7 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (12)
+### 1. Working Endpoints (15)
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **POST /api/organizations/mine/locations** - Fully functional, returns 201 with location data
 - **POST /api/admin/orders/{orderId}/paste-supplemental** - Works with order IDs 600, 601, 603, 604, 609, 612
@@ -21,6 +21,9 @@ We have tested all the missing endpoints and documented their current status:
 - **DELETE /api/connections/{relationshipId}** - Fully functional, terminates an active connection
 - **GET /api/users/me** - Fully functional, returns profile information for the authenticated user
 - **PUT /api/users/me** - Fully functional, allows users to update their own profile information
+- **GET /api/users/{userId}** - Fully functional, allows admins to view users in their organization
+- **PUT /api/users/{userId}** - Fully functional, allows admins to update users in their organization
+- **DELETE /api/users/{userId}** - Fully functional, allows admins to deactivate users in their organization
 
 ### 2. Endpoints That Exist But Need Further Verification (3)
 - **POST /api/uploads/presigned-url** - Exists but has server-side configuration issue with AWS credentials
@@ -61,6 +64,10 @@ All endpoints have been documented in their respective files:
 
 ### 5. User Management
 - **GET /api/users/me** - Documented in [user-management.md](./user-management.md)
+- **PUT /api/users/me** - Documented in [user-management.md](./user-management.md)
+- **GET /api/users/{userId}** - Documented in [user-management.md](./user-management.md)
+- **PUT /api/users/{userId}** - Documented in [user-management.md](./user-management.md)
+- **DELETE /api/users/{userId}** - Documented in [user-management.md](./user-management.md)
 
 ## Specific Findings
 

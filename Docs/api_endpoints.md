@@ -43,9 +43,9 @@
 -   `GET /users`: List users within the admin's organization with pagination, sorting, and filtering options. Supports filtering by role, status, and name search. Returns users with pagination metadata. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 -   `POST /users/invite`: Invite new users to the admin's organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented - See `implementation/user-invitation-implementation.md`]
 -   `POST /users/accept-invitation`: Endpoint for invited users to set password and activate account. Creates a new user account based on the invitation details. **(Public Endpoint - Requires Valid Invitation Token)** [Implemented]
--   `GET /users/{userId}`: Get details of a specific user within the admin's org. **(Admin Role)**
--   `PUT /users/{userId}`: Update details of a specific user within the admin's org (including `primary_location_id`). **(Admin Role)**
--   `DELETE /users/{userId}`: Deactivate a user within the admin's org. **(Admin Role)**
+-   `GET /users/{userId}`: Get details of a specific user within the admin's org. Returns user profile only if the user belongs to the admin's organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `PUT /users/{userId}`: Update details of a specific user within the admin's org (including name, role, specialty, active status). Enforces organization boundaries and role assignment restrictions. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `DELETE /users/{userId}`: Deactivate a user within the admin's org. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 
 ### User Location Assignments (`/users/.../locations`) - *If using user_locations join table*
 

@@ -45,6 +45,9 @@ The following endpoints were tested and are working correctly in the production 
 ### User Management
 - `GET /api/users/me`: Get the profile of the currently authenticated user (tested with all roles)
 - `PUT /api/users/me`: Update the profile of the currently authenticated user (tested with all roles)
+- `GET /api/users/{userId}`: Get a specific user's profile by ID (tested with admin_referring and admin_radiology roles)
+- `PUT /api/users/{userId}`: Update a specific user's profile by ID (tested with admin_referring and admin_radiology roles)
+- `DELETE /api/users/{userId}`: Deactivate a specific user by ID (tested with admin_referring and admin_radiology roles)
 - `GET /api/users`: List all users belonging to the authenticated administrator's organization (tested with admin_referring and admin_radiology roles)
 - `POST /api/user-invites/invite`: Invite a new user to join the organization (tested with admin_referring role)
 - `POST /api/user-invites/accept-invitation`: Accept an invitation and create a user account (public endpoint)
@@ -74,6 +77,7 @@ The following endpoints work correctly but are restricted to specific roles:
 - `GET /api/superadmin/organizations`: Works correctly and returns a list of all organizations (super_admin role only)
 - `GET /api/superadmin/users`: Works correctly and returns a list of all users (super_admin role only)
 - `GET /api/users`: Works correctly and returns a list of users in the authenticated user's organization (admin_referring and admin_radiology roles only)
+- `GET /api/users/{userId}`: Works correctly and returns a specific user's profile, but is restricted to admin_referring and admin_radiology roles and only allows viewing users within the admin's organization
 - `GET /api/radiology/orders`: Works correctly but is restricted to scheduler and admin_radiology roles
 - `GET /api/connections`: Works correctly but is restricted to admin_referring and admin_radiology roles
 - `GET /api/connections/requests`: Works correctly but is restricted to admin_referring and admin_radiology roles
