@@ -14,6 +14,7 @@ const webhooks_routes_js_1 = __importDefault(require("./webhooks.routes.js"));
 const organization_routes_js_1 = __importDefault(require("./organization.routes.js"));
 const user_location_routes_js_1 = __importDefault(require("./user-location.routes.js"));
 const user_invite_routes_js_1 = __importDefault(require("./user-invite.routes.js"));
+const user_routes_js_1 = __importDefault(require("./user.routes.js"));
 const superadmin_routes_js_1 = __importDefault(require("./superadmin.routes.js"));
 const billing_routes_js_1 = __importDefault(require("./billing.routes.js"));
 const router = (0, express_1.Router)();
@@ -26,7 +27,10 @@ router.use('/uploads', uploads_routes_js_1.default);
 router.use('/webhooks', webhooks_routes_js_1.default);
 router.use('/connections', connection_routes_js_1.default);
 router.use('/organizations', organization_routes_js_1.default);
-router.use('/users', user_location_routes_js_1.default);
+// Mount user routes for profile operations
+router.use('/users', user_routes_js_1.default);
+// Mount user location routes at a different path to avoid conflicts
+router.use('/user-locations', user_location_routes_js_1.default);
 // Mount user invite routes separately to avoid middleware conflicts
 router.use('/user-invites', user_invite_routes_js_1.default);
 router.use('/superadmin', superadmin_routes_js_1.default);

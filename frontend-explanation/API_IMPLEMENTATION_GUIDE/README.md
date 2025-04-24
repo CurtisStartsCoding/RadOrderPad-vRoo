@@ -18,6 +18,7 @@ The RadOrderPad API is organized into several logical sections:
 7. [Organization Management](./organization-management.md) - Organization-related endpoints
 8. [User Management](./user-management.md) - User-related endpoints
    - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature
+   - **Key Endpoint**: `GET /api/users/me` - Retrieves profile information for the authenticated user
 9. [Billing Management](./billing-management.md) - Billing and subscription endpoints
 10. [Validation Engine](./validation-engine.md) - Clinical indications processing and code assignment
 11. [Workflow Guide](./workflow-guide.md) - End-to-end API workflow examples
@@ -254,12 +255,12 @@ This section provides a comprehensive overview of the implementation status acro
   - GET /api/billing/credit-usage (not implemented)
 - Internal webhook handling and credit management are implemented
 
-### 7. User Management (50-60% Complete)
+### 7. User Management (60-70% Complete)
 - Working endpoints:
+  - GET /api/users/me
   - POST /api/user-invites/invite
   - POST /api/user-invites/accept-invitation
 - Missing or untested endpoints:
-  - GET /users/me
   - PUT /users/me
   - GET /users
   - GET /users/{userId}

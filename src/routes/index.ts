@@ -9,6 +9,7 @@ import webhooksRoutes from './webhooks.routes.js';
 import organizationRoutes from './organization.routes.js';
 import userLocationRoutes from './user-location.routes.js';
 import userInviteRoutes from './user-invite.routes.js';
+import userRoutes from './user.routes.js';
 import superadminRoutes from './superadmin.routes.js';
 import billingRoutes from './billing.routes.js';
 
@@ -22,7 +23,10 @@ router.use('/uploads', uploadsRoutes);
 router.use('/webhooks', webhooksRoutes);
 router.use('/connections', connectionRoutes);
 router.use('/organizations', organizationRoutes);
-router.use('/users', userLocationRoutes);
+// Mount user routes for profile operations
+router.use('/users', userRoutes);
+// Mount user location routes at a different path to avoid conflicts
+router.use('/user-locations', userLocationRoutes);
 // Mount user invite routes separately to avoid middleware conflicts
 router.use('/user-invites', userInviteRoutes);
 router.use('/superadmin', superadminRoutes);

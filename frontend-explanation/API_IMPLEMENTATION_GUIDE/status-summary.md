@@ -40,6 +40,7 @@ The following endpoints were tested and are working correctly in the production 
 - `GET /api/superadmin/users`: List all users (super_admin role only)
 
 ### User Management
+- `GET /api/users/me`: Get the profile of the currently authenticated user (tested with all roles)
 - `POST /api/user-invites/invite`: Invite a new user to join the organization (tested with admin_referring role)
 - `POST /api/user-invites/accept-invitation`: Accept an invitation and create a user account (public endpoint)
 

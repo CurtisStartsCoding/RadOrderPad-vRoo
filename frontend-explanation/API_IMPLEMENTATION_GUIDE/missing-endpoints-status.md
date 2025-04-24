@@ -8,7 +8,7 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (7)
+### 1. Working Endpoints (8)
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **POST /api/organizations/mine/locations** - Fully functional, returns 201 with location data
 - **POST /api/admin/orders/{orderId}/paste-supplemental** - Works with order IDs 600, 601, 603, 604, 609, 612
@@ -16,6 +16,7 @@ We have tested all the missing endpoints and documented their current status:
 - **PUT /api/admin/orders/{orderId}/insurance-info** - Works with order IDs 600, 601, 603, 604, 609, 612
 - **GET /api/admin/orders/queue** - Fully functional, returns orders with status 'pending_admin'
 - **GET /api/connections/requests** - Fully functional, returns pending incoming connection requests
+- **GET /api/users/me** - Fully functional, returns profile information for the authenticated user
 
 ### 2. Endpoints That Exist But Need Further Verification (3)
 - **POST /api/uploads/presigned-url** - Exists but has server-side configuration issue with AWS credentials
@@ -55,6 +56,9 @@ All endpoints have been documented in their respective files:
 - **POST /api/connections/{relationshipId}/approve** - Documented in [connection-management-details.md](./connection-management-details.md)
 - **POST /api/connections/{relationshipId}/reject** - Documented in [connection-management-details.md](./connection-management-details.md)
 - **DELETE /api/connections/{relationshipId}** - Documented in [connection-management-details.md](./connection-management-details.md)
+
+### 5. User Management
+- **GET /api/users/me** - Documented in [user-management.md](./user-management.md)
 
 ## Specific Findings
 
