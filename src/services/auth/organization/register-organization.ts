@@ -7,7 +7,7 @@ import { formatUserResponse } from '../user/format-user-response';
 import { generateToken } from '../token/generate-token';
 import { generateVerificationToken } from '../token/generate-verification-token';
 // Import the notification manager
-import NotificationManager from '../../../services/notification/manager';
+import NotificationManager from '../../../services/notification/manager/account';
 import enhancedLogger from '../../../utils/enhanced-logger';
 
 /**

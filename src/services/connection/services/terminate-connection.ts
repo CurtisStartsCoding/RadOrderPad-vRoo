@@ -1,5 +1,5 @@
 import { getMainDbClient } from '../../../config/db';
-import notificationManager from '../../notification';
+import notificationManager from '../../notification/manager';
 import { TerminateConnectionParams, ConnectionOperationResponse } from '../types';
 import {
   GET_RELATIONSHIP_FOR_TERMINATION_QUERY,
@@ -49,8 +49,10 @@ export class TerminateConnectionService {
       const terminatingOrgName = isInitiator ? relationship.org1_name : relationship.org2_name;
       
       if (partnerEmail) {
+        const partnerOrgName = isInitiator ? relationship.org2_name : relationship.org1_name;
         await notificationManager.sendConnectionTerminated(
           partnerEmail,
+          partnerOrgName,
           terminatingOrgName
         );
       }

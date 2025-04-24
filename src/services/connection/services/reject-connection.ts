@@ -1,5 +1,5 @@
 import { getMainDbClient } from '../../../config/db';
-import notificationManager from '../../notification';
+import notificationManager from '../../notification/manager';
 import { RejectConnectionParams, ConnectionOperationResponse } from '../types';
 import { GET_RELATIONSHIP_FOR_APPROVAL_QUERY } from '../queries/approve';
 import { REJECT_RELATIONSHIP_QUERY } from '../queries/reject';

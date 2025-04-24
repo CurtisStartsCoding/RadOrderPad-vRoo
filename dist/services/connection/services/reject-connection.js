@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RejectConnectionService = void 0;
 const db_1 = require("../../../config/db");
-const notification_1 = __importDefault(require("../../notification"));
+const manager_1 = __importDefault(require("../../notification/manager"));
 const approve_1 = require("../queries/approve");
 const reject_1 = require("../queries/reject");
 const enhanced_logger_1 = __importDefault(require("../../../utils/enhanced-logger"));
@@ -33,7 +33,7 @@ class RejectConnectionService {
             // Send notification
             const relationship = relationshipResult.rows[0];
             if (relationship.initiating_org_email) {
-                await notification_1.default.sendConnectionRejected(relationship.initiating_org_email, relationship.initiating_org_name);
+                await manager_1.default.sendConnectionRejected(relationship.initiating_org_email, relationship.initiating_org_name);
             }
             await client.query('COMMIT');
             return {

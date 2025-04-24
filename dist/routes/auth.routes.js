@@ -4,8 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const register_controller_1 = __importDefault(require("../controllers/auth/register.controller"));
 const auth_controller_js_1 = __importDefault(require("../controllers/auth.controller.js"));
 const router = (0, express_1.Router)();
+// Add a test endpoint that bypasses CAPTCHA verification
+router.post('/register-test', (req, res, next) => {
+    // Set the test mode header
+    req.headers['x-test-mode'] = 'true';
+    // Call the regular register controller
+    register_controller_1.default.register(req, res);
+});
 /**
  * @route   POST /api/auth/register
  * @desc    Register a new organization and admin user

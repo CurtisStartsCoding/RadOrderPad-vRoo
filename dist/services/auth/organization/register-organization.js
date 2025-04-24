@@ -13,7 +13,7 @@ const format_user_response_1 = require("../user/format-user-response");
 const generate_token_1 = require("../token/generate-token");
 const generate_verification_token_1 = require("../token/generate-verification-token");
 // Import the notification manager
-const manager_1 = __importDefault(require("../../../services/notification/manager"));
+const account_1 = __importDefault(require("../../../services/notification/manager/account"));
 const enhanced_logger_1 = __importDefault(require("../../../utils/enhanced-logger"));
 /**
  * Register a new organization and admin user
@@ -61,7 +61,7 @@ async function registerOrganization(orgData, userData) {
         const userResponse = (0, format_user_response_1.formatUserResponse)(user);
         // Send verification email
         try {
-            await manager_1.default.sendVerificationEmail(userData.email, verificationToken, {
+            await account_1.default.sendVerificationEmail(userData.email, verificationToken, {
                 firstName: userData.first_name,
                 organizationName: orgData.name
             });

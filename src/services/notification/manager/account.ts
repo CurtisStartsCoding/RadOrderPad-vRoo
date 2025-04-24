@@ -5,6 +5,20 @@ import { accountNotifications } from '../services';
  */
 export class AccountNotificationManager {
   /**
+   * Send a verification email to a newly registered user
+   * @param email Email address of the user
+   * @param token Verification token
+   * @param data Additional data for the email template
+   */
+  async sendVerificationEmail(
+    email: string,
+    token: string,
+    data: { firstName: string; organizationName: string }
+  ): Promise<void> {
+    return accountNotifications.sendVerificationEmail(email, token, data);
+  }
+
+  /**
    * Send an invitation email to a user
    * @param email Email address to send the invitation to
    * @param token Invitation token

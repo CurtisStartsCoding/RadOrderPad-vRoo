@@ -1,6 +1,6 @@
 import { queryMainDb } from '../../config/db';
 import crypto from 'crypto';
-import notificationManager from '../../services/notification/manager';
+import notificationManager from '../../services/notification/manager/account';
 
 /**
  * Service function to handle user invitation

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminateConnectionService = void 0;
 const db_1 = require("../../../config/db");
-const notification_1 = __importDefault(require("../../notification"));
+const manager_1 = __importDefault(require("../../notification/manager"));
 const terminate_1 = require("../queries/terminate");
 const enhanced_logger_1 = __importDefault(require("../../../utils/enhanced-logger"));
 /**
@@ -37,7 +37,8 @@ class TerminateConnectionService {
             const partnerEmail = isInitiator ? relationship.org2_email : relationship.org1_email;
             const terminatingOrgName = isInitiator ? relationship.org1_name : relationship.org2_name;
             if (partnerEmail) {
-                await notification_1.default.sendConnectionTerminated(partnerEmail, terminatingOrgName);
+                const partnerOrgName = isInitiator ? relationship.org2_name : relationship.org1_name;
+                await manager_1.default.sendConnectionTerminated(partnerEmail, partnerOrgName, terminatingOrgName);
             }
             await client.query('COMMIT');
             return {

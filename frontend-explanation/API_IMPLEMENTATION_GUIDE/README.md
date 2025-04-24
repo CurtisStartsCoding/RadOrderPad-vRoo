@@ -199,3 +199,93 @@ The user invitation system has been thoroughly tested and fixed to ensure proper
    - This resolved authentication issues where the wrong middleware was being applied
 
 For detailed implementation information, see the [User Invitation Details](./user-invitation-details.md) document.
+
+## Implementation Status by Area
+
+This section provides a comprehensive overview of the implementation status across all API areas:
+
+### 1. Connection Management (100% Complete)
+- All endpoints are working and tested:
+  - GET /api/connections
+  - GET /api/connections/requests
+  - POST /api/connections
+  - POST /api/connections/{relationshipId}/approve
+  - POST /api/connections/{relationshipId}/reject
+  - DELETE /api/connections/{relationshipId}
+
+### 2. Authentication & User Invitation (100% Complete)
+- All endpoints are working and tested:
+  - POST /api/auth/login
+  - POST /api/auth/register
+  - POST /api/user-invites/invite
+  - POST /api/user-invites/accept-invitation
+
+### 3. Radiology Workflow (80-90% Complete)
+- Most endpoints are working and tested:
+  - GET /api/radiology/orders
+  - GET /api/radiology/orders/{orderId}
+  - POST /api/radiology/orders/{orderId}/update-status
+  - GET /api/radiology/orders/{orderId}/export/{format}
+  - POST /api/radiology/orders/{orderId}/request-info (implemented but may not have specific tests)
+
+### 4. Order Management (90-100% Complete)
+- All core endpoints are working and tested:
+  - GET /api/orders (with filtering)
+  - GET /api/orders/{orderId}
+  - POST /api/orders/validate
+  - PUT /api/orders/{orderId}
+
+### 5. Admin Order Management (90-100% Complete)
+- Key endpoints are working and tested:
+  - GET /api/admin/orders/queue
+  - POST /api/admin/orders/{orderId}/send-to-radiology-fixed
+  - POST /api/admin/orders/{orderId}/paste-summary
+  - POST /api/admin/orders/{orderId}/paste-supplemental
+  - PUT /api/admin/orders/{orderId}/patient-info
+  - PUT /api/admin/orders/{orderId}/insurance-info
+
+### 6. Billing Management (60-70% Complete)
+- Core endpoints are working:
+  - POST /api/billing/create-checkout-session
+  - POST /api/billing/subscriptions
+- Missing endpoints:
+  - GET /api/billing (not implemented)
+  - GET /api/billing/credit-balance (not implemented)
+  - GET /api/billing/credit-usage (not implemented)
+- Internal webhook handling and credit management are implemented
+
+### 7. User Management (50-60% Complete)
+- Working endpoints:
+  - POST /api/user-invites/invite
+  - POST /api/user-invites/accept-invitation
+- Missing or untested endpoints:
+  - GET /users/me
+  - PUT /users/me
+  - GET /users
+  - GET /users/{userId}
+  - PUT /users/{userId}
+  - DELETE /users/{userId}
+  - User location assignment endpoints
+
+### 8. Organization Management (40-50% Complete)
+- Working endpoints:
+  - POST /api/organizations/mine/locations
+  - GET /api/organizations/mine (fixed but may still have issues)
+- Not working or untested:
+  - PUT /api/organizations/mine (returns 501 "Not implemented yet")
+  - GET /api/organizations (by design)
+  - GET /api/organizations/{organizationId} (by design)
+  - PUT /api/organizations/{organizationId} (by design)
+  - Location management endpoints (GET, PUT, DELETE)
+
+### 9. Superadmin Management (50-60% Complete)
+- Working endpoints:
+  - GET /api/superadmin/organizations
+  - GET /api/superadmin/users
+- Other superadmin endpoints may not be implemented or tested
+
+### 10. Uploads (0% Complete)
+- Blocked by S3 setup:
+  - POST /api/uploads/presigned-url
+  - POST /api/uploads/confirm
+  - GET /uploads/{documentId}/download-url
