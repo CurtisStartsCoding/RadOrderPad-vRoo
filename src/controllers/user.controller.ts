@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getUserProfile } from '../services/user';
+import { getUserProfile, listUsersByOrganization } from '../services/user';
 import enhancedLogger from '../utils/enhanced-logger';
 
 /**
@@ -45,6 +45,61 @@ const userController = {
       res.status(500).json({
         success: false,
         message: 'Failed to get user profile',
+        error: (error as Error).message
+      });
+    }
+  },
+
+  /**
+   * List users belonging to the authenticated user's organization
+   * @param req Express request object
+   * @param res Express response object
+   */
+  async listOrgUsers(req: Request, res: Response): Promise<void> {
+    try {
+      // Get organization ID from the authenticated user
+      const orgId = req.user?.orgId;
+      
+      if (!orgId) {
+        res.status(401).json({
+          success: false,
+          message: 'User authentication required'
+        });
+        return;
+      }
+      
+      // Extract query parameters with defaults
+      const page = parseInt(req.query.page as string || '1', 10);
+      const limit = parseInt(req.query.limit as string || '20', 10);
+      const sortBy = req.query.sortBy as string || 'last_name';
+      const sortOrder = req.query.sortOrder as string || 'asc';
+      const role = req.query.role as string;
+      const status = req.query.status !== undefined
+        ? req.query.status === 'true'
+        : undefined;
+      const name = req.query.name as string;
+      
+      // Call the service to list users
+      const result = await listUsersByOrganization(orgId, {
+        page,
+        limit,
+        sortBy,
+        sortOrder,
+        role,
+        status,
+        name
+      });
+      
+      // Return the users list with pagination info
+      res.status(200).json({
+        success: true,
+        data: result
+      });
+    } catch (error) {
+      enhancedLogger.error('Error listing organization users:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to list organization users',
         error: (error as Error).message
       });
     }

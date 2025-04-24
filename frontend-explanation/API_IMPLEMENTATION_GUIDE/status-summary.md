@@ -34,6 +34,8 @@ The following endpoints were tested and are working correctly in the production 
 ### Connection Management
 - `GET /api/connections`: List connections (tested with admin_referring role)
 - `GET /api/connections/requests`: List pending incoming connection requests (tested with admin_referring role)
+- `POST /api/connections/{relationshipId}/approve`: Approve a pending connection request (tested with admin_radiology role)
+- `POST /api/connections/{relationshipId}/reject`: Reject a pending connection request (tested with admin_radiology role)
 
 ### Superadmin Management
 - `GET /api/superadmin/organizations`: List all organizations (super_admin role only)
@@ -41,6 +43,7 @@ The following endpoints were tested and are working correctly in the production 
 
 ### User Management
 - `GET /api/users/me`: Get the profile of the currently authenticated user (tested with all roles)
+- `GET /api/users`: List all users belonging to the authenticated administrator's organization (tested with admin_referring and admin_radiology roles)
 - `POST /api/user-invites/invite`: Invite a new user to join the organization (tested with admin_referring role)
 - `POST /api/user-invites/accept-invitation`: Accept an invitation and create a user account (public endpoint)
 
@@ -60,7 +63,6 @@ The following endpoints have specific method restrictions by design:
 The following endpoints have specific path restrictions by design:
 
 - `GET /api/organizations`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path. Use organization-specific endpoints instead.
-- `GET /api/users`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path. Use `GET /api/superadmin/users` to list all users (super_admin role only)
 - `GET /api/superadmin`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path. Use specific superadmin endpoints like `GET /api/superadmin/users` or `GET /api/superadmin/organizations` instead
 
 ## Endpoints with Role Restrictions
@@ -69,6 +71,7 @@ The following endpoints work correctly but are restricted to specific roles:
 
 - `GET /api/superadmin/organizations`: Works correctly and returns a list of all organizations (super_admin role only)
 - `GET /api/superadmin/users`: Works correctly and returns a list of all users (super_admin role only)
+- `GET /api/users`: Works correctly and returns a list of users in the authenticated user's organization (admin_referring and admin_radiology roles only)
 - `GET /api/radiology/orders`: Works correctly but is restricted to scheduler and admin_radiology roles
 - `GET /api/connections`: Works correctly but is restricted to admin_referring and admin_radiology roles
 - `GET /api/connections/requests`: Works correctly but is restricted to admin_referring and admin_radiology roles

@@ -1,7 +1,7 @@
   API Endpoints Overview (Conceptual)
 
-**Version:** 1.6 (User Invitation Implementation)
-**Date:** 2025-04-23
+**Version:** 1.7 (User Management Enhancements)
+**Date:** 2025-04-24
 
 **Note:** This document provides a conceptual list of API endpoints based on the defined workflows and schema map. A formal OpenAPI/Swagger specification is recommended for definitive contract details.
 
@@ -38,11 +38,11 @@
 
 ## Users (`/users`)
 
--   `GET /users/me`: Get the authenticated user's profile. **(Authenticated)**
+-   `GET /users/me`: Get the authenticated user's profile information including role, organization, and personal details. **(Authenticated - Any Role)** [Implemented]
 -   `PUT /users/me`: Update the authenticated user's own profile (limited fields). **(Authenticated)**
--   `GET /users`: List users within the admin's organization. **(Admin Role)**
--   `POST /users/invite`: Invite new users to the admin's organization. **(Admin Role)** [Implemented - See `implementation/user-invitation-implementation.md`]
--   `POST /users/accept-invitation`: Endpoint for invited users to set password and activate account. **(Requires Valid Invitation Token)**
+-   `GET /users`: List users within the admin's organization with pagination, sorting, and filtering options. Supports filtering by role, status, and name search. Returns users with pagination metadata. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `POST /users/invite`: Invite new users to the admin's organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented - See `implementation/user-invitation-implementation.md`]
+-   `POST /users/accept-invitation`: Endpoint for invited users to set password and activate account. Creates a new user account based on the invitation details. **(Public Endpoint - Requires Valid Invitation Token)** [Implemented]
 -   `GET /users/{userId}`: Get details of a specific user within the admin's org. **(Admin Role)**
 -   `PUT /users/{userId}`: Update details of a specific user within the admin's org (including `primary_location_id`). **(Admin Role)**
 -   `DELETE /users/{userId}`: Deactivate a user within the admin's org. **(Admin Role)**
@@ -55,12 +55,12 @@
 
 ## Connections (`/connections`)
 
-- `GET /connections`: List connections for the admin's organization. **(Admin Role)**
-- `POST /connections`: Request a connection to another organization. Uses `targetOrgId` parameter. **(Admin Role)**
-- `GET /connections/requests`: List pending incoming connection requests. **(Admin Role)**
--   `POST /connections/{relationshipId}/approve`: Approve a pending incoming request. **(Admin Role)**
--   `POST /connections/{relationshipId}/reject`: Reject a pending incoming request. **(Admin Role)**
--   `DELETE /connections/{relationshipId}`: Terminate an active connection. **(Admin Role)**
+- `GET /connections`: List connections for the admin's organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+- `POST /connections`: Request a connection to another organization. Uses `targetOrgId` parameter. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+- `GET /connections/requests`: List pending incoming connection requests. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `POST /connections/{relationshipId}/approve`: Approve a pending incoming request. Updates relationship status to 'active' and notifies the initiating organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `POST /connections/{relationshipId}/reject`: Reject a pending incoming request. Updates relationship status to 'rejected' and notifies the initiating organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `DELETE /connections/{relationshipId}`: Terminate an active connection. Updates relationship status to 'terminated'. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 
 ## Orders - Physician/General Access (`/orders`)
 

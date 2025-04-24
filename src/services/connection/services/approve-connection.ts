@@ -25,17 +25,23 @@ export class ApproveConnectionService {
     try {
       await client.query('BEGIN');
       
-      // Get the relationship
-      enhancedLogger.debug(`Fetching relationship for approval: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
-      const relationshipResult = await client.query(
+      // Check if the relationship exists, is in pending status, and the user is authorized to approve it
+      enhancedLogger.debug(`Checking if relationship exists and can be approved: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
+      
+      const relationshipCheckResult = await client.query(
         GET_RELATIONSHIP_FOR_APPROVAL_QUERY,
         [relationshipId, approvingOrgId]
       );
       
-      if (relationshipResult.rows.length === 0) {
-        enhancedLogger.debug(`Relationship not found or not authorized: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
+      if (relationshipCheckResult.rows.length === 0) {
+        enhancedLogger.debug(`Relationship not found, not authorized, or not in pending status: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
         throw new Error('Relationship not found, not authorized, or not in pending status');
       }
+      
+      const relationship = relationshipCheckResult.rows[0];
+      
+      // Now that all checks have passed, proceed with the approval
+      enhancedLogger.debug(`Relationship found and validated: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
       
       // Update the relationship
       enhancedLogger.debug(`Updating relationship status to active: relationshipId=${relationshipId}`);
@@ -44,8 +50,7 @@ export class ApproveConnectionService {
         [approvingUserId, relationshipId]
       );
       
-      // Send notification
-      const relationship = relationshipResult.rows[0];
+      // Send notification (using the relationship we already retrieved)
       if (relationship.initiating_org_email) {
         enhancedLogger.debug(`Sending approval notification to: ${relationship.initiating_org_email}`);
         try {

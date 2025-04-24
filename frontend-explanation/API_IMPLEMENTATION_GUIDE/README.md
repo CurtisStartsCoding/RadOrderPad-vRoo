@@ -18,7 +18,9 @@ The RadOrderPad API is organized into several logical sections:
 7. [Organization Management](./organization-management.md) - Organization-related endpoints
 8. [User Management](./user-management.md) - User-related endpoints
    - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature
-   - **Key Endpoint**: `GET /api/users/me` - Retrieves profile information for the authenticated user
+   - **Key Endpoints**:
+     - `GET /api/users/me` - Retrieves profile information for the authenticated user
+     - `GET /api/users` - Lists all users belonging to the authenticated administrator's organization
 9. [Billing Management](./billing-management.md) - Billing and subscription endpoints
 10. [Validation Engine](./validation-engine.md) - Clinical indications processing and code assignment
 11. [Workflow Guide](./workflow-guide.md) - End-to-end API workflow examples
@@ -205,14 +207,15 @@ For detailed implementation information, see the [User Invitation Details](./use
 
 This section provides a comprehensive overview of the implementation status across all API areas:
 
-### 1. Connection Management (100% Complete)
-- All endpoints are working and tested:
+### 1. Connection Management (95% Complete)
+- Working endpoints:
   - GET /api/connections
   - GET /api/connections/requests
   - POST /api/connections
-  - POST /api/connections/{relationshipId}/approve
-  - POST /api/connections/{relationshipId}/reject
-  - DELETE /api/connections/{relationshipId}
+  - POST /api/connections/{relationshipId}/approve (fixed - previously returned 500 error)
+  - POST /api/connections/{relationshipId}/reject (fixed - previously returned 500 error)
+- Endpoints with issues:
+  - DELETE /api/connections/{relationshipId} (returns 500 error)
 
 ### 2. Authentication & User Invitation (100% Complete)
 - All endpoints are working and tested:
@@ -255,14 +258,14 @@ This section provides a comprehensive overview of the implementation status acro
   - GET /api/billing/credit-usage (not implemented)
 - Internal webhook handling and credit management are implemented
 
-### 7. User Management (60-70% Complete)
+### 7. User Management (70-80% Complete)
 - Working endpoints:
   - GET /api/users/me
+  - GET /api/users (admin_referring, admin_radiology roles only)
   - POST /api/user-invites/invite
   - POST /api/user-invites/accept-invitation
 - Missing or untested endpoints:
   - PUT /users/me
-  - GET /users
   - GET /users/{userId}
   - PUT /users/{userId}
   - DELETE /users/{userId}
@@ -290,3 +293,60 @@ This section provides a comprehensive overview of the implementation status acro
   - POST /api/uploads/presigned-url
   - POST /api/uploads/confirm
   - GET /uploads/{documentId}/download-url
+
+## Recent Fixes
+
+### Connection Approval Endpoint Fix
+
+The `POST /api/connections/{relationshipId}/approve` endpoint has been fixed and is now working correctly. This endpoint allows an admin (admin_referring, admin_radiology) of the target organization to approve a connection request initiated by another organization.
+
+#### Issue Description
+The endpoint was previously returning a 500 Internal Server Error due to an improper SQL query implementation. The service was using a custom query to check if the relationship exists, but it wasn't using the imported `GET_RELATIONSHIP_FOR_APPROVAL_QUERY` constant.
+
+The custom query only checked if the relationship exists by ID, but it didn't check if the related_organization_id matches the approvingOrgId or if the status is 'pending' in the SQL query itself. Instead, it did these checks after fetching the relationship, which could lead to issues if the relationship doesn't exist or if it's not in the expected state.
+
+#### Fix Implementation
+The fix was to update the `approve-connection.ts` service to use the imported `GET_RELATIONSHIP_FOR_APPROVAL_QUERY` constant, which includes all necessary checks in a single SQL query:
+
+```sql
+WHERE r.id = $1 AND r.related_organization_id = $2 AND r.status = 'pending'
+```
+
+This ensures that the endpoint properly validates that:
+1. The relationship exists
+2. The user is authorized to approve it (belongs to the target organization)
+3. The relationship is in 'pending' status
+
+All of these checks are now done in a single SQL query, which is more efficient and less error-prone.
+
+#### Testing
+The fix has been tested using the `test-connection-approve.js` script, which successfully approves a pending connection request. The test script has been updated to run from the correct directory, and both batch (.bat) and shell (.sh) scripts have been created to run the test.
+
+### Connection Rejection Endpoint Fix
+
+The `POST /api/connections/{relationshipId}/reject` endpoint has been fixed and is now working correctly. This endpoint allows an admin (admin_referring, admin_radiology) of the target organization to reject a connection request initiated by another organization.
+
+#### Issue Description
+The endpoint was previously returning a 500 Internal Server Error due to similar issues as the approval endpoint. The service was already using the imported `GET_RELATIONSHIP_FOR_APPROVAL_QUERY` constant, but needed additional debug logging and error handling improvements.
+
+#### Fix Implementation
+The fix involved enhancing the `reject-connection.ts` service with:
+
+1. Comprehensive debug logging throughout the service
+2. Better error handling for notification failures
+3. Improved transaction management
+4. Proper client release in the finally block
+
+The service already correctly used the `GET_RELATIONSHIP_FOR_APPROVAL_QUERY` constant, which includes all necessary checks in a single SQL query:
+
+```sql
+WHERE r.id = $1 AND r.related_organization_id = $2 AND r.status = 'pending'
+```
+
+This ensures that the endpoint properly validates that:
+1. The relationship exists
+2. The user is authorized to reject it (belongs to the target organization)
+3. The relationship is in 'pending' status
+
+#### Testing
+The fix has been tested using the `test-connection-reject.js` script, which successfully rejects a pending connection request. The test script has been updated to handle the expected 404 response when a relationship is not found, not in pending status, or the user is not authorized to reject it. Both batch (.bat) and shell (.sh) scripts have been created to run the test.

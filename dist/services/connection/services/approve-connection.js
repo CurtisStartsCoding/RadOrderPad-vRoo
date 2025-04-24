@@ -23,18 +23,20 @@ class ApproveConnectionService {
         enhanced_logger_1.default.debug(`Approving connection: relationshipId=${relationshipId}, approvingUserId=${approvingUserId}, approvingOrgId=${approvingOrgId}`);
         try {
             await client.query('BEGIN');
-            // Get the relationship
-            enhanced_logger_1.default.debug(`Fetching relationship for approval: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
-            const relationshipResult = await client.query(approve_1.GET_RELATIONSHIP_FOR_APPROVAL_QUERY, [relationshipId, approvingOrgId]);
-            if (relationshipResult.rows.length === 0) {
-                enhanced_logger_1.default.debug(`Relationship not found or not authorized: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
+            // Check if the relationship exists, is in pending status, and the user is authorized to approve it
+            enhanced_logger_1.default.debug(`Checking if relationship exists and can be approved: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
+            const relationshipCheckResult = await client.query(approve_1.GET_RELATIONSHIP_FOR_APPROVAL_QUERY, [relationshipId, approvingOrgId]);
+            if (relationshipCheckResult.rows.length === 0) {
+                enhanced_logger_1.default.debug(`Relationship not found, not authorized, or not in pending status: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
                 throw new Error('Relationship not found, not authorized, or not in pending status');
             }
+            const relationship = relationshipCheckResult.rows[0];
+            // Now that all checks have passed, proceed with the approval
+            enhanced_logger_1.default.debug(`Relationship found and validated: relationshipId=${relationshipId}, approvingOrgId=${approvingOrgId}`);
             // Update the relationship
             enhanced_logger_1.default.debug(`Updating relationship status to active: relationshipId=${relationshipId}`);
             await client.query(approve_1.APPROVE_RELATIONSHIP_QUERY, [approvingUserId, relationshipId]);
-            // Send notification
-            const relationship = relationshipResult.rows[0];
+            // Send notification (using the relationship we already retrieved)
             if (relationship.initiating_org_email) {
                 enhanced_logger_1.default.debug(`Sending approval notification to: ${relationship.initiating_org_email}`);
                 try {

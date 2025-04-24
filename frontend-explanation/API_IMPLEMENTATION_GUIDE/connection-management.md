@@ -252,6 +252,87 @@ This section covers endpoints related to managing connections between referring 
 - **Status:** Working
 - **Tested With:** test-connection-requests.js
 
+## Approve Connection Request
+
+**Endpoint:** `POST /api/connections/{relationshipId}/approve`
+
+**Description:** Approves a pending connection request from another organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**URL Parameters:**
+- `relationshipId`: The ID of the relationship to approve
+
+**Request Body:** None
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Connection request approved successfully",
+  "relationshipId": 1
+}
+```
+
+**Error Responses:**
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the admin_referring or admin_radiology role
+- 404 Not Found: If the relationship does not exist, the user is not authorized to approve it, or it is not in pending status
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to approve a pending connection request from another organization.
+- Only users with admin_referring or admin_radiology roles can access this endpoint.
+- The user must belong to the target organization of the connection request.
+- The connection status will be updated from "pending" to "active".
+- A notification will be sent to the initiating organization.
+- Use this endpoint when implementing the connection approval feature.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-connection-approve.js
+- **Fixed Issues:** Previously returned 500 error due to improper SQL query. Now uses the correct query that checks relationship existence, authorization, and pending status in a single database operation.
+
+## Reject Connection Request
+
+**Endpoint:** `POST /api/connections/{relationshipId}/reject`
+
+**Description:** Rejects a pending connection request from another organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**URL Parameters:**
+- `relationshipId`: The ID of the relationship to reject
+
+**Request Body:** None
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Connection request rejected successfully",
+  "relationshipId": 1
+}
+```
+
+**Error Responses:**
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the admin_referring or admin_radiology role
+- 404 Not Found: If the relationship does not exist, the user is not authorized to reject it, or it is not in pending status
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to reject a pending connection request from another organization.
+- Only users with admin_referring or admin_radiology roles can access this endpoint.
+- The user must belong to the target organization of the connection request.
+- The connection status will be updated from "pending" to "rejected".
+- A notification will be sent to the initiating organization.
+- Use this endpoint when implementing the connection rejection feature.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-connection-reject.js
+
 ## Role Restrictions
 
 The following connection-related endpoints have role restrictions:
@@ -261,3 +342,5 @@ The following connection-related endpoints have role restrictions:
 - `GET /api/connections/{connectionId}`: Works correctly but is restricted to admin_referring and admin_radiology roles
 - `POST /api/connections`: Works correctly but is restricted to admin_referring and admin_radiology roles
 - `PUT /api/connections/{connectionId}`: Works correctly but is restricted to admin_referring and admin_radiology roles
+- `POST /api/connections/{relationshipId}/approve`: Works correctly but is restricted to admin_referring and admin_radiology roles
+- `POST /api/connections/{relationshipId}/reject`: Works correctly but is restricted to admin_referring and admin_radiology roles

@@ -8,7 +8,7 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (8)
+### 1. Working Endpoints (10)
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **POST /api/organizations/mine/locations** - Fully functional, returns 201 with location data
 - **POST /api/admin/orders/{orderId}/paste-supplemental** - Works with order IDs 600, 601, 603, 604, 609, 612
@@ -16,6 +16,8 @@ We have tested all the missing endpoints and documented their current status:
 - **PUT /api/admin/orders/{orderId}/insurance-info** - Works with order IDs 600, 601, 603, 604, 609, 612
 - **GET /api/admin/orders/queue** - Fully functional, returns orders with status 'pending_admin'
 - **GET /api/connections/requests** - Fully functional, returns pending incoming connection requests
+- **POST /api/connections/{relationshipId}/approve** - Fully functional, approves a pending connection request
+- **POST /api/connections/{relationshipId}/reject** - Fully functional, rejects a pending connection request
 - **GET /api/users/me** - Fully functional, returns profile information for the authenticated user
 
 ### 2. Endpoints That Exist But Need Further Verification (3)
@@ -23,9 +25,7 @@ We have tested all the missing endpoints and documented their current status:
 - **POST /api/uploads/confirm** - Not tested (requires valid fileKey from previous step)
 - **POST /api/admin/orders/{orderId}/paste-summary** - Exists but has database schema issues ("column authorization_number does not exist")
 
-### 3. Endpoints With Implementation Issues (3)
-- **POST /api/connections/{relationshipId}/approve** - Returns 500 internal server error
-- **POST /api/connections/{relationshipId}/reject** - Returns 500 internal server error
+### 3. Endpoints With Implementation Issues (1)
 - **DELETE /api/connections/{relationshipId}** - Returns 500 internal server error
 
 ### 4. Skipped Endpoints (2)
@@ -101,9 +101,10 @@ Based on our comprehensive testing, here are the next steps to complete the API 
    - These IDs work with paste-supplemental, patient-info, and insurance-info endpoints
 
 4. **Debug the connection management endpoints**
-   - ~~Investigate the internal server errors~~ - GET /api/connections/requests has been fixed
+   - ~~Investigate the internal server errors~~ - GET /api/connections/requests and POST /api/connections/{relationshipId}/approve have been fixed
    - The GET /api/connections/requests endpoint now works correctly
-   - Still need to fix the approve, reject, and delete endpoints
+   - The POST /api/connections/{relationshipId}/approve endpoint now works correctly
+   - Still need to fix the reject and delete endpoints
    - Check server logs for more detailed error messages
 
 5. **Update the documentation with specific requirements**
