@@ -13,6 +13,8 @@ router.use(auth_1.authenticateJWT);
 // Organization routes
 router.get('/mine', index_js_2.default.getMyOrganization);
 router.put('/mine', (0, auth_1.authorizeRole)(['admin_referring', 'admin_radiology']), index_js_2.default.updateMyOrganization);
+// Search for organizations (for connection requests)
+router.get('/', (0, auth_1.authorizeRole)(['admin_referring', 'admin_radiology']), index_js_2.default.searchOrganizations);
 // Location routes
 // Only admin roles can manage locations
 const adminRoles = ['admin_referring', 'admin_radiology'];

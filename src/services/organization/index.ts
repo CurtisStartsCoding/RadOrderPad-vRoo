@@ -1,6 +1,6 @@
 /**
  * Organization service module
- * 
+ *
  * This module exports all organization-related services
  */
 
@@ -12,3 +12,9 @@ export {
   updateOrganizationProfile,
   UpdateOrganizationParams
 } from './update-organization-profile.service.js';
+
+// Export the search-organizations service
+export {
+  searchOrganizations,
+  OrganizationSearchFilters
+} from './search-organizations.service.js';

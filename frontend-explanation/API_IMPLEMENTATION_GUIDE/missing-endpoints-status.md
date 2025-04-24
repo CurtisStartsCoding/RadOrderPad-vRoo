@@ -8,7 +8,8 @@ This document provides the current status of the previously missing API endpoint
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (16)
+### 1. Working Endpoints (17)
+- **GET /api/organizations** - Fully functional, allows searching for potential partner organizations
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **PUT /api/organizations/mine** - Fully functional, allows admins to update their organization's profile
 - **POST /api/organizations/mine/locations** - Fully functional, returns 201 with location data
@@ -43,6 +44,7 @@ No endpoints currently have implementation issues.
 All endpoints have been documented in their respective files:
 
 ### 1. Organization Management
+- **GET /api/organizations** - Documented in [organization-management.md](./organization-management.md) and [connection-management-details.md](./connection-management-details.md)
 - **GET /api/organizations/mine** - Documented in [organization-management.md](./organization-management.md)
 - **PUT /api/organizations/mine** - Documented in [organization-management.md](./organization-management.md)
 - **POST /api/organizations/mine/locations** - Documented in [organization-management.md](./organization-management.md)
@@ -74,12 +76,17 @@ All endpoints have been documented in their respective files:
 ## Specific Findings
 
 ### 1. Organization Management
+- The GET /api/organizations endpoint is fully functional and allows searching for potential partner organizations
+  - Supports filtering by name, NPI, type, city, and state
+  - Excludes the requesting user's own organization from results
+  - Only returns active organizations
+  - Authentication: admin_referring and admin_radiology roles only
 - The GET /api/organizations/mine endpoint is fully functional and returns organization details, locations, and users
 - The PUT /api/organizations/mine endpoint is fully functional and allows admins to update their organization's profile
 - The endpoint validates input data and prevents updates to restricted fields (id, type, status, credit_balance, billing_id, subscription_tier)
 - The POST /api/organizations/mine/locations endpoint is fully functional and returns a 201 status code with the created location data
 - Required fields for location creation: name, address_line1, city, state, zip_code
-- Authentication: all roles for GET, admin_referring and admin_radiology roles for PUT, admin_referring role for POST
+- Authentication: all roles for GET /organizations/mine, admin_referring and admin_radiology roles for PUT, admin_referring role for POST
 
 ### 2. Uploads Management
 - The presigned-url endpoint exists but returns a 500 error with the message "AWS credentials or S3 bucket name not configured"

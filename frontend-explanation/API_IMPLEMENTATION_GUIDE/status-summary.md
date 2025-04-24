@@ -59,6 +59,7 @@ The following endpoints were tested and are working correctly in the production 
 ### Organization Management
 - `GET /api/organizations/mine`: Get details of the authenticated user's organization
 - `PUT /api/organizations/mine`: Update details of the authenticated user's organization (tested with admin_referring and admin_radiology roles)
+- `GET /api/organizations`: Search for potential partner organizations (tested with admin_referring and admin_radiology roles)
 
 ## Endpoints with Method Restrictions
 
@@ -71,7 +72,6 @@ The following endpoints have specific method restrictions by design:
 
 The following endpoints have specific path restrictions by design:
 
-- `GET /api/organizations`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path. Use organization-specific endpoints instead.
 - `GET /api/superadmin`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path. Use specific superadmin endpoints like `GET /api/superadmin/users` or `GET /api/superadmin/organizations` instead
 
 ## Endpoints with Role Restrictions

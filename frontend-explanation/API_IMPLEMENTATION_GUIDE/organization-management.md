@@ -2,31 +2,57 @@
 
 This section covers endpoints related to managing organizations in the RadOrderPad system.
 
-## Get Organizations
+## Search Organizations
 
 **Endpoint:** `GET /api/organizations`
 
-**Description:** Retrieves a list of organizations.
+**Description:** Search for potential partner organizations. Supports filtering by name, NPI, type, city, and state. Returns organizations excluding the user's own organization.
 
-**Authentication:** Required (admin_staff, admin_referring, admin_radiology roles)
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**Query Parameters:**
+- `name` (optional): Filter organizations by name (partial match)
+- `npi` (optional): Filter organizations by NPI (exact match)
+- `type` (optional): Filter organizations by type (referring_practice, radiology_group)
+- `city` (optional): Filter organizations by city (partial match)
+- `state` (optional): Filter organizations by state (exact match)
 
 **Response:**
 ```json
 {
-  "organizations": [
-    {
-      "id": 1,
-      "name": "ABC Medical Group",
-      "type": "referring",
-      "status": "active",
-      "createdAt": "2025-04-01T12:00:00.000Z"
-    },
+  "success": true,
+  "data": [
     {
       "id": 2,
-      "name": "XYZ Radiology",
-      "type": "radiology",
+      "name": "Test Radiology Group",
+      "type": "radiology_group",
+      "npi": "0987654321",
+      "address_line1": "456 Imaging Ave",
+      "city": "Test City",
+      "state": "TS",
+      "zip_code": "12345",
+      "phone_number": "555-987-6543",
+      "contact_email": "admin@testradiology.com",
+      "website": null,
+      "logo_url": null,
       "status": "active",
-      "createdAt": "2025-04-01T12:30:00.000Z"
+      "created_at": "2025-04-13T21:53:08.889Z"
+    },
+    {
+      "id": 3,
+      "name": "Another Medical Practice",
+      "type": "referring_practice",
+      "npi": "1122334455",
+      "address_line1": "789 Health St",
+      "city": "Medical City",
+      "state": "MC",
+      "zip_code": "54321",
+      "phone_number": "555-123-7890",
+      "contact_email": "admin@anotherpractice.com",
+      "website": "https://anotherpractice.com",
+      "logo_url": null,
+      "status": "active",
+      "created_at": "2025-04-13T21:53:08.889Z"
     }
   ]
 }
@@ -38,13 +64,16 @@ This section covers endpoints related to managing organizations in the RadOrderP
 - 500 Internal Server Error: If there is a server error
 
 **Usage Notes:**
-- This endpoint is used to display a list of organizations.
-- Use this endpoint when implementing the organization management view.
+- This endpoint is used to search for potential partner organizations when initiating connection requests.
+- The endpoint automatically excludes the requesting user's own organization from the results.
+- Only active organizations are returned in the results.
+- Results are ordered by organization name in ascending order.
+- A limit of 50 organizations is applied to prevent returning excessively large results.
 
 **Implementation Status:**
-- **Status:** Not Working
-- **Tested With:** test-comprehensive-api.js, test-comprehensive-api-with-roles.js
-- **Error:** Returns 404 "Route not found" error - This is by design as the route is not defined for the base path.
+- **Status:** Working
+- **Tested With:** test-search-organizations-simple.js
+- **Notes:** Successfully returns organizations matching the search criteria, excluding the user's own organization.
 
 ## Add Location to Current Organization
 
@@ -318,7 +347,6 @@ This section covers endpoints related to managing organizations in the RadOrderP
 
 The following organization-related endpoints have path restrictions:
 
-- `GET /api/organizations`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path. Use organization-specific endpoints instead.
 - `GET /api/organizations/{organizationId}`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path.
 - `PUT /api/organizations/{organizationId}`: Returns 404 "Route not found" error - This is by design as the route is not defined for the base path.
 

@@ -25,7 +25,7 @@
 
 -   `GET /organizations/mine`: Get details of the authenticated user's organization. **(Authenticated)**
 -   `PUT /organizations/mine`: Update details of the authenticated user's organization. **(Admin Role)** [Implemented]
--   `GET /organizations`: Search for potential partner organizations. **(Admin Role)**
+-   `GET /organizations`: Search for potential partner organizations. Supports filtering by name, NPI, type, city, and state. Returns organizations excluding the user's own organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 
 ### Organization Locations (`/organizations/.../locations`)
 

@@ -2,6 +2,71 @@
 
 This section covers endpoints related to managing connections between organizations in the RadOrderPad system.
 
+## Search Organizations
+
+**Endpoint:** `GET /api/organizations`
+
+**Description:** Allows administrators to search for potential partner organizations to initiate connection requests.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**Query Parameters:**
+- `name`: (optional) Search by organization name (partial match, case-insensitive)
+- `npi`: (optional) Search by organization NPI (exact match)
+- `type`: (optional) Search by organization type ('referring_practice' or 'radiology_group')
+- `city`: (optional) Search by city (partial match, case-insensitive)
+- `state`: (optional) Search by state (exact match)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 2,
+      "name": "XYZ Radiology Group",
+      "type": "radiology_group",
+      "npi": "1234567890",
+      "address_line1": "123 Main St",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip_code": "94105",
+      "phone_number": "555-123-4567",
+      "contact_email": "contact@xyzradiology.com",
+      "website": "https://www.xyzradiology.com",
+      "logo_url": null,
+      "status": "active",
+      "created_at": "2025-04-01T12:00:00.000Z"
+    }
+  ]
+}
+```
+
+**Error Responses:**
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the admin_referring or admin_radiology role
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to search for potential partner organizations to initiate connection requests.
+- The search results exclude the user's own organization.
+- Only active organizations are returned.
+- Results are limited to 50 organizations to prevent excessive data transfer.
+- Results are sorted alphabetically by name.
+
+**Implementation Details:**
+- The endpoint queries the `organizations` table in the Main database.
+- It uses parameterized queries to prevent SQL injection.
+- It excludes the requesting organization from the results.
+- It only returns organizations with status = 'active'.
+- It supports partial matching for name and city fields using ILIKE.
+- It supports exact matching for npi, type, and state fields.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-search-organizations.bat/sh
+- **Notes:** Successfully tested with production data
+
 ## Get Connection Requests
 
 **Endpoint:** `GET /api/connections/requests`

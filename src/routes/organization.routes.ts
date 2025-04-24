@@ -13,6 +13,9 @@ router.get('/mine', organizationController.getMyOrganization);
 
 router.put('/mine', authorizeRole(['admin_referring', 'admin_radiology']), organizationController.updateMyOrganization);
 
+// Search for organizations (for connection requests)
+router.get('/', authorizeRole(['admin_referring', 'admin_radiology']), organizationController.searchOrganizations);
+
 // Location routes
 // Only admin roles can manage locations
 const adminRoles = ['admin_referring', 'admin_radiology'];
