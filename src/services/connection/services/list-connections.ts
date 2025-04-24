@@ -12,32 +12,27 @@ export class ListConnectionsService {
    * @returns Promise with connections list
    */
   async listConnections(orgId: number): Promise<Connection[]> {
-    try {
-      const result = await queryMainDb(LIST_CONNECTIONS_QUERY, [orgId]);
+    const result = await queryMainDb(LIST_CONNECTIONS_QUERY, [orgId]);
+    
+    return result.rows.map((row: Record<string, unknown>) => {
+      // Determine if this org is the initiator or target
+      const isInitiator = row.organization_id === orgId;
       
-      return result.rows.map((row: any) => {
-        // Determine if this org is the initiator or target
-        const isInitiator = row.organization_id === orgId;
-        
-        return {
-          id: row.id,
-          partnerOrgId: isInitiator ? row.related_organization_id : row.organization_id,
-          partnerOrgName: isInitiator ? row.target_org_name : row.initiating_org_name,
-          status: row.status,
-          isInitiator,
-          initiatedBy: row.initiator_first_name && row.initiator_last_name ? 
-            `${row.initiator_first_name} ${row.initiator_last_name}` : null,
-          approvedBy: row.approver_first_name && row.approver_last_name ? 
-            `${row.approver_first_name} ${row.approver_last_name}` : null,
-          notes: row.notes,
-          createdAt: row.created_at,
-          updatedAt: row.updated_at
-        };
-      });
-    } catch (error) {
-      console.error('Error in listConnections:', error);
-      throw error;
-    }
+      return {
+        id: row.id as number,
+        partnerOrgId: isInitiator ? row.related_organization_id as number : row.organization_id as number,
+        partnerOrgName: isInitiator ? row.target_org_name as string : row.initiating_org_name as string,
+        status: row.status as Connection['status'],
+        isInitiator,
+        initiatedBy: row.initiator_first_name && row.initiator_last_name ? 
+          `${row.initiator_first_name} ${row.initiator_last_name}` : null,
+        approvedBy: row.approver_first_name && row.approver_last_name ? 
+          `${row.approver_first_name} ${row.approver_last_name}` : null,
+        notes: row.notes as string | null,
+        createdAt: row.created_at as Date,
+        updatedAt: row.updated_at as Date
+      };
+    });
   }
   
   /**
@@ -47,22 +42,27 @@ export class ListConnectionsService {
    */
   async listIncomingRequests(orgId: number): Promise<IncomingRequest[]> {
     try {
+      // Execute the query
       const result = await queryMainDb(LIST_INCOMING_REQUESTS_QUERY, [orgId]);
       
-      return result.rows.map((row: any) => {
+      // Map the rows to the IncomingRequest interface
+      return result.rows.map((row: Record<string, unknown>) => {
         return {
-          id: row.id,
-          initiatingOrgId: row.organization_id,
-          initiatingOrgName: row.initiating_org_name,
-          initiatedBy: row.initiator_first_name && row.initiator_last_name ? 
+          id: row.id as number,
+          initiatingOrgId: row.organization_id as number,
+          initiatingOrgName: (row.initiating_org_name as string) || 'Unknown Organization',
+          initiatedBy: row.initiator_first_name && row.initiator_last_name ?
             `${row.initiator_first_name} ${row.initiator_last_name}` : null,
-          initiatorEmail: row.initiator_email,
-          notes: row.notes,
-          createdAt: row.created_at
+          initiatorEmail: row.initiator_email as string | null,
+          notes: row.notes as string | null,
+          createdAt: row.created_at as Date
         };
       });
     } catch (error) {
-      console.error('Error in listIncomingRequests:', error);
+      // Enhance error message with more details
+      if (error instanceof Error) {
+        error.message = `Failed to list incoming requests for organization ${orgId}: ${error.message}`;
+      }
       throw error;
     }
   }

@@ -5,6 +5,9 @@
  */
 import logger from './logger';
 
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Enhanced logger that uses both Winston and console methods
  * This ensures logs are captured in all environments
@@ -15,7 +18,7 @@ const enhancedLogger = {
    * @param message The message to log
    * @param meta Additional metadata
    */
-  error: (message: string | any, ...meta: any[]): void => {
+  error: (message: string | any, ...meta: unknown[]): void => {
     // Use Winston logger
     logger.error(message, ...meta);
     
@@ -28,7 +31,7 @@ const enhancedLogger = {
    * @param message The message to log
    * @param meta Additional metadata
    */
-  warn: (message: string | any, ...meta: any[]): void => {
+  warn: (message: string | any, ...meta: unknown[]): void => {
     // Use Winston logger
     logger.warn(message, ...meta);
     
@@ -41,7 +44,7 @@ const enhancedLogger = {
    * @param message The message to log
    * @param meta Additional metadata
    */
-  info: (message: string | any, ...meta: any[]): void => {
+  info: (message: string | any, ...meta: unknown[]): void => {
     // Use Winston logger
     logger.info(message, ...meta);
     
@@ -54,7 +57,7 @@ const enhancedLogger = {
    * @param message The message to log
    * @param meta Additional metadata
    */
-  debug: (message: string | any, ...meta: any[]): void => {
+  debug: (message: string | any, ...meta: unknown[]): void => {
     // Use Winston logger
     logger.debug(message, ...meta);
     
@@ -68,9 +71,10 @@ const enhancedLogger = {
    * @param message The message to log
    * @param meta Additional metadata
    */
-  log: (level: string, message: string | any, ...meta: any[]): void => {
+  log: (level: string, message: string | any, ...meta: unknown[]): void => {
     // Use Winston logger if the level is supported
     if (level in logger) {
+      // We need to use any here because we're dynamically accessing a property by name
       (logger as any)[level](message, ...meta);
     }
     
@@ -78,5 +82,8 @@ const enhancedLogger = {
     console.log(`[${level.toUpperCase()}]`, message, ...meta);
   }
 };
+
+/* eslint-enable no-console */
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export default enhancedLogger;

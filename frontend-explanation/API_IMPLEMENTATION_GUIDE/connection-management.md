@@ -209,11 +209,55 @@ This section covers endpoints related to managing connections between referring 
 - **Status:** Working
 - **Tested With:** test-comprehensive-api-with-roles.js
 
+## List Incoming Connection Requests
+
+**Endpoint:** `GET /api/connections/requests`
+
+**Description:** Retrieves a list of pending incoming connection requests for the current organization.
+
+**Authentication:** Required (admin_referring, admin_radiology roles)
+
+**Query Parameters:** None
+
+**Response:**
+```json
+{
+  "requests": [
+    {
+      "id": 5,
+      "initiatingOrgId": 3,
+      "initiatingOrgName": "Test Referring Practice",
+      "initiatedBy": "John Smith",
+      "initiatorEmail": "john.smith@example.com",
+      "notes": "We would like to establish a connection with your radiology group",
+      "createdAt": "2025-04-22T14:28:44.148Z"
+    }
+  ]
+}
+```
+
+**Error Responses:**
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the admin_referring or admin_radiology role
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used to display a list of pending incoming connection requests for the current organization.
+- These are requests initiated by other organizations that are waiting for approval or rejection.
+- Only users with admin_referring or admin_radiology roles can access this endpoint.
+- Use this endpoint when implementing the connection requests management view.
+- After retrieving the requests, you can use the `POST /api/connections/{connectionId}/approve` or `POST /api/connections/{connectionId}/reject` endpoints to respond to them.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-connection-requests.js
+
 ## Role Restrictions
 
 The following connection-related endpoints have role restrictions:
 
 - `GET /api/connections`: Works correctly but is restricted to admin_referring and admin_radiology roles
+- `GET /api/connections/requests`: Works correctly but is restricted to admin_referring and admin_radiology roles
 - `GET /api/connections/{connectionId}`: Works correctly but is restricted to admin_referring and admin_radiology roles
 - `POST /api/connections`: Works correctly but is restricted to admin_referring and admin_radiology roles
 - `PUT /api/connections/{connectionId}`: Works correctly but is restricted to admin_referring and admin_radiology roles

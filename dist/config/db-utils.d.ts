@@ -1,4 +1,4 @@
-import { Pool, PoolClient } from 'pg';
+import { Pool, PoolClient, QueryResult } from 'pg';
 /**
  * Generic database utility functions
  */
@@ -17,7 +17,7 @@ export declare const getDbClient: (pool: Pool, dbName: string) => Promise<PoolCl
  * @param dbName Name of the database (for error logging)
  * @returns Promise with query result
  */
-export declare const queryDb: (pool: Pool, text: string, params: any[] | undefined, dbName: string) => Promise<any>;
+export declare const queryDb: (pool: Pool, text: string, params: unknown[] | undefined, dbName: string) => Promise<QueryResult>;
 /**
  * Test a database connection
  * @param pool Database pool
@@ -29,12 +29,12 @@ export declare const testDbConnection: (pool: Pool, dbName: string) => Promise<b
  * Convenience functions for main database
  */
 export declare const getMainDbClient: () => Promise<PoolClient>;
-export declare const queryMainDb: (text: string, params?: any[]) => Promise<any>;
+export declare const queryMainDb: (text: string, params?: unknown[]) => Promise<QueryResult>;
 /**
  * Convenience functions for PHI database
  */
 export declare const getPhiDbClient: () => Promise<PoolClient>;
-export declare const queryPhiDb: (text: string, params?: any[]) => Promise<any>;
+export declare const queryPhiDb: (text: string, params?: unknown[]) => Promise<QueryResult>;
 /**
  * Test both database connections
  * @returns Promise with boolean indicating success of both connections

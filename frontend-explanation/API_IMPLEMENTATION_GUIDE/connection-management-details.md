@@ -6,22 +6,22 @@ This section covers endpoints related to managing connections between organizati
 
 **Endpoint:** `GET /api/connections/requests`
 
-**Description:** Retrieves a list of pending connection requests for the user's organization.
+**Description:** Retrieves a list of pending incoming connection requests for the authenticated user's organization.
 
-**Authentication:** Required (admin_radiology role)
+**Authentication:** Required (admin_referring, admin_radiology roles)
 
 **Response:**
 ```json
 {
   "requests": [
     {
-      "id": 1,
-      "sourceOrganizationId": 3,
-      "sourceOrganizationName": "ABC Medical Group",
-      "targetOrganizationId": 2,
-      "targetOrganizationName": "XYZ Radiology",
-      "status": "pending",
-      "createdAt": "2025-04-01T12:00:00.000Z"
+      "id": 5,
+      "initiatingOrgId": 3,
+      "initiatingOrgName": "Test Referring Practice",
+      "initiatedBy": "John Smith",
+      "initiatorEmail": "john.smith@example.com",
+      "notes": "We would like to establish a connection with your radiology group",
+      "createdAt": "2025-04-22T14:28:44.148Z"
     }
   ]
 }
@@ -29,16 +29,32 @@ This section covers endpoints related to managing connections between organizati
 
 **Error Responses:**
 - 401 Unauthorized: If the user is not authenticated
-- 403 Forbidden: If the user does not have the admin_radiology role
+- 403 Forbidden: If the user does not have the admin_referring or admin_radiology role
 - 500 Internal Server Error: If there is a server error
 
 **Usage Notes:**
-- This endpoint is used to display a list of pending connection requests for the user's organization.
-- Use this endpoint when implementing the connection management view.
+- This endpoint is used to display a list of pending incoming connection requests for the current organization.
+- These are requests initiated by other organizations that are waiting for approval or rejection.
+- Use this endpoint when implementing the connection requests management view.
+- After retrieving the requests, you can use the approve or reject endpoints to respond to them.
+
+**Implementation Details:**
+- The endpoint queries the `organization_relationships` table in the Main database
+- It looks for records where:
+  - `related_organization_id` matches the authenticated user's organization ID
+  - `status` is 'pending'
+- The query uses LEFT JOIN with the organizations and users tables to get additional information
+- LEFT JOIN is critical here to handle cases where user records might be null
+
+**SQL Implementation Note:**
+- Using LEFT JOIN instead of JOIN is important for this endpoint
+- JOIN operations fail when there are null values in the joined tables
+- LEFT JOIN preserves the main record even when joined tables have no matching records
+- This is a common pattern needed when joining multiple tables where some relationships might be optional
 
 **Implementation Status:**
 - **Status:** Working
-- **Tested With:** test-connection-endpoints-production.js
+- **Tested With:** test-connection-requests.js
 - **Notes:** Successfully tested with production data
 
 ## Approve Connection Request

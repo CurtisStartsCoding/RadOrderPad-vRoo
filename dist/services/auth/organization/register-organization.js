@@ -21,8 +21,10 @@ const enhanced_logger_1 = __importDefault(require("../../../utils/enhanced-logge
  */
 async function registerOrganization(orgData, userData) {
     // Start a transaction
-    const client = await (0, db_1.queryMainDb)('BEGIN');
+    const client = await (0, db_1.getMainDbClient)();
     try {
+        // Begin transaction
+        await client.query('BEGIN');
         // Check if organization with the same name already exists
         const existingOrgResult = await client.query('SELECT id FROM organizations WHERE name = $1', [orgData.name]);
         if (existingOrgResult.rows.length > 0) {

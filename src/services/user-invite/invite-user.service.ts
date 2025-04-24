@@ -22,7 +22,7 @@ export const inviteUser = async (
     [invitedEmail, invitingOrgId]
   );
 
-  if (existingUserResult.rowCount > 0) {
+  if (existingUserResult.rowCount && existingUserResult.rowCount > 0) {
     throw new Error('User with this email already exists in this organization');
   }
 
@@ -33,7 +33,7 @@ export const inviteUser = async (
     [invitedEmail, invitingOrgId]
   );
 
-  if (pendingInvitationResult.rowCount > 0) {
+  if (pendingInvitationResult.rowCount && pendingInvitationResult.rowCount > 0) {
     throw new Error('An invitation is already pending for this email address');
   }
 

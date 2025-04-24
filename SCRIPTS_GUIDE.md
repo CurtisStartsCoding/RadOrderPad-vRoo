@@ -122,6 +122,7 @@ These scripts are related to frontend testing, debugging, and validation:
 | `save-environment-details.bat` | Saves environment details to a file |
 | `set-captcha-env-server.bat/sh` | Sets CAPTCHA environment variables on the server |
 | `implement-captcha-test-mode.bat/sh` | Modifies server code to support CAPTCHA testing |
+| `move-test-results.bat/sh` | Moves test results files to the API_IMPLEMENTATION_GUIDE directory |
 
 ## Utility Scripts
 

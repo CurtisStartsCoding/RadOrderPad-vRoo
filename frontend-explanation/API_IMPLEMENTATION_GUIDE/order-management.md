@@ -297,6 +297,71 @@ This section covers endpoints related to managing orders in the RadOrderPad syst
 - **Status:** Working
 - **Tested With:** test-send-to-radiology.js
 
+## List Orders Awaiting Admin Finalization
+
+**Endpoint:** `GET /api/admin/orders/queue`
+
+**Description:** Retrieves a list of orders awaiting admin finalization (status = 'pending_admin') for the current user's organization.
+
+**Authentication:** Required (admin_staff role)
+
+**Query Parameters:**
+- `page` (optional): Page number for pagination (default: 1)
+- `limit` (optional): Number of items per page (default: 20)
+- `sortBy` (optional): Field to sort by (default: "created_at")
+- `sortOrder` (optional): Sort direction ("asc" or "desc", default: "desc")
+- `patientName` (optional): Filter by patient name (case-insensitive partial match)
+- `physicianName` (optional): Filter by referring physician name (case-insensitive partial match)
+- `dateFrom` (optional): Filter by created date from (ISO format)
+- `dateTo` (optional): Filter by created date to (ISO format)
+
+**Response:**
+```json
+{
+  "orders": [
+    {
+      "id": 612,
+      "order_number": "ORD-1745331663206",
+      "patient_name": "John Smith",
+      "patient_dob": "1950-05-15",
+      "patient_gender": "male",
+      "referring_physician_name": "Dr. Jane Doe",
+      "modality": "MRI",
+      "body_part": "LUMBAR_SPINE",
+      "laterality": null,
+      "final_cpt_code": "72148",
+      "final_cpt_code_description": "MRI lumbar spine without contrast",
+      "final_icd10_codes": "{\"M54.16\",\"M51.36\",\"M79.605\"}",
+      "final_icd10_code_descriptions": null,
+      "created_at": "2025-04-22T14:21:03.301Z",
+      "updated_at": "2025-04-22T14:21:15.538Z"
+    }
+  ],
+  "pagination": {
+    "total": 32,
+    "page": 1,
+    "limit": 20,
+    "pages": 2
+  }
+}
+```
+
+**Error Responses:**
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the admin_staff role
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used by admin staff to view orders that have been signed by physicians and are now awaiting admin finalization.
+- The response includes pagination information for implementing pagination controls.
+- You can filter orders by patient name, physician name, and date range.
+- This endpoint is a key part of the admin finalization workflow, allowing admin staff to see which orders need to be processed.
+- After reviewing an order from this queue, admin staff would typically use the `/api/admin/orders/{orderId}/send-to-radiology-fixed` endpoint to finalize it.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-admin-order-queue.js
+
 ## Non-Working or Restricted Endpoints
 
 - `POST /api/orders` (direct order creation): Returns 404 "Route not found" error - This is by design, as order creation is handled implicitly by the `/api/orders/validate` endpoint when called without an existing orderId

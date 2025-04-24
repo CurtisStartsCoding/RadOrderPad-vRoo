@@ -25,7 +25,7 @@ export async function handleSubscriptionUpdated(event: Stripe.Event): Promise<{ 
     [event.id]
   );
   
-  if (existingEvent.rowCount > 0) {
+  if (existingEvent.rowCount && existingEvent.rowCount > 0) {
     return { 
       success: true, 
       message: `Subscription update event ${event.id} already processed` 

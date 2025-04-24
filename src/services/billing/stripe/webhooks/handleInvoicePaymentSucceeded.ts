@@ -26,7 +26,7 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
     [event.id]
   );
   
-  if (existingEvent.rowCount > 0) {
+  if (existingEvent.rowCount && existingEvent.rowCount > 0) {
     return { 
       success: true, 
       message: `Invoice payment event ${event.id} already processed` 

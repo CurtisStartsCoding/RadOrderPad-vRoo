@@ -1,4 +1,4 @@
-import { queryMainDb } from '../../../config/db';
+import { getMainDbClient } from '../../../config/db';
 import { OrganizationRegistrationDTO, UserRegistrationDTO, RegistrationResponse, OrganizationStatus } from '../types';
 import { createOrganization } from './create-organization';
 import { createStripeCustomer } from './create-stripe-customer';
@@ -19,9 +19,12 @@ export async function registerOrganization(
   userData: UserRegistrationDTO
 ): Promise<RegistrationResponse> {
   // Start a transaction
-  const client = await queryMainDb('BEGIN');
+  const client = await getMainDbClient();
   
   try {
+    // Begin transaction
+    await client.query('BEGIN');
+    
     // Check if organization with the same name already exists
     const existingOrgResult = await client.query(
       'SELECT id FROM organizations WHERE name = $1',

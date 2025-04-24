@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import * as dotenv from 'dotenv';
+import enhancedLogger from '../utils/enhanced-logger';
 
 // Load environment variables
 dotenv.config();
@@ -25,12 +26,12 @@ export const phiDbConfig = {
 };
 
 // Log database connection strings
-console.log('Database connection strings:');
-console.log('Environment:', process.env.NODE_ENV);
-console.log('MAIN_DATABASE_URL:', process.env.NODE_ENV === 'production'
+enhancedLogger.info('Database connection strings:');
+enhancedLogger.info('Environment:', process.env.NODE_ENV);
+enhancedLogger.info('MAIN_DATABASE_URL:', process.env.NODE_ENV === 'production'
   ? process.env.MAIN_DATABASE_URL
   : process.env.DEV_MAIN_DATABASE_URL);
-console.log('PHI_DATABASE_URL:', process.env.NODE_ENV === 'production'
+enhancedLogger.info('PHI_DATABASE_URL:', process.env.NODE_ENV === 'production'
   ? process.env.PHI_DATABASE_URL
   : process.env.DEV_PHI_DATABASE_URL);
 
@@ -40,11 +41,11 @@ export const phiDbPool = new Pool(phiDbConfig);
 
 // Event listeners for connection issues
 mainDbPool.on('error', (err) => {
-  console.error('Unexpected error on main database idle client', err);
+  enhancedLogger.error('Unexpected error on main database idle client', err);
   // Don't exit the process, just log the error
 });
 
 phiDbPool.on('error', (err) => {
-  console.error('Unexpected error on PHI database idle client', err);
+  enhancedLogger.error('Unexpected error on PHI database idle client', err);
   // Don't exit the process, just log the error
 });

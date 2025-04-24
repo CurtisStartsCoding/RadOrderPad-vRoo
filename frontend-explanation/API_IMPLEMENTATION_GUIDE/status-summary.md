@@ -28,10 +28,12 @@ The following endpoints were tested and are working correctly in the production 
 - `GET /api/radiology/orders/{orderId}/export/{format}`: Export radiology order
 
 ### Admin Order Management
+- `GET /api/admin/orders/queue`: List orders awaiting admin finalization (tested with admin_staff role)
 - `POST /api/admin/orders/{orderId}/send-to-radiology-fixed`: Send order to radiology (tested with admin_staff role)
 
 ### Connection Management
 - `GET /api/connections`: List connections (tested with admin_referring role)
+- `GET /api/connections/requests`: List pending incoming connection requests (tested with admin_referring role)
 
 ### Superadmin Management
 - `GET /api/superadmin/organizations`: List all organizations (super_admin role only)
@@ -68,6 +70,7 @@ The following endpoints work correctly but are restricted to specific roles:
 - `GET /api/superadmin/users`: Works correctly and returns a list of all users (super_admin role only)
 - `GET /api/radiology/orders`: Works correctly but is restricted to scheduler and admin_radiology roles
 - `GET /api/connections`: Works correctly but is restricted to admin_referring and admin_radiology roles
+- `GET /api/connections/requests`: Works correctly but is restricted to admin_referring and admin_radiology roles
 - `POST /api/user-invites/invite`: Works correctly but is restricted to admin_referring and admin_radiology roles
 
 ## Non-Working or Not Implemented Endpoints

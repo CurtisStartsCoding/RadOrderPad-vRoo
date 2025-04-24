@@ -2,25 +2,27 @@
 
 This document provides the current status of the previously missing API endpoints that have now been tested and documented.
 
+> **Note**: Detailed test results are available in the [test-results](./test-results/) directory.
+
 ## Testing Status Summary
 
 We have tested all the missing endpoints and documented their current status:
 
-### 1. Working Endpoints (5)
+### 1. Working Endpoints (7)
 - **GET /api/organizations/mine** - Fully functional, returns organization details, locations, and users
 - **POST /api/organizations/mine/locations** - Fully functional, returns 201 with location data
 - **POST /api/admin/orders/{orderId}/paste-supplemental** - Works with order IDs 600, 601, 603, 604, 609, 612
 - **PUT /api/admin/orders/{orderId}/patient-info** - Works with order IDs 600, 601, 603, 604, 609, 612
 - **PUT /api/admin/orders/{orderId}/insurance-info** - Works with order IDs 600, 601, 603, 604, 609, 612
+- **GET /api/admin/orders/queue** - Fully functional, returns orders with status 'pending_admin'
+- **GET /api/connections/requests** - Fully functional, returns pending incoming connection requests
 
 ### 2. Endpoints That Exist But Need Further Verification (3)
 - **POST /api/uploads/presigned-url** - Exists but has server-side configuration issue with AWS credentials
 - **POST /api/uploads/confirm** - Not tested (requires valid fileKey from previous step)
 - **POST /api/admin/orders/{orderId}/paste-summary** - Exists but has database schema issues ("column authorization_number does not exist")
 
-### 3. Endpoints With Implementation Issues (5)
-- **GET /api/admin/orders/queue** - Returns 500 internal server error
-- **GET /api/connections/requests** - Returns 500 internal server error
+### 3. Endpoints With Implementation Issues (3)
 - **POST /api/connections/{relationshipId}/approve** - Returns 500 internal server error
 - **POST /api/connections/{relationshipId}/reject** - Returns 500 internal server error
 - **DELETE /api/connections/{relationshipId}** - Returns 500 internal server error
@@ -74,8 +76,10 @@ All endpoints have been documented in their respective files:
 - The queue endpoint returns a 500 internal server error, suggesting implementation issues
 
 ### 4. Connection Management
-- All connection endpoints return 500 internal server errors
-- This suggests implementation issues or problems with the test data (invalid relationship IDs)
+- The GET /api/connections/requests endpoint has been fixed and is now working correctly
+- The endpoint returns a list of pending incoming connection requests for the current organization
+- The other connection endpoints (approve, reject, delete) still return 500 internal server errors
+- This suggests implementation issues or problems with the test data (invalid relationship IDs) for the remaining endpoints
 
 ## Next Steps
 
@@ -93,7 +97,9 @@ Based on our comprehensive testing, here are the next steps to complete the API 
    - These IDs work with paste-supplemental, patient-info, and insurance-info endpoints
 
 4. **Debug the connection management endpoints**
-   - Investigate the internal server errors
+   - ~~Investigate the internal server errors~~ - GET /api/connections/requests has been fixed
+   - The GET /api/connections/requests endpoint now works correctly
+   - Still need to fix the approve, reject, and delete endpoints
    - Check server logs for more detailed error messages
 
 5. **Update the documentation with specific requirements**

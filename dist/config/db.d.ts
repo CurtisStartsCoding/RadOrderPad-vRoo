@@ -7,8 +7,8 @@ export { getDbClient, queryDb, testDbConnection, getMainDbClient, getPhiDbClient
 declare const _default: {
     getMainDbClient: () => Promise<import("pg").PoolClient>;
     getPhiDbClient: () => Promise<import("pg").PoolClient>;
-    queryMainDb: (text: string, params?: any[]) => Promise<any>;
-    queryPhiDb: (text: string, params?: any[]) => Promise<any>;
+    queryMainDb: (text: string, params?: unknown[]) => Promise<import("pg").QueryResult>;
+    queryPhiDb: (text: string, params?: unknown[]) => Promise<import("pg").QueryResult>;
     testDatabaseConnections: () => Promise<boolean>;
     closeDatabaseConnections: () => Promise<void>;
 };

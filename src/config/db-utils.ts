@@ -1,5 +1,6 @@
-import { Pool, PoolClient } from 'pg';
+import { Pool, PoolClient, QueryResult } from 'pg';
 import { mainDbPool, phiDbPool } from './db-config';
+import enhancedLogger from '../utils/enhanced-logger';
 
 /**
  * Generic database utility functions
@@ -16,7 +17,7 @@ export const getDbClient = async (pool: Pool, dbName: string): Promise<PoolClien
     const client = await pool.connect();
     return client;
   } catch (error) {
-    console.error(`Error connecting to ${dbName} database:`, error);
+    enhancedLogger.error(`Error connecting to ${dbName} database:`, error);
     throw error;
   }
 };
@@ -32,9 +33,9 @@ export const getDbClient = async (pool: Pool, dbName: string): Promise<PoolClien
 export const queryDb = async (
   pool: Pool, 
   text: string, 
-  params: any[] = [],
+  params: unknown[] = [],
   dbName: string
-): Promise<any> => {
+): Promise<QueryResult> => {
   const client = await getDbClient(pool, dbName);
   try {
     const result = await client.query(text, params);
@@ -52,14 +53,14 @@ export const queryDb = async (
  */
 export const testDbConnection = async (pool: Pool, dbName: string): Promise<boolean> => {
   try {
-    console.log(`Testing ${dbName} database connection...`);
+    enhancedLogger.info(`Testing ${dbName} database connection...`);
     const client = await getDbClient(pool, dbName);
     const result = await client.query('SELECT NOW()');
     client.release();
-    console.log(`${dbName} database connection successful:`, result.rows[0].now);
+    enhancedLogger.info(`${dbName} database connection successful:`, result.rows[0].now);
     return true;
   } catch (error) {
-    console.error(`${dbName} database connection test failed:`, error);
+    enhancedLogger.error(`${dbName} database connection test failed:`, error);
     return false;
   }
 };
@@ -71,7 +72,7 @@ export const getMainDbClient = async (): Promise<PoolClient> => {
   return getDbClient(mainDbPool, 'main');
 };
 
-export const queryMainDb = async (text: string, params: any[] = []): Promise<any> => {
+export const queryMainDb = async (text: string, params: unknown[] = []): Promise<QueryResult> => {
   return queryDb(mainDbPool, text, params, 'main');
 };
 
@@ -82,7 +83,7 @@ export const getPhiDbClient = async (): Promise<PoolClient> => {
   return getDbClient(phiDbPool, 'PHI');
 };
 
-export const queryPhiDb = async (text: string, params: any[] = []): Promise<any> => {
+export const queryPhiDb = async (text: string, params: unknown[] = []): Promise<QueryResult> => {
   return queryDb(phiDbPool, text, params, 'PHI');
 };
 
@@ -104,5 +105,5 @@ export const testDatabaseConnections = async (): Promise<boolean> => {
 export const closeDatabaseConnections = async (): Promise<void> => {
   await mainDbPool.end();
   await phiDbPool.end();
-  console.log('Database connections closed');
+  enhancedLogger.info('Database connections closed');
 };

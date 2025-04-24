@@ -14,6 +14,7 @@ The RadOrderPad API is organized into several logical sections:
 6. [Connection Management](./connection-management.md) - Managing connections between organizations
    - [Connection Management Details](./connection-management-details.md) - Detailed information about connection endpoints
    - [Connection Testing](./connection-testing.md) - Guide for testing connection endpoints
+   - **Key Endpoint**: `GET /api/connections/requests` - Lists pending incoming connection requests (see [SQL Implementation Patterns](#sql-implementation-patterns))
 7. [Organization Management](./organization-management.md) - Organization-related endpoints
 8. [User Management](./user-management.md) - User-related endpoints
    - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature
@@ -129,6 +130,21 @@ This documentation is based on comprehensive testing of the API. Some endpoints 
 - **Restricted** - Endpoint exists but has method or role restrictions
 
 See the [Status Summary](./status-summary.md) for a complete list of endpoint statuses.
+
+### SQL Implementation Patterns
+
+During our testing and analysis, we identified important SQL implementation patterns that frontend developers should be aware of:
+
+#### LEFT JOIN vs JOIN for Nullable Relationships
+
+When working with the `GET /api/connections/requests` endpoint, we discovered a critical SQL pattern:
+
+- **Issue**: Using standard `JOIN` operations can cause queries to fail when joined records have null values
+- **Solution**: Using `LEFT JOIN` instead preserves the main record even when joined tables have no matching records
+- **Example**: The connection requests endpoint joins the organization_relationships table with organizations and users tables
+- **Impact**: This pattern is essential when querying data that involves optional relationships
+
+This pattern is documented in detail in the [Connection Management Details](./connection-management-details.md) document.
 
 ## Testing Tools
 

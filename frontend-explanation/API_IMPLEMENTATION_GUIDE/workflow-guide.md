@@ -113,7 +113,61 @@ Content-Type: application/json
 - The `finalCPTCode` should be the primary CPT code from the validation result
 - The `finalICD10Codes` should be an array of ICD-10 codes from the validation result
 
-### Step 3: Submit Order to Radiology
+### Step 3: View Orders Awaiting Admin Finalization
+
+After physicians sign orders, admin staff need to view the queue of orders awaiting finalization.
+
+**Endpoint:** `GET /api/admin/orders/queue`
+
+**Request Headers:**
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Query Parameters:**
+```
+page=1&limit=20&sortBy=created_at&sortOrder=desc
+```
+
+**Response:**
+```json
+{
+  "orders": [
+    {
+      "id": 599,
+      "order_number": "ORD-1745331663206",
+      "patient_name": "Robert Johnson",
+      "patient_dob": "1950-05-15",
+      "patient_gender": "male",
+      "referring_physician_name": "Dr. Jane Doe",
+      "modality": "MRI",
+      "body_part": "LUMBAR_SPINE",
+      "laterality": null,
+      "final_cpt_code": "72148",
+      "final_cpt_code_description": "MRI lumbar spine without contrast",
+      "final_icd10_codes": "{\"M54.17\",\"M51.36\"}",
+      "final_icd10_code_descriptions": null,
+      "created_at": "2025-04-22T14:21:03.301Z",
+      "updated_at": "2025-04-22T14:21:15.538Z"
+    }
+  ],
+  "pagination": {
+    "total": 32,
+    "page": 1,
+    "limit": 20,
+    "pages": 2
+  }
+}
+```
+
+**Important Notes:**
+- This endpoint is used by admin staff to view orders that need to be finalized
+- The response includes pagination information for implementing pagination controls
+- Admin staff can filter orders by patient name, physician name, and date range
+- After identifying an order to process, admin staff would proceed to Step 4
+
+### Step 4: Submit Order to Radiology
 
 **Endpoint:** `POST /api/admin/orders/{orderId}/send-to-radiology-fixed`
 
@@ -210,12 +264,19 @@ Example:
    - Include the referring_organization_name field
    - Submit the data to the order update endpoint
 
-4. **Error Handling**:
+4. **Admin Queue Flow**:
+   - Create a dashboard view for admin staff to see orders awaiting finalization
+   - Implement pagination controls for navigating through the queue
+   - Add sorting and filtering options (by patient name, physician name, date)
+   - Display key order information in a table or card format
+   - Provide a way to select an order for finalization
+
+5. **Error Handling**:
    - Implement proper error handling for all API requests
    - Display user-friendly error messages
    - Implement token refresh logic for expired tokens
 
-5. **UI/UX Considerations**:
+6. **UI/UX Considerations**:
    - Provide clear feedback during API calls (loading indicators)
    - Implement form validation for required fields
    - Create a user-friendly interface for reviewing validation results
@@ -255,6 +316,19 @@ async function validateDictation(token, dictationText, patientInfo) {
   return await response.json();
 }
 
+// Step 4: View Orders Awaiting Admin Finalization
+async function getOrdersAwaitingFinalization(token, page = 1, limit = 20, sortBy = 'created_at', sortOrder = 'desc') {
+  const response = await fetch(`https://api.radorderpad.com/api/admin/orders/queue?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  return await response.json();
+}
+
 // Step 3: Finalize Order
 async function finalizeOrder(token, orderId, signature, validationResult) {
   const response = await fetch(`https://api.radorderpad.com/api/orders/${orderId}`, {
@@ -272,6 +346,19 @@ async function finalizeOrder(token, orderId, signature, validationResult) {
       finalICD10Codes: validationResult.suggestedICD10Codes.map(code => code.code),
       referring_organization_name: "Test Referring Practice"
     })
+  });
+  
+  return await response.json();
+}
+
+// Step 5: Send Order to Radiology
+async function sendOrderToRadiology(token, orderId) {
+  const response = await fetch(`https://api.radorderpad.com/api/admin/orders/${orderId}/send-to-radiology-fixed`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
   });
   
   return await response.json();

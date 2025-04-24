@@ -29,9 +29,9 @@ export interface CategorizedKeywords {
 export interface ICD10Row {
   icd10_code: string;
   description: string;
-  clinical_notes?: string;
-  imaging_modalities?: string;
-  primary_imaging?: string;
+  clinical_notes?: string | null;
+  imaging_modalities?: string | null;
+  primary_imaging?: string | null;
 }
 
 /**
@@ -40,8 +40,8 @@ export interface ICD10Row {
 export interface CPTRow {
   cpt_code: string;
   description: string;
-  modality?: string;
-  body_part?: string;
+  modality?: string | null;
+  body_part?: string | null;
 }
 
 /**
@@ -53,9 +53,9 @@ export interface MappingRow {
   icd10_description: string;
   cpt_code: string;
   cpt_description: string;
-  appropriateness: number;
-  evidence_source?: string;
-  refined_justification?: string;
+  appropriateness: number | string;
+  evidence_source?: string | null;
+  refined_justification?: string | null;
 }
 
 /**

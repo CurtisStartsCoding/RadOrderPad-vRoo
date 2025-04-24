@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.closeDatabaseConnections = exports.testDatabaseConnections = exports.queryPhiDb = exports.getPhiDbClient = exports.queryMainDb = exports.getMainDbClient = exports.testDbConnection = exports.queryDb = exports.getDbClient = void 0;
 const db_config_1 = require("./db-config");
+const enhanced_logger_1 = __importDefault(require("../utils/enhanced-logger"));
 /**
  * Generic database utility functions
  */
@@ -17,7 +21,7 @@ const getDbClient = async (pool, dbName) => {
         return client;
     }
     catch (error) {
-        console.error(`Error connecting to ${dbName} database:`, error);
+        enhanced_logger_1.default.error(`Error connecting to ${dbName} database:`, error);
         throw error;
     }
 };
@@ -49,15 +53,15 @@ exports.queryDb = queryDb;
  */
 const testDbConnection = async (pool, dbName) => {
     try {
-        console.log(`Testing ${dbName} database connection...`);
+        enhanced_logger_1.default.info(`Testing ${dbName} database connection...`);
         const client = await (0, exports.getDbClient)(pool, dbName);
         const result = await client.query('SELECT NOW()');
         client.release();
-        console.log(`${dbName} database connection successful:`, result.rows[0].now);
+        enhanced_logger_1.default.info(`${dbName} database connection successful:`, result.rows[0].now);
         return true;
     }
     catch (error) {
-        console.error(`${dbName} database connection test failed:`, error);
+        enhanced_logger_1.default.error(`${dbName} database connection test failed:`, error);
         return false;
     }
 };
@@ -101,7 +105,7 @@ exports.testDatabaseConnections = testDatabaseConnections;
 const closeDatabaseConnections = async () => {
     await db_config_1.mainDbPool.end();
     await db_config_1.phiDbPool.end();
-    console.log('Database connections closed');
+    enhanced_logger_1.default.info('Database connections closed');
 };
 exports.closeDatabaseConnections = closeDatabaseConnections;
 //# sourceMappingURL=db-utils.js.map
