@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.listAllUsers = listAllUsers;
 const db_1 = require("../../../config/db");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * List all users with optional filtering
  *
@@ -49,13 +53,17 @@ async function listAllUsers(filters) {
         const result = await (0, db_1.queryMainDb)(query, params);
         // Remove password_hash from results for security
         const users = result.rows.map((user) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { password_hash, ...userWithoutPassword } = user;
             return userWithoutPassword;
         });
         return users;
     }
     catch (error) {
-        console.error('Error listing users:', error);
+        logger_1.default.error('Error listing users:', {
+            error,
+            filters
+        });
         throw error;
     }
 }

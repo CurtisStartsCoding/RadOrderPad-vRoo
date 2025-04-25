@@ -1,15 +1,6 @@
 import { Order, ValidationStatus } from '../../../models';
 import { PoolClient } from 'pg';
-/**
- * Patient information for temporary patients
- */
-export interface PatientInfo {
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    gender: string;
-    [key: string]: any;
-}
+import { PatientInfo } from '../../common/types';
 /**
  * Payload for finalizing an order
  */

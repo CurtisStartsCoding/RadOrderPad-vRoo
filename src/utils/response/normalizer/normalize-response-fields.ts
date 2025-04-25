@@ -3,8 +3,8 @@ import { FieldMap } from '../types';
 /**
  * Normalize response field names to handle casing issues
  */
-export function normalizeResponseFields(response: any): any {
-  const normalized: any = {};
+export function normalizeResponseFields(response: Record<string, unknown>): Record<string, unknown> {
+  const normalized: Record<string, unknown> = {};
   
   // Map of possible field names to normalized field names
   const fieldMap: FieldMap = {

@@ -13,9 +13,9 @@ import { UpdateQueryResult } from './types';
  */
 export function buildUpdateQuery(
   tableName: string,
-  updateData: { [key: string]: any },
+  updateData: { [key: string]: string | number | boolean | null | undefined },
   idField: string = 'id',
-  idValue: any,
+  idValue: string | number,
   fieldMap?: { [key: string]: string },
   includeTimestamp: boolean = true,
   returnFields: string[] = ['id']

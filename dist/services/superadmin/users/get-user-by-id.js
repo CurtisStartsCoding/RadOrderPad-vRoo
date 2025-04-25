@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserById = getUserById;
 const db_1 = require("../../../config/db");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Get a user by ID
  *
@@ -40,7 +44,10 @@ async function getUserById(userId) {
         };
     }
     catch (error) {
-        console.error(`Error getting user with ID ${userId}:`, error);
+        logger_1.default.error('Error getting user by ID:', {
+            error,
+            userId
+        });
         throw error;
     }
 }

@@ -2,17 +2,31 @@ import notificationManager from '../../../notification';
 import { ConnectionOperationResponse } from '../../types';
 import { UPDATE_RELATIONSHIP_TO_PENDING_QUERY } from '../../queries/request';
 
+interface DatabaseClient {
+  query: (text: string, params?: (string | number | null)[] | undefined) => Promise<{
+    rows: Array<{ id: number } & Record<string, unknown>>;
+    rowCount: number;
+  }>;
+}
+
+interface OrganizationData {
+  id: number;
+  name: string;
+  contact_email?: string;
+  [key: string]: unknown;
+}
+
 /**
  * Update an existing relationship to pending
  */
 export async function updateExistingRelationship(
-  client: any,
+  client: DatabaseClient,
   initiatingOrgId: number,
   targetOrgId: number,
   initiatingUserId: number,
   notes: string | undefined,
   existingId: number,
-  orgsData: any[]
+  orgsData: OrganizationData[]
 ): Promise<ConnectionOperationResponse> {
   const updateResult = await client.query(
     UPDATE_RELATIONSHIP_TO_PENDING_QUERY,

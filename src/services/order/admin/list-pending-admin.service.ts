@@ -28,8 +28,30 @@ export interface PaginationInfo {
 /**
  * Interface for the service response
  */
+/**
+ * Interface for order data returned by the service
+ */
+export interface OrderData {
+  id: number;
+  order_number: string;
+  patient_name: string;
+  patient_dob: string;
+  patient_gender: string;
+  referring_physician_name: string;
+  modality: string;
+  body_part: string;
+  laterality: string;
+  final_cpt_code: string;
+  final_cpt_code_description: string;
+  final_icd10_codes: string[];
+  final_icd10_code_descriptions: string[];
+  created_at: string;
+  updated_at: string;
+  [key: string]: unknown;
+}
+
 export interface ListPendingAdminOrdersResponse {
-  orders: any[];
+  orders: OrderData[];
   pagination: PaginationInfo;
 }
 
@@ -59,7 +81,7 @@ async function listPendingAdminOrders(
     
     // Build the WHERE clause with filters
     let whereClause = 'WHERE referring_organization_id = $1 AND status = $2';
-    const baseParams: any[] = [orgId, 'pending_admin'];
+    const baseParams: (string | number)[] = [orgId, 'pending_admin'];
     let paramIndex = 3;
     
     // Add optional filters if provided

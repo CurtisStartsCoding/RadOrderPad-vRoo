@@ -43,7 +43,7 @@ export async function executeTransaction(
     await verifyUserAuthorization(userId, order.referring_organization_id);
     
     // Create transaction context
-    const context: TransactionContext = {
+    const _context: TransactionContext = {
       client,
       orderId,
       order,
@@ -65,7 +65,7 @@ export async function executeTransaction(
     await updateOrderWithFinalData(client, orderId, patientId, payload, userId);
     
     // Generate presigned URL for signature upload if needed
-    const signatureUploadInfo = null;
+    const _signatureUploadInfo = null;
     if (payload.signatureData) {
       // For backward compatibility, if signatureData is provided as base64,
       // we'll log a warning but still proceed with the order finalization

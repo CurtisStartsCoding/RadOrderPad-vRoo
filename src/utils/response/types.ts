@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ValidationResult, ValidationStatus } from '../../models';
 
 /**
@@ -17,8 +18,8 @@ export interface NormalizedResponse {
   validationStatus: string;
   complianceScore: number;
   feedback: string;
-  suggestedICD10Codes: any;
-  suggestedCPTCodes: any;
+  suggestedICD10Codes: Array<{ code: string; description: string; isPrimary?: boolean }>;
+  suggestedCPTCodes: Array<{ code: string; description: string; isPrimary?: boolean }>;
   internalReasoning?: string;
 }
 

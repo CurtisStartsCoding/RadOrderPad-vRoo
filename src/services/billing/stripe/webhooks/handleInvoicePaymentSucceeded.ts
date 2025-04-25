@@ -8,7 +8,6 @@
 import { Stripe } from 'stripe';
 import { getMainDbClient, queryMainDb } from '../../../../config/db';
 import { replenishCreditsForTier } from '../../../../utils/billing/replenishCreditsForTier';
-import { mapPriceIdToTier } from '../../../../utils/billing/map-price-id-to-tier';
 import logger from '../../../../utils/logger';
 
 /**
@@ -62,8 +61,8 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
   // Get the subscription ID from the invoice
   // Access subscription ID from the invoice using type assertion
   // This is necessary because the Stripe types might not match the actual API response
-  const invoiceAny = invoice as any;
-  const subscriptionId = invoiceAny.subscription;
+  const invoiceWithSubscription = invoice as Stripe.Invoice & { subscription?: string };
+  const subscriptionId = invoiceWithSubscription.subscription;
   
   // Start a transaction for database operations
   const client = await getMainDbClient();
@@ -124,7 +123,7 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
         'subscription_payment',
         invoice.amount_paid,
         invoice.currency,
-        (invoice as any).payment_method_types?.[0] || 'unknown', // Use first payment method type if available
+        (invoice as Stripe.Invoice & { payment_method_types?: string[] }).payment_method_types?.[0] || 'unknown', // Use first payment method type if available
         event.id,
         invoice.id,
         `Successful payment for invoice ${invoice.number || invoice.id}`,

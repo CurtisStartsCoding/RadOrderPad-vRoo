@@ -43,13 +43,15 @@ export {
  * Main text processing functions
  */
 
+import { ProcessedMedicalText } from './types';
+
 /**
  * Process medical text by sanitizing PHI and extracting keywords
  *
  * @param text - The text to process
  * @returns Object containing sanitized text and extracted keywords
  */
-export function processMedicalText(text: string) {
+export function processMedicalText(text: string): ProcessedMedicalText {
   // First sanitize PHI
   const sanitizedText = stripPHI(text);
   

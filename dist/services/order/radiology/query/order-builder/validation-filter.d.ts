@@ -6,9 +6,9 @@
  * @param validationStatus Validation status to filter by
  * @returns Updated query, params, and paramIndex
  */
-declare function applyValidationStatusFilter(query: string, params: any[], paramIndex: number, validationStatus?: string): {
+declare function applyValidationStatusFilter(query: string, params: (string | number | Date)[], paramIndex: number, validationStatus?: string): {
     query: string;
-    params: any[];
+    params: (string | number | Date)[];
     paramIndex: number;
 };
 export { applyValidationStatusFilter };

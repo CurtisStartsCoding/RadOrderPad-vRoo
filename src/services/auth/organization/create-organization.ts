@@ -35,5 +35,6 @@ export async function createOrganization(
     ]
   );
   
-  return orgResult.rows[0] as Organization;
+  // Cast to unknown first, then to Organization to satisfy TypeScript
+  return orgResult.rows[0] as unknown as Organization;
 }

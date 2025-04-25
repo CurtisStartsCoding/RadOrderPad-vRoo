@@ -1,4 +1,6 @@
 import { queryMainDb } from '../../../config/db';
+import logger from '../../../utils/logger';
+import { UserWithLocations } from '../types';
 
 /**
  * Get a user by ID
@@ -6,7 +8,7 @@ import { queryMainDb } from '../../../config/db';
  * @param userId User ID
  * @returns Promise with user details or null if not found
  */
-export async function getUserById(userId: number): Promise<any | null> {
+export async function getUserById(userId: number): Promise<UserWithLocations | null> {
   try {
     // Query for the user with organization details
     const userQuery = `
@@ -43,7 +45,10 @@ export async function getUserById(userId: number): Promise<any | null> {
       locations: locationsResult.rows
     };
   } catch (error) {
-    console.error(`Error getting user with ID ${userId}:`, error);
+    logger.error('Error getting user by ID:', {
+      error,
+      userId
+    });
     throw error;
   }
 }

@@ -1,3 +1,4 @@
+import { User } from '../types';
 /**
  * List all users with optional filtering
  *
@@ -9,4 +10,4 @@ export declare function listAllUsers(filters: {
     email?: string;
     role?: string;
     status?: boolean;
-}): Promise<any[]>;
+}): Promise<User[]>;

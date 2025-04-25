@@ -11,7 +11,7 @@ import { UpdateQueryResult } from './types';
  * @returns Object containing the query string and parameter values
  */
 export declare function buildUpdateQuery(tableName: string, updateData: {
-    [key: string]: any;
-}, idField: string | undefined, idValue: any, fieldMap?: {
+    [key: string]: string | number | boolean | null | undefined;
+}, idField: string | undefined, idValue: string | number, fieldMap?: {
     [key: string]: string;
 }, includeTimestamp?: boolean, returnFields?: string[]): UpdateQueryResult;

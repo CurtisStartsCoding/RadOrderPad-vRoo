@@ -7,7 +7,7 @@ import { OrderFilters } from '../types';
  * @param filters Filter parameters
  * @returns Object containing the query string and parameters
  */
-export function buildCountQuery(orgId: number, filters: OrderFilters = {}): { query: string; params: any[] } {
+export function buildCountQuery(orgId: number, filters: OrderFilters = {}): { query: string; params: (number | string | Date)[] } {
   // Build the count query
   let countQuery = `
     SELECT COUNT(*) as total

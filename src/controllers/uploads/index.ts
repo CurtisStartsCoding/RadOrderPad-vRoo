@@ -22,6 +22,7 @@ import { Request, Response } from 'express';
 import { getPresignedUrl } from './get-presigned-url';
 import { confirmUpload } from './confirm-upload';
 import { getDownloadUrl } from './get-download-url.controller';
+import { AuthenticatedRequest } from './types';
 
 /**
  * Controller for handling file uploads
@@ -31,14 +32,14 @@ export class UploadsController {
    * Generate a presigned URL for uploading a file to S3
    */
   static async getPresignedUrl(req: Request, res: Response): Promise<void> {
-    return getPresignedUrl(req as any, res);
+    return getPresignedUrl(req as AuthenticatedRequest, res);
   }
 
   /**
    * Confirm a file upload and record it in the database
    */
   static async confirmUpload(req: Request, res: Response): Promise<void> {
-    return confirmUpload(req as any, res);
+    return confirmUpload(req as AuthenticatedRequest, res);
   }
 
   /**

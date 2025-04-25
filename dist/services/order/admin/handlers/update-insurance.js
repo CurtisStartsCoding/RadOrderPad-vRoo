@@ -47,7 +47,7 @@ const logger_1 = __importDefault(require("../../../../utils/logger"));
  * @param userId User ID
  * @returns Promise with result
  */
-async function updateInsuranceInfo(orderId, insuranceData, userId) {
+async function updateInsuranceInfo(orderId, insuranceData, _userId) {
     try {
         // 1. Verify order exists and has status 'pending_admin'
         const order = await clinicalRecordManager.verifyOrderStatus(orderId);

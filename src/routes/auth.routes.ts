@@ -5,7 +5,7 @@ import authController from '../controllers/auth.controller.js';
 const router = Router();
 
 // Add a test endpoint that bypasses CAPTCHA verification
-router.post('/register-test', (req, res, next) => {
+router.post('/register-test', (req, res) => {
   // Set the test mode header
   req.headers['x-test-mode'] = 'true';
   // Call the regular register controller

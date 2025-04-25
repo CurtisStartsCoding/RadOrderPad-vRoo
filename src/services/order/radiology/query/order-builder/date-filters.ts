@@ -8,12 +8,12 @@
  * @returns Updated query, params, and paramIndex
  */
 function applyDateRangeFilter(
-  query: string, 
-  params: any[], 
-  paramIndex: number, 
+  query: string,
+  params: (string | number | Date)[],
+  paramIndex: number,
   startDate?: Date,
   endDate?: Date
-): { query: string; params: any[]; paramIndex: number } {
+): { query: string; params: (string | number | Date)[]; paramIndex: number } {
   if (startDate) {
     query += ` AND o.created_at >= $${paramIndex}`;
     params.push(startDate.toISOString());

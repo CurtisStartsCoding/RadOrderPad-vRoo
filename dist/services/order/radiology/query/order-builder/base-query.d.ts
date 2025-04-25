@@ -5,7 +5,7 @@
  */
 export declare function createBaseQuery(orgId: number): {
     query: string;
-    params: any[];
+    params: (string | number | Date)[];
     paramIndex: number;
 };
 export default createBaseQuery;

@@ -11,7 +11,7 @@ import { applyPagination } from './pagination';
  */
 declare function buildOrderQuery(orgId: number, filters?: OrderFilters): {
     query: string;
-    params: any[];
+    params: (string | number | Date)[];
 };
 export { createBaseQuery, applyAllFilters, applySorting, applyPagination };
 export default buildOrderQuery;

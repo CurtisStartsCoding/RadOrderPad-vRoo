@@ -14,6 +14,7 @@ export default tseslint.config(
       '**/*.test.js',
       '**/__tests__/**',
       '**/test-*.ts',
+      '!**/src/services/order/admin/test-emr-parser.ts', // Don't ignore this specific file
       '**/test-*.js',
       '**/*.d.ts'
     ],
@@ -29,7 +30,10 @@ export default tseslint.config(
       'no-console': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_'
+      }],
       '@typescript-eslint/ban-ts-comment': ['error', {
         'ts-nocheck': false,
         'ts-ignore': true,

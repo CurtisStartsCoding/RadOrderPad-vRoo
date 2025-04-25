@@ -35,5 +35,6 @@ export async function createAdminUser(
     ]
   );
   
-  return userResult.rows[0] as User;
+  // Cast to unknown first, then to User to satisfy TypeScript
+  return userResult.rows[0] as unknown as User;
 }

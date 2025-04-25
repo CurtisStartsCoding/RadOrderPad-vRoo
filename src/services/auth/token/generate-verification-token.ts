@@ -18,12 +18,15 @@ export async function generateVerificationToken(
   const expiresAt = new Date();
   expiresAt.setHours(expiresAt.getHours() + 24);
   
+  // Convert Date to ISO string for database storage
+  const expiresAtString = expiresAt.toISOString();
+  
   // Store the token in the database
   await client.query(
     `INSERT INTO email_verification_tokens 
     (user_id, token, expires_at, used) 
     VALUES ($1, $2, $3, $4)`,
-    [userId, token, expiresAt, false]
+    [userId, token, expiresAtString, false]
   );
   
   return token;

@@ -1,6 +1,3 @@
-import { queryMainDb } from '../../../config/db';
-import stripeService from './stripe.service';
-import config from '../../../config/config';
 import { createCreditCheckoutSession } from './create-credit-checkout-session';
 
 /**

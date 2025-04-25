@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import logger from '../../../utils/logger';
 
 /**
  * Handles controller errors and sends appropriate response
@@ -7,7 +8,10 @@ import { Response } from 'express';
  * @param context Additional context for logging (e.g., function name)
  */
 export function handleControllerError(error: unknown, res: Response, context: string): void {
-  console.error(`Error in ${context}:`, error);
+  logger.error(`Error in controller:`, {
+    error,
+    context
+  });
   
   if (error instanceof Error) {
     // Handle specific error types based on error message

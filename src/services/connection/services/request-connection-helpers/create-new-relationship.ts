@@ -5,13 +5,27 @@ import { CREATE_RELATIONSHIP_QUERY } from '../../queries/request';
 /**
  * Create a new relationship
  */
+interface DatabaseClient {
+  query: (text: string, params?: (string | number | null)[] | undefined) => Promise<{
+    rows: Array<{ id: number } & Record<string, unknown>>;
+    rowCount: number;
+  }>;
+}
+
+interface OrganizationData {
+  id: number;
+  name: string;
+  contact_email?: string;
+  [key: string]: unknown;
+}
+
 export async function createNewRelationship(
-  client: any,
+  client: DatabaseClient,
   initiatingOrgId: number,
   targetOrgId: number,
   initiatingUserId: number,
   notes: string | undefined,
-  orgsData: any[]
+  orgsData: OrganizationData[]
 ): Promise<ConnectionOperationResponse> {
   const insertResult = await client.query(
     CREATE_RELATIONSHIP_QUERY,

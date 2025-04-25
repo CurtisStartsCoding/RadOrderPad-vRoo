@@ -6,6 +6,7 @@
  */
 
 import { queryMainDb } from '../../config/db';
+import { PoolClient } from 'pg';
 import { getTierCreditAllocation } from './map-price-id-to-tier';
 import logger from '../../utils/logger';
 
@@ -20,7 +21,7 @@ import logger from '../../utils/logger';
 export async function replenishCreditsForTier(
   organizationId: number,
   tier: string,
-  client?: any
+  client?: PoolClient
 ): Promise<number> {
   // Get the credit allocation for the tier
   const creditAllocation = getTierCreditAllocation(tier);

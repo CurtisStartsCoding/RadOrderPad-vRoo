@@ -1,7 +1,7 @@
 /**
  * Types for uploads controller
  */
-import { Request, Response } from 'express';
+import { Request } from 'express';
 
 /**
  * Request body for getting a presigned URL
@@ -59,5 +59,5 @@ export interface AuthenticatedRequest extends Request {
     role: string;
     email: string;
   };
-  body: any;
+  body: PresignedUrlRequestBody | ConfirmUploadRequestBody | Record<string, unknown>;
 }

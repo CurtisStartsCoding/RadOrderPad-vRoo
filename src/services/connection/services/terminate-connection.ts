@@ -22,7 +22,7 @@ export class TerminateConnectionService {
       terminatingOrgId: params.terminatingOrgId
     });
     
-    const { relationshipId, terminatingUserId, terminatingOrgId } = params;
+    const { relationshipId, terminatingOrgId } = params;
     const client = await getMainDbClient();
     
     try {

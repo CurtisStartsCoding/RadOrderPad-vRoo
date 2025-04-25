@@ -1,10 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleControllerError = handleControllerError;
 exports.checkAuthentication = checkAuthentication;
 exports.validateLocationId = validateLocationId;
 exports.validateUserId = validateUserId;
 exports.validateUserAndLocationIds = validateUserAndLocationIds;
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Common error handling function
  * @param res Express response object
@@ -12,7 +16,10 @@ exports.validateUserAndLocationIds = validateUserAndLocationIds;
  * @param message Error message
  */
 function handleControllerError(res, error, message) {
-    console.error(`Error in ${message}:`, error);
+    logger_1.default.error(`Error in location controller:`, {
+        error,
+        context: message
+    });
     res.status(500).json({ message, error: error.message });
 }
 /**

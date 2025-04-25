@@ -18,7 +18,7 @@ const levels = {
 };
 
 // Define log level based on environment
-const level = () => {
+const level = (): string => {
   const env = process.env.NODE_ENV || 'development';
   const isDevelopment = env === 'development';
   return isDevelopment ? 'debug' : 'info';

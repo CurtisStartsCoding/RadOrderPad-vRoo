@@ -7,6 +7,6 @@ import { OrderFilters } from '../types';
  */
 export declare function buildCountQuery(orgId: number, filters?: OrderFilters): {
     query: string;
-    params: any[];
+    params: (number | string | Date)[];
 };
 export default buildCountQuery;

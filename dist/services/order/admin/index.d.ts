@@ -1,4 +1,5 @@
 import { ListOptions, ListPendingAdminOrdersResponse } from './list-pending-admin.service';
+import { EmrSummaryResult, SupplementalDocResult, PatientUpdateData, PatientUpdateResult, InsuranceUpdateData, InsuranceUpdateResult, SendToRadiologyResult } from './types';
 /**
  * Service for handling admin order operations
  */
@@ -10,7 +11,7 @@ declare class AdminOrderService {
      * @param userId User ID
      * @returns Promise with result
      */
-    handlePasteSummary(orderId: number, pastedText: string, userId: number): Promise<import("./types").EmrSummaryResult>;
+    handlePasteSummary(orderId: number, pastedText: string, userId: number): Promise<EmrSummaryResult>;
     /**
      * Handle pasted supplemental documents
      * @param orderId Order ID
@@ -18,7 +19,7 @@ declare class AdminOrderService {
      * @param userId User ID
      * @returns Promise with result
      */
-    handlePasteSupplemental(orderId: number, pastedText: string, userId: number): Promise<import("./types").SupplementalDocResult>;
+    handlePasteSupplemental(orderId: number, pastedText: string, userId: number): Promise<SupplementalDocResult>;
     /**
      * Update patient information
      * @param orderId Order ID
@@ -26,7 +27,7 @@ declare class AdminOrderService {
      * @param userId User ID
      * @returns Promise with result
      */
-    updatePatientInfo(orderId: number, patientData: any, userId: number): Promise<import("./types").PatientUpdateResult>;
+    updatePatientInfo(orderId: number, patientData: PatientUpdateData, userId: number): Promise<PatientUpdateResult>;
     /**
      * Update insurance information
      * @param orderId Order ID
@@ -34,14 +35,14 @@ declare class AdminOrderService {
      * @param userId User ID
      * @returns Promise with result
      */
-    updateInsuranceInfo(orderId: number, insuranceData: any, userId: number): Promise<import("./types").InsuranceUpdateResult>;
+    updateInsuranceInfo(orderId: number, insuranceData: InsuranceUpdateData, userId: number): Promise<InsuranceUpdateResult>;
     /**
      * Send order to radiology
      * @param orderId Order ID
      * @param userId User ID
      * @returns Promise with result
      */
-    sendToRadiology(orderId: number, userId: number): Promise<import("./types").SendToRadiologyResult>;
+    sendToRadiology(orderId: number, userId: number): Promise<SendToRadiologyResult>;
     /**
      * List orders awaiting admin finalization
      * @param orgId Organization ID

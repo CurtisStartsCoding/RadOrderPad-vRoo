@@ -1,3 +1,4 @@
+import { Organization } from '../types';
 /**
  * List all organizations with optional filtering
  *
@@ -8,4 +9,4 @@ export declare function listAllOrganizations(filters: {
     name?: string;
     type?: string;
     status?: string;
-}): Promise<any[]>;
+}): Promise<Organization[]>;

@@ -54,5 +54,5 @@ export interface AuthenticatedRequest extends Request {
         role: string;
         email: string;
     };
-    body: any;
+    body: PresignedUrlRequestBody | ConfirmUploadRequestBody | Record<string, unknown>;
 }

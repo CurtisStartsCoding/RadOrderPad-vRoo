@@ -7,11 +7,11 @@
  * @returns Updated query, params, and paramIndex
  */
 function applyValidationStatusFilter(
-  query: string, 
-  params: any[], 
-  paramIndex: number, 
+  query: string,
+  params: (string | number | Date)[],
+  paramIndex: number,
   validationStatus?: string
-): { query: string; params: any[]; paramIndex: number } {
+): { query: string; params: (string | number | Date)[]; paramIndex: number } {
   if (validationStatus) {
     query += ` AND o.final_validation_status = $${paramIndex}`;
     params.push(validationStatus);

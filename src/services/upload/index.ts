@@ -3,7 +3,7 @@ import { s3ClientSingleton } from './s3-client.service';
 import getUploadUrl from './presigned-url.service';
 import confirmUpload from './document-upload.service';
 import { getDownloadUrl } from './get-download-url.service';
-import { PresignedUrlResponse, UploadConfirmationResponse } from './types';
+import { PresignedUrlResponse, UploadConfirmationResponse, DownloadUrlResponse } from './types';
 
 /**
  * Service for handling file upload operations using AWS S3
@@ -76,7 +76,7 @@ export class FileUploadService {
     documentId: number,
     requestingUserId: number,
     requestingOrgId: number
-  ) {
+  ): Promise<DownloadUrlResponse> {
     return getDownloadUrl(documentId, requestingUserId, requestingOrgId);
   }
 }

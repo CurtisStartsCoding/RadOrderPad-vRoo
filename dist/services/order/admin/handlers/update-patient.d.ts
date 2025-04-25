@@ -6,5 +6,5 @@ import { PatientUpdateData, PatientUpdateResult } from '../types';
  * @param userId User ID
  * @returns Promise with result
  */
-export declare function updatePatientInfo(orderId: number, patientData: PatientUpdateData, userId: number): Promise<PatientUpdateResult>;
+export declare function updatePatientInfo(orderId: number, patientData: PatientUpdateData, _userId: number): Promise<PatientUpdateResult>;
 export default updatePatientInfo;

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { getOrganizationById } from '../../../services/superadmin';
+import logger from '../../../utils/logger';
 
 /**
  * Get an organization by ID
@@ -35,7 +36,10 @@ export async function getOrganizationByIdController(req: Request, res: Response)
       data: organization
     });
   } catch (error) {
-    console.error(`Error getting organization with ID ${req.params.orgId}:`, error);
+    logger.error('Error in getOrganizationByIdController:', {
+      error,
+      orgId: req.params.orgId
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to get organization',

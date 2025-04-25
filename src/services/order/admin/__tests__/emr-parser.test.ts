@@ -1,4 +1,5 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 // Import the module using jest.mock to mock the dependencies
 jest.mock('../emr-parser', () => {
   // Create a mock implementation of parseEmrSummary

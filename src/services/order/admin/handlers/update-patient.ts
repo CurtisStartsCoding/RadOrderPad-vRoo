@@ -12,8 +12,8 @@ import logger from '../../../../utils/logger';
  */
 export async function updatePatientInfo(
   orderId: number, 
-  patientData: PatientUpdateData, 
-  userId: number
+  patientData: PatientUpdateData,
+  _userId: number
 ): Promise<PatientUpdateResult> {
   try {
     // 1. Verify order exists and has status 'pending_admin'

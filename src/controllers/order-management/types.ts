@@ -8,7 +8,7 @@ export interface PatientInfo {
   lastName: string;
   dateOfBirth: string;
   gender: string;
-  [key: string]: any; // Allow additional fields
+  [key: string]: string | number | boolean | undefined; // Allow additional fields with specific types
 }
 
 /**

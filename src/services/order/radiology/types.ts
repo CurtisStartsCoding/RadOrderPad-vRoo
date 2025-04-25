@@ -1,4 +1,13 @@
-import { OrderStatus } from '../../../models';
+// Import types from details directory
+import {
+  Order,
+  Patient,
+  Insurance,
+  ClinicalRecord,
+  DocumentUpload,
+  ValidationAttempt,
+  OrderHistoryEntry
+} from './details';
 
 /**
  * Interface for order filter parameters
@@ -31,7 +40,7 @@ export interface PaginationResult {
  * Interface for incoming orders result
  */
 export interface IncomingOrdersResult {
-  orders: any[];
+  orders: Order[];
   pagination: PaginationResult;
 }
 
@@ -39,14 +48,15 @@ export interface IncomingOrdersResult {
  * Interface for order details
  */
 export interface OrderDetails {
-  order: any;
-  patient: any;
-  insurance: any[];
-  clinicalRecords: any[];
-  documentUploads: any[];
-  validationAttempts: any[];
-  orderHistory: any[];
+  order: Order;
+  patient: Patient | null;
+  insurance: Insurance[];
+  clinicalRecords: ClinicalRecord[];
+  documentUploads: DocumentUpload[];
+  validationAttempts: ValidationAttempt[];
+  orderHistory: OrderHistoryEntry[];
 }
+
 
 /**
  * Interface for order status update result

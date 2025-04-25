@@ -1,5 +1,3 @@
-import { OrderFilters } from '../../types';
-
 /**
  * Apply sorting to the query
  * @param query Current query string

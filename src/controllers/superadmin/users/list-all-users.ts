@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { listAllUsers } from '../../../services/superadmin';
+import logger from '../../../utils/logger';
 
 /**
  * List all users with optional filtering
@@ -41,7 +42,10 @@ export async function listAllUsersController(req: Request, res: Response): Promi
       data: users
     });
   } catch (error) {
-    console.error('Error listing users:', error);
+    logger.error('Error in listAllUsersController:', {
+      error,
+      queryParams: req.query
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to list users',

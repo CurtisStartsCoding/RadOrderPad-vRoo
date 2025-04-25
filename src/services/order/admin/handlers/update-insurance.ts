@@ -12,8 +12,8 @@ import logger from '../../../../utils/logger';
  */
 export async function updateInsuranceInfo(
   orderId: number, 
-  insuranceData: InsuranceUpdateData, 
-  userId: number
+  insuranceData: InsuranceUpdateData,
+  _userId: number
 ): Promise<InsuranceUpdateResult> {
   try {
     // 1. Verify order exists and has status 'pending_admin'

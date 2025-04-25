@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.listAllOrganizationsController = listAllOrganizationsController;
 const superadmin_1 = require("../../../services/superadmin");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * List all organizations with optional filtering
  * GET /api/superadmin/organizations
@@ -24,7 +28,10 @@ async function listAllOrganizationsController(req, res) {
         });
     }
     catch (error) {
-        console.error('Error listing organizations:', error);
+        logger_1.default.error('Error in listAllOrganizationsController:', {
+            error,
+            filters: req.query
+        });
         res.status(500).json({
             success: false,
             message: 'Failed to list organizations',

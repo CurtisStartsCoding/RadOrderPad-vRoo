@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOrganizationByIdController = getOrganizationByIdController;
 const superadmin_1 = require("../../../services/superadmin");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Get an organization by ID
  * GET /api/superadmin/organizations/:orgId
@@ -33,7 +37,10 @@ async function getOrganizationByIdController(req, res) {
         });
     }
     catch (error) {
-        console.error(`Error getting organization with ID ${req.params.orgId}:`, error);
+        logger_1.default.error('Error in getOrganizationByIdController:', {
+            error,
+            orgId: req.params.orgId
+        });
         res.status(500).json({
             success: false,
             message: 'Failed to get organization',

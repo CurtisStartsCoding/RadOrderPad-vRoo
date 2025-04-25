@@ -9,11 +9,11 @@ import { OrderStatus } from '../../../../../models';
  * @returns Updated query, params, and paramIndex
  */
 export function applyStatusFilter(
-  query: string, 
-  params: any[], 
-  paramIndex: number, 
+  query: string,
+  params: (string | number | Date)[],
+  paramIndex: number,
   status?: string
-): { query: string; params: any[]; paramIndex: number } {
+): { query: string; params: (string | number | Date)[]; paramIndex: number } {
   if (status) {
     query += ` AND o.status = $${paramIndex}`;
     params.push(status);

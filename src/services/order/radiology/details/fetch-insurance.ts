@@ -1,11 +1,12 @@
 import { queryPhiDb } from '../../../../config/db';
+import { Insurance } from './types';
 
 /**
  * Fetch insurance information for a patient
  * @param patientId Patient ID
  * @returns Array of insurance records
  */
-export async function fetchInsurance(patientId: number): Promise<any[]> {
+export async function fetchInsurance(patientId: number): Promise<Insurance[]> {
   const insuranceResult = await queryPhiDb(
     `SELECT i.*
      FROM patient_insurance i

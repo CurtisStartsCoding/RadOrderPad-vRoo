@@ -57,7 +57,7 @@ export async function handleInvoicePaymentFailed(event: Stripe.Event): Promise<v
     );
     
     // Check if the organization should enter purgatory mode
-    const enterPurgatory = shouldEnterPurgatory(invoice, organization);
+    const enterPurgatory = shouldEnterPurgatory(invoice);
     
     // If the organization should enter purgatory and is not already in purgatory
     if (enterPurgatory && currentStatus !== 'purgatory') {

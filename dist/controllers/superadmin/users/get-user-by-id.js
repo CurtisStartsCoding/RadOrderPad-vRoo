@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserByIdController = getUserByIdController;
 const superadmin_1 = require("../../../services/superadmin");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Get a user by ID
  * GET /api/superadmin/users/:userId
@@ -33,7 +37,10 @@ async function getUserByIdController(req, res) {
         });
     }
     catch (error) {
-        console.error(`Error getting user with ID ${req.params.userId}:`, error);
+        logger_1.default.error('Error in getUserByIdController:', {
+            error,
+            userId: req.params.userId
+        });
         res.status(500).json({
             success: false,
             message: 'Failed to get user',

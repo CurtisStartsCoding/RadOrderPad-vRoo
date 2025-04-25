@@ -6,4 +6,5 @@ export { fetchDocumentUploads } from './fetch-document-uploads';
 export { fetchValidationAttempts } from './fetch-validation-attempts';
 export { fetchOrderHistory } from './fetch-order-history';
 export { getOrderDetails } from './get-order-details';
+export { ClinicalRecord, DocumentUpload, Insurance, OrderHistoryEntry, Patient, Order, ValidationAttempt } from './types';
 export { default } from './get-order-details';

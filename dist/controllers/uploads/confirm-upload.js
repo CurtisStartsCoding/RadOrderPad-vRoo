@@ -35,7 +35,7 @@ async function confirmUpload(req, res) {
         });
         res.status(500).json({
             success: false,
-            message: error.message || 'Failed to confirm upload'
+            message: error instanceof Error ? error.message : 'Failed to confirm upload'
         });
     }
 }

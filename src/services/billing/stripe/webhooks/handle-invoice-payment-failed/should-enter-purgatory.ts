@@ -8,7 +8,7 @@ import Stripe from 'stripe';
  * @param organization The organization data from the database
  * @returns boolean indicating whether to place in purgatory
  */
-export function shouldEnterPurgatory(invoice: Stripe.Invoice, organization: any): boolean {
+export function shouldEnterPurgatory(invoice: Stripe.Invoice): boolean {
   // In a real implementation, this would have more complex logic based on:
   // 1. Number of consecutive failures
   // 2. Total amount outstanding
@@ -19,7 +19,7 @@ export function shouldEnterPurgatory(invoice: Stripe.Invoice, organization: any)
   // Enter purgatory if the invoice has been attempted 3 or more times
   // or if the amount is significant (over $100)
   
-  const attemptCount = (invoice as any).attempt_count || 1;
+  const attemptCount = (invoice as Stripe.Invoice & { attempt_count?: number }).attempt_count || 1;
   const amountDue = invoice.amount_due || 0;
   
   return attemptCount >= 3 || amountDue >= 10000; // $100 in cents

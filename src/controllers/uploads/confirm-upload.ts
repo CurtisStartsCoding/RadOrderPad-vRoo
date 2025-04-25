@@ -3,7 +3,7 @@
  */
 import { Response } from 'express';
 import FileUploadService from '../../services/upload';
-import { AuthenticatedRequest, ConfirmUploadRequestBody, ConfirmUploadResponse } from './types';
+import { AuthenticatedRequest, ConfirmUploadRequestBody } from './types';
 import { validateConfirmUploadRequest } from './validate-confirm-upload-request';
 import logger from '../../utils/logger';
 
@@ -48,7 +48,7 @@ export async function confirmUpload(req: AuthenticatedRequest, res: Response): P
       documentId: result.documentId,
       message: 'Upload confirmed and recorded'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('[UploadsController] Error confirming upload:', {
       error,
       userId: req.user?.userId,
@@ -56,7 +56,7 @@ export async function confirmUpload(req: AuthenticatedRequest, res: Response): P
     });
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to confirm upload'
+      message: error instanceof Error ? error.message : 'Failed to confirm upload'
     });
   }
 }

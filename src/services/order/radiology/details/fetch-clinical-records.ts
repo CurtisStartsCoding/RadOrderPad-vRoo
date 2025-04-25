@@ -1,11 +1,12 @@
 import { queryPhiDb } from '../../../../config/db';
+import { ClinicalRecord } from './types';
 
 /**
  * Fetch clinical records for an order
  * @param orderId Order ID
  * @returns Array of clinical records
  */
-export async function fetchClinicalRecords(orderId: number): Promise<any[]> {
+export async function fetchClinicalRecords(orderId: number): Promise<ClinicalRecord[]> {
   const clinicalRecordsResult = await queryPhiDb(
     `SELECT cr.*
      FROM patient_clinical_records cr

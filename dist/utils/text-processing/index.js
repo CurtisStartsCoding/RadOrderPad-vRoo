@@ -47,9 +47,6 @@ Object.defineProperty(exports, "extractCPTCodes", { enumerable: true, get: funct
 Object.defineProperty(exports, "extractMedicalCodes", { enumerable: true, get: function () { return code_extractor_2.extractMedicalCodes; } });
 Object.defineProperty(exports, "isMedicalCode", { enumerable: true, get: function () { return code_extractor_2.isMedicalCode; } });
 /**
- * Main text processing functions
- */
-/**
  * Process medical text by sanitizing PHI and extracting keywords
  *
  * @param text - The text to process

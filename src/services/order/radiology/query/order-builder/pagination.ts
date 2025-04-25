@@ -9,11 +9,11 @@
  */
 function applyPagination(
   query: string,
-  params: any[],
+  params: (string | number | Date)[],
   paramIndex: number,
   page: number = 1,
   limit: number = 20
-): { query: string; params: any[]; paramIndex: number } {
+): { query: string; params: (string | number | Date)[]; paramIndex: number } {
   const offset = (page - 1) * limit;
   
   query += ` LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;

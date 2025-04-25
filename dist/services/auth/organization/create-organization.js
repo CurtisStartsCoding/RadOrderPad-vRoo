@@ -29,6 +29,7 @@ async function createOrganization(client, orgData) {
         status,
         0 // Initial credit balance
     ]);
+    // Cast to unknown first, then to Organization to satisfy TypeScript
     return orgResult.rows[0];
 }
 //# sourceMappingURL=create-organization.js.map

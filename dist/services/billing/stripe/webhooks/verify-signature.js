@@ -18,7 +18,8 @@ function verifyWebhookSignature(payload, signature) {
         return utils_1.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
     }
     catch (error) {
-        throw new Error(`Webhook signature verification failed: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        throw new Error(`Webhook signature verification failed: ${errorMessage}`);
     }
 }
 //# sourceMappingURL=verify-signature.js.map

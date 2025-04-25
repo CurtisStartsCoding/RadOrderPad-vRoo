@@ -7,7 +7,7 @@ import { stripe } from './utils';
  * @param signature Stripe signature from headers
  * @returns Verified Stripe event
  */
-export function verifyWebhookSignature(payload: any, signature: string): Stripe.Event {
+export function verifyWebhookSignature(payload: string | Buffer, signature: string): Stripe.Event {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
   if (!webhookSecret) {
@@ -21,7 +21,8 @@ export function verifyWebhookSignature(payload: any, signature: string): Stripe.
       signature,
       webhookSecret
     );
-  } catch (error: any) {
-    throw new Error(`Webhook signature verification failed: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(`Webhook signature verification failed: ${errorMessage}`);
   }
 }

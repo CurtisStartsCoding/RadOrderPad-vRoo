@@ -168,7 +168,7 @@ export function addDefaultValues<T>(
   
   for (const [key, value] of Object.entries(defaults)) {
     if (result[key as keyof T] === undefined) {
-      result[key as keyof T] = value as any;
+      result[key as keyof T] = value as T[keyof T];
     }
   }
   
@@ -206,21 +206,24 @@ export function clearColumnExistenceCache(): void {
  * @param error The error object
  * @returns Object with table and column names if found
  */
-export function extractSchemaInfoFromError(error: any): { table?: string; column?: string } {
+export function extractSchemaInfoFromError(error: Error | unknown): { table?: string; column?: string } {
   const result: { table?: string; column?: string } = {};
   
-  if (!error || typeof error.message !== 'string') {
+  // Check if error is an Error object with a message property
+  if (!error || typeof error !== 'object' || !('message' in error) || typeof error.message !== 'string') {
     return result;
   }
   
+  const errorMessage = error.message;
+  
   // Extract column name from "column X does not exist" errors
-  const columnMatch = error.message.match(/column ["']?([^"']+)["']? does not exist/i);
+  const columnMatch = errorMessage.match(/column ["']?([^"']+)["']? does not exist/i);
   if (columnMatch && columnMatch[1]) {
     result.column = columnMatch[1];
   }
   
   // Extract table name from various error messages
-  const tableMatch = error.message.match(/(?:relation|table) ["']?([^"']+)["']? does not exist/i);
+  const tableMatch = errorMessage.match(/(?:relation|table) ["']?([^"']+)["']? does not exist/i);
   if (tableMatch && tableMatch[1]) {
     result.table = tableMatch[1];
   }
@@ -234,8 +237,9 @@ export function extractSchemaInfoFromError(error: any): { table?: string; column
  * @param error The error to check
  * @returns boolean True if the error is related to schema compatibility
  */
-export function isSchemaCompatibilityError(error: any): boolean {
-  if (!error || typeof error.message !== 'string') {
+export function isSchemaCompatibilityError(error: Error | unknown): boolean {
+  // Check if error is an Error object with a message property
+  if (!error || typeof error !== 'object' || !('message' in error) || typeof error.message !== 'string') {
     return false;
   }
   
@@ -254,18 +258,21 @@ export function isSchemaCompatibilityError(error: any): boolean {
  * @param error The error to log
  * @param context Additional context information
  */
-export function logSchemaCompatibilityError(error: any, context: Record<string, any> = {}): void {
+export function logSchemaCompatibilityError(error: Error | unknown, context: Record<string, unknown> = {}): void {
   if (!isSchemaCompatibilityError(error)) {
     return;
   }
+  
+  // At this point we know error has a message property
+  const errorObj = error as Error;
   
   const schemaInfo = extractSchemaInfoFromError(error);
   
   enhancedLogger.error('Schema compatibility error', {
     ...context,
-    error: error.message,
+    error: errorObj.message,
     table: schemaInfo.table,
     column: schemaInfo.column,
-    stack: error.stack
+    stack: errorObj.stack
   });
 }

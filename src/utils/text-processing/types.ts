@@ -35,3 +35,23 @@ export interface PHISanitizerOptions {
   sanitizeAddresses?: boolean;
   sanitizeZipCodes?: boolean;
 }
+
+/**
+ * Medical code with type and description
+ */
+export interface MedicalCode {
+  code: string;
+  type: 'ICD10' | 'CPT';
+  description?: string;
+}
+
+/**
+ * Result of processing medical text
+ */
+export interface ProcessedMedicalText {
+  originalText: string;
+  sanitizedText: string;
+  keywords: string[];
+  categorizedKeywords: MedicalKeyword[];
+  medicalCodes: string[];
+}

@@ -22,7 +22,7 @@ class TerminateConnectionService {
             relationshipId: params.relationshipId,
             terminatingOrgId: params.terminatingOrgId
         });
-        const { relationshipId, terminatingUserId, terminatingOrgId } = params;
+        const { relationshipId, terminatingOrgId } = params;
         const client = await (0, db_1.getMainDbClient)();
         try {
             enhanced_logger_1.default.debug('Beginning transaction');

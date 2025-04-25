@@ -6,9 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createNewRelationship = createNewRelationship;
 const notification_1 = __importDefault(require("../../../notification"));
 const request_1 = require("../../queries/request");
-/**
- * Create a new relationship
- */
 async function createNewRelationship(client, initiatingOrgId, targetOrgId, initiatingUserId, notes, orgsData) {
     const insertResult = await client.query(request_1.CREATE_RELATIONSHIP_QUERY, [initiatingOrgId, targetOrgId, initiatingUserId, notes || null]);
     // Get target organization admin email for notification

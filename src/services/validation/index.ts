@@ -15,7 +15,7 @@ export { logLLMUsage } from './llm-logging';
 
 // Create ValidationService class for backward compatibility
 import { ValidationResult } from '../../models';
-import { ValidationContext, ValidationOptions } from './types';
+import { ValidationContext } from './types';
 import { runValidation } from './run-validation';
 
 /**

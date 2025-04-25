@@ -9,6 +9,15 @@ import listPendingAdminOrders, {
   ListOptions,
   ListPendingAdminOrdersResponse
 } from './list-pending-admin.service';
+import {
+  EmrSummaryResult,
+  SupplementalDocResult,
+  PatientUpdateData,
+  PatientUpdateResult,
+  InsuranceUpdateData,
+  InsuranceUpdateResult,
+  SendToRadiologyResult
+} from './types';
 
 /**
  * Service for handling admin order operations
@@ -21,7 +30,7 @@ class AdminOrderService {
    * @param userId User ID
    * @returns Promise with result
    */
-  async handlePasteSummary(orderId: number, pastedText: string, userId: number) {
+  async handlePasteSummary(orderId: number, pastedText: string, userId: number): Promise<EmrSummaryResult> {
     return handlePasteSummary(orderId, pastedText, userId);
   }
   
@@ -32,7 +41,7 @@ class AdminOrderService {
    * @param userId User ID
    * @returns Promise with result
    */
-  async handlePasteSupplemental(orderId: number, pastedText: string, userId: number) {
+  async handlePasteSupplemental(orderId: number, pastedText: string, userId: number): Promise<SupplementalDocResult> {
     return handlePasteSupplemental(orderId, pastedText, userId);
   }
   
@@ -43,7 +52,7 @@ class AdminOrderService {
    * @param userId User ID
    * @returns Promise with result
    */
-  async updatePatientInfo(orderId: number, patientData: any, userId: number) {
+  async updatePatientInfo(orderId: number, patientData: PatientUpdateData, userId: number): Promise<PatientUpdateResult> {
     return updatePatientInfo(orderId, patientData, userId);
   }
   
@@ -54,7 +63,7 @@ class AdminOrderService {
    * @param userId User ID
    * @returns Promise with result
    */
-  async updateInsuranceInfo(orderId: number, insuranceData: any, userId: number) {
+  async updateInsuranceInfo(orderId: number, insuranceData: InsuranceUpdateData, userId: number): Promise<InsuranceUpdateResult> {
     return updateInsuranceInfo(orderId, insuranceData, userId);
   }
   
@@ -64,7 +73,7 @@ class AdminOrderService {
    * @param userId User ID
    * @returns Promise with result
    */
-  async sendToRadiology(orderId: number, userId: number) {
+  async sendToRadiology(orderId: number, userId: number): Promise<SendToRadiologyResult> {
     return sendToRadiology(orderId, userId);
   }
   

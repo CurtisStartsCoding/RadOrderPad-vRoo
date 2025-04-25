@@ -6,7 +6,7 @@ import './types';
 /**
  * Middleware to check if user belongs to the specified organization
  */
-export const authorizeOrganization = (req: Request, res: Response, next: NextFunction) => {
+export const authorizeOrganization = (req: Request, res: Response, next: NextFunction): Response | void => {
   if (!req.user) {
     return res.status(401).json({ message: 'User not authenticated' });
   }

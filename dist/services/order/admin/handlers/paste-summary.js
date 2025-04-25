@@ -50,7 +50,7 @@ const insuranceManager = __importStar(require("../insurance-manager"));
  * @returns Promise with result
  */
 async function handlePasteSummary(orderId, pastedText, userId) {
-    return (0, transaction_1.withTransaction)(async (client) => {
+    return (0, transaction_1.withTransaction)(async (_client) => {
         // 1. Verify order exists and has status 'pending_admin'
         const order = await clinicalRecordManager.verifyOrderStatus(orderId);
         // 2. Save the raw pasted text to patient_clinical_records

@@ -7,8 +7,8 @@ import './types';
 /**
  * Middleware to check if user has required role
  */
-export const authorizeRole = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+export const authorizeRole = (roles: string[]): ((req: Request, res: Response, next: NextFunction) => Response | void) => {
+  return (req: Request, res: Response, next: NextFunction): Response | void => {
     if (!req.user) {
       return res.status(401).json({ message: 'User not authenticated' });
     }

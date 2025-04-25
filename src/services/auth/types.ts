@@ -31,6 +31,9 @@ export {
 };
 
 export interface DatabaseClient {
-  query: (text: string, params?: any[]) => Promise<any>;
+  query: (text: string, params?: (string | number | boolean | null)[] | undefined) => Promise<{
+    rows: Record<string, unknown>[];
+    rowCount: number;
+  }>;
   release: () => void;
 }

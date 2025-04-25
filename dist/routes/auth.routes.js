@@ -8,7 +8,7 @@ const register_controller_1 = __importDefault(require("../controllers/auth/regis
 const auth_controller_js_1 = __importDefault(require("../controllers/auth.controller.js"));
 const router = (0, express_1.Router)();
 // Add a test endpoint that bypasses CAPTCHA verification
-router.post('/register-test', (req, res, next) => {
+router.post('/register-test', (req, res) => {
     // Set the test mode header
     req.headers['x-test-mode'] = 'true';
     // Call the regular register controller

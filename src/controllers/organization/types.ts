@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import logger from '../../utils/logger';
 
 /**
  * Interface for authenticated request with user information
@@ -24,7 +25,10 @@ export type ControllerHandler = (req: AuthenticatedRequest, res: Response) => Pr
  * @param message Error message
  */
 export function handleControllerError(res: Response, error: unknown, message: string): void {
-  console.error(`Error in ${message}:`, error);
+  logger.error(`Error in organization controller:`, {
+    error,
+    context: message
+  });
   res.status(500).json({ message, error: (error as Error).message });
 }
 

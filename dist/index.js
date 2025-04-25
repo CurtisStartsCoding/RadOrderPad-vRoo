@@ -33,7 +33,7 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
     logger_1.default.error('Unhandled error:', { error: err });
     res.status(500).json({ message: 'Internal server error' });
 });

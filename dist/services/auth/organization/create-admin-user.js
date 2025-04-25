@@ -60,6 +60,7 @@ async function createAdminUser(client, userData, organizationId) {
         true, // is_active
         false // email_verified
     ]);
+    // Cast to unknown first, then to User to satisfy TypeScript
     return userResult.rows[0];
 }
 //# sourceMappingURL=create-admin-user.js.map

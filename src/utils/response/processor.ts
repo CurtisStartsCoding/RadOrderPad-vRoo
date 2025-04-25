@@ -47,20 +47,20 @@ export function processLLMResponse(responseContent: string): ValidationResult {
     validateRequiredFields(normalizedResponse);
     
     // Ensure validationStatus is a valid enum value
-    validateValidationStatus(normalizedResponse.validationStatus);
+    validateValidationStatus(normalizedResponse.validationStatus as string);
     
     // Normalize ICD-10 and CPT code arrays
-    const normalizedICD10Codes = normalizeCodeArray(normalizedResponse.suggestedICD10Codes);
-    const normalizedCPTCodes = normalizeCodeArray(normalizedResponse.suggestedCPTCodes);
+    const normalizedICD10Codes = normalizeCodeArray(normalizedResponse.suggestedICD10Codes as string[]);
+    const normalizedCPTCodes = normalizeCodeArray(normalizedResponse.suggestedCPTCodes as string[]);
     
     // Return the validation result
     return {
-      validationStatus: normalizedResponse.validationStatus,
-      complianceScore: normalizedResponse.complianceScore,
-      feedback: normalizedResponse.feedback,
+      validationStatus: normalizedResponse.validationStatus as ValidationStatus,
+      complianceScore: Number(normalizedResponse.complianceScore),
+      feedback: String(normalizedResponse.feedback),
       suggestedICD10Codes: normalizedICD10Codes,
       suggestedCPTCodes: normalizedCPTCodes,
-      internalReasoning: normalizedResponse.internalReasoning || 'No internal reasoning provided'
+      internalReasoning: normalizedResponse.internalReasoning ? String(normalizedResponse.internalReasoning) : 'No internal reasoning provided'
     };
   } catch (error) {
     // Log error without including the full raw response

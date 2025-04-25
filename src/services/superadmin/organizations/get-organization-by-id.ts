@@ -1,4 +1,6 @@
 import { queryMainDb } from '../../../config/db';
+import logger from '../../../utils/logger';
+import { OrganizationWithRelatedData } from '../types';
 
 /**
  * Get an organization by ID
@@ -6,7 +8,7 @@ import { queryMainDb } from '../../../config/db';
  * @param orgId Organization ID
  * @returns Promise with organization details or null if not found
  */
-export async function getOrganizationById(orgId: number): Promise<any | null> {
+export async function getOrganizationById(orgId: number): Promise<OrganizationWithRelatedData | null> {
   try {
     // Query for the organization
     const orgQuery = `
@@ -75,7 +77,10 @@ export async function getOrganizationById(orgId: number): Promise<any | null> {
       purgatoryHistory: purgatoryResult.rows
     };
   } catch (error) {
-    console.error(`Error getting organization with ID ${orgId}:`, error);
+    logger.error('Error getting organization by ID:', {
+      error,
+      orgId
+    });
     throw error;
   }
 }

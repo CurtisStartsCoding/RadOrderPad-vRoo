@@ -15,7 +15,7 @@ export interface PatientUpdateData {
     phoneNumber?: string;
     email?: string;
     mrn?: string;
-    [key: string]: any;
+    [key: string]: string | undefined;
 }
 /**
  * Patient data with required fields for validation

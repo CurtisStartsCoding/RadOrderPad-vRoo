@@ -50,11 +50,11 @@ function processLLMResponse(responseContent) {
         // Return the validation result
         return {
             validationStatus: normalizedResponse.validationStatus,
-            complianceScore: normalizedResponse.complianceScore,
-            feedback: normalizedResponse.feedback,
+            complianceScore: Number(normalizedResponse.complianceScore),
+            feedback: String(normalizedResponse.feedback),
             suggestedICD10Codes: normalizedICD10Codes,
             suggestedCPTCodes: normalizedCPTCodes,
-            internalReasoning: normalizedResponse.internalReasoning || 'No internal reasoning provided'
+            internalReasoning: normalizedResponse.internalReasoning ? String(normalizedResponse.internalReasoning) : 'No internal reasoning provided'
         };
     }
     catch (error) {

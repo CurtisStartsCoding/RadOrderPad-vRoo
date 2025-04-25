@@ -8,6 +8,7 @@ export interface ParsedPatientInfo {
   zipCode?: string;
   phone?: string;
   email?: string;
+  [key: string]: string | undefined;
 }
 
 /**

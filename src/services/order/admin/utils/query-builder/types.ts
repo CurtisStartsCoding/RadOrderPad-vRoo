@@ -3,5 +3,5 @@
  */
 export interface UpdateQueryResult {
   query: string;
-  values: any[];
+  values: (string | number | boolean | null)[];
 }

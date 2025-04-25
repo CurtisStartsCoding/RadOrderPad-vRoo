@@ -1,3 +1,4 @@
+import { Order } from './types';
 /**
  * Fetch order data from the database
  * @param orderId Order ID
@@ -5,4 +6,4 @@
  * @returns Order data
  * @throws Error if order not found or not authorized
  */
-export declare function fetchOrder(orderId: number, orgId: number): Promise<any>;
+export declare function fetchOrder(orderId: number, orgId: number): Promise<Order>;

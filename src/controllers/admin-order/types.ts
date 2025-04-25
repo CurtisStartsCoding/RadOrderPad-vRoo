@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import logger from '../../utils/logger';
 
 /**
  * Interface for the AdminOrderController
@@ -21,7 +22,10 @@ export type ErrorHandler = (error: unknown, res: Response) => void;
  * Common error handler function for admin order controllers
  */
 export function handleControllerError(error: unknown, res: Response, controllerName: string): void {
-  console.error(`Error in ${controllerName} controller:`, error);
+  logger.error(`Error in admin order controller:`, {
+    error,
+    controllerName
+  });
   
   if (error instanceof Error) {
     if (error.message.includes('not found')) {

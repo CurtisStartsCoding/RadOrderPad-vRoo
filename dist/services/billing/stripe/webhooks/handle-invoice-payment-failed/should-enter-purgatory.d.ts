@@ -7,4 +7,4 @@ import Stripe from 'stripe';
  * @param organization The organization data from the database
  * @returns boolean indicating whether to place in purgatory
  */
-export declare function shouldEnterPurgatory(invoice: Stripe.Invoice, organization: any): boolean;
+export declare function shouldEnterPurgatory(invoice: Stripe.Invoice): boolean;

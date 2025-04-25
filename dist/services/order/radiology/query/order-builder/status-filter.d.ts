@@ -6,9 +6,9 @@
  * @param status Status to filter by
  * @returns Updated query, params, and paramIndex
  */
-export declare function applyStatusFilter(query: string, params: any[], paramIndex: number, status?: string): {
+export declare function applyStatusFilter(query: string, params: (string | number | Date)[], paramIndex: number, status?: string): {
     query: string;
-    params: any[];
+    params: (string | number | Date)[];
     paramIndex: number;
 };
 export default applyStatusFilter;

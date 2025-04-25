@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { listAllOrganizations } from '../../../services/superadmin';
+import logger from '../../../utils/logger';
 
 /**
  * List all organizations with optional filtering
@@ -24,7 +25,10 @@ export async function listAllOrganizationsController(req: Request, res: Response
       data: organizations
     });
   } catch (error) {
-    console.error('Error listing organizations:', error);
+    logger.error('Error in listAllOrganizationsController:', {
+      error,
+      filters: req.query
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to list organizations',

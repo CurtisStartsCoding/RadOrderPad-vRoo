@@ -11,7 +11,7 @@ export interface InsuranceUpdateData {
   policyHolderDateOfBirth?: string;
   verificationStatus?: string;
   isPrimary?: boolean;
-  [key: string]: any;
+  [key: string]: string | boolean | undefined;
 }
 
 /**

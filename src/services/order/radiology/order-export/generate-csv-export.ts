@@ -19,13 +19,17 @@ function safeString(value: unknown): string {
  * @param date Date to format
  * @returns Formatted date string or empty string if invalid
  */
-function formatDate(date: Date | string | null | undefined): string {
+function formatDate(date: unknown): string {
   if (!date) {
     return '';
   }
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    return dateObj.toISOString();
+    if (date instanceof Date) {
+      return date.toISOString();
+    } else if (typeof date === 'string') {
+      return new Date(date).toISOString();
+    }
+    return '';
   } catch {
     return '';
   }
@@ -49,10 +53,15 @@ function joinArray(arr: unknown[], separator = ', '): string {
  * @param value Boolean value
  * @returns 'Yes', 'No', or empty string
  */
-function formatBoolean(value: boolean | null | undefined): string {
+function formatBoolean(value: unknown): string {
   if (value === null || value === undefined) {
     return '';
   }
+  // Convert to boolean if it's a string like "true" or "false"
+  if (typeof value === 'string') {
+    return value.toLowerCase() === 'true' ? 'Yes' : 'No';
+  }
+  // Use standard boolean conversion for other types
   return value ? 'Yes' : 'No';
 }
 

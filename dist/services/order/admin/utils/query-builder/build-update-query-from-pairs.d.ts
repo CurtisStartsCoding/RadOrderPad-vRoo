@@ -11,5 +11,5 @@ import { UpdateQueryResult } from './types';
  */
 export declare function buildUpdateQueryFromPairs(tableName: string, fieldValuePairs: {
     field: string;
-    value: any;
-}[], idField: string | undefined, idValue: any, includeTimestamp?: boolean, returnFields?: string[]): UpdateQueryResult;
+    value: string | number | boolean | null | undefined;
+}[], idField: string | undefined, idValue: string | number, includeTimestamp?: boolean, returnFields?: string[]): UpdateQueryResult;

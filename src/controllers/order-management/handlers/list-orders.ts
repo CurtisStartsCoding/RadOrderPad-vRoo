@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { queryMainDb, queryPhiDb } from '../../../config/db';
+import { queryPhiDb } from '../../../config/db';
 import { handleControllerError } from '../error-handling';
 
 /**
@@ -38,7 +38,7 @@ export async function listOrders(req: Request, res: Response): Promise<void> {
       WHERE 1=1
     `;
     
-    const queryParams: any[] = [];
+    const queryParams: (string | number)[] = [];
     let paramIndex = 1;
     
     // Apply filters based on user role
@@ -83,7 +83,7 @@ export async function listOrders(req: Request, res: Response): Promise<void> {
       WHERE 1=1
     `;
     
-    const countParams: any[] = [];
+    const countParams: (string | number)[] = [];
     paramIndex = 1;
     
     // Apply the same filters to the count query

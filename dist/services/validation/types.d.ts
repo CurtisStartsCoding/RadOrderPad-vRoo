@@ -2,7 +2,7 @@
  * Context for validation
  */
 export interface ValidationContext {
-    patientInfo?: any;
+    patientInfo?: Record<string, unknown>;
     userId?: number;
     orgId?: number;
     orderId?: number;

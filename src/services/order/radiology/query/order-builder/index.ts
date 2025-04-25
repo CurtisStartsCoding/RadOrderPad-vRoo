@@ -10,7 +10,7 @@ import { applyPagination } from './pagination';
  * @param filters Filter parameters
  * @returns Object containing the query string and parameters
  */
-function buildOrderQuery(orgId: number, filters: OrderFilters = {}): { query: string; params: any[] } {
+function buildOrderQuery(orgId: number, filters: OrderFilters = {}): { query: string; params: (string | number | Date)[] } {
   // Create the base query
   let { query, params, paramIndex } = createBaseQuery(orgId);
   

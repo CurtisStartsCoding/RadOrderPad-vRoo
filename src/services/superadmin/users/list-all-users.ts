@@ -1,4 +1,6 @@
 import { queryMainDb } from '../../../config/db';
+import logger from '../../../utils/logger';
+import { User, UserWithSensitiveData } from '../types';
 
 /**
  * List all users with optional filtering
@@ -11,7 +13,7 @@ export async function listAllUsers(filters: {
   email?: string;
   role?: string;
   status?: boolean;
-}): Promise<any[]> {
+}): Promise<User[]> {
   try {
     // Start building the query
     let query = `
@@ -25,7 +27,7 @@ export async function listAllUsers(filters: {
     `;
     
     // Add filters if provided
-    const params: any[] = [];
+    const params: (string | number | boolean)[] = [];
     let paramIndex = 1;
     
     if (filters.orgId) {
@@ -59,14 +61,18 @@ export async function listAllUsers(filters: {
     const result = await queryMainDb(query, params);
     
     // Remove password_hash from results for security
-    const users = result.rows.map((user: any) => {
+    const users = result.rows.map((user: UserWithSensitiveData) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password_hash, ...userWithoutPassword } = user;
       return userWithoutPassword;
     });
     
     return users;
   } catch (error) {
-    console.error('Error listing users:', error);
+    logger.error('Error listing users:', {
+      error,
+      filters
+    });
     throw error;
   }
 }

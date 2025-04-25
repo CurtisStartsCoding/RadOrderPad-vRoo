@@ -1,5 +1,4 @@
 import Stripe from 'stripe';
-import config from '../../../config/config';
 import logger from '../../../utils/logger';
 
 /**

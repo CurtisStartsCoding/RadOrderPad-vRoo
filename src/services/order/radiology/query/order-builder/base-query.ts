@@ -1,14 +1,12 @@
-import { OrderFilters } from '../../types';
-
 /**
  * Create the base query for getting incoming orders
  * @param orgId Radiology organization ID
  * @returns Object containing the query string, parameters, and next parameter index
  */
-export function createBaseQuery(orgId: number): { 
-  query: string; 
-  params: any[]; 
-  paramIndex: number 
+export function createBaseQuery(orgId: number): {
+  query: string;
+  params: (string | number | Date)[];
+  paramIndex: number
 } {
   const query = `
     SELECT o.id, o.order_number, o.status, o.priority, o.modality, o.body_part, 

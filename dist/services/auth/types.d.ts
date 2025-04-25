@@ -3,6 +3,9 @@ import { Organization, OrganizationRegistrationDTO, OrganizationStatus } from '.
 import { AuthTokenPayload, LoginResponse, RegistrationResponse } from '../../models/Auth';
 export { User, UserRegistrationDTO, UserLoginDTO, Organization, OrganizationRegistrationDTO, OrganizationStatus, AuthTokenPayload, LoginResponse, RegistrationResponse, UserResponse };
 export interface DatabaseClient {
-    query: (text: string, params?: any[]) => Promise<any>;
+    query: (text: string, params?: (string | number | boolean | null)[] | undefined) => Promise<{
+        rows: Record<string, unknown>[];
+        rowCount: number;
+    }>;
     release: () => void;
 }

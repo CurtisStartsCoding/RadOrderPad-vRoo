@@ -121,7 +121,6 @@ class BillingService {
      * @param params Parameters for creating a Stripe customer
      * @returns The Stripe customer ID
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async createStripeCustomerForOrg(_params) {
         // This is a placeholder implementation
         enhanced_logger_1.default.warn('Using placeholder implementation of createStripeCustomerForOrg');

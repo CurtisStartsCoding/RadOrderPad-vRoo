@@ -47,7 +47,7 @@ async function handleInvoicePaymentFailed(event) {
             `Invoice payment failed: ${invoice.number || invoice.id}`
         ]);
         // Check if the organization should enter purgatory mode
-        const enterPurgatory = (0, should_enter_purgatory_1.shouldEnterPurgatory)(invoice, organization);
+        const enterPurgatory = (0, should_enter_purgatory_1.shouldEnterPurgatory)(invoice);
         // If the organization should enter purgatory and is not already in purgatory
         if (enterPurgatory && currentStatus !== 'purgatory') {
             // 1. Update organization status

@@ -6,8 +6,8 @@
  * @param priority Priority to filter by
  * @returns Updated query, params, and paramIndex
  */
-export declare function applyPriorityFilter(query: string, params: any[], paramIndex: number, priority?: string): {
+export declare function applyPriorityFilter(query: string, params: (string | number | Date)[], paramIndex: number, priority?: string): {
     query: string;
-    params: any[];
+    params: (string | number | Date)[];
     paramIndex: number;
 };

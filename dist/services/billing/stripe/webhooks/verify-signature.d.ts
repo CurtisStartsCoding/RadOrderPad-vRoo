@@ -5,4 +5,4 @@ import Stripe from 'stripe';
  * @param signature Stripe signature from headers
  * @returns Verified Stripe event
  */
-export declare function verifyWebhookSignature(payload: any, signature: string): Stripe.Event;
+export declare function verifyWebhookSignature(payload: string | Buffer, signature: string): Stripe.Event;

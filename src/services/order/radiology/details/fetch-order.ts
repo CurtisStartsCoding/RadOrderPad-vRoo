@@ -1,4 +1,5 @@
 import { queryPhiDb } from '../../../../config/db';
+import { Order } from './types';
 
 /**
  * Fetch order data from the database
@@ -7,7 +8,7 @@ import { queryPhiDb } from '../../../../config/db';
  * @returns Order data
  * @throws Error if order not found or not authorized
  */
-export async function fetchOrder(orderId: number, orgId: number): Promise<any> {
+export async function fetchOrder(orderId: number, orgId: number): Promise<Order> {
   const orderResult = await queryPhiDb(
     `SELECT o.*
      FROM orders o

@@ -6,8 +6,8 @@
  * @param modality Modality to filter by
  * @returns Updated query, params, and paramIndex
  */
-export declare function applyModalityFilter(query: string, params: any[], paramIndex: number, modality?: string): {
+export declare function applyModalityFilter(query: string, params: (string | number | Date)[], paramIndex: number, modality?: string): {
     query: string;
-    params: any[];
+    params: (string | number | Date)[];
     paramIndex: number;
 };

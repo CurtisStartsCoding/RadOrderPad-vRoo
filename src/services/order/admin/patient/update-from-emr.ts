@@ -1,6 +1,19 @@
 import { queryPhiDb } from '../../../../config/db';
 
 /**
+ * Interface for parsed patient information from EMR
+ */
+interface ParsedPatientInfo {
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  phone?: string;
+  email?: string;
+  [key: string]: string | undefined;
+}
+
+/**
  * Update patient information from parsed EMR data
  * @param patientId Patient ID
  * @param parsedPatientInfo Parsed patient information
@@ -8,7 +21,7 @@ import { queryPhiDb } from '../../../../config/db';
  */
 export async function updatePatientFromEmr(
   patientId: number,
-  parsedPatientInfo: any
+  parsedPatientInfo: ParsedPatientInfo
 ): Promise<void> {
   if (!parsedPatientInfo || Object.keys(parsedPatientInfo).length === 0) {
     return;

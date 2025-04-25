@@ -7,9 +7,9 @@
  * @param endDate End date to filter by
  * @returns Updated query, params, and paramIndex
  */
-declare function applyDateRangeFilter(query: string, params: any[], paramIndex: number, startDate?: Date, endDate?: Date): {
+declare function applyDateRangeFilter(query: string, params: (string | number | Date)[], paramIndex: number, startDate?: Date, endDate?: Date): {
     query: string;
-    params: any[];
+    params: (string | number | Date)[];
     paramIndex: number;
 };
 export { applyDateRangeFilter };

@@ -7,9 +7,9 @@ import { OrderFilters } from '../../types';
  * @param filters Filter parameters
  * @returns Updated query, params, and paramIndex
  */
-declare function applyAllFilters(query: string, params: any[], paramIndex: number, filters?: OrderFilters): {
+declare function applyAllFilters(query: string, params: (string | number | Date)[], paramIndex: number, filters?: OrderFilters): {
     query: string;
-    params: any[];
+    params: (string | number | Date)[];
     paramIndex: number;
 };
 export { applyAllFilters };

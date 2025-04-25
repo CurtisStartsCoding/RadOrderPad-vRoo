@@ -9,6 +9,6 @@ const stripe_1 = __importDefault(require("stripe"));
  * Initialize Stripe with the API key from environment variables
  */
 exports.stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY || '', {
-    apiVersion: '2024-04-10', // Use the API version from config with type assertion
+    apiVersion: '2024-04-10', // Use the API version from config with proper type
 });
 //# sourceMappingURL=utils.js.map

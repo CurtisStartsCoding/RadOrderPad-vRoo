@@ -1,8 +1,13 @@
 /**
- * Normalize code arrays to ensure consistent format
+ * Type for code object
  */
-export declare function normalizeCodeArray(codes: any): Array<{
+type CodeObject = {
     code: string;
     description: string;
     isPrimary?: boolean;
-}>;
+};
+/**
+ * Normalize code arrays to ensure consistent format
+ */
+export declare function normalizeCodeArray(codes: string | string[] | CodeObject[] | null | undefined): CodeObject[];
+export {};

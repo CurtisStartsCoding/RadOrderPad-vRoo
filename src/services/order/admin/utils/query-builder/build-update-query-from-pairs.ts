@@ -12,9 +12,9 @@ import { UpdateQueryResult } from './types';
  */
 export function buildUpdateQueryFromPairs(
   tableName: string,
-  fieldValuePairs: { field: string, value: any }[],
+  fieldValuePairs: { field: string, value: string | number | boolean | null | undefined }[],
   idField: string = 'id',
-  idValue: any,
+  idValue: string | number,
   includeTimestamp: boolean = true,
   returnFields: string[] = ['id']
 ): UpdateQueryResult {

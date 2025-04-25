@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOrganizationById = getOrganizationById;
 const db_1 = require("../../../config/db");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Get an organization by ID
  *
@@ -66,7 +70,10 @@ async function getOrganizationById(orgId) {
         };
     }
     catch (error) {
-        console.error(`Error getting organization with ID ${orgId}:`, error);
+        logger_1.default.error('Error getting organization by ID:', {
+            error,
+            orgId
+        });
         throw error;
     }
 }

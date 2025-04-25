@@ -34,7 +34,7 @@ app.get('/health', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error('Unhandled error:', { error: err });
   res.status(500).json({ message: 'Internal server error' });
 });
@@ -70,7 +70,7 @@ const server = app.listen(PORT, async () => {
 process.on('SIGTERM', shutdownServer);
 process.on('SIGINT', shutdownServer);
 
-async function shutdownServer() {
+async function shutdownServer(): Promise<void> {
   logger.info('Shutting down server...');
   
   // Close database connections

@@ -14,16 +14,11 @@ export { extractICD10Codes, extractCPTCodes, extractMedicalCodes, isMedicalCode 
 /**
  * Main text processing functions
  */
+import { ProcessedMedicalText } from './types';
 /**
  * Process medical text by sanitizing PHI and extracting keywords
  *
  * @param text - The text to process
  * @returns Object containing sanitized text and extracted keywords
  */
-export declare function processMedicalText(text: string): {
-    originalText: string;
-    sanitizedText: string;
-    keywords: string[];
-    categorizedKeywords: import("./types").MedicalKeyword[];
-    medicalCodes: string[];
-};
+export declare function processMedicalText(text: string): ProcessedMedicalText;

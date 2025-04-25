@@ -1,4 +1,5 @@
 import { queryMainDb } from '../../../../config/db';
+import logger from '../../../../utils/logger';
 
 /**
  * Deactivate a location (soft delete)
@@ -30,7 +31,11 @@ export async function deactivateLocation(locationId: number, orgId: number): Pro
     
     return result.rows.length > 0;
   } catch (error) {
-    console.error('Error in deactivateLocation:', error);
+    logger.error('Error in deactivateLocation query:', {
+      error,
+      locationId,
+      orgId
+    });
     throw error;
   }
 }

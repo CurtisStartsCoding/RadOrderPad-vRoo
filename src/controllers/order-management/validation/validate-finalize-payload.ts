@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { ValidationStatus } from '../../../models';
-import { FinalizeOrderPayload } from '../types';
 
 /**
  * Validates the finalize order payload

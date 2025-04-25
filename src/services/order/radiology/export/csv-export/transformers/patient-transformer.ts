@@ -1,12 +1,13 @@
 import { PatientInfo } from '../interfaces';
 import { safeString } from '../utils';
+import { Patient } from '../../../details/types';
 
 /**
  * Transform patient data for CSV export
  * @param patient Patient data from database
  * @returns Transformed patient info for CSV
  */
-export function transformPatientData(patient: Record<string, unknown> | undefined): PatientInfo {
+export function transformPatientData(patient: Patient | null | undefined): PatientInfo {
   if (!patient) {
     return {};
   }

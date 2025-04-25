@@ -9,7 +9,7 @@ import './types';
 /**
  * Middleware to authenticate JWT tokens
  */
-export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
+export const authenticateJWT = (req: Request, res: Response, next: NextFunction): Response | void => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {

@@ -15,10 +15,10 @@ import { applyValidationStatusFilter } from './validation-filter';
  */
 function applyAllFilters(
   query: string,
-  params: any[],
+  params: (string | number | Date)[],
   paramIndex: number,
   filters: OrderFilters = {}
-): { query: string; params: any[]; paramIndex: number } {
+): { query: string; params: (string | number | Date)[]; paramIndex: number } {
   let result = { query, params, paramIndex };
   
   // Apply each filter in sequence

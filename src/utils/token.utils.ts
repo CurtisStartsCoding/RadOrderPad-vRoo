@@ -17,6 +17,7 @@ export function generateToken(user: User): string {
   const secret = process.env.JWT_SECRET || 'default_jwt_secret';
   const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
   
-  // Use any type to bypass TypeScript errors
+  // Need to use 'as any' due to type incompatibility in the jwt library
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (jwt as any).sign(payload, secret, { expiresIn });
 }

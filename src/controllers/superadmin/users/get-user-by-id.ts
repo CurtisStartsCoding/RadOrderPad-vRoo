@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { getUserById } from '../../../services/superadmin';
+import logger from '../../../utils/logger';
 
 /**
  * Get a user by ID
@@ -35,7 +36,10 @@ export async function getUserByIdController(req: Request, res: Response): Promis
       data: user
     });
   } catch (error) {
-    console.error(`Error getting user with ID ${req.params.userId}:`, error);
+    logger.error('Error in getUserByIdController:', {
+      error,
+      userId: req.params.userId
+    });
     res.status(500).json({
       success: false,
       message: 'Failed to get user',

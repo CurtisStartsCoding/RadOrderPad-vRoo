@@ -1,4 +1,5 @@
 import { PoolClient } from 'pg';
+import { PatientInfo } from './common/types';
 
 /**
  * Service for handling patient-related operations
@@ -11,7 +12,7 @@ class PatientService {
    * @param patientInfo Patient information
    * @returns Patient ID
    */
-  async createTemporaryPatient(client: PoolClient, organizationId: number, patientInfo: any): Promise<number> {
+  async createTemporaryPatient(client: PoolClient, organizationId: number, patientInfo: PatientInfo): Promise<number> {
     const patientResult = await client.query(
       `INSERT INTO patients 
       (organization_id, pidn, first_name, last_name, date_of_birth, gender, mrn, created_at, updated_at) 

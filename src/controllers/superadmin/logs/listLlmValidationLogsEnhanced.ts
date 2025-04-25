@@ -55,7 +55,7 @@ function parsePagination(req: Request): { limit?: number; offset?: number } {
  * @param value Query parameter value
  * @returns Array of strings or undefined
  */
-function parseArrayParam(value: any): string[] | undefined {
+function parseArrayParam(value: string | string[] | ParsedQs | (string | ParsedQs)[] | undefined): string[] | undefined {
   if (!value) return undefined;
   
   if (Array.isArray(value)) {

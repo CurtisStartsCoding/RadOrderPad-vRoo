@@ -1,11 +1,12 @@
 import { queryPhiDb } from '../../../../config/db';
+import { ValidationAttempt } from './types';
 
 /**
  * Fetch validation attempts for an order
  * @param orderId Order ID
  * @returns Array of validation attempts
  */
-export async function fetchValidationAttempts(orderId: number): Promise<any[]> {
+export async function fetchValidationAttempts(orderId: number): Promise<ValidationAttempt[]> {
   const validationAttemptsResult = await queryPhiDb(
     `SELECT va.id, va.attempt_number, va.validation_outcome, va.generated_compliance_score,
             va.created_at

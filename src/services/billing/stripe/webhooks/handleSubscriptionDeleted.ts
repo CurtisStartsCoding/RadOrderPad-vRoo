@@ -18,7 +18,7 @@ import logger from '../../../../utils/logger';
  */
 export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<{ success: boolean; message: string }> {
   // Cast the event data to the appropriate type
-  const subscription = event.data.object as any; // Using any due to type inconsistencies
+  const subscription = event.data.object as Stripe.Subscription & { customer?: string }; // Using extended type for Stripe inconsistencies
   
   // Basic idempotency check - if we've already processed this event, skip it
   const existingEvent = await queryMainDb(

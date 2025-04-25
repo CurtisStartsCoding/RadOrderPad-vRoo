@@ -7,11 +7,11 @@
  * @returns Updated query, params, and paramIndex
  */
 export function applyPriorityFilter(
-  query: string, 
-  params: any[], 
-  paramIndex: number, 
+  query: string,
+  params: (string | number | Date)[],
+  paramIndex: number,
   priority?: string
-): { query: string; params: any[]; paramIndex: number } {
+): { query: string; params: (string | number | Date)[]; paramIndex: number } {
   if (priority) {
     query += ` AND o.priority = $${paramIndex}`;
     params.push(priority);

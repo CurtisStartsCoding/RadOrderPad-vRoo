@@ -1,4 +1,6 @@
 import { queryMainDb } from '../../../config/db';
+import logger from '../../../utils/logger';
+import { Organization } from '../types';
 
 /**
  * List all organizations with optional filtering
@@ -10,7 +12,7 @@ export async function listAllOrganizations(filters: {
   name?: string;
   type?: string;
   status?: string;
-}): Promise<any[]> {
+}): Promise<Organization[]> {
   try {
     // Start building the query
     let query = `
@@ -20,7 +22,7 @@ export async function listAllOrganizations(filters: {
     `;
     
     // Add filters if provided
-    const params: any[] = [];
+    const params: (string)[] = [];
     let paramIndex = 1;
     
     if (filters.name) {
@@ -48,7 +50,10 @@ export async function listAllOrganizations(filters: {
     const result = await queryMainDb(query, params);
     return result.rows;
   } catch (error) {
-    console.error('Error listing organizations:', error);
+    logger.error('Error listing organizations:', {
+      error,
+      filters
+    });
     throw error;
   }
 }

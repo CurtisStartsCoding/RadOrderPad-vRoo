@@ -7,7 +7,7 @@ export interface PatientInfo {
     lastName: string;
     dateOfBirth: string;
     gender: string;
-    [key: string]: any;
+    [key: string]: string | number | boolean | undefined;
 }
 /**
  * Payload for finalizing an order

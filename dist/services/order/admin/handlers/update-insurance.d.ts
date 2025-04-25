@@ -6,5 +6,5 @@ import { InsuranceUpdateData, InsuranceUpdateResult } from '../types';
  * @param userId User ID
  * @returns Promise with result
  */
-export declare function updateInsuranceInfo(orderId: number, insuranceData: InsuranceUpdateData, userId: number): Promise<InsuranceUpdateResult>;
+export declare function updateInsuranceInfo(orderId: number, insuranceData: InsuranceUpdateData, _userId: number): Promise<InsuranceUpdateResult>;
 export default updateInsuranceInfo;
