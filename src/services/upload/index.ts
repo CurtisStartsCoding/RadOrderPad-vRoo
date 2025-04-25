@@ -2,6 +2,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { s3ClientSingleton } from './s3-client.service';
 import getUploadUrl from './presigned-url.service';
 import confirmUpload from './document-upload.service';
+import { getDownloadUrl } from './get-download-url.service';
 import { PresignedUrlResponse, UploadConfirmationResponse } from './types';
 
 /**
@@ -64,6 +65,20 @@ export class FileUploadService {
     return confirmUpload(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId, processingStatus);
   }
 
+  /**
+   * Generate a presigned URL for downloading a file from S3
+   * @param documentId The ID of the document to download
+   * @param requestingUserId The ID of the user requesting the download
+   * @param requestingOrgId The ID of the organization the requesting user belongs to
+   * @returns Object containing the presigned URL
+   */
+  static async getDownloadUrl(
+    documentId: number,
+    requestingUserId: number,
+    requestingOrgId: number
+  ) {
+    return getDownloadUrl(documentId, requestingUserId, requestingOrgId);
+  }
 }
 
 export default FileUploadService;
@@ -72,5 +87,6 @@ export default FileUploadService;
 export {
   getUploadUrl,
   confirmUpload,
+  getDownloadUrl,
   s3ClientSingleton
 };

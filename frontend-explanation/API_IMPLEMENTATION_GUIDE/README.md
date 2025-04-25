@@ -16,6 +16,8 @@ The RadOrderPad API is organized into several logical sections:
    - [Connection Testing](./connection-testing.md) - Guide for testing connection endpoints
    - **Key Endpoint**: `GET /api/connections/requests` - Lists pending incoming connection requests (see [SQL Implementation Patterns](#sql-implementation-patterns))
 7. [Organization Management](./organization-management.md) - Organization-related endpoints
+   - [Organizations/Mine Fix](./organizations-mine-fix.md) - Detailed documentation of the fix for the organizations/mine endpoint
+   - [Organizations/Mine Summary](./organizations-mine-summary.md) - Summary of recent improvements to the organizations/mine endpoint
 8. [User Management](./user-management.md) - User-related endpoints
    - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature
    - [User Location Assignment Guide](./user-location-assignment-guide.md) - Detailed guide for implementing user location assignment functionality
@@ -303,8 +305,13 @@ This section provides a comprehensive overview of the implementation status acro
 - Working endpoints:
   - POST /api/uploads/presigned-url - Generates a presigned URL for direct S3 upload
   - POST /api/uploads/confirm - Confirms successful S3 upload and creates a database record in the PHI database
-- Not implemented or tested:
-  - GET /uploads/{documentId}/download-url
+  - GET /api/uploads/{documentId}/download-url - Generates a presigned URL for downloading a previously uploaded file
+- Full end-to-end testing implemented:
+  - Complete flow from getting presigned URL to confirming upload and downloading files
+  - Test scripts demonstrate the expected behavior with proper error handling
+  - Tests handle the case where S3 upload is skipped (due to lack of permissions in test environments)
+  - Comprehensive error handling and edge case testing
+  - Authorization checks ensure users can only access files associated with their organization
 
 ## Recent Fixes
 

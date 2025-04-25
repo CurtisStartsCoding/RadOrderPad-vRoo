@@ -69,30 +69,24 @@ export interface UserResponse {
 
 /**
  * Get organization details for the current user
- * 
- * IMPORTANT: This implementation avoids querying the status column from the users table
- * since it might not exist in all environments. Instead, it adds a default 'active'
- * status to each user after retrieving them from the database.
- * 
- * See DOCS/database-schema-compatibility.md for more details on this issue.
- * 
+ * This version completely avoids using the status column
  * @param orgId Organization ID
  * @returns Promise with organization details, locations, and users
  */
-export async function getMyOrganization(orgId: number): Promise<{
+export async function getMyOrganizationNoStatus(orgId: number): Promise<{
   organization: OrganizationResponse;
   locations: LocationResponse[];
   users: UserResponse[];
 } | null> {
   try {
-    enhancedLogger.debug('Getting organization details', { orgId });
+    enhancedLogger.debug('Getting organization details (no-status version)', { orgId });
     
-    // Query the organizations table for the organization with the given ID
+    // IMPORTANT: This query deliberately excludes the status column
     const orgQuery = `SELECT
       id, name, type, npi, tax_id, address_line1, address_line2,
       city, state, zip_code, phone_number, fax_number, contact_email,
       website, logo_url, billing_id, credit_balance, subscription_tier,
-      status, created_at, updated_at
+      created_at, updated_at
      FROM organizations
      WHERE id = $1`;
     
@@ -107,11 +101,9 @@ export async function getMyOrganization(orgId: number): Promise<{
 
     const organization = orgResult.rows[0];
     
-    // Add default status value if missing
-    if (organization.status === undefined) {
-      organization.status = 'active';
-      enhancedLogger.debug('Applied default status "active" to organization', { orgId });
-    }
+    // Always add a default status value
+    organization.status = 'active';
+    enhancedLogger.debug('Applied default status "active"', { orgId });
 
     // Query the locations table for locations belonging to the organization
     enhancedLogger.debug('Querying locations for organization', { orgId });
@@ -124,7 +116,7 @@ export async function getMyOrganization(orgId: number): Promise<{
     );
 
     // Query the users table for users belonging to the organization
-    // IMPORTANT: This query deliberately excludes the status column which might not exist
+    // IMPORTANT: This query deliberately excludes the status column
     enhancedLogger.debug('Querying users for organization', { orgId });
     const usersResult = await queryMainDb(
       `SELECT 
@@ -164,7 +156,7 @@ export async function getMyOrganization(orgId: number): Promise<{
     };
   } catch (error) {
     logger.error(`Error getting organization with ID ${orgId}:`, error);
-    enhancedLogger.error('Error in getMyOrganization', { 
+    enhancedLogger.error('Error in getMyOrganizationNoStatus', { 
       orgId, 
       error: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined

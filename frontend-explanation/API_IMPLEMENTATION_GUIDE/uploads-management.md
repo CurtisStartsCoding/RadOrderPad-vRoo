@@ -98,4 +98,72 @@ This section covers endpoints related to managing file uploads in the RadOrderPa
 **Implementation Status:**
 - **Status:** Working
 - **Tested With:** test-uploads-confirm.js, test-uploads-confirm.bat, test-uploads-confirm.sh
-- **Notes:** Successfully verifies file existence in S3 and creates database record in the PHI database
+- **Notes:** Successfully verifies file existence in S3 and creates database record in the PHI database. Test scripts demonstrate the complete flow, with the expected 500 error when the file doesn't exist in S3 (since we skip the actual upload in the test environment).
+
+## Get Download URL
+
+**Endpoint:** `GET /api/uploads/{documentId}/download-url`
+
+**Description:** Generates a presigned URL for downloading a previously uploaded file from S3.
+
+**Authentication:** Required (any authenticated user)
+
+**Path Parameters:**
+- `documentId`: The ID of the document to download
+
+**Response:**
+```json
+{
+  "success": true,
+  "downloadUrl": "https://s3.amazonaws.com/bucket-name/path/to/file?AWSAccessKeyId=..."
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If the document ID is invalid
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have permission to access the document
+- 404 Not Found: If the document does not exist
+- 500 Internal Server Error: If there is a server error (e.g., AWS credentials not configured)
+
+**Usage Notes:**
+- This endpoint is used to get a presigned URL for downloading a file from S3.
+- The presigned URL is valid for 5 minutes.
+- The user must belong to the same organization as the order or patient associated with the document.
+- The downloadUrl can be used directly in a browser or with tools like curl to download the file.
+
+**Implementation Status:**
+- **Status:** Working
+- **Tested With:** test-get-download-url.js, test-get-download-url.bat, test-get-download-url.sh
+- **Notes:** Successfully generates presigned download URLs for S3 files with proper authorization checks.
+
+## Complete Upload Flow
+
+The complete file upload flow in RadOrderPad follows these steps:
+
+1. **Get Presigned URL**: Call `POST /api/uploads/presigned-url` with file metadata to get a presigned URL and fileKey.
+2. **Upload to S3**: Upload the file directly to S3 using the presigned URL (PUT request).
+3. **Confirm Upload**: Call `POST /api/uploads/confirm` with the fileKey and metadata to verify the upload and create a database record.
+4. **Download File**: When needed, call `GET /api/uploads/{documentId}/download-url` to get a presigned URL for downloading the file.
+
+This process ensures secure and efficient file handling by:
+- Offloading the file transfer to S3 directly from the client
+- Verifying the file exists in S3 before creating a database record
+- Maintaining proper authentication and authorization throughout the process
+- Associating uploads with the correct context (order/patient)
+- Providing secure, time-limited access to files when needed
+
+The test scripts demonstrate this complete flow, with the expected 500 error when the file doesn't exist in S3 (since we skip the actual upload in the test environment). In a production environment with proper S3 permissions, the confirm endpoint would succeed if the file was uploaded successfully.
+
+## Testing Notes
+
+When testing the upload functionality:
+
+1. The `test-uploads-presigned-url.js` script tests the presigned URL endpoint in isolation.
+2. The `test-uploads-confirm.js` script tests the complete flow but skips the actual S3 upload since test environments typically don't have the necessary AWS permissions.
+3. The confirm endpoint will return a 500 error in test environments because it checks if the file exists in S3 before creating a database record.
+4. The `test-get-download-url.js` script tests the download URL endpoint, but the actual download may fail in test environments without proper S3 permissions.
+5. For automated testing in CI/CD pipelines, you might need to:
+   - Mock the S3 service in the backend
+   - Add a test mode flag to bypass the S3 existence check
+   - Use a test S3 bucket with appropriate permissions

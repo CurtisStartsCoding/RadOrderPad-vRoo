@@ -182,6 +182,42 @@ async function insertTestUsers(referringOrgId, radiologyOrgId, referringUsers, r
   }
 }
 
+// Function to insert a super_admin user
+async function insertSuperAdminUser(referringOrgId) {
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+    
+    console.log('Inserting super_admin user...');
+    
+    // Create a super_admin user
+    const superAdminEmail = `superadmin.${randomString}@example.com`;
+    const hashedPassword = await hashPassword('password123');
+    
+    // Use the referring organization ID since super_admin needs an organization
+    const result = await client.query(
+      `INSERT INTO users
+       (email, password_hash, first_name, last_name, role, organization_id, is_active, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, true, NOW(), NOW())
+       RETURNING id`,
+      [superAdminEmail, hashedPassword, 'Super', 'Admin', 'super_admin', referringOrgId]
+    );
+    
+    const superAdminId = result.rows[0].id;
+    console.log(`Inserted super_admin user with ID: ${superAdminId} (${superAdminEmail})`);
+    
+    await client.query('COMMIT');
+    return { id: superAdminId, email: superAdminEmail };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error inserting super_admin user:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 // Function to insert test relationship
 async function insertTestRelationship(referringOrgId, radiologyOrgId, referringAdminId, radiologyAdminId) {
   const client = await pool.connect();
@@ -272,6 +308,9 @@ async function main() {
     // Insert test relationship
     const relationshipId = await insertTestRelationship(referringOrgId, radiologyOrgId, referringAdminId, radiologyAdminId);
     
+    // Insert super_admin user
+    const superAdmin = await insertSuperAdminUser(referringOrgId);
+    
     console.log('\n=== MULTIPLE USERS INSERTION COMPLETE ===');
     console.log('\nTest Organizations:');
     console.log(`- Referring Org ID: ${referringOrgId}`);
@@ -280,6 +319,7 @@ async function main() {
     console.log('\nTest Users:');
     console.log(`- Referring Users: ${referringUsers.length} users created`);
     console.log(`- Radiology Users: ${radiologyUsers.length} users created`);
+    console.log(`- Super Admin User: ${superAdmin.email} / password123`);
     
     console.log('\nTest Relationship:');
     console.log(`- Active Relationship ID: ${relationshipId}`);
@@ -287,6 +327,7 @@ async function main() {
     console.log('\nSample Login Credentials:');
     console.log(`- Referring Admin: ${referringUsers[0].email} / password123`);
     console.log(`- Radiology Admin: ${radiologyUsers[0].email} / password123`);
+    console.log(`- Super Admin: ${superAdmin.email} / password123`);
     
     console.log('\nAll users have the password: password123');
   } catch (error) {

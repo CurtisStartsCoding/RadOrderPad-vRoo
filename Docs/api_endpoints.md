@@ -1,6 +1,6 @@
-  API Endpoints Overview (Conceptual)
+API Endpoints Overview (Conceptual)
 
-**Version:** 1.7 (User Management Enhancements)
+**Version:** 1.8 (File Download Support)
 **Date:** 2025-04-24
 
 **Note:** This document provides a conceptual list of API endpoints based on the defined workflows and schema map. A formal OpenAPI/Swagger specification is recommended for definitive contract details.
@@ -96,6 +96,7 @@
 
 -   `POST /uploads/presigned-url`: Request a presigned URL for direct S3 upload. **(Authenticated - physician, admin_referring, admin_radiology, radiologist, admin_staff roles)** [Implemented]
 -   `POST /uploads/confirm`: Confirm successful S3 upload and create DB record. **(Authenticated - physician, admin_referring, admin_radiology, radiologist, admin_staff roles)** [Implemented]
+-   `GET /uploads/{documentId}/download-url`: Generate a presigned URL for downloading a previously uploaded document. Verifies the requesting user has permission to access the document (belongs to the same organization associated with the document's order/patient). **(Authenticated)** [Implemented]
 
 ## Billing (`/billing`)
 

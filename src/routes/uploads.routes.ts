@@ -21,4 +21,10 @@ router.post(
   UploadsController.confirmUpload
 );
 
+// Route to get a presigned URL for downloading a file
+router.get(
+  '/:documentId/download-url',
+  UploadsController.getDownloadUrl
+);
+
 export default router;

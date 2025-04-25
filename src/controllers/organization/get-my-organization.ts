@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { getMyOrganization } from '../../services/organization/get-my-organization.js';
+import { getMyOrganization } from '../../services/organization/index.js';
 import {
   AuthenticatedRequest,
   ControllerHandler,

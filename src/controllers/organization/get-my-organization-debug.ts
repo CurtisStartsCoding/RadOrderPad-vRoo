@@ -1,10 +1,9 @@
 import { Response } from 'express';
-import { getMyOrganization } from '../../services/organization/get-my-organization.js';
+import { getMyOrganization } from '../../services/organization/index.js';
 import {
   AuthenticatedRequest,
   ControllerHandler,
-  checkAuthentication,
-  handleControllerError
+  checkAuthentication
 } from './types.js';
 
 /**
@@ -26,6 +25,7 @@ export const getMyOrganizationDebugController: ControllerHandler = async (
     const orgId = req.user!.orgId;
     
     // Log the request for debugging
+    // eslint-disable-next-line no-console
     console.log(`Debug endpoint called for organization ID: ${orgId}`);
     
     // Try to query the database directly to check if the status column exists
@@ -38,6 +38,7 @@ export const getMyOrganizationDebugController: ControllerHandler = async (
         AND column_name = 'status'
       `);
       
+      // eslint-disable-next-line no-console
       console.log('Schema check result:', schemaResult.rows);
       
       if (schemaResult.rows.length === 0) {
@@ -47,11 +48,13 @@ export const getMyOrganizationDebugController: ControllerHandler = async (
         });
         return;
       }
-    } catch (dbError: any) {
-      console.error('Error checking database schema:', dbError);
+    } catch (dbError: unknown) {
+      const error = dbError as Error;
+      // eslint-disable-next-line no-console
+      console.error('Error checking database schema:', error);
       res.status(500).json({ 
         message: 'Error checking database schema',
-        error: dbError.message,
+        error: error.message,
         debug: true
       });
       return;
@@ -73,12 +76,14 @@ export const getMyOrganizationDebugController: ControllerHandler = async (
       data: result,
       debug: true
     });
-  } catch (error: any) {
-    console.error('Debug endpoint error:', error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    // eslint-disable-next-line no-console
+    console.error('Debug endpoint error:', err);
     res.status(500).json({
       message: 'Failed to get organization details',
-      error: error.message,
-      stack: error.stack,
+      error: err.message,
+      stack: err.stack,
       debug: true
     });
   }

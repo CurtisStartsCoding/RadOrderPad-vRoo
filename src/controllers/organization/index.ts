@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthenticatedRequest } from './types.js';
 import { getMyOrganizationController } from './get-my-organization.js';
+import { getMyOrganizationDebugController } from './get-my-organization-debug.js';
 import { updateMyOrganizationController } from './update-my-organization.controller.js';
 import { searchOrganizationsController } from './search-organizations.controller.js';
 
@@ -15,6 +16,15 @@ class OrganizationController {
    */
   async getMyOrganization(req: Request, res: Response): Promise<void> {
     return getMyOrganizationController(req as AuthenticatedRequest, res);
+  }
+
+  /**
+   * Debug version of getMyOrganization
+   * @param req Express request object
+   * @param res Express response object
+   */
+  async getMyOrganizationDebug(req: Request, res: Response): Promise<void> {
+    return getMyOrganizationDebugController(req as AuthenticatedRequest, res);
   }
 
   /**
@@ -40,5 +50,6 @@ export default new OrganizationController();
 
 // Also export the individual controllers for direct use
 export * from './get-my-organization.js';
+export * from './get-my-organization-debug.js';
 export * from './update-my-organization.controller.js';
 export * from './search-organizations.controller.js';

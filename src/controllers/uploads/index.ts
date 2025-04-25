@@ -15,11 +15,13 @@ export { validateConfirmUploadRequest } from './validate-confirm-upload-request'
 // Export handler functions
 export { getPresignedUrl } from './get-presigned-url';
 export { confirmUpload } from './confirm-upload';
+export { getDownloadUrl } from './get-download-url.controller';
 
 // Create UploadsController class for backward compatibility
 import { Request, Response } from 'express';
 import { getPresignedUrl } from './get-presigned-url';
 import { confirmUpload } from './confirm-upload';
+import { getDownloadUrl } from './get-download-url.controller';
 
 /**
  * Controller for handling file uploads
@@ -37,6 +39,13 @@ export class UploadsController {
    */
   static async confirmUpload(req: Request, res: Response): Promise<void> {
     return confirmUpload(req as any, res);
+  }
+
+  /**
+   * Generate a presigned URL for downloading a file from S3
+   */
+  static async getDownloadUrl(req: Request, res: Response): Promise<void> {
+    return getDownloadUrl(req, res);
   }
 }
 

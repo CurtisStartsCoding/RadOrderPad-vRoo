@@ -30,7 +30,7 @@ const TEST_USERS = [
   },
   {
     role: 'super_admin',
-    email: 'test.superadmin@example.com',
+    email: 'superadmin.20141244@example.com',
     password: 'password123'
   },
   {

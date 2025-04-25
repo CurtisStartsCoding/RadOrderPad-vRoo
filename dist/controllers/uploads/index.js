@@ -20,7 +20,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UploadsController = exports.confirmUpload = exports.getPresignedUrl = exports.validateConfirmUploadRequest = exports.validatePresignedUrlRequest = void 0;
+exports.UploadsController = exports.getDownloadUrl = exports.confirmUpload = exports.getPresignedUrl = exports.validateConfirmUploadRequest = exports.validatePresignedUrlRequest = void 0;
 // Export types
 __exportStar(require("./types"), exports);
 // Export validation functions
@@ -33,8 +33,11 @@ var get_presigned_url_1 = require("./get-presigned-url");
 Object.defineProperty(exports, "getPresignedUrl", { enumerable: true, get: function () { return get_presigned_url_1.getPresignedUrl; } });
 var confirm_upload_1 = require("./confirm-upload");
 Object.defineProperty(exports, "confirmUpload", { enumerable: true, get: function () { return confirm_upload_1.confirmUpload; } });
+var get_download_url_controller_1 = require("./get-download-url.controller");
+Object.defineProperty(exports, "getDownloadUrl", { enumerable: true, get: function () { return get_download_url_controller_1.getDownloadUrl; } });
 const get_presigned_url_2 = require("./get-presigned-url");
 const confirm_upload_2 = require("./confirm-upload");
+const get_download_url_controller_2 = require("./get-download-url.controller");
 /**
  * Controller for handling file uploads
  */
@@ -50,6 +53,12 @@ class UploadsController {
      */
     static async confirmUpload(req, res) {
         return (0, confirm_upload_2.confirmUpload)(req, res);
+    }
+    /**
+     * Generate a presigned URL for downloading a file from S3
+     */
+    static async getDownloadUrl(req, res) {
+        return (0, get_download_url_controller_2.getDownloadUrl)(req, res);
     }
 }
 exports.UploadsController = UploadsController;

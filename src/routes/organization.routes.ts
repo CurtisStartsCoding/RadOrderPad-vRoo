@@ -11,6 +11,9 @@ router.use(authenticateJWT);
 // Organization routes
 router.get('/mine', organizationController.getMyOrganization);
 
+// Debug endpoint for organization details
+router.get('/mine/debug', organizationController.getMyOrganizationDebug);
+
 router.put('/mine', authorizeRole(['admin_referring', 'admin_radiology']), organizationController.updateMyOrganization);
 
 // Search for organizations (for connection requests)

@@ -2,19 +2,24 @@
  * Organization service module
  *
  * This module exports all organization-related services
+ * 
+ * IMPORTANT: We've fixed an issue with the getMyOrganization service where it was
+ * trying to query the status column from the users table, which doesn't exist in
+ * all environments. See DOCS/database-schema-compatibility.md for details.
  */
 
-// Export the get-my-organization service
-export { getMyOrganization } from './get-my-organization.js';
+// Export the get-my-organization service from the fixed implementation
+import { getMyOrganization } from './get-my-organization-fixed.js';
 
 // Export the update-organization-profile service
-export {
-  updateOrganizationProfile,
-  UpdateOrganizationParams
-} from './update-organization-profile.service.js';
+import { updateOrganizationProfile } from './update-organization-profile.service.js';
 
 // Export the search-organizations service
+import { searchOrganizations } from './search-organizations.service.js';
+
+// Export all services
 export {
-  searchOrganizations,
-  OrganizationSearchFilters
-} from './search-organizations.service.js';
+  getMyOrganization,
+  updateOrganizationProfile,
+  searchOrganizations
+};

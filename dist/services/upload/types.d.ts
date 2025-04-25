@@ -15,6 +15,13 @@ export interface UploadConfirmationResponse {
     documentId: number;
 }
 /**
+ * Interface for download URL response
+ */
+export interface DownloadUrlResponse {
+    success: boolean;
+    downloadUrl: string;
+}
+/**
  * Interface for S3 client singleton
  */
 export interface S3ClientSingleton {

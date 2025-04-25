@@ -7,6 +7,6 @@ call npx tsc
 
 REM Run the test script
 echo Running test...
-node scripts/test-redis-connection.js
+node scripts/redis/test-redis-connection.js
 
 pause

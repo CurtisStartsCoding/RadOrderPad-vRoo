@@ -208,11 +208,14 @@ This section covers endpoints related to managing organizations in the RadOrderP
 **Usage Notes:**
 - This endpoint is used to retrieve information about the current user's organization.
 - Use this endpoint when implementing the organization profile view.
+- The implementation includes robust error handling for database schema variations, particularly for the "status" column.
+- If the status column doesn't exist in the database, a default value of "active" will be applied.
+- See [organizations-mine-summary.md](./organizations-mine-summary.md) for detailed information about the implementation and error handling.
 
 **Implementation Status:**
 - **Status:** Working
 - **Tested With:** test-organizations-mine-endpoint.js
-- **Notes:** Returns organization details, locations, and users associated with the authenticated user's organization
+- **Notes:** Returns organization details, locations, and users associated with the authenticated user's organization. Enhanced with robust error handling and detailed logging.
 
 ## Get Organization Details
 

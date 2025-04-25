@@ -3,13 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.s3ClientSingleton = exports.confirmUpload = exports.getUploadUrl = exports.FileUploadService = void 0;
+exports.s3ClientSingleton = exports.getDownloadUrl = exports.confirmUpload = exports.getUploadUrl = exports.FileUploadService = void 0;
 const s3_client_service_1 = require("./s3-client.service");
 Object.defineProperty(exports, "s3ClientSingleton", { enumerable: true, get: function () { return s3_client_service_1.s3ClientSingleton; } });
 const presigned_url_service_1 = __importDefault(require("./presigned-url.service"));
 exports.getUploadUrl = presigned_url_service_1.default;
 const document_upload_service_1 = __importDefault(require("./document-upload.service"));
 exports.confirmUpload = document_upload_service_1.default;
+const get_download_url_service_1 = require("./get-download-url.service");
+Object.defineProperty(exports, "getDownloadUrl", { enumerable: true, get: function () { return get_download_url_service_1.getDownloadUrl; } });
 /**
  * Service for handling file upload operations using AWS S3
  */
@@ -48,6 +50,16 @@ class FileUploadService {
      */
     static async confirmUpload(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId = 1, processingStatus = 'uploaded') {
         return (0, document_upload_service_1.default)(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId, processingStatus);
+    }
+    /**
+     * Generate a presigned URL for downloading a file from S3
+     * @param documentId The ID of the document to download
+     * @param requestingUserId The ID of the user requesting the download
+     * @param requestingOrgId The ID of the organization the requesting user belongs to
+     * @returns Object containing the presigned URL
+     */
+    static async getDownloadUrl(documentId, requestingUserId, requestingOrgId) {
+        return (0, get_download_url_service_1.getDownloadUrl)(documentId, requestingUserId, requestingOrgId);
     }
 }
 exports.FileUploadService = FileUploadService;

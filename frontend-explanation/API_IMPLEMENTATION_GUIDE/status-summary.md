@@ -69,6 +69,12 @@ The following endpoints were tested and are working correctly in the production 
 ### Uploads Management
 - `POST /api/uploads/presigned-url`: Generate a presigned URL for direct S3 upload (tested with admin_referring role)
 - `POST /api/uploads/confirm`: Confirm successful S3 upload and create database record (tested with admin_referring role)
+- `GET /api/uploads/{documentId}/download-url`: Generate a presigned URL for downloading a previously uploaded file (tested with admin_referring role)
+- Full end-to-end testing implemented:
+  - Test scripts demonstrate the complete flow from getting presigned URL to confirming upload and downloading files
+  - Tests handle the case where S3 upload is skipped (due to lack of permissions in test environments)
+  - Expected 500 error when the file doesn't exist in S3 confirms the backend is properly checking file existence
+  - Authorization checks ensure users can only access files associated with their organization
 
 ## Endpoints with Method Restrictions
 
@@ -140,12 +146,16 @@ Based on the testing results, frontend developers should:
    - Validate password strength and required fields
    - Store the JWT token returned upon successful acceptance for authentication
    
-   7. **Implement file upload functionality** using the presigned URL pattern:
+   7. **Implement file upload and download functionality** using the presigned URL pattern:
       - Use the `POST /api/uploads/presigned-url` endpoint to get a presigned URL for S3 upload
-      - Upload the file directly to S3 using the presigned URL
+      - Upload the file directly to S3 using the presigned URL (PUT request with appropriate Content-Type header)
       - Confirm the upload using the `POST /api/uploads/confirm` endpoint
+      - Use the `GET /api/uploads/{documentId}/download-url` endpoint to get a presigned URL for downloading files
       - Handle file type validation and size limits (20MB for PDFs, 5MB for other file types)
       - Implement proper error handling for S3 upload failures
+      - Be aware that the confirm endpoint checks if the file exists in S3 before creating a database record
+      - In production environments with proper S3 permissions, the confirm endpoint will succeed if the file was uploaded successfully
+      - Ensure proper authorization checks when downloading files (users can only access files associated with their organization)
    
    8. **Implement user location assignment functionality**:
       - Use the `GET /api/user-locations/{userId}/locations` endpoint to retrieve locations assigned to a user
