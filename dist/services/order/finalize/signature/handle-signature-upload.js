@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleSignatureUpload = handleSignatureUpload;
 const upload_1 = require("../../../upload");
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Handle signature upload
  *
@@ -24,7 +28,11 @@ async function handleSignatureUpload(orderId, userId) {
     if (!result.success || !result.presignedUrl || !result.filePath) {
         throw new Error('Failed to generate presigned URL for signature upload');
     }
-    console.log(`Signature presigned URL generated: ${result.presignedUrl}`);
+    logger_1.default.debug(`Signature presigned URL generated`, {
+        orderId,
+        userId,
+        fileKey: result.filePath
+    });
     return {
         presignedUrl: result.presignedUrl,
         fileKey: result.filePath

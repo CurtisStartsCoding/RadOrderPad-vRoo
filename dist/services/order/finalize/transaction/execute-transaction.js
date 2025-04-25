@@ -10,6 +10,7 @@ const patient_service_1 = __importDefault(require("../../../patient.service"));
 const order_history_service_1 = __importDefault(require("../../../order-history.service"));
 const authorization_1 = require("../authorization");
 const update_1 = require("../update");
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Execute the order finalization transaction
  *
@@ -52,7 +53,10 @@ async function executeTransaction(orderId, payload, userId) {
         if (payload.signatureData) {
             // For backward compatibility, if signatureData is provided as base64,
             // we'll log a warning but still proceed with the order finalization
-            console.warn('Base64 signature data provided. This flow is deprecated. Frontend should use presigned URL flow instead.');
+            logger_1.default.warn('Base64 signature data provided. This flow is deprecated.', {
+                orderId,
+                userId
+            });
         }
         // Note: The frontend should request a presigned URL for signature upload separately
         // using the /api/uploads/presigned-url endpoint, then upload the signature directly to S3,
@@ -74,7 +78,12 @@ async function executeTransaction(orderId, payload, userId) {
     catch (error) {
         // Rollback transaction on error
         await client.query('ROLLBACK');
-        console.error('Error finalizing order:', error);
+        logger_1.default.error('Error finalizing order:', {
+            error,
+            orderId,
+            userId,
+            overridden: payload.overridden || false
+        });
         throw error;
     }
     finally {

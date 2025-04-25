@@ -5,6 +5,7 @@ import OrderHistoryService from '../../../order-history.service';
 import { FinalizeOrderPayload, FinalizeOrderResponse, TransactionContext } from '../types';
 import { verifyUserAuthorization } from '../authorization';
 import { updateOrderWithFinalData } from '../update';
+import logger from '../../../../utils/logger';
 
 /**
  * Execute the order finalization transaction
@@ -68,7 +69,10 @@ export async function executeTransaction(
     if (payload.signatureData) {
       // For backward compatibility, if signatureData is provided as base64,
       // we'll log a warning but still proceed with the order finalization
-      console.warn('Base64 signature data provided. This flow is deprecated. Frontend should use presigned URL flow instead.');
+      logger.warn('Base64 signature data provided. This flow is deprecated.', {
+        orderId,
+        userId
+      });
     }
     
     // Note: The frontend should request a presigned URL for signature upload separately
@@ -100,7 +104,12 @@ export async function executeTransaction(
   } catch (error) {
     // Rollback transaction on error
     await client.query('ROLLBACK');
-    console.error('Error finalizing order:', error);
+    logger.error('Error finalizing order:', {
+      error,
+      orderId,
+      userId,
+      overridden: payload.overridden || false
+    });
     throw error;
   } finally {
     // Release client back to pool

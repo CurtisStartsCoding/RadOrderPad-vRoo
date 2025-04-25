@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import config from '../../../config/config';
+import logger from '../../../utils/logger';
 
 /**
  * Create a checkout session for purchasing credit bundles
@@ -38,7 +39,12 @@ export async function createCheckoutSessionInternal(
 
     return session;
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    logger.error('Error creating checkout session:', {
+      error,
+      customerId,
+      priceId,
+      metadata
+    });
     throw new Error(`Failed to create checkout session: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import BillingService from '../../services/billing';
+import logger from '../../utils/logger';
 
 /**
  * Create a checkout session for purchasing credit bundles
@@ -31,7 +32,11 @@ export async function createCheckoutSession(req: Request, res: Response): Promis
       sessionId
     });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    logger.error('Error creating checkout session:', {
+      error,
+      orgId: req.user?.orgId,
+      priceId: req.body?.priceId
+    });
     return res.status(500).json({
       success: false,
       message: `Failed to create checkout session: ${error instanceof Error ? error.message : String(error)}`

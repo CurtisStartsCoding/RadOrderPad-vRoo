@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticateJWT = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 // Import types to ensure Express Request interface is extended
 require("./types");
 /**
@@ -20,15 +21,15 @@ const authenticateJWT = (req, res, next) => {
         return res.status(401).json({ message: 'Token missing' });
     }
     try {
-        console.log('JWT Secret:', process.env.JWT_SECRET?.substring(0, 3) + '...');
-        console.log('Token:', token.substring(0, 10) + '...');
+        logger_1.default.debug('JWT Secret:', { secretPrefix: process.env.JWT_SECRET?.substring(0, 3) + '...' });
+        logger_1.default.debug('Token:', { tokenPrefix: token.substring(0, 10) + '...' });
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key_here');
-        console.log('Decoded token:', decoded);
+        logger_1.default.debug('Decoded token:', { userId: decoded.userId, role: decoded.role });
         req.user = decoded;
         next();
     }
     catch (error) {
-        console.error('JWT verification error:', error);
+        logger_1.default.error('JWT verification error:', { error });
         return res.status(403).json({ message: 'Invalid or expired token' });
     }
 };

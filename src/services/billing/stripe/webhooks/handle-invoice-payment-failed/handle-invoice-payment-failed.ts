@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { getMainDbClient } from '../../../../../config/db';
 import { generalNotifications } from '../../../../../services/notification/services';
 import { shouldEnterPurgatory } from './should-enter-purgatory';
+import logger from '../../../../../utils/logger';
 
 /**
  * Handle invoice.payment_failed event
@@ -117,7 +118,11 @@ export async function handleInvoicePaymentFailed(event: Stripe.Event): Promise<v
         );
       }
       
-      console.log(`Organization ${orgId} placed in purgatory mode due to payment failure`);
+      logger.info(`Organization placed in purgatory mode due to payment failure`, {
+        orgId,
+        orgName,
+        invoiceId: invoice.id
+      });
     } else {
       // If not entering purgatory, just send a warning notification
       const adminUsersResult = await client.query(
@@ -150,11 +155,18 @@ export async function handleInvoicePaymentFailed(event: Stripe.Event): Promise<v
     
     await client.query('COMMIT');
     
-    console.log(`Successfully processed invoice payment failure for org ${orgId}`);
+    logger.info(`Successfully processed invoice payment failure`, {
+      orgId,
+      invoiceId: invoice.id
+    });
     
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('Error processing invoice payment failure:', error);
+    logger.error('Error processing invoice payment failure:', {
+      error,
+      customerId,
+      invoiceId: invoice.id
+    });
     throw error;
   } finally {
     client.release();

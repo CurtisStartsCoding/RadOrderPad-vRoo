@@ -1,5 +1,6 @@
 import { getPhiDbClient } from '../../../config/db';
 import { OrderStatusUpdateResult } from './types';
+import logger from '../../../utils/logger';
 
 /**
  * Update order status
@@ -73,7 +74,13 @@ export async function updateOrderStatus(
   } catch (error) {
     // Rollback transaction on error
     await client.query('ROLLBACK');
-    console.error('Error in updateOrderStatus:', error);
+    logger.error('Error in updateOrderStatus:', {
+      error,
+      orderId,
+      newStatus,
+      userId,
+      orgId
+    });
     throw error;
   } finally {
     // Release client back to pool

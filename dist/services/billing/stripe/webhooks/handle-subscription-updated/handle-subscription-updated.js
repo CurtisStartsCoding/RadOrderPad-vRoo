@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleSubscriptionUpdated = handleSubscriptionUpdated;
 const db_1 = require("../../../../../config/db");
@@ -7,6 +10,7 @@ const credit_management_1 = require("../../../../../services/billing/credit-mana
 const status_transitions_1 = require("./status-transitions");
 const notifications_1 = require("./notifications");
 const errors_1 = require("../errors");
+const logger_1 = __importDefault(require("../../../../../utils/logger"));
 /**
  * Handle customer.subscription.updated event
  * This is triggered when a subscription is updated (e.g., plan change, status change)
@@ -100,11 +104,21 @@ async function handleSubscriptionUpdated(event) {
             }
         }
         await client.query('COMMIT');
-        console.log(`Successfully processed subscription update for org ${orgId}`);
+        logger_1.default.info(`Successfully processed subscription update`, {
+            orgId,
+            subscriptionId: subscription.id,
+            newStatus: subscription.status,
+            tierChanged,
+            statusChanged
+        });
     }
     catch (error) {
         await client.query('ROLLBACK');
-        console.error('Error processing subscription update:', error);
+        logger_1.default.error('Error processing subscription update:', {
+            error,
+            customerId,
+            subscriptionId: subscription.id
+        });
         // Rethrow as a more specific error if possible
         if (error instanceof errors_1.StripeWebhookError) {
             throw error;

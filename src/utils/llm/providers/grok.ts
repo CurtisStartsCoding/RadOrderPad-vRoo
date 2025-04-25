@@ -4,12 +4,13 @@
 
 import config from '../../../config/config';
 import { LLMProvider, LLMResponse, GrokResponse } from '../types';
+import logger from '../../../utils/logger';
 
 /**
  * Call Grok API
  */
 export async function callGrok(prompt: string): Promise<LLMResponse> {
-  console.log('Calling Grok API...');
+  logger.info('Calling Grok API...');
   
   const apiKey = config.llm.grokApiKey;
   if (!apiKey) {
@@ -17,7 +18,7 @@ export async function callGrok(prompt: string): Promise<LLMResponse> {
   }
   
   const modelName = config.llm.grokModelName;
-  console.log(`Using model: ${modelName}`);
+  logger.info(`Using model: ${modelName}`);
   
   const startTime = Date.now();
   
@@ -56,7 +57,7 @@ export async function callGrok(prompt: string): Promise<LLMResponse> {
       latencyMs: endTime - startTime
     };
   } catch (error) {
-    console.error('Error calling Grok API:', error);
+    logger.error('Error calling Grok API:', error);
     throw error;
   }
 }

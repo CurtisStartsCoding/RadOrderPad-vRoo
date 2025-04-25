@@ -1,5 +1,6 @@
 import { PoolClient } from 'pg';
 import { getMainDbClient } from '../../../config/db';
+import logger from '../../../utils/logger';
 
 /**
  * Credit allocation by tier
@@ -34,7 +35,7 @@ export async function replenishCreditsForTier(
   const creditAmount = TIER_CREDIT_ALLOCATION[tier] || 0;
   
   if (creditAmount <= 0) {
-    console.warn(`No credit allocation defined for tier: ${tier}`);
+    logger.warn(`No credit allocation defined for tier: ${tier}`, { orgId, tier });
     return;
   }
   
@@ -75,7 +76,12 @@ export async function replenishCreditsForTier(
       await dbClient.query('COMMIT');
     }
     
-    console.log(`Successfully replenished ${creditAmount} credits for organization ${orgId} (${tier})`);
+    logger.info(`Successfully replenished credits for organization`, {
+      orgId,
+      tier,
+      creditAmount,
+      eventId
+    });
     
   } catch (error) {
     // Rollback transaction if we created our own client
@@ -83,7 +89,7 @@ export async function replenishCreditsForTier(
       await dbClient.query('ROLLBACK');
     }
     
-    console.error('Error replenishing credits:', error);
+    logger.error('Error replenishing credits:', { error, orgId, tier });
     throw error;
   } finally {
     // Release client if we created our own

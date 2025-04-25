@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import RadiologyOrderService from '../../services/order/radiology';
+import logger from '../../utils/logger';
 
 /**
  * Request additional information from referring group
@@ -41,7 +42,13 @@ export async function requestInformation(req: Request, res: Response): Promise<v
     
     res.status(200).json(result);
   } catch (error) {
-    console.error('Error in requestInformation controller:', error);
+    logger.error('Error in requestInformation controller:', {
+      error,
+      orderId: req.params.orderId,
+      userId: req.user?.userId,
+      orgId: req.user?.orgId,
+      requestedInfoType: req.body?.requestedInfoType
+    });
     
     if (error instanceof Error) {
       if (error.message.includes('not found')) {

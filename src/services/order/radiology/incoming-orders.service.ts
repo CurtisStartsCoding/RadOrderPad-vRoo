@@ -1,6 +1,7 @@
 import { queryPhiDb } from '../../../config/db';
 import { OrderFilters, IncomingOrdersResult } from './types';
 import { buildOrderQuery, buildCountQuery, createPaginationResult } from './query';
+import logger from '../../../utils/logger';
 
 /**
  * Get incoming orders queue for radiology group
@@ -36,7 +37,11 @@ export async function getIncomingOrders(orgId: number, filters: OrderFilters = {
       pagination
     };
   } catch (error) {
-    console.error('Error in getIncomingOrders:', error);
+    logger.error('Error in getIncomingOrders:', {
+      error,
+      orgId,
+      filters
+    });
     throw error;
   }
 }

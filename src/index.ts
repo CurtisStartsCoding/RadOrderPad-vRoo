@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import config from './config/config.js';
 import routes from './routes/index.js';
 import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';
+import logger from './utils/logger';
 
 // Create Express app
 const app = express();
@@ -34,7 +35,7 @@ app.get('/health', (req, res) => {
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Unhandled error:', err);
+  logger.error('Unhandled error:', { error: err });
   res.status(500).json({ message: 'Internal server error' });
 });
 
@@ -47,19 +48,19 @@ app.use((req, res) => {
 const PORT = config.port;
 
 const server = app.listen(PORT, async () => {
-  console.log(`Server running in ${config.nodeEnv} mode on port ${PORT}`);
+  logger.info(`Server running in ${config.nodeEnv} mode on port ${PORT}`);
   
   // Test database connections
   try {
     const connectionsSuccessful = await testDatabaseConnections();
     if (!connectionsSuccessful) {
-      console.warn('Database connection test failed. Server will continue running, but some features may not work properly.');
+      logger.warn('Database connection test failed. Server will continue running, but some features may not work properly.');
       // Don't shut down the server, just log a warning
       // await shutdownServer();
     }
   } catch (error) {
-    console.error('Error testing database connections:', error);
-    console.warn('Server will continue running, but some features may not work properly.');
+    logger.error('Error testing database connections:', { error });
+    logger.warn('Server will continue running, but some features may not work properly.');
     // Don't shut down the server, just log a warning
     // await shutdownServer();
   }
@@ -70,20 +71,20 @@ process.on('SIGTERM', shutdownServer);
 process.on('SIGINT', shutdownServer);
 
 async function shutdownServer() {
-  console.log('Shutting down server...');
+  logger.info('Shutting down server...');
   
   // Close database connections
   await closeDatabaseConnections();
   
   // Close server
   server.close(() => {
-    console.log('Server shut down successfully');
+    logger.info('Server shut down successfully');
     process.exit(0);
   });
   
   // Force close after 5 seconds if graceful shutdown fails
   setTimeout(() => {
-    console.error('Forced shutdown after timeout');
+    logger.error('Forced shutdown after timeout');
     process.exit(1);
   }, 5000);
 }

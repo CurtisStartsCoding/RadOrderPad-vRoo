@@ -9,17 +9,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.callGPT = callGPT;
 const config_1 = __importDefault(require("../../../config/config"));
 const types_1 = require("../types");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Call OpenAI GPT API
  */
 async function callGPT(prompt) {
-    console.log('Calling OpenAI GPT API...');
+    logger_1.default.info('Calling OpenAI GPT API...');
     const apiKey = config_1.default.llm.openaiApiKey;
     if (!apiKey) {
         throw new Error('OPENAI_API_KEY not set');
     }
     const modelName = config_1.default.llm.gptModelName;
-    console.log(`Using model: ${modelName}`);
+    logger_1.default.info(`Using model: ${modelName}`);
     const startTime = Date.now();
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -54,7 +55,7 @@ async function callGPT(prompt) {
         };
     }
     catch (error) {
-        console.error('Error calling OpenAI GPT API:', error);
+        logger_1.default.error('Error calling OpenAI GPT API:', error);
         throw error;
     }
 }

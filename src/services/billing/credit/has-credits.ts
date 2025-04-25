@@ -1,4 +1,5 @@
 import { getMainDbClient } from '../../../config/db';
+import logger from '../../../utils/logger';
 
 /**
  * Check if an organization has sufficient credits
@@ -24,7 +25,7 @@ export async function hasCredits(organizationId: number): Promise<boolean> {
     
     return result.rows[0].credit_balance > 0;
   } catch (error) {
-    console.error('Error checking credits:', error);
+    logger.error('Error checking credits:', { error, organizationId });
     throw error;
   }
 }

@@ -1,5 +1,6 @@
 import { queryMainDb } from '../../config/db';
 import { LocationResponse } from './types';
+import logger from '../../utils/logger';
 
 /**
  * Get a location by ID
@@ -21,7 +22,11 @@ export async function getLocation(locationId: number, orgId: number): Promise<Lo
     
     return result.rows[0];
   } catch (error) {
-    console.error('Error in getLocation:', error);
+    logger.error('Error in getLocation:', {
+      error,
+      locationId,
+      orgId
+    });
     throw error;
   }
 }

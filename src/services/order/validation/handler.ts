@@ -3,13 +3,14 @@
  */
 import ValidationService from '../../../services/validation';
 import { ValidationResult } from '../../../models';
-import { 
-  ValidationContext, 
-  ValidationRequestResponse, 
+import {
+  ValidationContext,
+  ValidationRequestResponse,
   PatientInfo
 } from './types';
 import { createDraftOrder } from './draft-order';
 import { getNextAttemptNumber, logValidationAttempt } from './attempt-tracking';
+import logger from '../../../utils/logger';
 
 /**
  * Handle validation request for an order
@@ -73,7 +74,7 @@ export async function handleValidationRequest(
       validationResult
     };
   } catch (error) {
-    console.error('Error handling validation request:', error);
+    logger.error('Error handling validation request:', { error });
     
     // If it's our custom error object with status, pass it through
     if (error && typeof error === 'object' && 'status' in error) {

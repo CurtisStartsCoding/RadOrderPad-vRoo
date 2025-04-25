@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createLocation = createLocation;
 const db_1 = require("../../config/db");
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Create a new location for an organization
  * @param orgId Organization ID
@@ -30,7 +34,11 @@ async function createLocation(orgId, locationData) {
         return result.rows[0];
     }
     catch (error) {
-        console.error('Error in createLocation:', error);
+        logger_1.default.error('Error in createLocation:', {
+            error,
+            orgId,
+            locationName: locationData.name
+        });
         throw error;
     }
 }

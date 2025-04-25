@@ -9,17 +9,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.callClaude = callClaude;
 const config_1 = __importDefault(require("../../../config/config"));
 const types_1 = require("../types");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Call Anthropic Claude API
  */
 async function callClaude(prompt) {
-    console.log('Calling Anthropic Claude API...');
+    logger_1.default.info('Calling Anthropic Claude API...');
     const apiKey = config_1.default.llm.anthropicApiKey;
     if (!apiKey) {
         throw new Error('ANTHROPIC_API_KEY not set');
     }
     const modelName = config_1.default.llm.claudeModelName;
-    console.log(`Using model: ${modelName}`);
+    logger_1.default.info(`Using model: ${modelName}`);
     const startTime = Date.now();
     try {
         const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -55,7 +56,7 @@ async function callClaude(prompt) {
         };
     }
     catch (error) {
-        console.error('Error calling Anthropic Claude API:', error);
+        logger_1.default.error('Error calling Anthropic Claude API:', error);
         throw error;
     }
 }

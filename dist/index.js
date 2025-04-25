@@ -9,6 +9,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const config_js_1 = __importDefault(require("./config/config.js"));
 const index_js_1 = __importDefault(require("./routes/index.js"));
 const db_js_1 = require("./config/db.js");
+const logger_1 = __importDefault(require("./utils/logger"));
 // Create Express app
 const app = (0, express_1.default)();
 // Middleware
@@ -33,7 +34,7 @@ app.get('/health', (req, res) => {
 });
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error('Unhandled error:', err);
+    logger_1.default.error('Unhandled error:', { error: err });
     res.status(500).json({ message: 'Internal server error' });
 });
 // Handle 404 routes
@@ -43,19 +44,19 @@ app.use((req, res) => {
 // Start the server
 const PORT = config_js_1.default.port;
 const server = app.listen(PORT, async () => {
-    console.log(`Server running in ${config_js_1.default.nodeEnv} mode on port ${PORT}`);
+    logger_1.default.info(`Server running in ${config_js_1.default.nodeEnv} mode on port ${PORT}`);
     // Test database connections
     try {
         const connectionsSuccessful = await (0, db_js_1.testDatabaseConnections)();
         if (!connectionsSuccessful) {
-            console.warn('Database connection test failed. Server will continue running, but some features may not work properly.');
+            logger_1.default.warn('Database connection test failed. Server will continue running, but some features may not work properly.');
             // Don't shut down the server, just log a warning
             // await shutdownServer();
         }
     }
     catch (error) {
-        console.error('Error testing database connections:', error);
-        console.warn('Server will continue running, but some features may not work properly.');
+        logger_1.default.error('Error testing database connections:', { error });
+        logger_1.default.warn('Server will continue running, but some features may not work properly.');
         // Don't shut down the server, just log a warning
         // await shutdownServer();
     }
@@ -64,17 +65,17 @@ const server = app.listen(PORT, async () => {
 process.on('SIGTERM', shutdownServer);
 process.on('SIGINT', shutdownServer);
 async function shutdownServer() {
-    console.log('Shutting down server...');
+    logger_1.default.info('Shutting down server...');
     // Close database connections
     await (0, db_js_1.closeDatabaseConnections)();
     // Close server
     server.close(() => {
-        console.log('Server shut down successfully');
+        logger_1.default.info('Server shut down successfully');
         process.exit(0);
     });
     // Force close after 5 seconds if graceful shutdown fails
     setTimeout(() => {
-        console.error('Forced shutdown after timeout');
+        logger_1.default.error('Forced shutdown after timeout');
         process.exit(1);
     }, 5000);
 }

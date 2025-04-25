@@ -14,14 +14,12 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserSpecialty = exports.getSpecialtyWordCount = exports.constructPrompt = exports.formatDatabaseContext = exports.categorizeKeywords = exports.generateDatabaseContextWithRedis = exports.generateDatabaseContext = exports.getActivePromptTemplate = void 0;
+exports.getUserSpecialty = exports.getSpecialtyWordCount = exports.constructPrompt = exports.formatDatabaseContext = exports.categorizeKeywords = exports.generateDatabaseContextWithRedis = exports.getActivePromptTemplate = void 0;
 // Re-export types
 __exportStar(require("./types"), exports);
 // Re-export functions
 var prompt_template_1 = require("./prompt-template");
 Object.defineProperty(exports, "getActivePromptTemplate", { enumerable: true, get: function () { return prompt_template_1.getActivePromptTemplate; } });
-var context_generator_1 = require("./context-generator");
-Object.defineProperty(exports, "generateDatabaseContext", { enumerable: true, get: function () { return context_generator_1.generateDatabaseContext; } });
 var redis_context_generator_weighted_1 = require("./redis-context-generator-weighted");
 Object.defineProperty(exports, "generateDatabaseContextWithRedis", { enumerable: true, get: function () { return redis_context_generator_weighted_1.generateDatabaseContextWithRedis; } });
 var keyword_categorizer_1 = require("./keyword-categorizer");

@@ -32,10 +32,14 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePatientInfo = updatePatientInfo;
 const clinicalRecordManager = __importStar(require("../clinical-record-manager"));
 const patientManager = __importStar(require("../patient-manager"));
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Update patient information
  * @param orderId Order ID
@@ -58,7 +62,11 @@ async function updatePatientInfo(orderId, patientData, userId) {
         };
     }
     catch (error) {
-        console.error('Error in updatePatientInfo:', error);
+        logger_1.default.error('Error in updatePatientInfo:', {
+            error,
+            orderId,
+            patientId: patientData.id
+        });
         throw error;
     }
 }

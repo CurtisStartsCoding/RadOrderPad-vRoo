@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import config from '../../../config/config';
 import { getMainDbClient } from '../../../config/db';
+import logger from '../../../utils/logger';
 
 // Initialize Stripe client
 const stripe = new Stripe(config.stripe.secretKey as string, {
@@ -87,7 +88,11 @@ export async function createSubscription(
       status: subscription.status
     };
   } catch (error) {
-    console.error('Error creating subscription:', error);
+    logger.error('Error creating subscription:', {
+      error,
+      orgId,
+      priceId
+    });
     
     // Re-throw with a more user-friendly message
     if (error instanceof Error) {

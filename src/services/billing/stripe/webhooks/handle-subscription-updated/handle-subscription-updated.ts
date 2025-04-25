@@ -9,6 +9,7 @@ import {
   OrganizationNotFoundError,
   DatabaseOperationError
 } from '../errors';
+import logger from '../../../../../utils/logger';
 
 /**
  * Handle customer.subscription.updated event
@@ -127,11 +128,21 @@ export async function handleSubscriptionUpdated(event: Stripe.Event): Promise<vo
     
     await client.query('COMMIT');
     
-    console.log(`Successfully processed subscription update for org ${orgId}`);
+    logger.info(`Successfully processed subscription update`, {
+      orgId,
+      subscriptionId: subscription.id,
+      newStatus: subscription.status,
+      tierChanged,
+      statusChanged
+    });
     
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('Error processing subscription update:', error);
+    logger.error('Error processing subscription update:', {
+      error,
+      customerId,
+      subscriptionId: subscription.id
+    });
     
     // Rethrow as a more specific error if possible
     if (error instanceof StripeWebhookError) {

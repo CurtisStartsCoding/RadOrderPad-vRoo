@@ -1,8 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIncomingOrders = getIncomingOrders;
 const db_1 = require("../../../config/db");
 const query_1 = require("./query");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Get incoming orders queue for radiology group
  * @param orgId Radiology organization ID
@@ -32,7 +36,11 @@ async function getIncomingOrders(orgId, filters = {}) {
         };
     }
     catch (error) {
-        console.error('Error in getIncomingOrders:', error);
+        logger_1.default.error('Error in getIncomingOrders:', {
+            error,
+            orgId,
+            filters
+        });
         throw error;
     }
 }

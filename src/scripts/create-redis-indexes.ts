@@ -11,17 +11,18 @@
  */
 import { createRedisSearchIndexes } from '../utils/redis/redis-index-manager';
 import { closeRedisConnection } from '../config/redis';
+import logger from '../utils/logger';
 
 async function main(): Promise<void> {
   try {
-    console.log('Starting Redis index creation...');
+    logger.info('Starting Redis index creation...');
     
     // Create the RedisSearch indexes
     await createRedisSearchIndexes();
     
-    console.log('Redis indexes created successfully');
+    logger.info('Redis indexes created successfully');
   } catch (error) {
-    console.error('Error creating Redis indexes:', error);
+    logger.error('Error creating Redis indexes:', { error });
     process.exit(1);
   } finally {
     // Close the Redis connection

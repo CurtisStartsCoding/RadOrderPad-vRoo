@@ -8,6 +8,7 @@
 
 import { Stripe } from 'stripe';
 import { getMainDbClient, queryMainDb } from '../../../../config/db';
+import logger from '../../../../utils/logger';
 
 /**
  * Handles the 'customer.subscription.deleted' Stripe webhook event
@@ -128,7 +129,11 @@ export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<{ 
     // In a real implementation, this would call a notification service
     // For now, we'll just log the notification
     if (adminCount > 0) {
-      console.log(`Notification would be sent to ${adminUsers.length} admin users of organization ${organization.name} (ID: ${organizationId}) about subscription deletion`);
+      logger.info(`Subscription deletion notification would be sent to admins`, {
+        organizationId,
+        organizationName: organization.name,
+        adminCount: adminUsers.length
+      });
       
       // Example of how notification might be triggered:
       // await notificationService.sendEmail({
@@ -149,11 +154,15 @@ export async function handleSubscriptionDeleted(event: Stripe.Event): Promise<{ 
   } catch (error) {
     // Rollback the transaction on error
     await client.query('ROLLBACK');
-    console.error('Error handling customer.subscription.deleted event:', error);
+    logger.error('Error handling customer.subscription.deleted event:', {
+      error,
+      customerId,
+      subscriptionId: subscription.id
+    });
     
-    return { 
-      success: false, 
-      message: `Error processing subscription deletion: ${error instanceof Error ? error.message : String(error)}` 
+    return {
+      success: false,
+      message: `Error processing subscription deletion: ${error instanceof Error ? error.message : String(error)}`
     };
   } finally {
     // Release the client back to the pool

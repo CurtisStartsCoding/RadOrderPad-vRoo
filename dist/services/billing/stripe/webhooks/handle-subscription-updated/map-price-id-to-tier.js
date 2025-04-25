@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mapPriceIdToTier = mapPriceIdToTier;
 /**
@@ -10,6 +13,7 @@ exports.mapPriceIdToTier = mapPriceIdToTier;
  * @param priceId Stripe price ID
  * @returns Subscription tier string
  */
+const logger_1 = __importDefault(require("../../../../../utils/logger"));
 function mapPriceIdToTier(priceId) {
     // Comprehensive mapping of Stripe price IDs to internal tier names
     const priceTierMap = {
@@ -32,7 +36,7 @@ function mapPriceIdToTier(priceId) {
     };
     // Log warning if price ID is not found in the mapping
     if (!priceTierMap[priceId]) {
-        console.warn(`Unknown Stripe price ID: ${priceId}. Defaulting to tier_1.`);
+        logger_1.default.warn(`Unknown Stripe price ID. Defaulting to tier_1.`, { priceId });
     }
     return priceTierMap[priceId] || 'tier_1'; // Default to tier_1 if not found
 }

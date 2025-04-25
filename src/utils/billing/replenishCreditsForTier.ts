@@ -7,6 +7,7 @@
 
 import { queryMainDb } from '../../config/db';
 import { getTierCreditAllocation } from './map-price-id-to-tier';
+import logger from '../../utils/logger';
 
 /**
  * Replenishes credits for an organization based on their subscription tier
@@ -47,7 +48,7 @@ export async function replenishCreditsForTier(
     // Return the new credit balance
     return result.rows[0]?.credit_balance || 0;
   } catch (error) {
-    console.error(`Error replenishing credits for organization ${organizationId}:`, error);
+    logger.error(`Error replenishing credits for organization ${organizationId}:`, { error, organizationId, tier });
     throw error;
   }
 }

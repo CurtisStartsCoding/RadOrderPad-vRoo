@@ -4,12 +4,13 @@
 
 import config from '../../../config/config';
 import { LLMProvider, LLMResponse, AnthropicResponse } from '../types';
+import logger from '../../../utils/logger';
 
 /**
  * Call Anthropic Claude API
  */
 export async function callClaude(prompt: string): Promise<LLMResponse> {
-  console.log('Calling Anthropic Claude API...');
+  logger.info('Calling Anthropic Claude API...');
   
   const apiKey = config.llm.anthropicApiKey;
   if (!apiKey) {
@@ -17,7 +18,7 @@ export async function callClaude(prompt: string): Promise<LLMResponse> {
   }
   
   const modelName = config.llm.claudeModelName;
-  console.log(`Using model: ${modelName}`);
+  logger.info(`Using model: ${modelName}`);
   
   const startTime = Date.now();
   
@@ -57,7 +58,7 @@ export async function callClaude(prompt: string): Promise<LLMResponse> {
       latencyMs: endTime - startTime
     };
   } catch (error) {
-    console.error('Error calling Anthropic Claude API:', error);
+    logger.error('Error calling Anthropic Claude API:', error);
     throw error;
   }
 }

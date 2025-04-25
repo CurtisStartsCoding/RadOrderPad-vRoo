@@ -1,6 +1,5 @@
 export * from './types';
 export { getActivePromptTemplate } from './prompt-template';
-export { generateDatabaseContext } from './context-generator';
 export { generateDatabaseContextWithRedis } from './redis-context-generator-weighted';
 export { categorizeKeywords } from './keyword-categorizer';
 export { formatDatabaseContext } from './context-formatter';

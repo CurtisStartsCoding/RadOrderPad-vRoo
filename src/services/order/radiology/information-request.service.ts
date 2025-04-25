@@ -1,5 +1,6 @@
 import { queryPhiDb } from '../../../config/db';
 import { InformationRequestResult } from './types';
+import logger from '../../../utils/logger';
 
 /**
  * Request additional information from referring group
@@ -78,7 +79,13 @@ export async function requestInformation(
       message: 'Information request created successfully'
     };
   } catch (error) {
-    console.error('Error in requestInformation:', error);
+    logger.error('Error in requestInformation:', {
+      error,
+      orderId,
+      requestedInfoType,
+      userId,
+      orgId
+    });
     throw error;
   }
 }

@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import logger from '../../utils/logger';
 
 /**
  * Handle errors in connection controllers
@@ -7,7 +8,10 @@ import { Response } from 'express';
  * @param controllerName The name of the controller for logging purposes
  */
 export function handleConnectionError(error: unknown, res: Response, controllerName: string): void {
-  console.error(`Error in ${controllerName} controller:`, error);
+  logger.error(`Error in ${controllerName} controller:`, {
+    error,
+    controllerName
+  });
   
   if (error instanceof Error) {
     // Handle not found or not authorized errors

@@ -46,7 +46,17 @@ class OrderValidationController {
                 });
             }
             else if (error instanceof Error) {
-                res.status(500).json({ message: error.message });
+                // Check for ValidationServiceUnavailable error
+                if (error.message.includes('ValidationServiceUnavailable')) {
+                    // Return 503 Service Unavailable status code
+                    res.status(503).json({
+                        message: 'Validation service temporarily unavailable. All LLM providers failed.',
+                        code: 'VALIDATION_SERVICE_UNAVAILABLE'
+                    });
+                }
+                else {
+                    res.status(500).json({ message: error.message });
+                }
             }
             else {
                 res.status(500).json({ message: 'An unexpected error occurred' });

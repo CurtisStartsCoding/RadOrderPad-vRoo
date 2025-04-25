@@ -4,6 +4,7 @@
 import { Response } from 'express';
 import { ConfirmUploadRequestBody, AuthenticatedRequest } from './types';
 import { queryPhiDb } from '../../config/db';
+import logger from '../../utils/logger';
 
 /**
  * Validate request for upload confirmation
@@ -48,7 +49,10 @@ export async function validateConfirmUploadRequest(
   
   // Skip order validation in test environment for specific test IDs
   if (isTestEnvironment && (orderId === 1 || orderId === 999)) {
-    console.log('[TEST MODE] Bypassing order validation for test order ID:', orderId);
+    logger.info('[TEST MODE] Bypassing order validation for test order ID:', {
+      orderId,
+      userId: req.user?.userId
+    });
     // For tests, we'll assume the order exists and belongs to the user's organization
     return true;
   }

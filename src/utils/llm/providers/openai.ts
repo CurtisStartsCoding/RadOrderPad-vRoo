@@ -4,12 +4,13 @@
 
 import config from '../../../config/config';
 import { LLMProvider, LLMResponse, OpenAIResponse } from '../types';
+import logger from '../../../utils/logger';
 
 /**
  * Call OpenAI GPT API
  */
 export async function callGPT(prompt: string): Promise<LLMResponse> {
-  console.log('Calling OpenAI GPT API...');
+  logger.info('Calling OpenAI GPT API...');
   
   const apiKey = config.llm.openaiApiKey;
   if (!apiKey) {
@@ -17,7 +18,7 @@ export async function callGPT(prompt: string): Promise<LLMResponse> {
   }
   
   const modelName = config.llm.gptModelName;
-  console.log(`Using model: ${modelName}`);
+  logger.info(`Using model: ${modelName}`);
   
   const startTime = Date.now();
   
@@ -56,7 +57,7 @@ export async function callGPT(prompt: string): Promise<LLMResponse> {
       latencyMs: endTime - startTime
     };
   } catch (error) {
-    console.error('Error calling OpenAI GPT API:', error);
+    logger.error('Error calling OpenAI GPT API:', error);
     throw error;
   }
 }

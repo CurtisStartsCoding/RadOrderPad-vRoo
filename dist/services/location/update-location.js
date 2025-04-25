@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateLocation = updateLocation;
 const db_1 = require("../../config/db");
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Update a location
  * @param locationId Location ID
@@ -46,7 +50,12 @@ async function updateLocation(locationId, orgId, locationData) {
         return result.rows[0];
     }
     catch (error) {
-        console.error('Error in updateLocation:', error);
+        logger_1.default.error('Error in updateLocation:', {
+            error,
+            locationId,
+            orgId,
+            locationName: locationData.name
+        });
         throw error;
     }
 }

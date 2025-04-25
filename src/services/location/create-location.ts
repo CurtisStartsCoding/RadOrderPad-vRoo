@@ -1,5 +1,6 @@
 import { queryMainDb } from '../../config/db';
 import { LocationData, LocationResponse } from './types';
+import logger from '../../utils/logger';
 
 /**
  * Create a new location for an organization
@@ -33,7 +34,11 @@ export async function createLocation(orgId: number, locationData: LocationData):
     
     return result.rows[0];
   } catch (error) {
-    console.error('Error in createLocation:', error);
+    logger.error('Error in createLocation:', {
+      error,
+      orgId,
+      locationName: locationData.name
+    });
     throw error;
   }
 }

@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSubscription = createSubscription;
 const billing_1 = __importDefault(require("../../services/billing"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Create a Stripe subscription for a specific pricing tier
  *
@@ -57,7 +58,11 @@ async function createSubscription(req, res) {
         });
     }
     catch (error) {
-        console.error('Error creating subscription:', error);
+        logger_1.default.error('Error creating subscription:', {
+            error,
+            orgId: req.user?.orgId,
+            priceId: req.body?.priceId
+        });
         return res.status(500).json({
             success: false,
             message: `Failed to create subscription: ${error instanceof Error ? error.message : String(error)}`

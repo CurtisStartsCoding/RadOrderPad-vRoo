@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { getMainDbClient } from '../../../../config/db';
+import logger from '../../../../utils/logger';
 
 /**
  * Handle checkout.session.completed event
@@ -78,11 +79,11 @@ export async function handleCheckoutSessionCompleted(event: Stripe.Event): Promi
     
     await client.query('COMMIT');
     
-    console.log(`Successfully processed checkout session for org ${orgId}: Added ${creditAmount} credits, new balance: ${newCreditBalance}`);
+    logger.info(`Successfully processed checkout session for org ${orgId}: Added ${creditAmount} credits, new balance: ${newCreditBalance}`);
     
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('Error processing checkout session:', error);
+    logger.error('Error processing checkout session:', { error });
     throw error;
   } finally {
     client.release();

@@ -6,6 +6,7 @@ import { fetchClinicalRecords } from './fetch-clinical-records';
 import { fetchDocumentUploads } from './fetch-document-uploads';
 import { fetchValidationAttempts } from './fetch-validation-attempts';
 import { fetchOrderHistory } from './fetch-order-history';
+import logger from '../../../../utils/logger';
 
 /**
  * Get full details of an order
@@ -47,7 +48,11 @@ export async function getOrderDetails(orderId: number, orgId: number): Promise<O
       orderHistory
     };
   } catch (error) {
-    console.error('Error in getOrderDetails:', error);
+    logger.error('Error in getOrderDetails:', {
+      error,
+      orderId,
+      orgId
+    });
     throw error;
   }
 }

@@ -9,17 +9,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.callGrok = callGrok;
 const config_1 = __importDefault(require("../../../config/config"));
 const types_1 = require("../types");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Call Grok API
  */
 async function callGrok(prompt) {
-    console.log('Calling Grok API...');
+    logger_1.default.info('Calling Grok API...');
     const apiKey = config_1.default.llm.grokApiKey;
     if (!apiKey) {
         throw new Error('GROK_API_KEY not set');
     }
     const modelName = config_1.default.llm.grokModelName;
-    console.log(`Using model: ${modelName}`);
+    logger_1.default.info(`Using model: ${modelName}`);
     const startTime = Date.now();
     try {
         const response = await fetch('https://api.x.ai/v1/chat/completions', {
@@ -54,7 +55,7 @@ async function callGrok(prompt) {
         };
     }
     catch (error) {
-        console.error('Error calling Grok API:', error);
+        logger_1.default.error('Error calling Grok API:', error);
         throw error;
     }
 }

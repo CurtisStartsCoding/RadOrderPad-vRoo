@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import logger from '../../utils/logger';
 
 // Import types to ensure Express Request interface is extended
 import './types';
@@ -12,8 +13,10 @@ export const authorizeRole = (roles: string[]) => {
       return res.status(401).json({ message: 'User not authenticated' });
     }
 
-    console.log('User role:', req.user.role);
-    console.log('Required roles:', roles);
+    logger.debug('Role authorization check:', {
+      userRole: req.user.role,
+      requiredRoles: roles
+    });
 
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({ 

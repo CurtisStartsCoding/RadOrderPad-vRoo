@@ -1,9 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleInvoicePaymentFailed = handleInvoicePaymentFailed;
 const db_1 = require("../../../../../config/db");
 const services_1 = require("../../../../../services/notification/services");
 const should_enter_purgatory_1 = require("./should-enter-purgatory");
+const logger_1 = __importDefault(require("../../../../../utils/logger"));
 /**
  * Handle invoice.payment_failed event
  * This is triggered when an invoice payment fails
@@ -82,7 +86,11 @@ async function handleInvoicePaymentFailed(event) {
                     `Best regards,\n` +
                     `The RadOrderPad Team`);
             }
-            console.log(`Organization ${orgId} placed in purgatory mode due to payment failure`);
+            logger_1.default.info(`Organization placed in purgatory mode due to payment failure`, {
+                orgId,
+                orgName,
+                invoiceId: invoice.id
+            });
         }
         else {
             // If not entering purgatory, just send a warning notification
@@ -106,11 +114,18 @@ async function handleInvoicePaymentFailed(event) {
             }
         }
         await client.query('COMMIT');
-        console.log(`Successfully processed invoice payment failure for org ${orgId}`);
+        logger_1.default.info(`Successfully processed invoice payment failure`, {
+            orgId,
+            invoiceId: invoice.id
+        });
     }
     catch (error) {
         await client.query('ROLLBACK');
-        console.error('Error processing invoice payment failure:', error);
+        logger_1.default.error('Error processing invoice payment failure:', {
+            error,
+            customerId,
+            invoiceId: invoice.id
+        });
         throw error;
     }
     finally {

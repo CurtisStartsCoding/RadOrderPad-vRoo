@@ -7,6 +7,7 @@ exports.createSubscription = createSubscription;
 const stripe_1 = __importDefault(require("stripe"));
 const config_1 = __importDefault(require("../../../config/config"));
 const db_1 = require("../../../config/db");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 // Initialize Stripe client
 const stripe = new stripe_1.default(config_1.default.stripe.secretKey, {
     apiVersion: config_1.default.stripe.apiVersion,
@@ -70,7 +71,11 @@ async function createSubscription(orgId, priceId) {
         };
     }
     catch (error) {
-        console.error('Error creating subscription:', error);
+        logger_1.default.error('Error creating subscription:', {
+            error,
+            orgId,
+            priceId
+        });
         // Re-throw with a more user-friendly message
         if (error instanceof Error) {
             throw new Error(`Failed to create subscription: ${error.message}`);

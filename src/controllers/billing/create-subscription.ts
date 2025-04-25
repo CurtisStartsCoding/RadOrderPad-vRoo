@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import BillingService from '../../services/billing';
+import logger from '../../utils/logger';
 
 /**
  * Create a Stripe subscription for a specific pricing tier
@@ -60,7 +61,11 @@ export async function createSubscription(req: Request, res: Response): Promise<R
       ...subscriptionResult
     });
   } catch (error) {
-    console.error('Error creating subscription:', error);
+    logger.error('Error creating subscription:', {
+      error,
+      orgId: req.user?.orgId,
+      priceId: req.body?.priceId
+    });
     return res.status(500).json({
       success: false,
       message: `Failed to create subscription: ${error instanceof Error ? error.message : String(error)}`

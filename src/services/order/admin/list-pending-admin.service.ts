@@ -1,4 +1,5 @@
 import { queryPhiDb } from '../../../config/db';
+import logger from '../../../utils/logger';
 
 /**
  * Interface for pagination and sorting options
@@ -140,7 +141,18 @@ async function listPendingAdminOrders(
       }
     };
   } catch (error) {
-    console.error('Error in listPendingAdminOrders service:', error);
+    logger.error('Error in listPendingAdminOrders service:', {
+      error,
+      orgId,
+      page: options.page,
+      limit: options.limit,
+      filters: {
+        patientName: options.patientName,
+        physicianName: options.physicianName,
+        dateFrom: options.dateFrom,
+        dateTo: options.dateTo
+      }
+    });
     throw error;
   }
 }

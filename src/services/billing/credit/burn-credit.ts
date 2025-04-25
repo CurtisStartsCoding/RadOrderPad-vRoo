@@ -2,6 +2,7 @@ import { getMainDbClient } from '../../../config/db';
 import config from '../../../config/config';
 import { InsufficientCreditsError } from '../errors';
 import { CreditActionType } from '../types';
+import logger from '../../../utils/logger';
 
 /**
  * Record credit usage for an order submission action
@@ -22,7 +23,13 @@ export async function burnCredit(
 ): Promise<boolean> {
   // Check if billing test mode is enabled
   if (config.testMode.billing) {
-    console.log(`[TEST MODE] Credit burn skipped for organization ${organizationId}, action: ${actionType}`);
+    logger.info(`[TEST MODE] Credit burn skipped for organization ${organizationId}, action: ${actionType}`, {
+      organizationId,
+      userId,
+      orderId,
+      actionType,
+      testMode: true
+    });
     return true;
   }
   
@@ -70,8 +77,13 @@ export async function burnCredit(
     await client.query('COMMIT');
     
     // Log the action (for development purposes)
-    console.log(`[BillingService] Burning credit for organization ${organizationId}, user ${userId}, order ${orderId}, action ${actionType}`);
-    console.log(`[BillingService] New credit balance: ${newBalance}`);
+    logger.info(`[BillingService] Credit burned successfully`, {
+      organizationId,
+      userId,
+      orderId,
+      actionType,
+      newBalance
+    });
     
     return true;
   } catch (error) {
@@ -82,7 +94,13 @@ export async function burnCredit(
     if (error instanceof InsufficientCreditsError) {
       throw error;
     } else {
-      console.error('Error in burnCredit:', error);
+      logger.error('Error in burnCredit:', {
+        error,
+        organizationId,
+        userId,
+        orderId,
+        actionType
+      });
       throw new Error(`Failed to burn credit: ${error instanceof Error ? error.message : String(error)}`);
     }
   } finally {

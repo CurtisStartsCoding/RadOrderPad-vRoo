@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requestInformation = requestInformation;
 const radiology_1 = __importDefault(require("../../services/order/radiology"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Request additional information from referring group
  * @route POST /api/radiology/orders/:orderId/request-info
@@ -33,7 +34,13 @@ async function requestInformation(req, res) {
         res.status(200).json(result);
     }
     catch (error) {
-        console.error('Error in requestInformation controller:', error);
+        logger_1.default.error('Error in requestInformation controller:', {
+            error,
+            orderId: req.params.orderId,
+            userId: req.user?.userId,
+            orgId: req.user?.orgId,
+            requestedInfoType: req.body?.requestedInfoType
+        });
         if (error instanceof Error) {
             if (error.message.includes('not found')) {
                 res.status(404).json({ message: error.message });

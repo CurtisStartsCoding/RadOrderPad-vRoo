@@ -32,10 +32,14 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateInsuranceInfo = updateInsuranceInfo;
 const clinicalRecordManager = __importStar(require("../clinical-record-manager"));
 const insuranceManager = __importStar(require("../insurance-manager"));
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Update insurance information
  * @param orderId Order ID
@@ -58,7 +62,11 @@ async function updateInsuranceInfo(orderId, insuranceData, userId) {
         };
     }
     catch (error) {
-        console.error('Error in updateInsuranceInfo:', error);
+        logger_1.default.error('Error in updateInsuranceInfo:', {
+            error,
+            orderId,
+            patientId: insuranceData.patient_id
+        });
         throw error;
     }
 }

@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleConnectionError = handleConnectionError;
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Handle errors in connection controllers
  * @param error The error object
@@ -8,7 +12,10 @@ exports.handleConnectionError = handleConnectionError;
  * @param controllerName The name of the controller for logging purposes
  */
 function handleConnectionError(error, res, controllerName) {
-    console.error(`Error in ${controllerName} controller:`, error);
+    logger_1.default.error(`Error in ${controllerName} controller:`, {
+        error,
+        controllerName
+    });
     if (error instanceof Error) {
         // Handle not found or not authorized errors
         if (error.message.includes('not found') || error.message.includes('not authorized')) {

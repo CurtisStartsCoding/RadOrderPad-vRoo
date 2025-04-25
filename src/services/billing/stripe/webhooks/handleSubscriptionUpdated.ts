@@ -8,6 +8,7 @@
 import { Stripe } from 'stripe';
 import { getMainDbClient, queryMainDb } from '../../../../config/db';
 import { mapPriceIdToTier } from '../../../../utils/billing/map-price-id-to-tier';
+import logger from '../../../../utils/logger';
 
 /**
  * Handles the 'customer.subscription.updated' Stripe webhook event
@@ -185,11 +186,16 @@ export async function handleSubscriptionUpdated(event: Stripe.Event): Promise<{ 
   } catch (error) {
     // Rollback the transaction on error
     await client.query('ROLLBACK');
-    console.error('Error handling customer.subscription.updated event:', error);
+    logger.error('Error handling customer.subscription.updated event:', {
+      error,
+      customerId,
+      subscriptionId: subscription.id,
+      subscriptionStatus
+    });
     
-    return { 
-      success: false, 
-      message: `Error processing subscription update: ${error instanceof Error ? error.message : String(error)}` 
+    return {
+      success: false,
+      message: `Error processing subscription update: ${error instanceof Error ? error.message : String(error)}`
     };
   } finally {
     // Release the client back to the pool

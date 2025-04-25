@@ -4,6 +4,7 @@
 
 import { LLMResponse } from './types';
 import { callClaude, callGrok, callGPT } from './providers';
+import logger from '../../utils/logger';
 
 /**
  * Call LLM with fallback logic
@@ -14,19 +15,19 @@ export async function callLLMWithFallback(prompt: string): Promise<LLMResponse> 
   try {
     return await callClaude(prompt);
   } catch (error) {
-    console.log('Claude API call failed, falling back to Grok...');
+    logger.warn('Claude API call failed, falling back to Grok...', { error });
     
     // Try Grok next
     try {
       return await callGrok(prompt);
     } catch (error) {
-      console.log('Grok API call failed, falling back to GPT...');
+      logger.warn('Grok API call failed, falling back to GPT...', { error });
       
       // Try GPT as last resort
       try {
         return await callGPT(prompt);
       } catch (error) {
-        console.error('All LLM API calls failed');
+        logger.error('All LLM API calls failed', { error });
         throw new Error('ValidationServiceUnavailable: All LLM providers failed');
       }
     }

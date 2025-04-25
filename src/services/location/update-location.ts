@@ -1,5 +1,6 @@
 import { queryMainDb } from '../../config/db';
 import { LocationData, LocationResponse } from './types';
+import logger from '../../utils/logger';
 
 /**
  * Update a location
@@ -58,7 +59,12 @@ export async function updateLocation(
     
     return result.rows[0];
   } catch (error) {
-    console.error('Error in updateLocation:', error);
+    logger.error('Error in updateLocation:', {
+      error,
+      locationId,
+      orgId,
+      locationName: locationData.name
+    });
     throw error;
   }
 }

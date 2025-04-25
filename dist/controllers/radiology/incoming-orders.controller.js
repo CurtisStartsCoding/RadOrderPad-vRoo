@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIncomingOrders = getIncomingOrders;
 const radiology_1 = __importDefault(require("../../services/order/radiology"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Get incoming orders queue for radiology group
  * @route GET /api/radiology/orders
@@ -64,7 +65,10 @@ async function getIncomingOrders(req, res) {
         res.status(200).json(result);
     }
     catch (error) {
-        console.error('Error in getIncomingOrders controller:', error);
+        logger_1.default.error('Error in getIncomingOrders controller:', {
+            error,
+            orgId: req.user?.orgId
+        });
         if (error instanceof Error) {
             res.status(500).json({ message: error.message });
         }

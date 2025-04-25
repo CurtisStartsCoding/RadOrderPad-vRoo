@@ -10,6 +10,7 @@ exports.handleValidationRequest = handleValidationRequest;
 const validation_1 = __importDefault(require("../../../services/validation"));
 const draft_order_1 = require("./draft-order");
 const attempt_tracking_1 = require("./attempt-tracking");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Handle validation request for an order
  *
@@ -54,7 +55,7 @@ async function handleValidationRequest(dictationText, patientInfo, userId, orgId
         };
     }
     catch (error) {
-        console.error('Error handling validation request:', error);
+        logger_1.default.error('Error handling validation request:', { error });
         // If it's our custom error object with status, pass it through
         if (error && typeof error === 'object' && 'status' in error) {
             throw error;

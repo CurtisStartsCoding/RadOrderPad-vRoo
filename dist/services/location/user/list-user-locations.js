@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.listUserLocations = listUserLocations;
 const db_1 = require("../../../config/db");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * List locations assigned to a user
  * @param userId User ID
@@ -24,7 +28,11 @@ async function listUserLocations(userId, orgId) {
         return result.rows;
     }
     catch (error) {
-        console.error('Error in listUserLocations:', error);
+        logger_1.default.error('Error in listUserLocations:', {
+            error,
+            userId,
+            orgId
+        });
         throw error;
     }
 }

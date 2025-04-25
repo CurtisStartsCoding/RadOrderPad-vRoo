@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requestInformation = requestInformation;
 const db_1 = require("../../../config/db");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Request additional information from referring group
  * @param orderId Order ID
@@ -57,7 +61,13 @@ async function requestInformation(orderId, requestedInfoType, requestedInfoDetai
         };
     }
     catch (error) {
-        console.error('Error in requestInformation:', error);
+        logger_1.default.error('Error in requestInformation:', {
+            error,
+            orderId,
+            requestedInfoType,
+            userId,
+            orgId
+        });
         throw error;
     }
 }

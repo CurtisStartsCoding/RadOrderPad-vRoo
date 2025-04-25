@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AuthTokenPayload } from '../../models';
+import logger from '../../utils/logger';
 
 // Import types to ensure Express Request interface is extended
 import './types';
@@ -22,16 +23,16 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
   }
 
   try {
-    console.log('JWT Secret:', process.env.JWT_SECRET?.substring(0, 3) + '...');
-    console.log('Token:', token.substring(0, 10) + '...');
+    logger.debug('JWT Secret:', { secretPrefix: process.env.JWT_SECRET?.substring(0, 3) + '...' });
+    logger.debug('Token:', { tokenPrefix: token.substring(0, 10) + '...' });
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key_here') as AuthTokenPayload;
-    console.log('Decoded token:', decoded);
+    logger.debug('Decoded token:', { userId: decoded.userId, role: decoded.role });
     
     req.user = decoded;
     next();
   } catch (error) {
-    console.error('JWT verification error:', error);
+    logger.error('JWT verification error:', { error });
     return res.status(403).json({ message: 'Invalid or expired token' });
   }
 };

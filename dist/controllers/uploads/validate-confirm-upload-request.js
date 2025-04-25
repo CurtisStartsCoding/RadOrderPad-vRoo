@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateConfirmUploadRequest = validateConfirmUploadRequest;
 const db_1 = require("../../config/db");
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Validate request for upload confirmation
  */
@@ -29,7 +33,10 @@ async function validateConfirmUploadRequest(req, res) {
     const isTestEnvironment = process.env.NODE_ENV === 'test' || req.headers['x-test-mode'] === 'true';
     // Skip order validation in test environment for specific test IDs
     if (isTestEnvironment && (orderId === 1 || orderId === 999)) {
-        console.log('[TEST MODE] Bypassing order validation for test order ID:', orderId);
+        logger_1.default.info('[TEST MODE] Bypassing order validation for test order ID:', {
+            orderId,
+            userId: req.user?.userId
+        });
         // For tests, we'll assume the order exists and belongs to the user's organization
         return true;
     }

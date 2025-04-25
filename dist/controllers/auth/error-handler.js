@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginErrorMap = exports.registrationErrorMap = void 0;
 exports.handleAuthError = handleAuthError;
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Error handling utilities for authentication controllers
  */
@@ -14,7 +18,7 @@ exports.handleAuthError = handleAuthError;
  * @param defaultMessage Default error message
  */
 function handleAuthError(error, res, operation, errorMap = {}, defaultMessage = 'An error occurred') {
-    console.error(`${operation} error:`, error);
+    logger_1.default.error(`${operation} error:`, { error, operation });
     if (error instanceof Error) {
         // Check if the error message is in the error map
         for (const [message, statusCode] of Object.entries(errorMap)) {

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import RadiologyOrderService from '../../services/order/radiology';
+import logger from '../../utils/logger';
 
 /**
  * Update order status
@@ -42,7 +43,13 @@ export async function updateOrderStatus(req: Request, res: Response): Promise<vo
     
     res.status(200).json(result);
   } catch (error) {
-    console.error('Error in updateOrderStatus controller:', error);
+    logger.error('Error in updateOrderStatus controller:', {
+      error,
+      orderId: req.params.orderId,
+      userId: req.user?.userId,
+      orgId: req.user?.orgId,
+      newStatus: req.body?.newStatus
+    });
     
     if (error instanceof Error) {
       if (error.message.includes('not found')) {

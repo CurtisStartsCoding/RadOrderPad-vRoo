@@ -1,4 +1,5 @@
 import { getMainDbClient } from '../../../config/db';
+import logger from '../../../utils/logger';
 
 /**
  * Assign a user to a location
@@ -59,7 +60,12 @@ export async function assignUserToLocation(userId: number, locationId: number, o
     return true;
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('Error in assignUserToLocation:', error);
+    logger.error('Error in assignUserToLocation:', {
+      error,
+      userId,
+      locationId,
+      orgId
+    });
     throw error;
   } finally {
     client.release();

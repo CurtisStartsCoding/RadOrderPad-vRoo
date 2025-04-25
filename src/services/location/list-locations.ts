@@ -1,5 +1,6 @@
 import { queryMainDb } from '../../config/db';
 import { LocationResponse } from './types';
+import logger from '../../utils/logger';
 
 /**
  * List locations for an organization
@@ -17,7 +18,10 @@ export async function listLocations(orgId: number): Promise<LocationResponse[]> 
     
     return result.rows;
   } catch (error) {
-    console.error('Error in listLocations:', error);
+    logger.error('Error in listLocations:', {
+      error,
+      orgId
+    });
     throw error;
   }
 }

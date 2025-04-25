@@ -1,6 +1,7 @@
 import { queryMainDb } from '../../../config/db';
 import stripeService from './stripe.service';
 import config from '../../../config/config';
+import logger from '../../../utils/logger';
 
 /**
  * Create a Stripe checkout session for purchasing credit bundles
@@ -53,11 +54,19 @@ export async function createCreditCheckoutSession(
       config.stripe.frontendCancelUrl
     );
 
-    console.log(`[BillingService] Created checkout session ${session.id} for organization ${orgId}`);
+    logger.info(`[BillingService] Created checkout session`, {
+      sessionId: session.id,
+      orgId,
+      priceId: actualPriceId
+    });
 
     return session.id;
   } catch (error) {
-    console.error('Error creating credit checkout session:', error);
+    logger.error('Error creating credit checkout session:', {
+      error,
+      orgId,
+      priceId
+    });
     throw new Error(`Failed to create credit checkout session: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

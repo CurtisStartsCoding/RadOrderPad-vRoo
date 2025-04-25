@@ -1,9 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RequestConnectionService = void 0;
 const db_1 = require("../../../config/db");
 const request_1 = require("../queries/request");
 const request_connection_helpers_1 = require("./request-connection-helpers");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Service for requesting connections
  */
@@ -57,7 +61,7 @@ class RequestConnectionService {
         }
         catch (error) {
             await client.query('ROLLBACK');
-            console.error('Error in requestConnection:', error);
+            logger_1.default.error('Error in requestConnection:', { error });
             throw error;
         }
         finally {

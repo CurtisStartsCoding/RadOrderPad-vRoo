@@ -7,6 +7,7 @@ exports.burnCredit = burnCredit;
 const db_1 = require("../../../config/db");
 const config_1 = __importDefault(require("../../../config/config"));
 const errors_1 = require("../errors");
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Record credit usage for an order submission action
  * Decrements the organization's credit balance and logs the usage
@@ -21,7 +22,13 @@ const errors_1 = require("../errors");
 async function burnCredit(organizationId, userId, orderId, actionType) {
     // Check if billing test mode is enabled
     if (config_1.default.testMode.billing) {
-        console.log(`[TEST MODE] Credit burn skipped for organization ${organizationId}, action: ${actionType}`);
+        logger_1.default.info(`[TEST MODE] Credit burn skipped for organization ${organizationId}, action: ${actionType}`, {
+            organizationId,
+            userId,
+            orderId,
+            actionType,
+            testMode: true
+        });
         return true;
     }
     // Get a client for transaction
@@ -54,8 +61,13 @@ async function burnCredit(organizationId, userId, orderId, actionType) {
         // Commit transaction
         await client.query('COMMIT');
         // Log the action (for development purposes)
-        console.log(`[BillingService] Burning credit for organization ${organizationId}, user ${userId}, order ${orderId}, action ${actionType}`);
-        console.log(`[BillingService] New credit balance: ${newBalance}`);
+        logger_1.default.info(`[BillingService] Credit burned successfully`, {
+            organizationId,
+            userId,
+            orderId,
+            actionType,
+            newBalance
+        });
         return true;
     }
     catch (error) {
@@ -66,7 +78,13 @@ async function burnCredit(organizationId, userId, orderId, actionType) {
             throw error;
         }
         else {
-            console.error('Error in burnCredit:', error);
+            logger_1.default.error('Error in burnCredit:', {
+                error,
+                organizationId,
+                userId,
+                orderId,
+                actionType
+            });
             throw new Error(`Failed to burn credit: ${error instanceof Error ? error.message : String(error)}`);
         }
     }

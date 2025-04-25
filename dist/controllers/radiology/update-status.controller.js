@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateOrderStatus = updateOrderStatus;
 const radiology_1 = __importDefault(require("../../services/order/radiology"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Update order status
  * @route POST /api/radiology/orders/:orderId/update-status
@@ -39,7 +40,13 @@ async function updateOrderStatus(req, res) {
         res.status(200).json(result);
     }
     catch (error) {
-        console.error('Error in updateOrderStatus controller:', error);
+        logger_1.default.error('Error in updateOrderStatus controller:', {
+            error,
+            orderId: req.params.orderId,
+            userId: req.user?.userId,
+            orgId: req.user?.orgId,
+            newStatus: req.body?.newStatus
+        });
         if (error instanceof Error) {
             if (error.message.includes('not found')) {
                 res.status(404).json({ message: error.message });

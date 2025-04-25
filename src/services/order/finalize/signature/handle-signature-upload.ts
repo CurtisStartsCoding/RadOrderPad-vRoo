@@ -1,4 +1,5 @@
-import { getUploadUrl, confirmUpload } from '../../../upload';
+import { getUploadUrl } from '../../../upload';
+import logger from '../../../../utils/logger';
 
 /**
  * Handle signature upload
@@ -34,7 +35,11 @@ export async function handleSignatureUpload(
     throw new Error('Failed to generate presigned URL for signature upload');
   }
   
-  console.log(`Signature presigned URL generated: ${result.presignedUrl}`);
+  logger.debug(`Signature presigned URL generated`, {
+    orderId,
+    userId,
+    fileKey: result.filePath
+  });
   
   return {
     presignedUrl: result.presignedUrl,

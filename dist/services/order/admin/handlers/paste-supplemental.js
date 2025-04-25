@@ -32,9 +32,13 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handlePasteSupplemental = handlePasteSupplemental;
 const clinicalRecordManager = __importStar(require("../clinical-record-manager"));
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Handle pasted supplemental documents
  * @param orderId Order ID
@@ -55,7 +59,11 @@ async function handlePasteSupplemental(orderId, pastedText, userId) {
         };
     }
     catch (error) {
-        console.error('Error in handlePasteSupplemental:', error);
+        logger_1.default.error('Error in handlePasteSupplemental:', {
+            error,
+            orderId,
+            userId
+        });
         throw error;
     }
 }

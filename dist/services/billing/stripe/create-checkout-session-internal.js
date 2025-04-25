@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCheckoutSessionInternal = createCheckoutSessionInternal;
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Create a checkout session for purchasing credit bundles
  * This is an internal function used by the StripeService facade
@@ -31,7 +35,12 @@ async function createCheckoutSessionInternal(stripe, customerId, priceId, metada
         return session;
     }
     catch (error) {
-        console.error('Error creating checkout session:', error);
+        logger_1.default.error('Error creating checkout session:', {
+            error,
+            customerId,
+            priceId,
+            metadata
+        });
         throw new Error(`Failed to create checkout session: ${error instanceof Error ? error.message : String(error)}`);
     }
 }

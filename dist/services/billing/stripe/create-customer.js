@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createStripeCustomerForOrg = createStripeCustomerForOrg;
 const db_1 = require("../../../config/db");
 const stripe_service_1 = __importDefault(require("./stripe.service"));
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Create a Stripe customer for an organization and update the organization's billing_id
  *
@@ -22,11 +23,20 @@ async function createStripeCustomerForOrg(orgId, orgName, orgEmail) {
         const stripeCustomerId = customer.id;
         // Update organization with Stripe customer ID
         await (0, db_1.queryMainDb)(`UPDATE organizations SET billing_id = $1 WHERE id = $2`, [stripeCustomerId, orgId]);
-        console.log(`[BillingService] Created Stripe customer ${stripeCustomerId} for organization ${orgId}`);
+        logger_1.default.info(`[BillingService] Created Stripe customer`, {
+            stripeCustomerId,
+            orgId,
+            orgName
+        });
         return stripeCustomerId;
     }
     catch (error) {
-        console.error('[BillingService] Error creating Stripe customer:', error);
+        logger_1.default.error('[BillingService] Error creating Stripe customer:', {
+            error,
+            orgId,
+            orgName,
+            orgEmail
+        });
         throw new Error(`Failed to create Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
     }
 }

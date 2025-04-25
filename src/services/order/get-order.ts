@@ -1,5 +1,6 @@
 import { queryMainDb, queryPhiDb } from '../../config/db';
 import { Order } from '../../models';
+import logger from '../../utils/logger';
 
 /**
  * Get order details by ID
@@ -38,7 +39,11 @@ export async function getOrderById(orderId: number, userId: number): Promise<Ord
     
     return order;
   } catch (error) {
-    console.error('Error getting order by ID:', error);
+    logger.error('Error getting order by ID:', {
+      error,
+      orderId,
+      userId
+    });
     throw error;
   }
 }

@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOrderDetails = getOrderDetails;
 const fetch_order_1 = require("./fetch-order");
@@ -8,6 +11,7 @@ const fetch_clinical_records_1 = require("./fetch-clinical-records");
 const fetch_document_uploads_1 = require("./fetch-document-uploads");
 const fetch_validation_attempts_1 = require("./fetch-validation-attempts");
 const fetch_order_history_1 = require("./fetch-order-history");
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Get full details of an order
  * @param orderId Order ID
@@ -42,7 +46,11 @@ async function getOrderDetails(orderId, orgId) {
         };
     }
     catch (error) {
-        console.error('Error in getOrderDetails:', error);
+        logger_1.default.error('Error in getOrderDetails:', {
+            error,
+            orderId,
+            orgId
+        });
         throw error;
     }
 }

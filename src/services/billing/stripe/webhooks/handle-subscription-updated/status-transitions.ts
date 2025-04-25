@@ -1,5 +1,6 @@
 import { PoolClient } from 'pg';
 import { generalNotifications } from '../../../../../services/notification/services';
+import logger from '../../../../../utils/logger';
 
 /**
  * Handle transition to purgatory status
@@ -60,12 +61,20 @@ export async function handlePurgatoryTransition(
         `The RadOrderPad Team`
       );
     } catch (notificationError) {
-      console.error(`Failed to send notification to ${admin.email}:`, notificationError);
+      logger.error(`Failed to send purgatory notification to admin`, {
+        error: notificationError,
+        adminEmail: admin.email,
+        orgId
+      });
       // Continue processing other admins even if one notification fails
     }
   }
   
-  console.log(`Organization ${orgId} placed in purgatory mode`);
+  logger.info(`Organization placed in purgatory mode`, {
+    orgId,
+    orgName,
+    reason: 'subscription_canceled'
+  });
 }
 
 /**
@@ -121,10 +130,18 @@ export async function handleReactivationTransition(
         `The RadOrderPad Team`
       );
     } catch (notificationError) {
-      console.error(`Failed to send notification to ${admin.email}:`, notificationError);
+      logger.error(`Failed to send reactivation notification to admin`, {
+        error: notificationError,
+        adminEmail: admin.email,
+        orgId
+      });
       // Continue processing other admins even if one notification fails
     }
   }
   
-  console.log(`Organization ${orgId} reactivated`);
+  logger.info(`Organization reactivated`, {
+    orgId,
+    orgName,
+    recipientCount: adminUsersResult.rows.length
+  });
 }

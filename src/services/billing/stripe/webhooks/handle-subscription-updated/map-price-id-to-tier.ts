@@ -7,6 +7,7 @@
  * @param priceId Stripe price ID
  * @returns Subscription tier string
  */
+import logger from '../../../../../utils/logger';
 export function mapPriceIdToTier(priceId: string): string {
   // Comprehensive mapping of Stripe price IDs to internal tier names
   const priceTierMap: Record<string, string> = {
@@ -33,7 +34,7 @@ export function mapPriceIdToTier(priceId: string): string {
   
   // Log warning if price ID is not found in the mapping
   if (!priceTierMap[priceId]) {
-    console.warn(`Unknown Stripe price ID: ${priceId}. Defaulting to tier_1.`);
+    logger.warn(`Unknown Stripe price ID. Defaulting to tier_1.`, { priceId });
   }
   
   return priceTierMap[priceId] || 'tier_1'; // Default to tier_1 if not found

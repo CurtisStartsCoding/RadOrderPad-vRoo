@@ -1,5 +1,6 @@
 import { PoolClient } from 'pg';
 import { generalNotifications } from '../../../../../services/notification/services';
+import logger from '../../../../../utils/logger';
 
 /**
  * Send tier change notifications to organization admins
@@ -41,10 +42,20 @@ export async function sendTierChangeNotifications(
         `The RadOrderPad Team`
       );
     } catch (notificationError) {
-      console.error(`Failed to send notification to ${admin.email}:`, notificationError);
+      logger.error(`Failed to send notification to admin`, {
+        error: notificationError,
+        adminEmail: admin.email,
+        orgId
+      });
       // Continue processing other admins even if one notification fails
     }
   }
   
-  console.log(`Sent tier change notifications for organization ${orgId} (${currentTier} -> ${newTier})`);
+  logger.info(`Sent tier change notifications for organization`, {
+    orgId,
+    orgName,
+    currentTier,
+    newTier,
+    recipientCount: adminUsersResult.rows.length
+  });
 }

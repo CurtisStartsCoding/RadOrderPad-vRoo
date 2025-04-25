@@ -9,6 +9,7 @@ import { Stripe } from 'stripe';
 import { getMainDbClient, queryMainDb } from '../../../../config/db';
 import { replenishCreditsForTier } from '../../../../utils/billing/replenishCreditsForTier';
 import { mapPriceIdToTier } from '../../../../utils/billing/map-price-id-to-tier';
+import logger from '../../../../utils/logger';
 
 /**
  * Handles the 'invoice.payment_succeeded' Stripe webhook event
@@ -105,7 +106,11 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
         client
       );
       
-      console.log(`Replenished credits for organization ${organizationId} to ${newCreditBalance}`);
+      logger.info(`Replenished credits for organization`, {
+        organizationId,
+        newCreditBalance,
+        subscriptionTier: organization.subscription_tier
+      });
     }
     
     // Log the billing event
@@ -136,10 +141,14 @@ export async function handleInvoicePaymentSucceeded(event: Stripe.Event): Promis
   } catch (error) {
     // Rollback the transaction on error
     await client.query('ROLLBACK');
-    console.error('Error handling invoice.payment_succeeded event:', error);
+    logger.error('Error handling invoice.payment_succeeded event:', {
+      error,
+      customerId,
+      invoiceId: invoice.id
+    });
     
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: `Error processing invoice payment: ${error instanceof Error ? error.message : String(error)}`
     };
   } finally {

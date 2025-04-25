@@ -7,6 +7,7 @@ exports.createCreditCheckoutSession = createCreditCheckoutSession;
 const db_1 = require("../../../config/db");
 const stripe_service_1 = __importDefault(require("./stripe.service"));
 const config_1 = __importDefault(require("../../../config/config"));
+const logger_1 = __importDefault(require("../../../utils/logger"));
 /**
  * Create a Stripe checkout session for purchasing credit bundles
  *
@@ -38,11 +39,19 @@ async function createCreditCheckoutSession(orgId, priceId) {
         };
         // Create the checkout session
         const session = await stripe_service_1.default.createCheckoutSession(billingId, actualPriceId, metadata, config_1.default.stripe.frontendSuccessUrl, config_1.default.stripe.frontendCancelUrl);
-        console.log(`[BillingService] Created checkout session ${session.id} for organization ${orgId}`);
+        logger_1.default.info(`[BillingService] Created checkout session`, {
+            sessionId: session.id,
+            orgId,
+            priceId: actualPriceId
+        });
         return session.id;
     }
     catch (error) {
-        console.error('Error creating credit checkout session:', error);
+        logger_1.default.error('Error creating credit checkout session:', {
+            error,
+            orgId,
+            priceId
+        });
         throw new Error(`Failed to create credit checkout session: ${error instanceof Error ? error.message : String(error)}`);
     }
 }

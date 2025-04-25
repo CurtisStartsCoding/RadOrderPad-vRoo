@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleCheckoutSessionCompleted = handleCheckoutSessionCompleted;
 const db_1 = require("../../../../config/db");
+const logger_1 = __importDefault(require("../../../../utils/logger"));
 /**
  * Handle checkout.session.completed event
  * This is triggered when a customer completes a checkout session,
@@ -63,11 +67,11 @@ async function handleCheckoutSessionCompleted(event) {
             `Credit bundle purchase: ${creditAmount} credits added`
         ]);
         await client.query('COMMIT');
-        console.log(`Successfully processed checkout session for org ${orgId}: Added ${creditAmount} credits, new balance: ${newCreditBalance}`);
+        logger_1.default.info(`Successfully processed checkout session for org ${orgId}: Added ${creditAmount} credits, new balance: ${newCreditBalance}`);
     }
     catch (error) {
         await client.query('ROLLBACK');
-        console.error('Error processing checkout session:', error);
+        logger_1.default.error('Error processing checkout session:', { error });
         throw error;
     }
     finally {

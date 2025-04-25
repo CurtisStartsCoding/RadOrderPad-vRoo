@@ -4,10 +4,11 @@ import {
   CHECK_ORGANIZATIONS_QUERY,
   CHECK_EXISTING_RELATIONSHIP_QUERY
 } from '../queries/request';
-import { 
-  updateExistingRelationship, 
-  createNewRelationship 
+import {
+  updateExistingRelationship,
+  createNewRelationship
 } from './request-connection-helpers';
+import logger from '../../../utils/logger';
 
 /**
  * Service for requesting connections
@@ -91,7 +92,7 @@ export class RequestConnectionService {
       );
     } catch (error) {
       await client.query('ROLLBACK');
-      console.error('Error in requestConnection:', error);
+      logger.error('Error in requestConnection:', { error });
       throw error;
     } finally {
       client.release();

@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import logger from '../../utils/logger';
 
 /**
  * Error handling utilities for authentication controllers
@@ -19,7 +20,7 @@ export function handleAuthError(
   errorMap: { [key: string]: number } = {},
   defaultMessage: string = 'An error occurred'
 ): void {
-  console.error(`${operation} error:`, error);
+  logger.error(`${operation} error:`, { error, operation });
   
   if (error instanceof Error) {
     // Check if the error message is in the error map

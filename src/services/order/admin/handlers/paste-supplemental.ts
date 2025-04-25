@@ -1,5 +1,6 @@
 import * as clinicalRecordManager from '../clinical-record-manager';
 import { SupplementalDocResult } from '../types';
+import logger from '../../../../utils/logger';
 
 /**
  * Handle pasted supplemental documents
@@ -26,7 +27,11 @@ export async function handlePasteSupplemental(
       message: 'Supplemental documents saved successfully'
     };
   } catch (error) {
-    console.error('Error in handlePasteSupplemental:', error);
+    logger.error('Error in handlePasteSupplemental:', {
+      error,
+      orderId,
+      userId
+    });
     throw error;
   }
 }

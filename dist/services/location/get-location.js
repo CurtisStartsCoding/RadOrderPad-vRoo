@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLocation = getLocation;
 const db_1 = require("../../config/db");
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Get a location by ID
  * @param locationId Location ID
@@ -18,7 +22,11 @@ async function getLocation(locationId, orgId) {
         return result.rows[0];
     }
     catch (error) {
-        console.error('Error in getLocation:', error);
+        logger_1.default.error('Error in getLocation:', {
+            error,
+            locationId,
+            orgId
+        });
         throw error;
     }
 }

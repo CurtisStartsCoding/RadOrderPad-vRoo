@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOrderDetails = getOrderDetails;
 const radiology_1 = __importDefault(require("../../services/order/radiology"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 /**
  * Get full details of an order
  * @route GET /api/radiology/orders/:orderId
@@ -27,7 +28,11 @@ async function getOrderDetails(req, res) {
         res.status(200).json(result);
     }
     catch (error) {
-        console.error('Error in getOrderDetails controller:', error);
+        logger_1.default.error('Error in getOrderDetails controller:', {
+            error,
+            orderId: req.params.orderId,
+            orgId: req.user?.orgId
+        });
         if (error instanceof Error) {
             if (error.message.includes('not found')) {
                 res.status(404).json({ message: error.message });

@@ -1,6 +1,7 @@
 import * as clinicalRecordManager from '../clinical-record-manager';
 import * as insuranceManager from '../insurance-manager';
 import { InsuranceUpdateData, InsuranceUpdateResult } from '../types';
+import logger from '../../../../utils/logger';
 
 /**
  * Update insurance information
@@ -29,7 +30,11 @@ export async function updateInsuranceInfo(
       message: 'Insurance information updated successfully'
     };
   } catch (error) {
-    console.error('Error in updateInsuranceInfo:', error);
+    logger.error('Error in updateInsuranceInfo:', {
+      error,
+      orderId,
+      patientId: insuranceData.patient_id
+    });
     throw error;
   }
 }

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import RadiologyOrderService from '../../services/order/radiology';
 import { OrderFilters } from './types';
+import logger from '../../utils/logger';
 
 /**
  * Get incoming orders queue for radiology group
@@ -74,7 +75,10 @@ export async function getIncomingOrders(req: Request, res: Response): Promise<vo
     
     res.status(200).json(result);
   } catch (error) {
-    console.error('Error in getIncomingOrders controller:', error);
+    logger.error('Error in getIncomingOrders controller:', {
+      error,
+      orgId: req.user?.orgId
+    });
     
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });

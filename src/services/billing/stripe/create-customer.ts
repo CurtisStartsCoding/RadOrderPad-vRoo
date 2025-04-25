@@ -1,5 +1,6 @@
 import { queryMainDb } from '../../../config/db';
 import stripeService from './stripe.service';
+import logger from '../../../utils/logger';
 
 /**
  * Create a Stripe customer for an organization and update the organization's billing_id
@@ -31,11 +32,20 @@ export async function createStripeCustomerForOrg(
       [stripeCustomerId, orgId]
     );
     
-    console.log(`[BillingService] Created Stripe customer ${stripeCustomerId} for organization ${orgId}`);
+    logger.info(`[BillingService] Created Stripe customer`, {
+      stripeCustomerId,
+      orgId,
+      orgName
+    });
     
     return stripeCustomerId;
   } catch (error) {
-    console.error('[BillingService] Error creating Stripe customer:', error);
+    logger.error('[BillingService] Error creating Stripe customer:', {
+      error,
+      orgId,
+      orgName,
+      orgEmail
+    });
     throw new Error(`Failed to create Stripe customer: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

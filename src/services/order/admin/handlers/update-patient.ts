@@ -1,6 +1,7 @@
 import * as clinicalRecordManager from '../clinical-record-manager';
 import * as patientManager from '../patient-manager';
 import { PatientUpdateData, PatientUpdateResult } from '../types';
+import logger from '../../../../utils/logger';
 
 /**
  * Update patient information
@@ -29,7 +30,11 @@ export async function updatePatientInfo(
       message: 'Patient information updated successfully'
     };
   } catch (error) {
-    console.error('Error in updatePatientInfo:', error);
+    logger.error('Error in updatePatientInfo:', {
+      error,
+      orderId,
+      patientId: patientData.id
+    });
     throw error;
   }
 }
