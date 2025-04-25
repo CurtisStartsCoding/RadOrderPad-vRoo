@@ -21,7 +21,8 @@ export function extractPartialInformation(responseContent: string): PartialInfor
   // Try to extract ICD-10 codes
   const icd10Matches = responseContent.match(/[A-Z]\d{2}(?:\.\d{1,2})?/g);
   if (icd10Matches) {
-    result.icd10Codes = [...new Set(icd10Matches)].map(code => ({
+    // Use Array.from instead of spread operator with Set
+    result.icd10Codes = Array.from(new Set(icd10Matches)).map(code => ({
       code,
       description: ''
     }));

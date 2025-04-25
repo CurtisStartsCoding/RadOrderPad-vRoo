@@ -20,6 +20,7 @@ function extractCPTCodes(text) {
         // This is a simple heuristic that could be improved
         return code.startsWith('7') || code.startsWith('9');
     });
-    return [...new Set(filteredMatches)];
+    // Use Array.from instead of spread operator with Set
+    return Array.from(new Set(filteredMatches));
 }
 //# sourceMappingURL=extract-cpt-codes.js.map

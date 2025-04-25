@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import registerController from '../controllers/auth/register.controller';
 import authController from '../controllers/auth.controller.js';
+import trialRegisterController from '../controllers/auth/trial/register.controller';
+import trialLoginController from '../controllers/auth/trial/login.controller';
 
 const router = Router();
 
@@ -26,5 +28,19 @@ router.post('/register', authController.register);
  * @access  Public
  */
 router.post('/login', authController.login);
+
+/**
+ * @route   POST /api/auth/trial/register
+ * @desc    Register a new trial user
+ * @access  Public
+ */
+router.post('/trial/register', trialRegisterController.registerTrialUser);
+
+/**
+ * @route   POST /api/auth/trial/login
+ * @desc    Login a trial user
+ * @access  Public
+ */
+router.post('/trial/login', trialLoginController.loginTrialUser);
 
 export default router;

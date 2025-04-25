@@ -1,0 +1,322 @@
+---
+feature:
+  name: "Physician Trial Sandbox"
+  version: "1.0"
+  date: "2025-04-25"
+  description: "Limited trial feature allowing physicians to test the dictation-validation core loop without full registration or PHI involvement"
+
+core_principles:
+  - name: "Modularity & Single Responsibility"
+    description: "Complete separation between trial user data/workflows and production data/workflows"
+  - name: "No PHI Involvement"
+    description: "The trial process does not involve any PHI data"
+  - name: "Limited Access"
+    description: "Trial users have access only to the validation functionality, with a limited number of validations"
+  - name: "Separate Storage"
+    description: "Trial user data is stored only in the radorder_main database, with no interaction with the radorder_phi database"
+
+database:
+  table_name: "trial_users"
+  database: "radorder_main"
+  schema: |
+    CREATE TABLE trial_users (
+      id SERIAL PRIMARY KEY,
+      email TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      first_name TEXT,
+      last_name TEXT,
+      specialty TEXT,
+      validation_count INTEGER NOT NULL DEFAULT 0,
+      max_validations INTEGER NOT NULL DEFAULT 10,
+      created_at TIMESTAMP DEFAULT NOW(),
+      last_validation_at TIMESTAMP NULL
+    );
+    
+    -- Add index on email for faster lookups
+    CREATE INDEX idx_trial_users_email ON trial_users(email);
+  columns:
+    - name: "id"
+      type: "SERIAL"
+      constraints: "PRIMARY KEY"
+      description: "Primary key for the trial user"
+    - name: "email"
+      type: "TEXT"
+      constraints: "NOT NULL, UNIQUE"
+      description: "Trial user email address (used for login)"
+    - name: "password_hash"
+      type: "TEXT"
+      constraints: "NOT NULL"
+      description: "Bcrypt hash of the trial user's password"
+    - name: "first_name"
+      type: "TEXT"
+      description: "Trial user first name"
+    - name: "last_name"
+      type: "TEXT"
+      description: "Trial user last name"
+    - name: "specialty"
+      type: "TEXT"
+      description: "Medical specialty (for trial physicians)"
+    - name: "validation_count"
+      type: "INTEGER"
+      constraints: "NOT NULL, DEFAULT 0"
+      description: "Number of validations performed by the trial user"
+    - name: "max_validations"
+      type: "INTEGER"
+      constraints: "NOT NULL, DEFAULT 10"
+      description: "Maximum number of validations allowed for the trial user"
+    - name: "created_at"
+      type: "TIMESTAMP"
+      constraints: "DEFAULT NOW()"
+      description: "Timestamp when the trial user was created"
+    - name: "last_validation_at"
+      type: "TIMESTAMP"
+      description: "Timestamp of trial user's last validation"
+
+api_endpoints:
+  - name: "Trial Registration"
+    path: "/api/auth/trial/register"
+    method: "POST"
+    authentication: false
+    description: "Register a new trial user"
+    request_body:
+      content_type: "application/json"
+      schema:
+        email: "string (required)"
+        password: "string (required)"
+        firstName: "string"
+        lastName: "string"
+        specialty: "string"
+      example: |
+        {
+          "email": "trial-user@example.com",
+          "password": "password123",
+          "firstName": "John",
+          "lastName": "Doe",
+          "specialty": "Cardiology"
+        }
+    responses:
+      success:
+        status_code: 201
+        content_type: "application/json"
+        schema:
+          success: "boolean"
+          message: "string"
+          token: "string"
+        example: |
+          {
+            "success": true,
+            "message": "Trial account created.",
+            "token": "jwt-token-here"
+          }
+      errors:
+        - status_code: 400
+          description: "Invalid input (missing required fields, invalid email format, password too short)"
+        - status_code: 409
+          description: "Email already registered for a trial or associated with a full account"
+        - status_code: 500
+          description: "Server error"
+    database_interactions:
+      reads:
+        - table: "trial_users"
+          purpose: "Check if email already exists"
+        - table: "users"
+          purpose: "Check if email is associated with a full account"
+      writes:
+        - table: "trial_users"
+          purpose: "Create new trial user record"
+
+  - name: "Trial Login"
+    path: "/api/auth/trial/login"
+    method: "POST"
+    authentication: false
+    description: "Authenticate a trial user and get a JWT token"
+    request_body:
+      content_type: "application/json"
+      schema:
+        email: "string (required)"
+        password: "string (required)"
+      example: |
+        {
+          "email": "trial-user@example.com",
+          "password": "password123"
+        }
+    responses:
+      success:
+        status_code: 200
+        content_type: "application/json"
+        schema:
+          success: "boolean"
+          token: "string"
+        example: |
+          {
+            "success": true,
+            "token": "jwt-token-here"
+          }
+      errors:
+        - status_code: 400
+          description: "Missing required fields"
+        - status_code: 401
+          description: "Invalid email or password"
+        - status_code: 500
+          description: "Server error"
+    database_interactions:
+      reads:
+        - table: "trial_users"
+          purpose: "Retrieve user by email to verify credentials"
+      writes: []
+
+  - name: "Trial Validation"
+    path: "/api/orders/validate/trial"
+    method: "POST"
+    authentication: true
+    auth_type: "Bearer Token (Trial JWT)"
+    description: "Validate a dictation in trial mode"
+    request_body:
+      content_type: "application/json"
+      schema:
+        dictationText: "string (required)"
+      example: |
+        {
+          "dictationText": "Patient with chest pain, shortness of breath. History of hypertension. Please evaluate for possible coronary artery disease."
+        }
+    responses:
+      success:
+        status_code: 200
+        content_type: "application/json"
+        schema:
+          success: "boolean"
+          validationResult:
+            validationStatus: "string"
+            complianceScore: "number"
+            feedback: "string"
+            suggestedICD10Codes: "array of objects"
+            suggestedCPTCodes: "array of objects"
+        example: |
+          {
+            "success": true,
+            "validationResult": {
+              "validationStatus": "needs_clarification",
+              "complianceScore": 5,
+              "feedback": "Dictation lacks specific chest pain characteristics...",
+              "suggestedICD10Codes": [
+                {
+                  "code": "R07.9",
+                  "description": "Chest pain, unspecified"
+                },
+                {
+                  "code": "R06.02",
+                  "description": "Shortness of breath"
+                },
+                {
+                  "code": "I10",
+                  "description": "Essential (primary) hypertension"
+                }
+              ],
+              "suggestedCPTCodes": [
+                {
+                  "code": "71020",
+                  "description": "Radiologic examination, chest, two views, frontal and lateral"
+                },
+                {
+                  "code": "93000",
+                  "description": "Electrocardiogram, routine ECG with at least 12 leads; with interpretation and report"
+                }
+              ]
+            }
+          }
+      errors:
+        - status_code: 400
+          description: "Missing or invalid dictation text"
+        - status_code: 401
+          description: "Invalid or expired token"
+        - status_code: 403
+          description: "Validation limit reached"
+        - status_code: 500
+          description: "Server error"
+        - status_code: 503
+          description: "LLM service unavailable"
+    database_interactions:
+      reads:
+        - table: "trial_users"
+          purpose: "Check validation count against max_validations"
+        - table: "prompt_templates"
+          purpose: "Get validation prompt template"
+        - table: "medical_*"
+          purpose: "Reference medical code data"
+      writes:
+        - table: "trial_users"
+          purpose: "Update validation_count and last_validation_at"
+        - table: "llm_validation_logs"
+          purpose: "Log validation attempt"
+
+authentication:
+  jwt_structure:
+    trialUserId: "number"
+    userId: "number (mapped from trialUserId for compatibility)"
+    orgId: "number (0 for trial users)"
+    role: "string ('trial_physician')"
+    email: "string"
+    specialty: "string"
+    isTrial: "boolean (true)"
+  example: |
+    {
+      "trialUserId": 123,
+      "userId": 123,
+      "orgId": 0,
+      "role": "trial_physician",
+      "email": "trial-user@example.com",
+      "specialty": "Cardiology",
+      "isTrial": true
+    }
+
+implementation:
+  controllers:
+    - path: "src/controllers/auth/trial/register.controller.ts"
+      description: "Handles trial user registration"
+    - path: "src/controllers/auth/trial/login.controller.ts"
+      description: "Handles trial user login"
+    - path: "src/controllers/order-validation/trial-validate.controller.ts"
+      description: "Handles trial validation"
+  services:
+    - path: "src/services/auth/trial/register-trial-user.service.ts"
+      description: "Registers a new trial user"
+    - path: "src/services/auth/trial/login-trial-user.service.ts"
+      description: "Authenticates a trial user"
+    - path: "src/services/order/validation/trial/run-trial-validation.service.ts"
+      description: "Runs validation for trial users"
+  middleware:
+    - path: "src/middleware/auth/authenticate-jwt.ts"
+      description: "Modified to handle trial JWT tokens"
+      changes: |
+        if (decoded.isTrial === true) {
+          req.user = {
+            userId: decoded.trialUserId,
+            orgId: 0,
+            role: 'trial_physician',
+            email: decoded.email,
+            isTrial: true,
+            specialty: decoded.specialty
+          };
+        }
+
+testing:
+  scripts:
+    - path: "debug-scripts/vercel-tests/test-trial-feature.js"
+      description: "Tests the trial registration, login, and validation endpoints"
+    - path: "debug-scripts/vercel-tests/run-trial-feature-test.bat"
+      description: "Batch script to run the test"
+    - path: "debug-scripts/vercel-tests/run-trial-feature-test.sh"
+      description: "Shell script to run the test"
+  validation_limit_test:
+    command: "node debug-scripts/vercel-tests/test-trial-feature.js limit"
+    description: "Tests the validation limit enforcement"
+
+frontend_integration:
+  suggestions:
+    - "Add a 'Try it now' button on the landing page"
+    - "Create a simplified registration form that collects only email, password, name, and specialty"
+    - "Implement a trial validation page that shows the remaining validation count"
+    - "Display a prompt to upgrade when the validation limit is reached"
+
+upgrade_path:
+  description: "When a trial user wants to upgrade to a full account, they need to contact an administrator who can create a full account for them. The trial user's email cannot be used for a full account until the trial account is deleted."

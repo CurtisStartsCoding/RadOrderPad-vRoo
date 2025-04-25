@@ -29,7 +29,25 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key_here') as AuthTokenPayload;
     logger.debug('Decoded token:', { userId: decoded.userId, role: decoded.role });
     
-    req.user = decoded;
+    if (decoded.isTrial === true && decoded.trialUserId) {
+      req.user = {
+        userId: decoded.trialUserId, // Map trialUserId to userId for simplicity downstream
+        orgId: 0, // No org for trial users
+        role: 'trial_physician', // Assign a specific role
+        email: decoded.email,
+        isTrial: true, // Add the flag
+        specialty: decoded.specialty, // Pass specialty along
+        trialUserId: decoded.trialUserId // Keep the original trialUserId
+      };
+    } else {
+      req.user = {
+        userId: decoded.userId,
+        orgId: decoded.orgId,
+        role: decoded.role,
+        email: decoded.email,
+        isTrial: false // Explicitly false
+      };
+    }
     next();
   } catch (error) {
     logger.error('JWT verification error:', { error });

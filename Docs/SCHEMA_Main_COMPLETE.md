@@ -1,7 +1,7 @@
 # SCHEMA_Main.md (Reconciled Definitive - COMPLETE)
 
-**Version:** 1.3 (Standardized Admin Roles)
-**Date:** 2025-04-11
+**Version:** 1.4 (Trial Feature Implementation)
+**Date:** 2025-04-25
 
 This document defines the **authoritative and fully expanded reconciled schema** for the **`radorder_main`** database (Non-PHI). It includes all tables and columns based on the initial specification and later feature requirements.
 
@@ -75,6 +75,21 @@ This document defines the **authoritative and fully expanded reconciled schema**
 | `invitation_sent_at`     | `timestamp without time zone` |                                           | Timestamp when invitation was sent                                          |
 | `invitation_accepted_at` | `timestamp without time zone` |                                           | Timestamp when invitation was accepted                                      |
 | `phone_number`           | `text`                      |                                           | User contact phone number                                                   |
+
+**Table: `trial_users`**
+
+Column                   | Type                        | Constraints                               | Description                                                                 |
+------------------------ | --------------------------- | ----------------------------------------- | --------------------------------------------------------------------------- |
+`id`                     | `integer`                   | `PRIMARY KEY`, Auto-incrementing          | Primary key for the trial user                                              |
+`email`                  | `text`                      | `NOT NULL`, `UNIQUE`                      | Trial user email address (used for login)                                   |
+`password_hash`          | `text`                      | `NOT NULL`                                | Hashed trial user password                                                  |
+`first_name`             | `text`                      |                                           | Trial user first name                                                       |
+`last_name`              | `text`                      |                                           | Trial user last name                                                        |
+`specialty`              | `text`                      |                                           | Medical specialty (for trial physicians)                                    |
+`validation_count`       | `integer`                   | `NOT NULL`, `DEFAULT 0`                   | Number of validations performed by the trial user                           |
+`max_validations`        | `integer`                   | `NOT NULL`, `DEFAULT 10`                  | Maximum number of validations allowed for the trial user                    |
+`created_at`             | `timestamp without time zone` | `DEFAULT now()`                           | Timestamp when the trial user was created                                   |
+`last_validation_at`     | `timestamp without time zone` |                                           | Timestamp of trial user's last validation                                   |
 
 **Table: `user_locations`** *(NEW - Optional Join Table for Multi-Location)*
 

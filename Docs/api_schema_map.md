@@ -1,7 +1,7 @@
 # API Endpoint to Schema Map
 
-**Version:** 1.5 - Credit Consumption Refactoring
-**Date:** 2025-04-14
+**Version:** 1.6 - Trial Feature Implementation
+**Date:** 2025-04-25
 
 This document maps core API endpoints to the primary database tables they interact with in `radorder_main` (Main) and `radorder_phi` (PHI), based on the final reconciled schemas and the implemented override/draft order flow. This is not exhaustive but covers key interactions. Assumes RESTful endpoints.
 
@@ -18,6 +18,13 @@ This document maps core API endpoints to the primary database tables they intera
     -   Writes: `sessions` (Main), `refresh_tokens` (Main), `users` (update `last_login`)
 -   **`POST /api/auth/logout`**
     -   Writes: `refresh_tokens` (revoke), `sessions` (delete)
+-   **`POST /api/auth/trial/register`**
+    -   Writes: `trial_users` (Main)
+    -   Reads: `trial_users` (Main), `users` (Main) (Check uniqueness)
+    -   **Constraint:** Public endpoint for trial user registration.
+-   **`POST /api/auth/trial/login`**
+    -   Reads: `trial_users` (Main)
+    -   **Note:** No session tracking for trial users, just JWT token generation.
 -   **`POST /api/auth/refresh`**
     -   Reads: `refresh_tokens` (Main), `users` (Main)
     -   Writes: `sessions` (Main), `refresh_tokens` (rotate/update)
@@ -94,6 +101,10 @@ This document maps core API endpoints to the primary database tables they intera
 -   **`POST /api/orders/validate`** (Submit dictation for validation/retry/override)
     -   Reads: `patients` (PHI), `prompt_templates`(Main), `prompt_assignments`(Main), `medical_*` tables (Main), Redis Cache, `orders` (PHI - Check for existing draft)
     -   Writes: **`orders` (PHI - Create draft on first call)**, `validation_attempts`(PHI), `llm_validation_logs`(Main), `order_history` (PHI - log validation attempt)
+-   **`POST /api/orders/validate/trial`** (Trial user validation)
+    -   Reads: `trial_users` (Main), `prompt_templates`(Main), `medical_*` tables (Main), Redis Cache
+    -   Writes: `trial_users` (Main - update validation_count), `llm_validation_logs`(Main)
+    -   **Constraint:** Limited to trial users, no PHI storage, validation count enforced
 -   **`GET /api/orders`** (View orders)
     -   Reads: `orders` (PHI)
 -   **`GET /api/orders/{orderId}`** (View specific order)

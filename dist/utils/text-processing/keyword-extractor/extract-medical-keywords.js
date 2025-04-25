@@ -46,7 +46,8 @@ function extractMedicalKeywords(text) {
     const medicalCodes = (0, code_extractor_1.extractMedicalCodes)(text);
     keywords.push(...medicalCodes);
     // Remove duplicates and convert to lowercase for consistency
-    const uniqueKeywords = [...new Set(keywords.map(k => k.toLowerCase()))];
+    // Use Array.from instead of spread operator with Set
+    const uniqueKeywords = Array.from(new Set(keywords.map(k => k.toLowerCase())));
     return uniqueKeywords;
 }
 //# sourceMappingURL=extract-medical-keywords.js.map

@@ -2,6 +2,7 @@ import { User, UserRegistrationDTO, UserLoginDTO, OrganizationRegistrationDTO, L
 import { login } from './user';
 import { registerOrganization } from './organization';
 import { generateToken } from './token';
+import { registerTrialUser, loginTrialUser } from './trial';
 
 /**
  * Service for handling authentication-related operations
@@ -23,6 +24,26 @@ export class AuthService {
   async login(loginData: UserLoginDTO): Promise<LoginResponse> {
     return login(loginData);
   }
+
+  /**
+   * Register a trial user
+   */
+  async registerTrialUser(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    specialty: string
+  ): Promise<{ token: string }> {
+    return registerTrialUser(email, password, firstName, lastName, specialty);
+  }
+  
+  /**
+   * Login a trial user
+   */
+  async loginTrialUser(email: string, password: string): Promise<{ token: string }> {
+    return loginTrialUser(email, password);
+  }
   
   /**
    * Generate a JWT token for a user
@@ -43,6 +64,9 @@ export * from './organization';
 
 // Export token functionality
 export * from './token';
+
+// Export trial functionality
+export * from './trial';
 
 // Export default instance
 export default new AuthService();

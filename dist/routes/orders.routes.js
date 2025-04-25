@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const order_validation_controller_1 = __importDefault(require("../controllers/order-validation.controller"));
 const order_management_1 = __importDefault(require("../controllers/order-management"));
+const trial_validate_controller_1 = __importDefault(require("../controllers/order-validation/trial-validate.controller"));
 const auth_1 = require("../middleware/auth");
 const router = (0, express_1.Router)();
 /**
@@ -38,5 +39,11 @@ router.get('/:orderId', auth_1.authenticateJWT, order_management_1.default.getOr
  * @access  Private (Admin)
  */
 router.post('/:orderId/admin-update', auth_1.authenticateJWT, (0, auth_1.authorizeRole)(['admin']), order_management_1.default.adminUpdate);
+/**
+ * @route   POST /api/orders/validate/trial
+ * @desc    Validate an order in trial mode
+ * @access  Private (Trial users only)
+ */
+router.post('/validate/trial', auth_1.authenticateJWT, trial_validate_controller_1.default.validateTrialOrder);
 exports.default = router;
 //# sourceMappingURL=orders.routes.js.map

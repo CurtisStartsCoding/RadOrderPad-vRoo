@@ -11,6 +11,7 @@ function extractICD10Codes(text) {
     // optionally followed by a period and 1-2 more digits
     const icd10Regex = /\b[A-Z]\d{2}(?:\.\d{1,2})?\b/g;
     const matches = text.match(icd10Regex);
-    return matches ? [...new Set(matches)] : [];
+    // Use Array.from instead of spread operator with Set
+    return matches ? Array.from(new Set(matches)) : [];
 }
 //# sourceMappingURL=extract-icd10-codes.js.map

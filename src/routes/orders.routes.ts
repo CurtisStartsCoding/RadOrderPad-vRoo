@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import orderValidationController from '../controllers/order-validation.controller';
 import orderManagementController from '../controllers/order-management';
+import trialValidateController from '../controllers/order-validation/trial-validate.controller';
 import { authenticateJWT, authorizeRole } from '../middleware/auth';
 
 const router = Router();
@@ -61,6 +62,17 @@ router.post(
   authenticateJWT,
   authorizeRole(['admin']),
   orderManagementController.adminUpdate
+);
+
+/**
+ * @route   POST /api/orders/validate/trial
+ * @desc    Validate an order in trial mode
+ * @access  Private (Trial users only)
+ */
+router.post(
+  '/validate/trial',
+  authenticateJWT,
+  trialValidateController.validateTrialOrder
 );
 
 export default router;

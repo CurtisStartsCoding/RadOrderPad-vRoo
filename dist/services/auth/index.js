@@ -18,6 +18,7 @@ exports.AuthService = void 0;
 const user_1 = require("./user");
 const organization_1 = require("./organization");
 const token_1 = require("./token");
+const trial_1 = require("./trial");
 /**
  * Service for handling authentication-related operations
  */
@@ -35,6 +36,18 @@ class AuthService {
         return (0, user_1.login)(loginData);
     }
     /**
+     * Register a trial user
+     */
+    async registerTrialUser(email, password, firstName, lastName, specialty) {
+        return (0, trial_1.registerTrialUser)(email, password, firstName, lastName, specialty);
+    }
+    /**
+     * Login a trial user
+     */
+    async loginTrialUser(email, password) {
+        return (0, trial_1.loginTrialUser)(email, password);
+    }
+    /**
      * Generate a JWT token for a user
      */
     generateToken(user) {
@@ -50,6 +63,8 @@ __exportStar(require("./user"), exports);
 __exportStar(require("./organization"), exports);
 // Export token functionality
 __exportStar(require("./token"), exports);
+// Export trial functionality
+__exportStar(require("./trial"), exports);
 // Export default instance
 exports.default = new AuthService();
 //# sourceMappingURL=index.js.map

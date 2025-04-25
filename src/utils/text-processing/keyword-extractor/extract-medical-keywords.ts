@@ -55,7 +55,8 @@ export function extractMedicalKeywords(text: string): string[] {
   keywords.push(...medicalCodes);
   
   // Remove duplicates and convert to lowercase for consistency
-  const uniqueKeywords = [...new Set(keywords.map(k => k.toLowerCase()))];
+  // Use Array.from instead of spread operator with Set
+  const uniqueKeywords = Array.from(new Set(keywords.map(k => k.toLowerCase())));
   
   return uniqueKeywords;
 }

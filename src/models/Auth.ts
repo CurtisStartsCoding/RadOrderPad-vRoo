@@ -6,6 +6,9 @@ export interface AuthTokenPayload {
   orgId: number;
   role: string;
   email: string;
+  isTrial?: boolean;
+  specialty?: string;
+  trialUserId?: number;
 }
 
 export interface LoginResponse {
