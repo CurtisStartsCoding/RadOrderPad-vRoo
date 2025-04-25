@@ -1,5 +1,22 @@
+/**
+ * Resilient Organization Service
+ * 
+ * This module provides a schema-resilient implementation of the organization service.
+ * It uses the schema compatibility utilities to handle potential schema differences
+ * between environments, making the code more robust against database schema changes.
+ * 
+ * This implementation specifically addresses the issue where the 'status' column
+ * might not exist in all environments, as documented in DOCS/database-schema-compatibility.md.
+ */
+
 import { queryMainDb } from '../../config/db';
 import logger from '../../utils/logger';
+import enhancedLogger from '../../utils/enhanced-logger';
+import { 
+  buildResilientSelectQuery, 
+  addDefaultValuesToArray,
+  logSchemaCompatibilityError
+} from '../../utils/schema-compatibility';
 
 /**
  * Interface for organization response
@@ -23,7 +40,7 @@ export interface OrganizationResponse {
   billing_id?: string;
   credit_balance?: number;
   subscription_tier?: string;
-  status?: string; // Made optional since it doesn't exist in the database
+  status?: string;
   created_at: string;
   updated_at: string;
 }
@@ -55,7 +72,7 @@ export interface UserResponse {
   firstName: string;
   lastName: string;
   role: string;
-  status: string;
+  status?: string;
   npi?: string;
   specialty?: string;
   phone_number?: string;
@@ -68,6 +85,8 @@ export interface UserResponse {
 
 /**
  * Get organization details for the current user
+ * This implementation is resilient to schema differences
+ * 
  * @param orgId Organization ID
  * @returns Promise with organization details, locations, and users
  */
@@ -76,41 +95,45 @@ export async function getMyOrganization(orgId: number): Promise<{
   locations: LocationResponse[];
   users: UserResponse[];
 } | null> {
+  enhancedLogger.debug('Getting organization details', { orgId });
+  
   try {
-    // First check if the status column exists in the organizations table
-    const checkStatusColumn = await queryMainDb(
-      `SELECT column_name
-       FROM information_schema.columns
-       WHERE table_name = 'organizations' AND column_name = 'status'`
+    // Define the columns we want to select from the organizations table
+    const orgColumns = [
+      'id', 'name', 'type', 'npi', 'tax_id', 'address_line1', 'address_line2',
+      'city', 'state', 'zip_code', 'phone_number', 'fax_number', 'contact_email',
+      'website', 'logo_url', 'billing_id', 'credit_balance', 'subscription_tier',
+      'status', 'created_at', 'updated_at'
+    ];
+    
+    // Build a resilient query that will work even if some columns don't exist
+    const orgQuery = await buildResilientSelectQuery(
+      'organizations',
+      orgColumns,
+      'id = $1'
     );
     
-    const statusColumnExists = checkStatusColumn.rows.length > 0;
-    
-    // Query the organizations table for the organization with the given ID
-    // Dynamically build the query based on whether the status column exists
-    const orgQuery = `SELECT
-      id, name, type, npi, tax_id, address_line1, address_line2,
-      city, state, zip_code, phone_number, fax_number, contact_email,
-      website, logo_url, billing_id, credit_balance, subscription_tier,
-      ${statusColumnExists ? 'status,' : ''} created_at, updated_at
-     FROM organizations
-     WHERE id = $1`;
-    
+    enhancedLogger.debug('Executing organization query:', { orgId, query: orgQuery });
     const orgResult = await queryMainDb(orgQuery, [orgId]);
 
     // If no organization is found, return null
     if (orgResult.rows.length === 0) {
+      enhancedLogger.debug('No organization found with the given ID', { orgId });
       return null;
     }
 
-    const organization = orgResult.rows[0];
+    // Add default values for potentially missing columns
+    const organization = addDefaultValuesToArray<OrganizationResponse>([orgResult.rows[0]], {
+      status: 'active'
+    })[0];
     
-    // If status column doesn't exist, add a default value
-    if (!statusColumnExists && !organization.status) {
-      organization.status = 'active'; // Default value
-    }
+    enhancedLogger.debug('Retrieved organization data with defaults applied', { 
+      orgId, 
+      hasStatusColumn: 'status' in orgResult.rows[0]
+    });
 
     // Query the locations table for locations belonging to the organization
+    enhancedLogger.debug('Querying locations for organization', { orgId });
     const locationsResult = await queryMainDb(
       `SELECT *
        FROM locations
@@ -119,26 +142,50 @@ export async function getMyOrganization(orgId: number): Promise<{
       [orgId]
     );
 
-    // Query the users table for users belonging to the organization
-    const usersResult = await queryMainDb(
-      `SELECT 
-         id, email, first_name as "firstName", last_name as "lastName", 
-         role, status, npi, specialty, phone_number, organization_id,
-         created_at, updated_at, last_login, email_verified
-       FROM users
-       WHERE organization_id = $1
-       ORDER BY last_name, first_name`,
-      [orgId]
+    // Define the columns we want to select from the users table
+    const userColumns = [
+      'id', 'email', 'first_name as "firstName"', 'last_name as "lastName"', 
+      'role', 'status', 'npi', 'specialty', 'phone_number', 'organization_id',
+      'created_at', 'updated_at', 'last_login', 'email_verified'
+    ];
+    
+    // Build a resilient query for users that will work even if some columns don't exist
+    const usersQuery = await buildResilientSelectQuery(
+      'users',
+      userColumns,
+      'organization_id = $1',
+      'last_name, first_name'
     );
+    
+    // Query the users table for users belonging to the organization
+    enhancedLogger.debug('Querying users for organization', { orgId, query: usersQuery });
+    const usersResult = await queryMainDb(usersQuery, [orgId]);
 
-    // Return the organization, locations, and users
+    // Add default values for potentially missing columns in users
+    const users = addDefaultValuesToArray<UserResponse>(usersResult.rows, {
+      status: 'active'
+    });
+    
+    enhancedLogger.debug('Successfully retrieved organization data', { 
+      orgId,
+      locationCount: locationsResult.rows.length,
+      userCount: users.length
+    });
+    
     return {
       organization,
       locations: locationsResult.rows,
-      users: usersResult.rows
+      users
     };
   } catch (error) {
     logger.error(`Error getting organization with ID ${orgId}:`, error);
+    
+    // Log enhanced details for schema compatibility errors
+    logSchemaCompatibilityError(error, {
+      orgId,
+      service: 'getMyOrganization'
+    });
+    
     throw error;
   }
 }

@@ -12,7 +12,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 
 // Configuration
-const API_URL = process.env.API_BASE_URL || 'http://localhost:3000/api';
+const API_URL = process.env.API_BASE_URL || 'https://api.radorderpad.com/api';
 const JWT_SECRET = process.env.JWT_SECRET || '79e90196beeb1beccf61381b2ee3c8038905be3b4058fdf0f611eb78602a5285a7ab7a2a43e38853d5d65f2cfb2d8f955dad73dc67ffb1f0fb6f6e7282a3e112';
 
 // Create results directory if it doesn't exist
@@ -157,14 +157,27 @@ async function submitOrderForValidation(testCase) {
     payload.orderId = testCase.orderId;
   }
   
-  const response = await axios.post(`${API_URL}/orders/validate`, payload, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PHYSICIAN_TOKEN}`
-    }
-  });
+  console.log(`Connecting to API URL: ${API_URL}`);
   
-  return response.data;
+  try {
+    const response = await axios.post(`${API_URL}/orders/validate`, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${PHYSICIAN_TOKEN}`
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error(`Error details: ${error.message}`);
+    if (error.code) {
+      console.error(`Error code: ${error.code}`);
+    }
+    if (error.config) {
+      console.error(`Request URL: ${error.config.url}`);
+    }
+    throw error;
+  }
 }
 
 /**

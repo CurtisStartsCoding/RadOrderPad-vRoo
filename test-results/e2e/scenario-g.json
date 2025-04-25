@@ -1,8 +1,8 @@
 {
-  "orgId": "org_ref_a",
-  "adminId": "user_admin_ref_a",
-  "adminToken": "mock_token_database_2onl1unb",
-  "uploadUrl": "https://mock-s3-bucket.amazonaws.com/uploads/pd1vinplv4",
-  "fileKey": "uploads/dwntdvsqzag/test-document.pdf",
-  "documentId": "doc_mock_6672dzkw"
+  "orgId": "org_a61cfpxl",
+  "adminId": "user_cdhtddr0",
+  "adminToken": "mock_token_2wbchm007n",
+  "uploadUrl": "https://example-bucket.s3.amazonaws.com/uploads/mock-file-key",
+  "fileKey": "uploads/mock-file-key",
+  "documentId": "doc_txsjinkp"
 }

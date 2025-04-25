@@ -8,8 +8,8 @@
  * all environments. See DOCS/database-schema-compatibility.md for details.
  */
 
-// Export the get-my-organization service from the fixed implementation
-import { getMyOrganization } from './get-my-organization-fixed.js';
+// Export the get-my-organization service
+import { getMyOrganization } from './get-my-organization.js';
 
 // Export the update-organization-profile service
 import { updateOrganizationProfile } from './update-organization-profile.service.js';

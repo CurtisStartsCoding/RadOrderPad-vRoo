@@ -3,7 +3,7 @@ const path = require('path');
 
 // Configuration
 const outputFile = 'all-code.txt';
-const sourceDir = 'vercel-deploy';
+const sourceDir = 'dist';
 const excludeDirs = [
   'node_modules', '.git', 'logs', 'temp', 'deployment/node_modules'
 ];

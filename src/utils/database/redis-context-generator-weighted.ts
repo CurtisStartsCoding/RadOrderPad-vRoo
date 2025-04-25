@@ -29,6 +29,7 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
     return 'No specific medical context found in the input text.';
   }
   
+  const startTime = Date.now();
   logger.info('Generating database context with RedisSearch using keywords:', keywords);
   
   try {
@@ -61,8 +62,10 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
     
     // Search for ICD-10 codes using RedisSearch with weighted relevance
     logger.info('Searching for ICD-10 codes with weighted RedisSearch...');
+    const icd10SearchStartTime = Date.now();
     const icd10RowsWithScores = await searchICD10CodesWithScores(keywords, categorizedKeywords);
-    logger.info(`Found ${icd10RowsWithScores.length} relevant ICD-10 codes with weighted RedisSearch`);
+    const icd10SearchDuration = Date.now() - icd10SearchStartTime;
+    logger.info(`Found ${icd10RowsWithScores.length} relevant ICD-10 codes with weighted RedisSearch (took ${icd10SearchDuration}ms)`);
     
     // Log the top ICD-10 results with scores for debugging
     if (icd10RowsWithScores.length > 0) {
@@ -74,8 +77,10 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
     
     // Search for CPT codes using RedisSearch with weighted relevance
     logger.info('Searching for CPT codes with weighted RedisSearch...');
+    const cptSearchStartTime = Date.now();
     const cptRowsWithScores = await searchCPTCodesWithScores(keywords, categorizedKeywords);
-    logger.info(`Found ${cptRowsWithScores.length} relevant CPT codes with weighted RedisSearch`);
+    const cptSearchDuration = Date.now() - cptSearchStartTime;
+    logger.info(`Found ${cptRowsWithScores.length} relevant CPT codes with weighted RedisSearch (took ${cptSearchDuration}ms)`);
     
     // Log the top CPT results with scores for debugging
     if (cptRowsWithScores.length > 0) {
@@ -87,12 +92,14 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
     
     // Get mappings between ICD-10 and CPT codes with weighted relevance
     logger.info('Getting mappings with weighted search from Redis...');
+    const mappingsSearchStartTime = Date.now();
     const mappingRowsWithScores = await getMappingsWithScores(
-      icd10RowsWithScores, 
+      icd10RowsWithScores,
       cptRowsWithScores,
       keywords
     );
-    logger.info(`Found ${mappingRowsWithScores.length} relevant mappings with weighted search from Redis`);
+    const mappingsSearchDuration = Date.now() - mappingsSearchStartTime;
+    logger.info(`Found ${mappingRowsWithScores.length} relevant mappings with weighted search from Redis (took ${mappingsSearchDuration}ms)`);
     
     // Log the top mapping results with scores for debugging
     if (mappingRowsWithScores.length > 0) {
@@ -104,11 +111,13 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
     
     // Get markdown docs for ICD-10 codes with weighted relevance
     logger.info('Getting markdown docs with weighted search from Redis...');
+    const markdownSearchStartTime = Date.now();
     const markdownRowsWithScores = await getMarkdownDocsWithScores(
       icd10RowsWithScores,
       keywords
     );
-    logger.info(`Found ${markdownRowsWithScores.length} relevant markdown docs with weighted search from Redis`);
+    const markdownSearchDuration = Date.now() - markdownSearchStartTime;
+    logger.info(`Found ${markdownRowsWithScores.length} relevant markdown docs with weighted search from Redis (took ${markdownSearchDuration}ms)`);
     
     // Log the top markdown results with scores for debugging
     if (markdownRowsWithScores.length > 0) {
@@ -133,12 +142,29 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
     const markdownRows: MarkdownRow[] = markdownRowsWithScores;
     
     // Format the database context
-    return formatDatabaseContext(
+    const formatStartTime = Date.now();
+    const result = formatDatabaseContext(
       icd10Rows,
       cptRows,
       mappingRows,
       markdownRows
     );
+    const formatDuration = Date.now() - formatStartTime;
+    
+    // Log total duration
+    const totalDuration = Date.now() - startTime;
+    logger.info(`Total Redis context generation took ${totalDuration}ms`, {
+      totalDuration,
+      icd10SearchDuration,
+      cptSearchDuration,
+      mappingsSearchDuration,
+      markdownSearchDuration,
+      formatDuration,
+      keywordCount: keywords.length,
+      resultSize: result.length
+    });
+    
+    return result;
   } catch (error) {
     // If RedisSearch fails, fall back to PostgreSQL
     logger.error('Error using RedisSearch for context generation:', error);
@@ -171,6 +197,7 @@ export async function generateDatabaseContextWithRedis(keywords: string[]): Prom
  * @returns Formatted database context string
  */
 async function fallbackToPostgres(keywords: string[]): Promise<string> {
+  const fallbackStartTime = Date.now();
   logger.info('CONTEXT_PATH: Executing PostgreSQL weighted search fallback path');
   
   // Add more detailed logging for monitoring and testing
@@ -203,12 +230,25 @@ async function fallbackToPostgres(keywords: string[]): Promise<string> {
     }
     
     // Format the database context
-    return formatDatabaseContext(
+    const formatStartTime = Date.now();
+    const formattedResult = formatDatabaseContext(
       result.icd10Rows,
       result.cptRows,
       result.mappingRows,
       result.markdownRows
     );
+    const formatDuration = Date.now() - formatStartTime;
+    
+    // Log total duration for the fallback path
+    const totalFallbackDuration = Date.now() - fallbackStartTime;
+    logger.info(`Total PostgreSQL fallback context generation took ${totalFallbackDuration}ms`, {
+      totalDuration: totalFallbackDuration,
+      formatDuration,
+      keywordCount: keywords.length,
+      resultSize: formattedResult.length
+    });
+    
+    return formattedResult;
   } catch (error) {
     logger.error('Error in PostgreSQL weighted search fallback for context generation:', error);
     
