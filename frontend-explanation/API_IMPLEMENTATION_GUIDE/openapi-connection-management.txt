@@ -1,0 +1,629 @@
+openapi: 3.1.0
+info:
+  title: RadOrderPad API - Connection Management Focus
+  description: |
+    API for the RadOrderPad application, with a focus on connection management
+    between referring organizations and radiology organizations.
+  version: 1.0.0
+  contact:
+    name: RadOrderPad Support
+    email: support@radorderpad.com
+
+servers:
+  - url: /api
+    description: Base API path
+
+components:
+  securitySchemes:
+    jwtBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from login or registration
+
+  schemas:
+    # Connection schemas
+    Connection:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, rejected, inactive]
+        requestingOrganizationId:
+          type: integer
+          format: int64
+        targetOrganizationId:
+          type: integer
+          format: int64
+        requestingOrganizationName:
+          type: string
+        targetOrganizationName:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ConnectionDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, rejected, inactive]
+        requestingOrganizationId:
+          type: integer
+          format: int64
+        targetOrganizationId:
+          type: integer
+          format: int64
+        requestingOrganizationName:
+          type: string
+        targetOrganizationName:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        requestingOrganization:
+          $ref: '#/components/schemas/OrganizationSummary'
+        targetOrganization:
+          $ref: '#/components/schemas/OrganizationSummary'
+
+    OrganizationSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          type: string
+          enum: [referring_practice, radiology_group]
+        contact_email:
+          type: string
+        phone_number:
+          type: string
+
+    ConnectionRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        initiatingOrgId:
+          type: integer
+          format: int64
+        initiatingOrgName:
+          type: string
+        initiatedBy:
+          type: string
+        initiatorEmail:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ConnectionCreateRequest:
+      type: object
+      required:
+        - targetOrgId
+      properties:
+        targetOrgId:
+          type: integer
+          format: int64
+        notes:
+          type: string
+
+    ConnectionUpdateRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [pending, active, rejected, inactive]
+
+    # Error response
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        code:
+          type: string
+        status:
+          type: integer
+          format: int32
+
+paths:
+  # List connections endpoint
+  /connections:
+    get:
+      tags:
+        - Connection Management
+      summary: List connections
+      description: |
+        Retrieves a list of connections for the current organization. Connections represent
+        established relationships that allow referring organizations to send orders to
+        specific radiology organizations.
+      operationId: listConnections
+      security:
+        - jwtBearerAuth: []
+      responses:
+        '200':
+          description: Connections retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connections:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Connection'
+              example:
+                connections:
+                  - id: "conn_123456"
+                    status: "active"
+                    requestingOrganizationId: 1
+                    targetOrganizationId: 2
+                    requestingOrganizationName: "Test Organization"
+                    targetOrganizationName: "Test Radiology Group"
+                    notes: "Connection for testing"
+                    createdAt: "2025-04-13T16:34:44.148Z"
+                    updatedAt: "2025-04-13T16:34:44.148Z"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    # Create connection request endpoint
+    post:
+      tags:
+        - Connection Management
+      summary: Create connection request
+      description: |
+        Creates a new connection request from the current organization to a target organization.
+        This is the first step in establishing a connection between two organizations.
+      operationId: createConnectionRequest
+      security:
+        - jwtBearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionCreateRequest'
+            example:
+              targetOrgId: 2
+              notes: "Connection request for testing"
+      responses:
+        '201':
+          description: Connection request created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  connection:
+                    $ref: '#/components/schemas/Connection'
+              example:
+                success: true
+                connection:
+                  id: "conn_123456"
+                  status: "pending"
+                  requestingOrganizationId: 1
+                  targetOrganizationId: 2
+                  requestingOrganizationName: "Test Organization"
+                  targetOrganizationName: "Test Radiology Group"
+                  notes: "Connection request for testing"
+                  createdAt: "2025-04-22T17:28:44.148Z"
+                  updatedAt: "2025-04-22T17:28:44.148Z"
+        '400':
+          description: Invalid request or connection already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Target organization not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Get connection details endpoint
+  /connections/{connectionId}:
+    get:
+      tags:
+        - Connection Management
+      summary: Get connection details
+      description: |
+        Retrieves detailed information about a specific connection, including
+        information about both the requesting and target organizations.
+      operationId: getConnectionDetails
+      security:
+        - jwtBearerAuth: []
+      parameters:
+        - name: connectionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the connection to retrieve
+      responses:
+        '200':
+          description: Connection details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connection:
+                    $ref: '#/components/schemas/ConnectionDetail'
+              example:
+                connection:
+                  id: "conn_123456"
+                  status: "active"
+                  requestingOrganizationId: 1
+                  targetOrganizationId: 2
+                  requestingOrganizationName: "Test Organization"
+                  targetOrganizationName: "Test Radiology Group"
+                  notes: "Connection for testing"
+                  createdAt: "2025-04-13T16:34:44.148Z"
+                  updatedAt: "2025-04-13T16:34:44.148Z"
+                  requestingOrganization:
+                    id: 1
+                    name: "Test Organization"
+                    type: "referring"
+                    contact_email: "contact@testorg.com"
+                    phone_number: "555-123-4567"
+                  targetOrganization:
+                    id: 2
+                    name: "Test Radiology Group"
+                    type: "radiology_group"
+                    contact_email: "admin@testradiology.com"
+                    phone_number: "555-987-6543"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Connection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    # Update connection status endpoint
+    put:
+      tags:
+        - Connection Management
+      summary: Update connection status
+      description: |
+        Updates the status of a connection. This endpoint can be used to activate,
+        reject, or deactivate a connection.
+      operationId: updateConnectionStatus
+      security:
+        - jwtBearerAuth: []
+      parameters:
+        - name: connectionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the connection to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionUpdateRequest'
+            example:
+              status: "active"
+      responses:
+        '200':
+          description: Connection status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  connection:
+                    $ref: '#/components/schemas/Connection'
+              example:
+                success: true
+                connection:
+                  id: "conn_123456"
+                  status: "active"
+                  requestingOrganizationId: 1
+                  targetOrganizationId: 2
+                  requestingOrganizationName: "Test Organization"
+                  targetOrganizationName: "Test Radiology Group"
+                  notes: "Connection request for testing"
+                  createdAt: "2025-04-22T17:28:44.148Z"
+                  updatedAt: "2025-04-22T17:30:12.345Z"
+        '400':
+          description: Invalid request or status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Connection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # List incoming connection requests endpoint
+  /connections/requests:
+    get:
+      tags:
+        - Connection Management
+      summary: List incoming connection requests
+      description: |
+        Retrieves a list of pending incoming connection requests for the current organization.
+        These are requests initiated by other organizations that are waiting for approval or rejection.
+      operationId: listIncomingConnectionRequests
+      security:
+        - jwtBearerAuth: []
+      responses:
+        '200':
+          description: Connection requests retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requests:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConnectionRequest'
+              example:
+                requests:
+                  - id: 5
+                    initiatingOrgId: 3
+                    initiatingOrgName: "Test Referring Practice"
+                    initiatedBy: "John Smith"
+                    initiatorEmail: "john.smith@example.com"
+                    notes: "We would like to establish a connection with your radiology group"
+                    createdAt: "2025-04-22T14:28:44.148Z"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Approve connection request endpoint
+  /connections/{relationshipId}/approve:
+    post:
+      tags:
+        - Connection Management
+      summary: Approve connection request
+      description: |
+        Approves a pending connection request from another organization.
+        This endpoint is used by the target organization to accept a connection request.
+        
+        The implementation uses a LEFT JOIN SQL pattern to handle nullable relationships:
+        ```sql
+        SELECT r.*, o.name as initiating_org_name, u.email as initiator_email
+        FROM organization_relationships r
+        LEFT JOIN organizations o ON r.initiating_organization_id = o.id
+        LEFT JOIN users u ON r.initiated_by_user_id = u.id
+        WHERE r.id = $1 AND r.related_organization_id = $2 AND r.status = 'pending'
+        ```
+      operationId: approveConnectionRequest
+      security:
+        - jwtBearerAuth: []
+      parameters:
+        - name: relationshipId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the relationship to approve
+      responses:
+        '200':
+          description: Connection request approved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  relationshipId:
+                    type: integer
+                    format: int64
+              example:
+                success: true
+                message: "Connection request approved successfully"
+                relationshipId: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Relationship not found, not authorized, or not in pending status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Reject connection request endpoint
+  /connections/{relationshipId}/reject:
+    post:
+      tags:
+        - Connection Management
+      summary: Reject connection request
+      description: |
+        Rejects a pending connection request from another organization.
+        This endpoint is used by the target organization to decline a connection request.
+      operationId: rejectConnectionRequest
+      security:
+        - jwtBearerAuth: []
+      parameters:
+        - name: relationshipId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the relationship to reject
+      responses:
+        '200':
+          description: Connection request rejected successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  relationshipId:
+                    type: integer
+                    format: int64
+              example:
+                success: true
+                message: "Connection request rejected successfully"
+                relationshipId: 1
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Relationship not found, not authorized, or not in pending status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

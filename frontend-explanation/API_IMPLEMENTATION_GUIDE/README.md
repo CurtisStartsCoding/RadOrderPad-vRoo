@@ -9,18 +9,22 @@ The RadOrderPad API is organized into several logical sections:
 1. [Authentication](./authentication.md) - Login and token management
 2. [Health Check](./health.md) - System status endpoint
 3. [Order Management](./order-management.md) - Endpoints for managing orders
-4. [Radiology Order Management](./radiology-order-management.md) - Endpoints for radiology orders
-5. [Superadmin Management](./superadmin-management.md) - Superadmin-specific endpoints
-6. [Connection Management](./connection-management.md) - Managing connections between organizations
+4. [Admin Finalization](./admin-finalization-api-guide.md) - Detailed guide for the admin finalization workflow and "Send to Radiology" functionality
+   - [Admin Finalization API Specification](./openapi-admin-finalization.yaml) - OpenAPI specification focused on the admin finalization workflow
+5. [Radiology Order Management](./radiology-order-management.md) - Endpoints for radiology orders
+6. [Superadmin Management](./superadmin-management.md) - Superadmin-specific endpoints
+7. [Connection Management](./connection-management.md) - Managing connections between organizations
    - [Connection Management Details](./connection-management-details.md) - Detailed information about connection endpoints
    - [Connection Testing](./connection-testing.md) - Guide for testing connection endpoints
+   - [Connection Management API Specification](./openapi-connection-management.yaml) - OpenAPI specification focused on connection management
    - **Key Endpoint**: `GET /api/connections/requests` - Lists pending incoming connection requests (see [SQL Implementation Patterns](#sql-implementation-patterns))
-7. [Organization Management](./organization-management.md) - Organization-related endpoints
+8. [Organization Management](./organization-management.md) - Organization-related endpoints
    - [Organizations/Mine Fix](./organizations-mine-fix.md) - Detailed documentation of the fix for the organizations/mine endpoint
    - [Organizations/Mine Summary](./organizations-mine-summary.md) - Summary of recent improvements to the organizations/mine endpoint
-8. [User Management](./user-management.md) - User-related endpoints
+9. [User Management](./user-management.md) - User-related endpoints
    - [User Invitation Details](./user-invitation-details.md) - Detailed implementation of user invitation feature
    - [User Location Assignment Guide](./user-location-assignment-guide.md) - Detailed guide for implementing user location assignment functionality
+   - [User Management API Specification](./openapi-user-management.yaml) - OpenAPI specification focused on user management, invitation, and location assignment
    - **Key Endpoints**:
      - `GET /api/users/me` - Retrieves profile information for the authenticated user
      - `PUT /api/users/me` - Updates profile information for the authenticated user
@@ -28,14 +32,95 @@ The RadOrderPad API is organized into several logical sections:
      - `GET /api/users/{userId}` - Retrieves profile information for a specific user in the admin's organization
      - `PUT /api/users/{userId}` - Updates profile information for a specific user in the admin's organization
      - `DELETE /api/users/{userId}` - Deactivates a specific user in the admin's organization
-9. [Billing Management](./billing-management.md) - Billing and subscription endpoints
-10. [Uploads Management](./uploads-management.md) - File upload endpoints
-   - **Key Endpoints**:
-     - `POST /api/uploads/presigned-url` - Generates a presigned URL for uploading a file to S3
-     - `POST /api/uploads/confirm` - Confirms a file upload and creates a database record
-11. [Validation Engine](./validation-engine.md) - Clinical indications processing and code assignment
-12. [Workflow Guide](./workflow-guide.md) - End-to-end API workflow examples
-13. [Status Summary](./status-summary.md) - Overview of working and non-working endpoints
+10. [Billing Management](./billing-management.md) - Billing and subscription endpoints
+11. [Uploads Management](./uploads-management.md) - File upload endpoints
+    - **Key Endpoints**:
+      - `POST /api/uploads/presigned-url` - Generates a presigned URL for uploading a file to S3
+      - `POST /api/uploads/confirm` - Confirms a file upload and creates a database record
+12. [Validation Engine](./validation-engine.md) - Clinical indications processing and code assignment
+    - [Validation Workflow Guide](./validation-workflow-guide.md) - Detailed explanation of the validation workflow
+    - [Validation Engine Integration](./validation-engine-integration.md) - Technical guide for frontend integration
+    - [Validation-Focused API Specification](./openapi-validation-focused.yaml) - OpenAPI specification focused on the validation engine
+13. [Workflow Guide](./workflow-guide.md) - End-to-end API workflow examples
+14. [Status Summary](./status-summary.md) - Overview of working and non-working endpoints
+
+## OpenAPI Specifications
+
+To make the API documentation more manageable and focused, we've created separate OpenAPI specification files for key functional areas:
+
+1. **[Validation Engine API Specification](./openapi-validation-focused.yaml)** - Focused on the validation engine that processes clinical indications and assigns CPT and ICD-10 codes
+   - Detailed schemas for validation requests and responses
+   - Examples of different validation scenarios
+   - Comprehensive documentation of the validation workflow
+
+2. **[Admin Finalization API Specification](./openapi-admin-finalization.yaml)** - Focused on the admin finalization workflow
+   - Endpoints for managing the admin order queue
+   - Patient and insurance information updates
+   - The critical "Send to Radiology" functionality
+   - Dual database architecture considerations
+
+3. **[Connection Management API Specification](./openapi-connection-management.yaml)** - Focused on connection management between organizations
+   - Creating and managing connection requests
+   - Approving and rejecting connections
+   - SQL implementation patterns for nullable relationships
+
+4. **[User Management API Specification](./openapi-user-management.yaml)** - Focused on user management
+   - User profile management
+   - User invitation system
+   - User location assignment
+
+These modular specifications provide more detailed documentation for specific functional areas, making the API documentation easier to navigate and understand.
+
+## Core Functionality
+
+### Validation Engine
+
+The RadOrderPad validation engine is the heart of the system, processing clinical indications from physician dictation to assign appropriate CPT and ICD-10 codes. This functionality is critical for ensuring accurate medical coding and compliance with clinical guidelines.
+
+Key aspects of the validation engine include:
+
+1. **LLM Orchestration**
+   - Primary: Claude 3.7
+   - Fallbacks: Grok 3 → GPT-4.0
+   - Uses specialized prompts for different validation scenarios
+
+2. **Validation Workflow**
+   - Initial dictation → Validation processing → Clarification loop (if needed) → Override flow (after 3 failed attempts) → Finalization
+   - Each step is clearly documented with API endpoints and request/response formats
+
+3. **Best Practices for Clinical Dictation**
+   - Patient demographics (age, gender)
+   - Clinical symptoms (location, duration, severity)
+   - Relevant history (prior diagnoses, treatments)
+   - Clinical reasoning (suspected diagnosis, reason for study)
+
+For detailed implementation guidance, refer to the validation documentation linked in the overview section.
+
+### Admin Finalization Workflow
+
+The Admin Finalization workflow is a critical part of the system that allows administrative staff to add EMR context and send orders to radiology after they've been signed by physicians.
+
+Key aspects of the admin finalization workflow include:
+
+1. **Dual Database Architecture**
+   - PHI Database: Contains Protected Health Information (patient data, orders, clinical indications)
+   - Main Database: Contains non-PHI data (organizations, users, credit balances)
+   - Proper transaction management across both databases
+
+2. **Admin Workflow Steps**
+   - Access the Queue: Admin staff access the queue of pending admin orders
+   - Add Patient Information: Update patient demographics (address, city, state, zip code, etc.)
+   - Add Insurance Information: Update insurance details if applicable
+   - Add Supplemental Documentation: Paste any supplemental documentation from EMR
+   - Final Review: Review all information for accuracy
+   - Send to Radiology: Finalize the order and send it to the radiology group
+
+3. **Credit Management**
+   - Checks organization credit balance before sending to radiology
+   - Decrements credits upon successful submission
+   - Handles insufficient credit scenarios
+
+For detailed implementation guidance, refer to the admin finalization documentation linked in the overview section.
 
 ## API Conventions
 
@@ -218,7 +303,20 @@ For detailed implementation information, see the [User Invitation Details](./use
 
 This section provides a comprehensive overview of the implementation status across all API areas:
 
-### 1. Connection Management (100% Complete)
+### 1. Admin Finalization (100% Complete)
+- Working endpoints:
+  - GET /api/admin/orders/queue
+  - POST /api/admin/orders/{orderId}/send-to-radiology-fixed
+  - POST /api/admin/orders/{orderId}/paste-summary
+  - POST /api/admin/orders/{orderId}/paste-supplemental
+  - PUT /api/admin/orders/{orderId}/patient-info
+  - PUT /api/admin/orders/{orderId}/insurance-info
+- Fixed issues:
+  - Database connection issue in send-to-radiology endpoint
+  - Proper transaction management across PHI and Main databases
+  - Credit consumption and validation
+
+### 2. Connection Management (100% Complete)
 - Working endpoints:
   - GET /api/connections
   - GET /api/connections/requests
@@ -227,14 +325,14 @@ This section provides a comprehensive overview of the implementation status acro
   - POST /api/connections/{relationshipId}/reject (fixed - previously returned 500 error)
   - DELETE /api/connections/{relationshipId} (fixed - previously returned 500 error)
 
-### 2. Authentication & User Invitation (100% Complete)
+### 3. Authentication & User Invitation (100% Complete)
 - All endpoints are working and tested:
   - POST /api/auth/login
   - POST /api/auth/register
   - POST /api/user-invites/invite
   - POST /api/user-invites/accept-invitation
 
-### 3. Radiology Workflow (80-90% Complete)
+### 4. Radiology Workflow (80-90% Complete)
 - Most endpoints are working and tested:
   - GET /api/radiology/orders
   - GET /api/radiology/orders/{orderId}
@@ -242,21 +340,12 @@ This section provides a comprehensive overview of the implementation status acro
   - GET /api/radiology/orders/{orderId}/export/{format}
   - POST /api/radiology/orders/{orderId}/request-info (implemented but may not have specific tests)
 
-### 4. Order Management (90-100% Complete)
+### 5. Order Management (90-100% Complete)
 - All core endpoints are working and tested:
   - GET /api/orders (with filtering)
   - GET /api/orders/{orderId}
   - POST /api/orders/validate
   - PUT /api/orders/{orderId}
-
-### 5. Admin Order Management (90-100% Complete)
-- Key endpoints are working and tested:
-  - GET /api/admin/orders/queue
-  - POST /api/admin/orders/{orderId}/send-to-radiology-fixed
-  - POST /api/admin/orders/{orderId}/paste-summary
-  - POST /api/admin/orders/{orderId}/paste-supplemental
-  - PUT /api/admin/orders/{orderId}/patient-info
-  - PUT /api/admin/orders/{orderId}/insurance-info
 
 ### 6. Billing Management (70-80% Complete)
 - Core endpoints are working:
@@ -314,6 +403,26 @@ This section provides a comprehensive overview of the implementation status acro
   - Authorization checks ensure users can only access files associated with their organization
 
 ## Recent Fixes
+
+### Admin Finalization "Send to Radiology" Fix
+
+The `POST /api/admin/orders/{orderId}/send-to-radiology-fixed` endpoint has been implemented to fix issues with the original send-to-radiology endpoint. This endpoint is critical for the admin finalization workflow, allowing administrative staff to send validated and signed orders to radiology organizations.
+
+#### Issue Description
+The original endpoint was failing with a 500 error due to database connection issues. The root cause was:
+- The endpoint needed to interact with both PHI and Main databases
+- It was using a single database connection (PHI) to try to access tables in both databases
+- It was using incorrect column names for the order_history table
+
+#### Fix Implementation
+The fix includes:
+- Proper dual database connections for PHI and Main databases
+- Transaction management across both databases
+- Correct column names for the order_history table
+- Credit balance validation and consumption
+- Comprehensive error handling
+
+For detailed implementation information, see the [Admin Finalization API Guide](./admin-finalization-api-guide.md) document.
 
 ### Connection Approval Endpoint Fix
 
