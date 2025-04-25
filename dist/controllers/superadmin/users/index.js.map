@@ -1,1 +1,1 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/controllers/superadmin/users/index.ts"],"names":[],"mappings":";;;AAAA;;GAEG;AACH,mDAA0D;AAAjD,wHAAA,sBAAsB,OAAA;AAC/B,mDAAyD;AAAhD,uHAAA,qBAAqB,OAAA"}
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/controllers/superadmin/users/index.ts"],"names":[],"mappings":";;;AAAA;;GAEG;AACH,mDAA0D;AAAjD,wHAAA,sBAAsB,OAAA;AAC/B,mDAAyD;AAAhD,uHAAA,qBAAqB,OAAA;AAC9B,2DAAkE;AAAzD,gIAAA,0BAA0B,OAAA"}

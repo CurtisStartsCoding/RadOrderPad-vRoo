@@ -17,5 +17,6 @@ export const {
 
 export const {
   listAllUsersController,
-  getUserByIdController
+  getUserByIdController,
+  updateUserStatusController
 } = users;

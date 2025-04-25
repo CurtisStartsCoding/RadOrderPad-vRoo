@@ -15,6 +15,7 @@ router.post('/organizations/:orgId/credits/adjust', superadmin_1.organizations.a
 // User routes
 router.get('/users', superadmin_1.listAllUsersController);
 router.get('/users/:userId', superadmin_1.getUserByIdController);
+router.put('/users/:userId/status', superadmin_1.users.updateUserStatusController);
 // Prompt template routes
 router.post('/prompts/templates', superadmin_1.prompts.templates.createPromptTemplateController);
 router.get('/prompts/templates', superadmin_1.prompts.templates.listPromptTemplatesController);

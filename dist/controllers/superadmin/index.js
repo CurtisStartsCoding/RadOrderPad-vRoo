@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByIdController = exports.listAllUsersController = exports.getOrganizationByIdController = exports.listAllOrganizationsController = exports.logs = exports.prompts = exports.users = exports.organizations = void 0;
+exports.updateUserStatusController = exports.getUserByIdController = exports.listAllUsersController = exports.getOrganizationByIdController = exports.listAllOrganizationsController = exports.logs = exports.prompts = exports.users = exports.organizations = void 0;
 /**
  * Export all superadmin controller functions
  */
@@ -47,5 +47,5 @@ const logs = __importStar(require("./logs"));
 exports.logs = logs;
 // Export individual functions for backward compatibility
 exports.listAllOrganizationsController = organizations.listAllOrganizationsController, exports.getOrganizationByIdController = organizations.getOrganizationByIdController;
-exports.listAllUsersController = users.listAllUsersController, exports.getUserByIdController = users.getUserByIdController;
+exports.listAllUsersController = users.listAllUsersController, exports.getUserByIdController = users.getUserByIdController, exports.updateUserStatusController = users.updateUserStatusController;
 //# sourceMappingURL=index.js.map

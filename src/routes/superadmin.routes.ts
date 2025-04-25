@@ -7,7 +7,8 @@ import {
   getUserByIdController,
   prompts,
   logs,
-  organizations
+  organizations,
+  users
 } from '../controllers/superadmin';
 
 const router = Router();
@@ -25,6 +26,7 @@ router.post('/organizations/:orgId/credits/adjust', organizations.adjustOrganiza
 // User routes
 router.get('/users', listAllUsersController);
 router.get('/users/:userId', getUserByIdController);
+router.put('/users/:userId/status', users.updateUserStatusController);
 
 // Prompt template routes
 router.post('/prompts/templates', prompts.templates.createPromptTemplateController);

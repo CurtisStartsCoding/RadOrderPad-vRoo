@@ -110,7 +110,18 @@ API Endpoints Overview (Conceptual)
 
 ## Super Admin (`/superadmin`)
 
--   Endpoints corresponding to features outlined in `super_admin.md`. **(Super Admin Role ONLY)**
+### Organizations (`/superadmin/organizations`)
+
+-   `GET /superadmin/organizations`: List all organizations with optional filtering by name, type, and status. **(Super Admin Role)**
+-   `GET /superadmin/organizations/{orgId}`: Get detailed information about a specific organization, including users, connections, and billing history. **(Super Admin Role)**
+-   `PUT /superadmin/organizations/{orgId}/status`: Update an organization's status (active, on_hold, purgatory, terminated). Handles side effects like logging purgatory events and updating organization relationships. **(Super Admin Role)**
+-   `POST /superadmin/organizations/{orgId}/credits/adjust`: Adjust an organization's credit balance with a reason. Logs the adjustment in billing events. **(Super Admin Role)**
+
+### Users (`/superadmin/users`)
+
+-   `GET /superadmin/users`: List all users with optional filtering by organization, email, role, and active status. **(Super Admin Role)**
+-   `GET /superadmin/users/{userId}`: Get detailed information about a specific user, including organization and assigned locations. **(Super Admin Role)**
+-   `PUT /superadmin/users/{userId}/status`: Update a user's active status. **(Super Admin Role)**
 
 ### Prompt Templates (`/superadmin/prompts/templates`)
 
