@@ -1,0 +1,777 @@
+# File Upload Endpoints
+
+'/uploads/presigned-url':
+  post:
+    tags:
+      - Uploads
+    summary: Get presigned URL for file upload
+    description: |
+      Generates a presigned URL for direct file upload to storage.
+      
+      This endpoint returns a presigned URL that can be used to upload a file directly
+      to the storage service, along with an upload ID for tracking the upload.
+    operationId: getPresignedUrl
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fileName:
+                type: string
+                description: Original file name
+              fileType:
+                type: string
+                description: MIME type of the file
+              fileSize:
+                type: integer
+                description: Size of the file in bytes
+              purpose:
+                type: string
+                enum: [order_attachment, patient_record, organization_document]
+                description: Purpose of the upload
+              associatedId:
+                type: string
+                description: ID of the associated entity (optional)
+            required:
+              - fileName
+              - fileType
+              - fileSize
+              - purpose
+    responses:
+      '200':
+        description: Presigned URL generated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    uploadId:
+                      type: string
+                      description: Unique identifier for this upload
+                    presignedUrl:
+                      type: string
+                      format: uri
+                      description: The S3 presigned URL for uploading
+                    fileKey:
+                      type: string
+                      description: The S3 object key for the file
+                    expiresIn:
+                      type: integer
+                      description: Expiration time for the presigned URL in seconds
+                    fields:
+                      type: object
+                      description: Additional fields to include in the upload form (for POST uploads)
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '413':
+        description: File size exceeds limit
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "File size exceeds the maximum limit of 50MB"
+      '415':
+        description: Unsupported file type
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "File type not allowed"
+
+'/uploads/{uploadId}/complete':
+  post:
+    tags:
+      - Uploads
+    summary: Complete file upload
+    description: |
+      Notifies the API that a file upload is complete.
+      
+      This endpoint should be called after successfully uploading a file to the storage service
+      using the presigned URL. It updates the upload status and makes the file available for use.
+    operationId: completeUpload
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: uploadId
+        in: path
+        description: ID of the upload to complete
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Upload completed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    uploadId:
+                      type: string
+                      description: The upload ID
+                    status:
+                      type: string
+                      enum: [completed]
+                      description: Upload status
+                    fileUrl:
+                      type: string
+                      format: uri
+                      description: URL for accessing the file
+                    fileName:
+                      type: string
+                      description: Original file name
+                    fileType:
+                      type: string
+                      description: MIME type of the file
+                    fileSize:
+                      type: integer
+                      description: Size of the file in bytes
+                    uploadDate:
+                      type: string
+                      format: date-time
+                      description: Date and time of the upload
+                    expiryDate:
+                      type: string
+                      format: date-time
+                      description: Date and time when the file will expire (if applicable)
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '404':
+        description: Upload not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Upload not found"
+      '409':
+        description: Upload already completed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Upload already completed"
+
+'/uploads/{uploadId}/associate':
+  post:
+    tags:
+      - Uploads
+    summary: Associate file with entity
+    description: |
+      Associates an uploaded file with an entity.
+      
+      This endpoint allows associating a file with an entity after upload,
+      such as an order, patient, or organization.
+    operationId: associateFile
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: uploadId
+        in: path
+        description: ID of the upload to associate
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              entityType:
+                type: string
+                enum: [order, patient, organization, user]
+                description: Type of entity to associate with
+              entityId:
+                type: string
+                description: ID of the entity to associate with
+            required:
+              - entityType
+              - entityId
+    responses:
+      '200':
+        description: File associated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    uploadId:
+                      type: string
+                      description: The upload ID
+                    entityType:
+                      type: string
+                      description: Type of associated entity
+                    entityId:
+                      type: string
+                      description: ID of associated entity
+                    associationDate:
+                      type: string
+                      format: date-time
+                      description: Date and time of the association
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        description: Upload or entity not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Upload or entity not found"
+      '409':
+        description: File already associated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "File is already associated with this entity"
+
+'/uploads/{uploadId}/disassociate':
+  post:
+    tags:
+      - Uploads
+    summary: Disassociate file from entity
+    description: |
+      Removes the association between a file and an entity.
+      
+      This endpoint allows removing the association between a file and an entity,
+      such as an order, patient, or organization.
+    operationId: disassociateFile
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: uploadId
+        in: path
+        description: ID of the upload to disassociate
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              entityType:
+                type: string
+                enum: [order, patient, organization, user]
+                description: Type of entity to disassociate from
+              entityId:
+                type: string
+                description: ID of the entity to disassociate from
+            required:
+              - entityType
+              - entityId
+    responses:
+      '200':
+        description: File disassociated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    uploadId:
+                      type: string
+                      description: The upload ID
+                    entityType:
+                      type: string
+                      description: Type of disassociated entity
+                    entityId:
+                      type: string
+                      description: ID of disassociated entity
+                    disassociationDate:
+                      type: string
+                      format: date-time
+                      description: Date and time of the disassociation
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        description: Upload or association not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Upload or association not found"
+
+'/uploads/by-entity/{entityType}/{entityId}':
+  get:
+    tags:
+      - Uploads
+    summary: List files by entity
+    description: |
+      Retrieves files associated with a specific entity.
+      
+      This endpoint returns a paginated list of files associated with a specific entity,
+      such as an order, patient, or organization.
+    operationId: getFilesByEntity
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: entityType
+        in: path
+        description: Type of entity
+        required: true
+        schema:
+          type: string
+          enum: [order, patient, organization, user]
+      - name: entityId
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of files
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    files:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/FileRecord'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        description: Entity not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Entity not found"
+
+'/uploads/by-purpose/{purpose}':
+  get:
+    tags:
+      - Uploads
+    summary: List files by purpose
+    description: |
+      Retrieves files filtered by purpose.
+      
+      This endpoint returns a paginated list of files filtered by their purpose,
+      such as order attachments, patient records, or organization documents.
+    operationId: getFilesByPurpose
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: purpose
+        in: path
+        description: Purpose of the files
+        required: true
+        schema:
+          type: string
+          enum: [order_attachment, patient_record, organization_document, user_profile, system_report]
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of files
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    files:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/FileRecord'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+
+'/uploads/recent':
+  get:
+    tags:
+      - Uploads
+    summary: List recent uploads
+    description: |
+      Retrieves recently uploaded files.
+      
+      This endpoint returns a paginated list of files that were recently uploaded,
+      optionally filtered by the number of days.
+    operationId: getRecentUploads
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: days
+        in: query
+        description: Number of days to look back
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 90
+          default: 7
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of recent uploads
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    files:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/FileRecord'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+
+'/uploads/{uploadId}/metadata':
+  get:
+    tags:
+      - Uploads
+    summary: Get file metadata
+    description: |
+      Retrieves metadata for a specific file.
+      
+      This endpoint returns detailed metadata about a file,
+      including its associations, upload information, and content details.
+    operationId: getFileMetadata
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: uploadId
+        in: path
+        description: ID of the upload to retrieve metadata for
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: File metadata
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/FileMetadata'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        description: File not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "File not found"
+  
+  patch:
+    tags:
+      - Uploads
+    summary: Update file metadata
+    description: |
+      Updates metadata for a specific file.
+      
+      This endpoint allows updating file metadata such as file name,
+      purpose, tags, and custom metadata.
+    operationId: updateFileMetadata
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: uploadId
+        in: path
+        description: ID of the upload to update metadata for
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fileName:
+                type: string
+                description: Updated file name
+              purpose:
+                type: string
+                enum: [order_attachment, patient_record, organization_document, user_profile, system_report]
+                description: Updated purpose
+              tags:
+                type: array
+                description: Array of tags
+                items:
+                  type: string
+              description:
+                type: string
+                description: File description
+              customMetadata:
+                type: object
+                description: Object with custom metadata fields
+    responses:
+      '200':
+        description: File metadata updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/FileMetadata'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        description: File not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "File not found"
+
+'/uploads/{uploadId}/download-url':
+  get:
+    tags:
+      - Uploads
+    summary: Generate download URL
+    description: |
+      Generates a temporary URL for downloading a file.
+      
+      This endpoint returns a presigned URL that can be used to download a file,
+      with an optional expiration time.
+    operationId: getDownloadUrl
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: uploadId
+        in: path
+        description: ID of the upload to generate a download URL for
+        required: true
+        schema:
+          type: string
+      - name: expiresIn
+        in: query
+        description: Expiration time for the URL in seconds
+        schema:
+          type: integer
+          minimum: 60
+          maximum: 86400
+          default: 3600
+    responses:
+      '200':
+        description: Download URL generated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    downloadUrl:
+                      type: string
+                      format: uri
+                      description: Temporary URL for downloading the file
+                    expiresAt:
+                      type: string
+                      format: date-time
+                      description: Expiration time for the download URL
+                    fileName:
+                      type: string
+                      description: Original file name
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        description: File not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "File not found"

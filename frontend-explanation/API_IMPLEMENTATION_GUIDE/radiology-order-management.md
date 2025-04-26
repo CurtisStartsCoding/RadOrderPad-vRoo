@@ -241,3 +241,50 @@ This section covers endpoints related to managing radiology orders, which are us
 **Implementation Status:**
 - **Status:** Working
 - **Tested With:** test-radiology-orders.js
+
+## Request Additional Information
+
+**Endpoint:** `POST /api/radiology/orders/{orderId}/request-info`
+
+**Description:** Allows radiology staff to request additional information for an order from the referring organization.
+
+**Authentication:** Required (scheduler, admin_radiology roles)
+
+**URL Parameters:**
+- `orderId`: The ID of the order for which additional information is being requested
+
+**Request Body:**
+```json
+{
+  "requestedInfoType": "labs",
+  "requestedInfoDetails": "Please provide recent CBC and metabolic panel results for this patient."
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "orderId": 606,
+  "requestId": 123,
+  "message": "Information request created successfully"
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: If required fields are missing or invalid
+- 401 Unauthorized: If the user is not authenticated
+- 403 Forbidden: If the user does not have the appropriate role or the order doesn't belong to their organization
+- 404 Not Found: If the order does not exist
+- 500 Internal Server Error: If there is a server error
+
+**Usage Notes:**
+- This endpoint is used when radiology staff need additional information to properly schedule or perform a study.
+- The `requestedInfoType` field should indicate the category of information needed (e.g., "labs", "prior_imaging", "clarification").
+- The `requestedInfoDetails` field should provide specific details about what information is being requested.
+- The request is stored in the `information_requests` table and an entry is added to the `order_history` table.
+- In the future, this will trigger a notification to the referring organization's admin users.
+
+**Implementation Status:**
+- **Status:** Implemented
+- **Tested With:** radiology-request-information.test.js

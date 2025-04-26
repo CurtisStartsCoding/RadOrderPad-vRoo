@@ -1,6 +1,6 @@
 import { queryPhiDb } from '../../../config/db';
 import { InformationRequestResult } from './types';
-import logger from '../../../utils/logger';
+import enhancedLogger from '../../../utils/enhanced-logger';
 
 /**
  * Request additional information from referring group
@@ -20,29 +20,41 @@ export async function requestInformation(
 ): Promise<InformationRequestResult> {
   try {
     // 1. Verify order exists and belongs to the radiology group
+    enhancedLogger.info('Verifying order and authorization', { orderId, orgId });
     const orderResult = await queryPhiDb(
-      `SELECT o.id, o.referring_organization_id, o.radiology_organization_id
-       FROM orders o
-       WHERE o.id = $1`,
+      `SELECT
+         id,
+         referring_organization_id,
+         radiology_organization_id
+       FROM orders
+       WHERE id = $1`,
       [orderId]
     );
     
     if (orderResult.rows.length === 0) {
+      enhancedLogger.warn(`Order ${orderId} not found`);
       throw new Error(`Order ${orderId} not found`);
     }
     
     const order = orderResult.rows[0];
     
     if (order.radiology_organization_id !== orgId) {
+      enhancedLogger.warn(`Unauthorized: Order ${orderId} does not belong to organization ${orgId}`);
       throw new Error(`Unauthorized: Order ${orderId} does not belong to your organization`);
     }
     
     // 2. Create information request
+    enhancedLogger.info('Creating information request', {
+      orderId,
+      requestedInfoType,
+      targetOrgId: order.referring_organization_id
+    });
+    
     const result = await queryPhiDb(
       `INSERT INTO information_requests
        (order_id, requested_by_user_id, requesting_organization_id, target_organization_id,
-        requested_info_type, requested_info_details, status, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+        requested_info_type, requested_info_details, status, requested_at, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW(), NOW())
        RETURNING id`,
       [
         orderId,
@@ -58,6 +70,7 @@ export async function requestInformation(
     const requestId = result.rows[0].id;
     
     // 3. Log the event in order_history
+    enhancedLogger.info('Logging event in order history', { orderId, userId, eventType: 'information_requested' });
     await queryPhiDb(
       `INSERT INTO order_history
        (order_id, user_id, event_type, details, created_at)
@@ -66,7 +79,7 @@ export async function requestInformation(
         orderId,
         userId,
         'information_requested',
-        `Requested information: ${requestedInfoType}`
+        `Requested: ${requestedInfoType}`
       ]
     );
     
@@ -79,13 +92,25 @@ export async function requestInformation(
       message: 'Information request created successfully'
     };
   } catch (error) {
-    logger.error('Error in requestInformation:', {
-      error,
-      orderId,
-      requestedInfoType,
-      userId,
-      orgId
-    });
+    // Log detailed error information
+    if (error instanceof Error) {
+      enhancedLogger.error('Error in requestInformation service:', {
+        error: error.message,
+        stack: error.stack,
+        orderId,
+        requestedInfoType,
+        userId,
+        orgId
+      });
+    } else {
+      enhancedLogger.error('Unknown error in requestInformation service:', {
+        error,
+        orderId,
+        requestedInfoType,
+        userId,
+        orgId
+      });
+    }
     throw error;
   }
 }

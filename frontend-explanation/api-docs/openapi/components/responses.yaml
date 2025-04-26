@@ -1,0 +1,218 @@
+# Common Responses
+
+# 400 Bad Request
+BadRequest:
+  description: Bad Request - The request was invalid or cannot be served
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "Invalid request parameters"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "INVALID_PARAMETERS"
+              details:
+                type: object
+                example:
+                  dictation: "Dictation text is required"
+
+# 401 Unauthorized
+Unauthorized:
+  description: Unauthorized - Authentication is required or has failed
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "Authentication required"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "AUTHENTICATION_REQUIRED"
+
+# 403 Forbidden
+Forbidden:
+  description: Forbidden - The authenticated user does not have access to the requested resource
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "Insufficient permissions"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "INSUFFICIENT_PERMISSIONS"
+              requiredRole:
+                type: string
+                example: "physician"
+
+# 404 Not Found
+NotFound:
+  description: Not Found - The requested resource was not found
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "Resource not found"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "RESOURCE_NOT_FOUND"
+              resourceType:
+                type: string
+                example: "order"
+
+# 409 Conflict
+Conflict:
+  description: Conflict - The request could not be completed due to a conflict with the current state of the resource
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "Resource already exists"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "RESOURCE_CONFLICT"
+
+# 422 Unprocessable Entity
+UnprocessableEntity:
+  description: Unprocessable Entity - The request was well-formed but was unable to be followed due to semantic errors
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "Validation failed"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "VALIDATION_FAILED"
+              validationErrors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+
+# 429 Too Many Requests
+TooManyRequests:
+  description: Too Many Requests - The user has sent too many requests in a given amount of time
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "Rate limit exceeded"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "RATE_LIMIT_EXCEEDED"
+              retryAfter:
+                type: integer
+                example: 60
+
+# 500 Internal Server Error
+InternalServerError:
+  description: Internal Server Error - An unexpected condition was encountered
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "An unexpected error occurred"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "INTERNAL_SERVER_ERROR"
+              requestId:
+                type: string
+                example: "req-123456"
+
+# 503 Service Unavailable
+ServiceUnavailable:
+  description: Service Unavailable - The server is currently unable to handle the request
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            type: string
+            example: "Service temporarily unavailable"
+          error:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "SERVICE_UNAVAILABLE"
+              retryAfter:
+                type: integer
+                example: 300

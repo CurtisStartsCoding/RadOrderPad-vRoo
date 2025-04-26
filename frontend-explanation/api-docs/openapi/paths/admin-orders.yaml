@@ -1,0 +1,728 @@
+# Admin Order Management Endpoints
+
+'/admin/orders':
+  get:
+    tags:
+      - Admin
+      - Orders
+    summary: List orders for admin
+    description: |
+      Retrieves a list of orders for administrative staff.
+      
+      This endpoint returns a paginated list of orders that require administrative processing,
+      with optional filtering by status, date range, and other criteria.
+      Requires admin or staff role.
+    operationId: listAdminOrders
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: status
+        in: query
+        description: Filter by order status
+        schema:
+          type: string
+          enum: [pending_admin, in_progress, completed, canceled, all]
+          default: pending_admin
+      - name: startDate
+        in: query
+        description: Filter by start date (ISO format)
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: Filter by end date (ISO format)
+        schema:
+          type: string
+          format: date
+      - name: physicianId
+        in: query
+        description: Filter by referring physician ID
+        schema:
+          type: string
+      - name: patientId
+        in: query
+        description: Filter by patient ID
+        schema:
+          type: string
+      - name: modalityType
+        in: query
+        description: Filter by modality type
+        schema:
+          type: string
+          enum: [CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR]
+      - name: locationId
+        in: query
+        description: Filter by location ID
+        schema:
+          type: string
+      - name: search
+        in: query
+        description: Search term for patient name or order ID
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        schema:
+          type: string
+          enum: [createdAt, updatedAt, patientName]
+          default: createdAt
+      - name: sortOrder
+        in: query
+        description: Sort order
+        schema:
+          type: string
+          enum: [asc, desc]
+          default: desc
+    responses:
+      '200':
+        description: List of orders
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orders:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/AdminOrderSummary'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+
+'/admin/orders/{orderId}':
+  get:
+    tags:
+      - Admin
+      - Orders
+    summary: Get order details for admin
+    description: |
+      Retrieves detailed information about a specific order for administrative staff.
+      
+      This endpoint returns comprehensive information about an order,
+      including validation results, patient information, and physician details.
+      Requires admin or staff role.
+    operationId: getAdminOrderDetails
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to retrieve
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Order details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/AdminOrderDetails'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+  
+  patch:
+    tags:
+      - Admin
+      - Orders
+    summary: Update order as admin
+    description: |
+      Updates an order as an administrative staff member.
+      
+      This endpoint allows administrative staff to update order information,
+      including status, patient information, and administrative notes.
+      Requires admin or staff role.
+    operationId: updateAdminOrder
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to update
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [in_progress, completed, canceled]
+                description: New order status
+              patientInfo:
+                $ref: '../components/schemas.yaml#/PatientInfo'
+              insuranceInfo:
+                $ref: '../components/schemas.yaml#/InsuranceInfo'
+              scheduledDate:
+                type: string
+                format: date-time
+                description: Scheduled date for the procedure
+              adminNotes:
+                type: string
+                description: Administrative notes
+              radiologyFacility:
+                type: string
+                description: Radiology facility where the procedure will be performed
+              priority:
+                type: string
+                enum: [routine, urgent, stat]
+                description: Order priority
+    responses:
+      '200':
+        description: Order updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/AdminOrderDetails'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '422':
+        description: Invalid status transition
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Invalid status transition"
+
+'/admin/orders/{orderId}/claim':
+  post:
+    tags:
+      - Admin
+      - Orders
+    summary: Claim order for processing
+    description: |
+      Claims an order for administrative processing.
+      
+      This endpoint allows an administrative staff member to claim an order
+      for processing, changing its status to 'in_progress' and assigning it to themselves.
+      Requires admin or staff role.
+    operationId: claimOrder
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to claim
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Order claimed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orderId:
+                      type: string
+                      description: Order ID
+                    status:
+                      type: string
+                      enum: [in_progress]
+                      description: Updated order status
+                    assignedTo:
+                      type: string
+                      description: ID of the user the order is assigned to
+                    assignedAt:
+                      type: string
+                      format: date-time
+                      description: Date and time of assignment
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Order already claimed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Order is already claimed by another user"
+
+'/admin/orders/{orderId}/release':
+  post:
+    tags:
+      - Admin
+      - Orders
+    summary: Release claimed order
+    description: |
+      Releases a claimed order back to the queue.
+      
+      This endpoint allows an administrative staff member to release an order
+      they previously claimed, changing its status back to 'pending_admin'.
+      Requires admin or staff role.
+    operationId: releaseOrder
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to release
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Order released successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orderId:
+                      type: string
+                      description: Order ID
+                    status:
+                      type: string
+                      enum: [pending_admin]
+                      description: Updated order status
+                    releasedAt:
+                      type: string
+                      format: date-time
+                      description: Date and time of release
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        description: Not authorized to release this order
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "You are not authorized to release this order"
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Order not claimed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Order is not currently claimed"
+
+'/admin/orders/{orderId}/complete':
+  post:
+    tags:
+      - Admin
+      - Orders
+    summary: Complete order processing
+    description: |
+      Marks an order as completed after administrative processing.
+      
+      This endpoint allows an administrative staff member to mark an order as completed,
+      indicating that all administrative tasks have been performed.
+      Requires admin or staff role.
+    operationId: completeOrder
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to complete
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              completionNotes:
+                type: string
+                description: Notes about the completion
+              radiologyFacility:
+                type: string
+                description: Radiology facility where the procedure will be performed
+              scheduledDate:
+                type: string
+                format: date-time
+                description: Scheduled date for the procedure
+              insuranceVerified:
+                type: boolean
+                description: Whether insurance has been verified
+                default: true
+            required:
+              - radiologyFacility
+              - scheduledDate
+    responses:
+      '200':
+        description: Order completed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orderId:
+                      type: string
+                      description: Order ID
+                    status:
+                      type: string
+                      enum: [completed]
+                      description: Updated order status
+                    completedAt:
+                      type: string
+                      format: date-time
+                      description: Date and time of completion
+                    completedBy:
+                      type: string
+                      description: ID of the user who completed the order
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        description: Not authorized to complete this order
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "You are not authorized to complete this order"
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Order not in progress
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Order must be in 'in_progress' status to be completed"
+
+'/admin/orders/{orderId}/cancel':
+  post:
+    tags:
+      - Admin
+      - Orders
+    summary: Cancel order
+    description: |
+      Cancels an order.
+      
+      This endpoint allows an administrative staff member to cancel an order,
+      providing a reason for the cancellation.
+      Requires admin or staff role.
+    operationId: cancelOrder
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to cancel
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              reason:
+                type: string
+                description: Reason for cancellation
+              notifyPhysician:
+                type: boolean
+                description: Whether to notify the referring physician
+                default: true
+            required:
+              - reason
+    responses:
+      '200':
+        description: Order canceled successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orderId:
+                      type: string
+                      description: Order ID
+                    status:
+                      type: string
+                      enum: [canceled]
+                      description: Updated order status
+                    canceledAt:
+                      type: string
+                      format: date-time
+                      description: Date and time of cancellation
+                    canceledBy:
+                      type: string
+                      description: ID of the user who canceled the order
+                    reason:
+                      type: string
+                      description: Reason for cancellation
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Order already completed or canceled
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Order is already completed or canceled"
+
+'/admin/orders/queue/stats':
+  get:
+    tags:
+      - Admin
+      - Orders
+    summary: Get order queue statistics
+    description: |
+      Retrieves statistics about the administrative order queue.
+      
+      This endpoint returns statistics about the order queue,
+      including counts by status, average processing time, and backlog information.
+      Requires admin or staff role.
+    operationId: getOrderQueueStats
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Order queue statistics
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    totalOrders:
+                      type: integer
+                      description: Total number of orders in the queue
+                    statusCounts:
+                      type: object
+                      properties:
+                        pending_admin:
+                          type: integer
+                          description: Number of orders pending admin processing
+                        in_progress:
+                          type: integer
+                          description: Number of orders in progress
+                        completed:
+                          type: integer
+                          description: Number of completed orders
+                        canceled:
+                          type: integer
+                          description: Number of canceled orders
+                    averageProcessingTime:
+                      type: integer
+                      description: Average processing time in minutes
+                    oldestPendingOrder:
+                      type: string
+                      format: date-time
+                      description: Timestamp of the oldest pending order
+                    assignedToMe:
+                      type: integer
+                      description: Number of orders assigned to the current user
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+
+'/admin/orders/my-assigned':
+  get:
+    tags:
+      - Admin
+      - Orders
+    summary: List orders assigned to current user
+    description: |
+      Retrieves a list of orders assigned to the current administrative staff member.
+      
+      This endpoint returns a paginated list of orders that are currently assigned
+      to the authenticated administrative staff member.
+      Requires admin or staff role.
+    operationId: listMyAssignedOrders
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: status
+        in: query
+        description: Filter by order status
+        schema:
+          type: string
+          enum: [in_progress, completed, canceled, all]
+          default: in_progress
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        schema:
+          type: string
+          enum: [createdAt, updatedAt, patientName]
+          default: createdAt
+      - name: sortOrder
+        in: query
+        description: Sort order
+        schema:
+          type: string
+          enum: [asc, desc]
+          default: desc
+    responses:
+      '200':
+        description: List of assigned orders
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orders:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/AdminOrderSummary'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'

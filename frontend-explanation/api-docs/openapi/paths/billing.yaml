@@ -1,0 +1,316 @@
+# Billing Management Endpoints
+
+'/billing':
+  get:
+    tags:
+      - Billing
+    summary: Get billing overview
+    description: |
+      Retrieves billing information for the current organization, including subscription status and credit balance.
+      
+      This endpoint returns comprehensive billing information including the organization's status,
+      subscription tier, credit balance, and Stripe subscription details.
+    operationId: getBillingOverview
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Billing overview
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    organizationStatus:
+                      type: string
+                      description: Status of the organization
+                      example: active
+                    subscriptionTier:
+                      type: string
+                      description: Current subscription tier
+                      example: tier_1
+                    currentCreditBalance:
+                      type: integer
+                      description: Current credit balance
+                      example: 500
+                    stripeSubscriptionStatus:
+                      type: string
+                      description: Status of the Stripe subscription
+                      example: active
+                    currentPeriodEnd:
+                      type: string
+                      format: date-time
+                      description: End date of the current billing period
+                    billingInterval:
+                      type: string
+                      description: Billing interval (month, year)
+                      example: month
+                    cancelAtPeriodEnd:
+                      type: boolean
+                      description: Whether the subscription will cancel at the end of the period
+                    stripeCustomerPortalUrl:
+                      type: string
+                      format: uri
+                      description: URL to the Stripe customer portal
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/billing/create-checkout-session':
+  post:
+    tags:
+      - Billing
+    summary: Create checkout session
+    description: |
+      Creates a Stripe checkout session for purchasing credit bundles.
+      
+      This endpoint generates a Stripe checkout session that can be used to redirect
+      the user to the Stripe checkout page for purchasing credit bundles.
+    operationId: createCheckoutSession
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              priceId:
+                type: string
+                description: Stripe price ID for the credit bundle
+              successUrl:
+                type: string
+                format: uri
+                description: URL to redirect to after successful payment
+              cancelUrl:
+                type: string
+                format: uri
+                description: URL to redirect to if payment is cancelled
+            required:
+              - priceId
+              - successUrl
+              - cancelUrl
+    responses:
+      '200':
+        description: Checkout session created successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                sessionId:
+                  type: string
+                  description: Stripe checkout session ID
+                checkoutUrl:
+                  type: string
+                  format: uri
+                  description: URL to redirect the user to for checkout
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/billing/subscriptions':
+  post:
+    tags:
+      - Billing
+    summary: Create subscription
+    description: |
+      Creates a Stripe subscription for a specific pricing tier.
+      
+      This endpoint creates a subscription for the organization using the specified
+      Stripe price ID and optional payment method.
+    operationId: createSubscription
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              priceId:
+                type: string
+                description: Stripe price ID for the subscription
+              paymentMethodId:
+                type: string
+                description: Optional Stripe payment method ID
+            required:
+              - priceId
+    responses:
+      '200':
+        description: Subscription created successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                subscription:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Stripe subscription ID
+                    status:
+                      type: string
+                      description: Subscription status
+                    currentPeriodEnd:
+                      type: string
+                      format: date-time
+                      description: End date of the current billing period
+                clientSecret:
+                  type: string
+                  description: Client secret for confirming the subscription (if required)
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/billing/credit-balance':
+  get:
+    tags:
+      - Billing
+    summary: Get credit balance
+    description: |
+      Retrieves the current credit balance for the organization.
+      
+      This endpoint returns the current credit balance for the authenticated user's organization.
+    operationId: getCreditBalance
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Credit balance retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                creditBalance:
+                  type: integer
+                  description: Current credit balance
+                  example: 500
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/billing/credit-usage':
+  get:
+    tags:
+      - Billing
+    summary: Get credit usage history
+    description: |
+      Retrieves credit usage history for the organization.
+      
+      This endpoint returns a paginated list of credit usage events for the
+      authenticated user's organization, with optional filtering by date range.
+    operationId: getCreditUsage
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: startDate
+        in: query
+        description: Start date for filtering (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date
+      - name: endDate
+        in: query
+        description: End date for filtering (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: Credit usage history retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    events:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            description: Event ID
+                          event_type:
+                            type: string
+                            description: Type of event (credit_usage, credit_purchase)
+                          amount:
+                            type: integer
+                            description: Amount of credits added or used
+                          order_id:
+                            type: integer
+                            description: Associated order ID (for credit_usage events)
+                          description:
+                            type: string
+                            description: Human-readable description of the event
+                          created_at:
+                            type: string
+                            format: date-time
+                            description: Date and time of the event
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'

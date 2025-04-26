@@ -1,0 +1,902 @@
+# Super Admin Management Endpoints
+
+# Organizations endpoints
+'/superadmin/organizations':
+  get:
+    tags:
+      - SuperAdmin
+      - Organizations
+    summary: List organizations
+    description: |
+      Retrieves a list of all organizations in the system.
+      
+      This endpoint returns a list of all organizations with basic information,
+      allowing superadmins to view and manage organizations across the platform.
+    operationId: listOrganizations
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: name
+        in: query
+        description: Filter by organization name
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: Filter by organization type
+        schema:
+          type: string
+          enum: [referring, radiology_group, both]
+      - name: status
+        in: query
+        description: Filter by organization status
+        schema:
+          type: string
+          enum: [active, on_hold, purgatory, terminated]
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of organizations
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                count:
+                  type: integer
+                  description: Total number of organizations
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/OrganizationSummary'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/superadmin/organizations/{orgId}':
+  get:
+    tags:
+      - SuperAdmin
+      - Organizations
+    summary: Get organization details
+    description: |
+      Retrieves detailed information about a specific organization.
+      
+      This endpoint returns comprehensive information about an organization,
+      including users, connections, and billing history.
+    operationId: getOrganizationDetails
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orgId
+        in: path
+        description: ID of the organization to retrieve
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Organization details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    organization:
+                      $ref: '../components/schemas.yaml#/Organization'
+                    users:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/UserSummary'
+                    connections:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/ConnectionSummary'
+                    billingHistory:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/BillingEvent'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/superadmin/organizations/{orgId}/status':
+  put:
+    tags:
+      - SuperAdmin
+      - Organizations
+    summary: Update organization status
+    description: |
+      Updates an organization's status.
+      
+      This endpoint allows superadmins to change an organization's status,
+      which affects its ability to use the platform.
+    operationId: updateOrganizationStatus
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orgId
+        in: path
+        description: ID of the organization to update
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [active, on_hold, purgatory, terminated]
+                description: New status for the organization
+              reason:
+                type: string
+                description: Reason for the status change
+            required:
+              - status
+    responses:
+      '200':
+        description: Organization status updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Organization ID
+                    previousStatus:
+                      type: string
+                      description: Previous status
+                    newStatus:
+                      type: string
+                      description: New status
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      description: Date and time of the update
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/superadmin/organizations/{orgId}/credits/adjust':
+  post:
+    tags:
+      - SuperAdmin
+      - Organizations
+    summary: Adjust organization credits
+    description: |
+      Adjusts an organization's credit balance.
+      
+      This endpoint allows superadmins to add or remove credits from an organization's balance,
+      with a reason for the adjustment.
+    operationId: adjustOrganizationCredits
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orgId
+        in: path
+        description: ID of the organization to adjust credits for
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              amount:
+                type: integer
+                description: Amount of credits to add (positive) or remove (negative)
+              reason:
+                type: string
+                description: Reason for the credit adjustment
+            required:
+              - amount
+              - reason
+    responses:
+      '200':
+        description: Credits adjusted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Organization ID
+                    previousBalance:
+                      type: integer
+                      description: Previous credit balance
+                    newBalance:
+                      type: integer
+                      description: New credit balance
+                    adjustment:
+                      type: integer
+                      description: Amount of credits adjusted
+                    reason:
+                      type: string
+                      description: Reason for the adjustment
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+# Users endpoints
+'/superadmin/users':
+  get:
+    tags:
+      - SuperAdmin
+      - Users
+    summary: List users
+    description: |
+      Retrieves a list of all users in the system.
+      
+      This endpoint returns a list of all users with basic information,
+      allowing superadmins to view and manage users across the platform.
+    operationId: listUsers
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: email
+        in: query
+        description: Filter by user email
+        schema:
+          type: string
+      - name: organizationId
+        in: query
+        description: Filter by organization ID
+        schema:
+          type: string
+      - name: role
+        in: query
+        description: Filter by user role
+        schema:
+          type: string
+          enum: [admin_referring, admin_radiology, physician, admin_staff, radiologist, scheduler, super_admin]
+      - name: isActive
+        in: query
+        description: Filter by active status
+        schema:
+          type: boolean
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of users
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                count:
+                  type: integer
+                  description: Total number of users
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/UserSummary'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/superadmin/users/{userId}':
+  get:
+    tags:
+      - SuperAdmin
+      - Users
+    summary: Get user details
+    description: |
+      Retrieves detailed information about a specific user.
+      
+      This endpoint returns comprehensive information about a user,
+      including their organization, assigned locations, and activity history.
+    operationId: getUserDetails
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        description: ID of the user to retrieve
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: User details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/UserDetails'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/superadmin/users/{userId}/status':
+  put:
+    tags:
+      - SuperAdmin
+      - Users
+    summary: Update user status
+    description: |
+      Updates a user's active status.
+      
+      This endpoint allows superadmins to activate or deactivate a user,
+      which affects their ability to log in and use the platform.
+    operationId: updateUserStatus
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        description: ID of the user to update
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              isActive:
+                type: boolean
+                description: New active status for the user
+              reason:
+                type: string
+                description: Reason for the status change
+            required:
+              - isActive
+    responses:
+      '200':
+        description: User status updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: User ID
+                    previousStatus:
+                      type: boolean
+                      description: Previous active status
+                    newStatus:
+                      type: boolean
+                      description: New active status
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      description: Date and time of the update
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+# System Logs endpoints
+'/superadmin/logs/validation':
+  get:
+    tags:
+      - SuperAdmin
+      - Logs
+    summary: Get validation logs
+    description: |
+      Retrieves LLM validation logs with basic filtering capabilities.
+      
+      This endpoint returns a list of validation logs with information about
+      validation attempts, including status, tokens used, and latency.
+    operationId: getValidationLogs
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: organization_id
+        in: query
+        description: Filter by organization ID
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        description: Filter by user ID
+        schema:
+          type: string
+      - name: date_range_start
+        in: query
+        description: Filter by start date (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date
+      - name: date_range_end
+        in: query
+        description: Filter by end date (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date
+      - name: status
+        in: query
+        description: Filter by validation status
+        schema:
+          type: string
+      - name: llm_provider
+        in: query
+        description: Filter by LLM provider
+        schema:
+          type: string
+      - name: model_name
+        in: query
+        description: Filter by model name
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: offset
+        in: query
+        description: Offset for pagination
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+    responses:
+      '200':
+        description: Validation logs
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/ValidationLog'
+                pagination:
+                  type: object
+                  properties:
+                    total:
+                      type: integer
+                      description: Total number of logs
+                    limit:
+                      type: integer
+                      description: Number of items per page
+                    offset:
+                      type: integer
+                      description: Current offset
+                    has_more:
+                      type: boolean
+                      description: Whether there are more logs to fetch
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/superadmin/logs/validation/enhanced':
+  get:
+    tags:
+      - SuperAdmin
+      - Logs
+    summary: Get enhanced validation logs
+    description: |
+      Retrieves LLM validation logs with advanced filtering capabilities.
+      
+      This endpoint extends the basic validation logs endpoint with additional
+      filtering options, including multiple status selection, text search,
+      date presets, and sorting options.
+    operationId: getEnhancedValidationLogs
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: organization_id
+        in: query
+        description: Filter by organization ID
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        description: Filter by user ID
+        schema:
+          type: string
+      - name: statuses
+        in: query
+        description: Filter by multiple validation statuses (comma-separated)
+        schema:
+          type: string
+      - name: llm_providers
+        in: query
+        description: Filter by multiple LLM providers (comma-separated)
+        schema:
+          type: string
+      - name: model_names
+        in: query
+        description: Filter by multiple model names (comma-separated)
+        schema:
+          type: string
+      - name: search_text
+        in: query
+        description: Text search across relevant fields
+        schema:
+          type: string
+      - name: date_preset
+        in: query
+        description: Predefined date range
+        schema:
+          type: string
+          enum: [today, yesterday, last_7_days, last_30_days, this_month, last_month, custom]
+      - name: date_range_start
+        in: query
+        description: Filter by start date (YYYY-MM-DD) when date_preset is 'custom'
+        schema:
+          type: string
+          format: date
+      - name: date_range_end
+        in: query
+        description: Filter by end date (YYYY-MM-DD) when date_preset is 'custom'
+        schema:
+          type: string
+          format: date
+      - name: sort_by
+        in: query
+        description: Field to sort by
+        schema:
+          type: string
+          enum: [created_at, latency_ms, total_tokens, status]
+          default: created_at
+      - name: sort_direction
+        in: query
+        description: Sort direction
+        schema:
+          type: string
+          enum: [asc, desc]
+          default: desc
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: offset
+        in: query
+        description: Offset for pagination
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+    responses:
+      '200':
+        description: Enhanced validation logs
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/EnhancedValidationLog'
+                pagination:
+                  type: object
+                  properties:
+                    total:
+                      type: integer
+                      description: Total number of logs
+                    limit:
+                      type: integer
+                      description: Number of items per page
+                    offset:
+                      type: integer
+                      description: Current offset
+                    has_more:
+                      type: boolean
+                      description: Whether there are more logs to fetch
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/superadmin/logs/credits':
+  get:
+    tags:
+      - SuperAdmin
+      - Logs
+    summary: Get credit usage logs
+    description: |
+      Retrieves credit usage logs with filtering capabilities.
+      
+      This endpoint returns a list of credit usage logs, showing when and how
+      credits were consumed or added across the platform.
+    operationId: getCreditUsageLogs
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: organization_id
+        in: query
+        description: Filter by organization ID
+        schema:
+          type: string
+      - name: user_id
+        in: query
+        description: Filter by user ID
+        schema:
+          type: string
+      - name: date_range_start
+        in: query
+        description: Filter by start date (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date
+      - name: date_range_end
+        in: query
+        description: Filter by end date (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date
+      - name: action_type
+        in: query
+        description: Filter by action type
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: offset
+        in: query
+        description: Offset for pagination
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+    responses:
+      '200':
+        description: Credit usage logs
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/CreditUsageLog'
+                pagination:
+                  type: object
+                  properties:
+                    total:
+                      type: integer
+                      description: Total number of logs
+                    limit:
+                      type: integer
+                      description: Number of items per page
+                    offset:
+                      type: integer
+                      description: Current offset
+                    has_more:
+                      type: boolean
+                      description: Whether there are more logs to fetch
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/superadmin/logs/purgatory':
+  get:
+    tags:
+      - SuperAdmin
+      - Logs
+    summary: Get purgatory events
+    description: |
+      Retrieves purgatory events with filtering capabilities.
+      
+      This endpoint returns a list of purgatory events, showing when organizations
+      were placed in or removed from purgatory status.
+    operationId: getPurgatoryEvents
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: organization_id
+        in: query
+        description: Filter by organization ID
+        schema:
+          type: string
+      - name: date_range_start
+        in: query
+        description: Filter by start date (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date
+      - name: date_range_end
+        in: query
+        description: Filter by end date (YYYY-MM-DD)
+        schema:
+          type: string
+          format: date
+      - name: status
+        in: query
+        description: Filter by status
+        schema:
+          type: string
+          enum: [to_purgatory, from_purgatory]
+      - name: reason
+        in: query
+        description: Filter by reason
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: offset
+        in: query
+        description: Offset for pagination
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+    responses:
+      '200':
+        description: Purgatory events
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/PurgatoryEvent'
+                pagination:
+                  type: object
+                  properties:
+                    total:
+                      type: integer
+                      description: Total number of events
+                    limit:
+                      type: integer
+                      description: Number of items per page
+                    offset:
+                      type: integer
+                      description: Current offset
+                    has_more:
+                      type: boolean
+                      description: Whether there are more events to fetch
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'

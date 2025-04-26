@@ -152,8 +152,9 @@ This document maps core API endpoints to the primary database tables they intera
 -   **`POST /api/radiology/orders/{orderId}/update-status`** (Mark as scheduled, completed)
     -   Reads: `orders` (PHI)
     *   Writes: `orders` (PHI - update `status`), `order_history` (PHI)
--   **`POST /api/radiology/orders/{orderId}/request-info`** (Optional: Request info)
-    -   Writes: `information_requests` (PHI)
+-   **`POST /api/radiology/orders/{orderId}/request-info`** (Request additional information)
+    -   Reads: `orders` (PHI - Verify order exists and belongs to radiology org)
+    -   Writes: `information_requests` (PHI), `order_history` (PHI - log information request)
 -   **`POST /api/radiology/orders/{orderId}/results`** (Planned: Submit results)
     -   Writes: `orders` (PHI), `document_uploads` (PHI), `order_history` (PHI)
 

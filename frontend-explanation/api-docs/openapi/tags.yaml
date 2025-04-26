@@ -1,0 +1,40 @@
+# API Tags
+
+- name: Authentication
+  description: Endpoints for user authentication and registration
+
+- name: Users
+  description: User management endpoints
+
+- name: Organizations
+  description: Organization management endpoints
+
+- name: Locations
+  description: Location management endpoints
+
+- name: Connections
+  description: Connection management between organizations
+
+- name: Orders
+  description: Order management endpoints
+
+- name: Validation Engine
+  description: Clinical validation endpoints for processing dictations and assigning CPT and ICD-10 codes
+
+- name: Admin
+  description: Administrative endpoints for order finalization
+
+- name: Radiology
+  description: Radiology workflow endpoints
+
+- name: Uploads
+  description: File upload endpoints
+
+- name: Billing
+  description: Billing and credit management endpoints
+
+- name: SuperAdmin
+  description: Superadmin functionality endpoints
+
+- name: Trial
+  description: Trial user endpoints for testing the validation engine

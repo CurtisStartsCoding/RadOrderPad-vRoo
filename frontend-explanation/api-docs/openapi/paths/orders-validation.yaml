@@ -1,0 +1,387 @@
+# Order Validation Endpoints
+
+/orders/validate:
+  post:
+    tags:
+      - Validation Engine
+    summary: Validate an order
+    description: |
+      Validates a radiology order based on dictation text. This is the core endpoint for the validation engine,
+      which processes clinical indications from physician dictation to assign appropriate CPT and ICD-10 codes.
+      
+      The validation process includes:
+      1. Extracting medical context from the dictation
+      2. Analyzing the clinical indications
+      3. Determining appropriate CPT and ICD-10 codes
+      4. Assessing compliance with clinical guidelines
+      5. Providing educational feedback
+      
+      Processing takes approximately 2-3 seconds per request.
+    operationId: validateOrder
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - dictation
+              - modalityType
+            properties:
+              dictation:
+                type: string
+                description: The clinical dictation text from the physician
+              modalityType:
+                type: string
+                enum: [CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR]
+                description: The type of imaging modality
+              patientInfo:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
+                  dateOfBirth:
+                    type: string
+                    format: date
+                  gender:
+                    type: string
+                    enum: [male, female, other]
+                  mrn:
+                    type: string
+                  pidn:
+                    type: string
+                    description: Patient Identifier Number
+              orderId:
+                type: string
+                description: For subsequent validation attempts, the ID of the existing order
+              isOverrideValidation:
+                type: boolean
+                description: Set to true for override validation after multiple failed attempts
+          examples:
+            initialValidation:
+              summary: Initial validation request
+              value:
+                dictation: "72-year-old male with persistent lower back pain radiating to the left leg for 3 weeks. History of degenerative disc disease. Clinical concern for lumbar radiculopathy."
+                modalityType: "MRI"
+                patientInfo:
+                  firstName: "Robert"
+                  lastName: "Johnson"
+                  dateOfBirth: "1950-05-15"
+                  gender: "male"
+                  pidn: "P12345"
+            subsequentAttempt:
+              summary: Subsequent validation attempt
+              value:
+                dictation: "72-year-old male with persistent lower back pain radiating to the left leg for 3 weeks. History of degenerative disc disease. Clinical concern for lumbar radiculopathy.\n\n--- CLARIFICATION 1 ---\nPain is worse with standing and walking. Physical exam shows positive straight leg raise on left side. No bowel or bladder symptoms."
+                modalityType: "MRI"
+                patientInfo:
+                  firstName: "Robert"
+                  lastName: "Johnson"
+                  dateOfBirth: "1950-05-15"
+                  gender: "male"
+                  pidn: "P12345"
+                orderId: "123"
+            overrideValidation:
+              summary: Override validation request
+              value:
+                dictation: "72-year-old male with persistent lower back pain radiating to the left leg for 3 weeks. History of degenerative disc disease. Clinical concern for lumbar radiculopathy.\n\n--- CLARIFICATION 1 ---\nPain is worse with standing and walking. Physical exam shows positive straight leg raise on left side. No bowel or bladder symptoms.\n\n--- OVERRIDE JUSTIFICATION ---\nPatient has failed conservative therapy including physical therapy and NSAIDs. MRI is needed to evaluate for possible surgical intervention."
+                modalityType: "MRI"
+                patientInfo:
+                  firstName: "Robert"
+                  lastName: "Johnson"
+                  dateOfBirth: "1950-05-15"
+                  gender: "male"
+                  pidn: "P12345"
+                orderId: "123"
+                isOverrideValidation: true
+    responses:
+      '200':
+        description: Validation successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orderId:
+                      type: string
+                      description: The ID of the created or updated order
+                    validationResult:
+                      type: object
+                      properties:
+                        cptCode:
+                          type: string
+                          description: The assigned CPT code
+                        cptDescription:
+                          type: string
+                          description: Description of the CPT code
+                        icd10Codes:
+                          type: array
+                          items:
+                            type: string
+                          description: The assigned ICD-10 codes
+                        icd10Descriptions:
+                          type: array
+                          items:
+                            type: string
+                          description: Descriptions of the ICD-10 codes
+                        confidence:
+                          type: number
+                          format: float
+                          description: Confidence score of the validation
+                    requiresClarification:
+                      type: boolean
+                      description: Whether additional clarification is needed
+                    clarificationPrompt:
+                      type: string
+                      description: The prompt for clarification if needed
+                    attemptNumber:
+                      type: integer
+                      description: The current validation attempt number
+            examples:
+              appropriateResponse:
+                summary: Appropriate validation response
+                value:
+                  success: true
+                  data:
+                    orderId: "123"
+                    validationResult:
+                      cptCode: "72148"
+                      cptDescription: "Magnetic resonance (eg, proton) imaging, spinal canal and contents, lumbar; without contrast material"
+                      icd10Codes: ["M54.17", "M51.36"]
+                      icd10Descriptions: ["Radiculopathy, lumbosacral region", "Other intervertebral disc degeneration, lumbar region"]
+                      confidence: 0.95
+                    requiresClarification: false
+                    attemptNumber: 1
+              needsClarificationResponse:
+                summary: Needs clarification response
+                value:
+                  success: true
+                  data:
+                    orderId: "123"
+                    validationResult:
+                      cptCode: "72148"
+                      cptDescription: "Magnetic resonance (eg, proton) imaging, spinal canal and contents, lumbar; without contrast material"
+                      icd10Codes: ["M54.5"]
+                      icd10Descriptions: ["Low back pain"]
+                      confidence: 0.6
+                    requiresClarification: true
+                    clarificationPrompt: "Additional information is needed to determine appropriateness. Please provide: 1) Duration of symptoms, 2) Any prior treatments attempted, 3) Any neurological symptoms such as weakness or numbness, 4) Results of physical examination."
+                    attemptNumber: 1
+      '400':
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Missing required fields"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Authentication required"
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Insufficient permissions"
+      '503':
+        description: LLM Service Unavailable
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Validation service temporarily unavailable. Please try again later."
+
+/orders/validate/trial:
+  post:
+    tags:
+      - Validation Engine
+      - Trial
+    summary: Validate an order in trial mode
+    description: |
+      Validates a radiology order in trial mode. This endpoint is similar to the regular validation endpoint,
+      but does not create any PHI records and is limited to a certain number of validations per trial user.
+      
+      The validation process is the same as the regular validation endpoint, but without the clarification loop
+      or override functionality.
+    operationId: validateOrderTrial
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - dictation
+              - modalityType
+            properties:
+              dictation:
+                type: string
+                description: The clinical dictation text from the physician
+              modalityType:
+                type: string
+                enum: [CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR]
+                description: The type of imaging modality
+          example:
+            dictation: "72-year-old male with persistent lower back pain radiating to the left leg for 3 weeks. History of degenerative disc disease. Clinical concern for lumbar radiculopathy."
+            modalityType: "MRI"
+    responses:
+      '200':
+        description: Validation successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    validationResult:
+                      type: object
+                      properties:
+                        cptCode:
+                          type: string
+                          description: The assigned CPT code
+                        cptDescription:
+                          type: string
+                          description: Description of the CPT code
+                        icd10Codes:
+                          type: array
+                          items:
+                            type: string
+                          description: The assigned ICD-10 codes
+                        icd10Descriptions:
+                          type: array
+                          items:
+                            type: string
+                          description: Descriptions of the ICD-10 codes
+                        confidence:
+                          type: number
+                          format: float
+                          description: Confidence score of the validation
+                    validationsRemaining:
+                      type: integer
+                      description: Number of validations remaining for the trial user
+            example:
+              success: true
+              data:
+                validationResult:
+                  cptCode: "72148"
+                  cptDescription: "Magnetic resonance (eg, proton) imaging, spinal canal and contents, lumbar; without contrast material"
+                  icd10Codes: ["M54.17", "M51.36"]
+                  icd10Descriptions: ["Radiculopathy, lumbosacral region", "Other intervertebral disc degeneration, lumbar region"]
+                  confidence: 0.95
+                validationsRemaining: 9
+      '400':
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Missing required fields"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Authentication required"
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Validation limit reached. Please register for a full account to continue using the service."
+                error:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: "VALIDATION_LIMIT_REACHED"
+                    validationsUsed:
+                      type: integer
+                      example: 10
+                    validationsLimit:
+                      type: integer
+                      example: 10
+      '503':
+        description: LLM Service Unavailable
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Validation service temporarily unavailable. Please try again later."
+                error:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: "SERVICE_UNAVAILABLE"

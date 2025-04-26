@@ -1,0 +1,644 @@
+# Authentication Endpoints
+
+'/auth/login':
+  post:
+    tags:
+      - Authentication
+    summary: Authenticate user
+    description: |
+      Authenticates a user with email and password credentials and returns a JWT token.
+      
+      This endpoint validates the user's credentials, checks their account status,
+      and returns authentication tokens along with basic user information.
+    operationId: login
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                description: User's email address
+              password:
+                type: string
+                format: password
+                description: User's password
+            required:
+              - email
+              - password
+    responses:
+      '200':
+        description: Successful authentication
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                      description: JWT token for authentication
+                    refreshToken:
+                      type: string
+                      description: Refresh token for obtaining a new JWT token
+                    expiresIn:
+                      type: integer
+                      description: Token expiration time in seconds
+                      example: 3600
+                    user:
+                      $ref: '../components/schemas.yaml#/User'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        description: Invalid credentials
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Invalid email or password"
+      '403':
+        description: Account disabled or organization inactive
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Your account has been disabled. Please contact your administrator."
+      '429':
+        $ref: '../components/responses.yaml#/TooManyRequests'
+
+'/auth/refresh':
+  post:
+    tags:
+      - Authentication
+    summary: Refresh authentication token
+    description: |
+      Refreshes an expired JWT token using a valid refresh token.
+      
+      This endpoint validates the refresh token and issues a new JWT token
+      without requiring the user to re-enter their credentials.
+    operationId: refreshToken
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              refreshToken:
+                type: string
+                description: Refresh token obtained during login
+            required:
+              - refreshToken
+    responses:
+      '200':
+        description: Token refreshed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                      description: New JWT token
+                    refreshToken:
+                      type: string
+                      description: New refresh token
+                    expiresIn:
+                      type: integer
+                      description: Token expiration time in seconds
+                      example: 3600
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        description: Invalid or expired refresh token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Invalid or expired refresh token"
+
+'/auth/logout':
+  post:
+    tags:
+      - Authentication
+    summary: Logout user
+    description: |
+      Logs out a user by invalidating their current tokens.
+      
+      This endpoint invalidates the user's current JWT and refresh tokens,
+      effectively logging them out of the system.
+    operationId: logout
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Logout successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Logout successful"
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+
+'/auth/forgot-password':
+  post:
+    tags:
+      - Authentication
+    summary: Request password reset
+    description: |
+      Initiates the password reset process by sending a reset link to the user's email.
+      
+      This endpoint validates the email address and sends a password reset link
+      if the email is associated with an active user account.
+    operationId: forgotPassword
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                description: User's email address
+            required:
+              - email
+    responses:
+      '200':
+        description: Password reset email sent
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Password reset instructions have been sent to your email"
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '404':
+        description: Email not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "No account found with that email address"
+      '429':
+        $ref: '../components/responses.yaml#/TooManyRequests'
+
+'/auth/reset-password':
+  post:
+    tags:
+      - Authentication
+    summary: Reset password
+    description: |
+      Resets a user's password using a valid reset token.
+      
+      This endpoint validates the reset token and updates the user's password
+      if the token is valid and not expired.
+    operationId: resetPassword
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: Password reset token from email
+              password:
+                type: string
+                format: password
+                description: New password
+            required:
+              - token
+              - password
+    responses:
+      '200':
+        description: Password reset successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Password has been reset successfully"
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        description: Invalid or expired token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Invalid or expired reset token"
+
+'/auth/change-password':
+  post:
+    tags:
+      - Authentication
+    summary: Change password
+    description: |
+      Changes a user's password while authenticated.
+      
+      This endpoint allows an authenticated user to change their password
+      by providing their current password and a new password.
+    operationId: changePassword
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              currentPassword:
+                type: string
+                format: password
+                description: Current password
+              newPassword:
+                type: string
+                format: password
+                description: New password
+            required:
+              - currentPassword
+              - newPassword
+    responses:
+      '200':
+        description: Password changed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Password changed successfully"
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        description: Invalid current password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Current password is incorrect"
+
+'/auth/trial/register':
+  post:
+    tags:
+      - Authentication
+      - Trial
+    summary: Register trial user
+    description: |
+      Registers a new trial user with an invitation token.
+      
+      This endpoint validates the invitation token and creates a new trial user
+      account with the provided information.
+    operationId: registerTrialUser
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              invitationToken:
+                type: string
+                description: Trial invitation token
+              email:
+                type: string
+                format: email
+                description: User's email address
+              password:
+                type: string
+                format: password
+                description: User's password
+              firstName:
+                type: string
+                description: User's first name
+              lastName:
+                type: string
+                description: User's last name
+              specialty:
+                type: string
+                description: User's medical specialty
+            required:
+              - invitationToken
+              - email
+              - password
+              - firstName
+              - lastName
+              - specialty
+    responses:
+      '201':
+        description: Trial user registered successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                      description: JWT token for authentication
+                    refreshToken:
+                      type: string
+                      description: Refresh token for obtaining a new JWT token
+                    expiresIn:
+                      type: integer
+                      description: Token expiration time in seconds
+                      example: 3600
+                    user:
+                      $ref: '../components/schemas.yaml#/User'
+                    trialInfo:
+                      $ref: '../components/schemas.yaml#/TrialInfo'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '404':
+        description: Invalid invitation token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Invalid or expired invitation token"
+      '409':
+        description: Email already in use
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Email address is already registered"
+
+'/auth/trial/login':
+  post:
+    tags:
+      - Authentication
+      - Trial
+    summary: Login trial user
+    description: |
+      Authenticates a trial user with email and password credentials.
+      
+      This endpoint validates the trial user's credentials, checks their trial status,
+      and returns authentication tokens along with trial-specific information.
+    operationId: loginTrialUser
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                description: User's email address
+              password:
+                type: string
+                format: password
+                description: User's password
+            required:
+              - email
+              - password
+    responses:
+      '200':
+        description: Successful authentication
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                      description: JWT token for authentication
+                    refreshToken:
+                      type: string
+                      description: Refresh token for obtaining a new JWT token
+                    expiresIn:
+                      type: integer
+                      description: Token expiration time in seconds
+                      example: 3600
+                    user:
+                      $ref: '../components/schemas.yaml#/User'
+                    trialInfo:
+                      $ref: '../components/schemas.yaml#/TrialInfo'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        description: Invalid credentials
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Invalid email or password"
+      '403':
+        description: Trial expired or usage limit reached
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Your trial period has expired"
+                trialStatus:
+                  type: object
+                  properties:
+                    active:
+                      type: boolean
+                      example: false
+                    remainingDays:
+                      type: integer
+                      example: 0
+                    usageCount:
+                      type: integer
+                      example: 20
+                    usageLimit:
+                      type: integer
+                      example: 20
+                    message:
+                      type: string
+                      example: "You have reached your trial usage limit"
+
+'/auth/complete-registration':
+  post:
+    tags:
+      - Authentication
+    summary: Complete user registration
+    description: |
+      Completes the registration process for a user who received an invitation.
+      
+      This endpoint validates the invitation token and completes the user registration
+      by setting a password and accepting terms and conditions.
+    operationId: completeRegistration
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: Invitation token from email
+              password:
+                type: string
+                format: password
+                description: User's chosen password
+              acceptTerms:
+                type: boolean
+                description: Whether the user accepts the terms and conditions
+              setupTwoFactor:
+                type: boolean
+                description: Whether to set up two-factor authentication
+            required:
+              - token
+              - password
+              - acceptTerms
+    responses:
+      '200':
+        description: Registration completed successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                      description: JWT token for authentication
+                    refreshToken:
+                      type: string
+                      description: Refresh token for obtaining a new JWT token
+                    expiresIn:
+                      type: integer
+                      description: Token expiration time in seconds
+                      example: 3600
+                    user:
+                      $ref: '../components/schemas.yaml#/User'
+                    twoFactorSetupRequired:
+                      type: boolean
+                      description: Whether two-factor authentication setup is required
+                      example: false
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '404':
+        description: Invalid invitation token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Invalid or expired invitation token"

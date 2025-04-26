@@ -1,0 +1,431 @@
+# Radiology Order Management Endpoints
+
+'/radiology/orders':
+  get:
+    tags:
+      - Radiology
+      - Orders
+    summary: List radiology orders
+    description: |
+      Retrieves a list of orders for a radiology organization with optional filtering.
+      
+      This endpoint returns a paginated list of orders that have been sent to the radiology
+      organization, with filtering options for status, priority, modality, and referring organization.
+    operationId: listRadiologyOrders
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: status
+        in: query
+        description: Filter by order status
+        schema:
+          type: string
+          enum: [pending_radiology, scheduled, completed, all]
+          default: pending_radiology
+      - name: priority
+        in: query
+        description: Filter by priority
+        schema:
+          type: string
+          enum: [routine, stat]
+      - name: modality
+        in: query
+        description: Filter by modality
+        schema:
+          type: string
+          enum: [MRI, CT, XRAY, ULTRASOUND, PET, NUCLEAR]
+      - name: referringOrgId
+        in: query
+        description: Filter by referring organization ID
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        schema:
+          type: string
+          enum: [created_at, updated_at, patient_name]
+          default: created_at
+      - name: sortOrder
+        in: query
+        description: Sort direction
+        schema:
+          type: string
+          enum: [asc, desc]
+          default: desc
+    responses:
+      '200':
+        description: List of radiology orders
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orders:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/RadiologyOrderSummary'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/radiology/orders/{orderId}':
+  get:
+    tags:
+      - Radiology
+      - Orders
+    summary: Get radiology order details
+    description: |
+      Retrieves detailed information about a specific radiology order.
+      
+      This endpoint returns comprehensive information about a radiology order,
+      including patient details, insurance information, clinical records, and documents.
+    operationId: getRadiologyOrderDetails
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to retrieve
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Radiology order details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/RadiologyOrderDetails'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/radiology/orders/{orderId}/export/{format}':
+  get:
+    tags:
+      - Radiology
+      - Orders
+    summary: Export radiology order
+    description: |
+      Exports a radiology order in the specified format.
+      
+      This endpoint allows exporting order data for integration with external systems
+      or for reporting purposes. Supported formats are JSON and CSV.
+    operationId: exportRadiologyOrder
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to export
+        required: true
+        schema:
+          type: string
+      - name: format
+        in: path
+        description: Export format
+        required: true
+        schema:
+          type: string
+          enum: [json, csv]
+    responses:
+      '200':
+        description: Exported order data
+        content:
+          application/json:
+            schema:
+              type: object
+          text/csv:
+            schema:
+              type: string
+      '400':
+        description: Invalid format
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Invalid export format. Supported formats: json, csv"
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/radiology/orders/{orderId}/update-status':
+  post:
+    tags:
+      - Radiology
+      - Orders
+    summary: Update radiology order status
+    description: |
+      Updates the status of a radiology order.
+      
+      This endpoint allows radiology staff to update the status of an order
+      as it progresses through the workflow (e.g., from pending to scheduled to completed).
+    operationId: updateRadiologyOrderStatus
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to update
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              newStatus:
+                type: string
+                enum: [pending_radiology, scheduled, completed, cancelled]
+                description: New status for the order
+              scheduledDate:
+                type: string
+                format: date-time
+                description: Scheduled date (required when status is 'scheduled')
+              completedDate:
+                type: string
+                format: date-time
+                description: Completed date (required when status is 'completed')
+              notes:
+                type: string
+                description: Additional notes about the status change
+            required:
+              - newStatus
+    responses:
+      '200':
+        description: Order status updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                orderId:
+                  type: string
+                  description: ID of the updated order
+                previousStatus:
+                  type: string
+                  description: Previous status of the order
+                newStatus:
+                  type: string
+                  description: New status of the order
+                message:
+                  type: string
+                  example: "Order status updated to scheduled"
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/radiology/orders/{orderId}/request-info':
+  post:
+    tags:
+      - Radiology
+      - Orders
+    summary: Request additional information
+    description: |
+      Allows radiology staff to request additional information for an order from the referring organization.
+      
+      This endpoint creates an information request that will be visible to the referring organization,
+      and optionally sends a notification to the referring physician or admin staff.
+    operationId: requestAdditionalInfo
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order for which additional information is being requested
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              requestedInfoType:
+                type: string
+                enum: [labs, prior_imaging, clarification, patient_info, insurance_info, other]
+                description: Type of information being requested
+              requestedInfoDetails:
+                type: string
+                description: Detailed description of the information being requested
+              urgency:
+                type: string
+                enum: [low, medium, high]
+                default: medium
+                description: Urgency of the request
+              notifyPhysician:
+                type: boolean
+                default: true
+                description: Whether to notify the referring physician
+            required:
+              - requestedInfoType
+              - requestedInfoDetails
+    responses:
+      '200':
+        description: Information request created successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                orderId:
+                  type: string
+                  description: ID of the order
+                requestId:
+                  type: string
+                  description: ID of the created information request
+                message:
+                  type: string
+                  example: "Information request created successfully"
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/radiology/orders/{orderId}/results':
+  post:
+    tags:
+      - Radiology
+      - Orders
+    summary: Submit results
+    description: |
+      Submits results for a completed radiology order.
+      
+      This endpoint allows radiologists to submit findings and results for a completed order,
+      which can then be accessed by the referring physician.
+      
+      Note: This endpoint is planned for future implementation.
+    operationId: submitResults
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to submit results for
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              findings:
+                type: string
+                description: Detailed findings from the radiologist
+              impression:
+                type: string
+                description: Impression or conclusion
+              recommendedFollowUp:
+                type: string
+                description: Recommended follow-up actions
+              documentIds:
+                type: array
+                items:
+                  type: string
+                description: IDs of uploaded documents (e.g., images, reports)
+            required:
+              - findings
+              - impression
+    responses:
+      '200':
+        description: Results submitted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                orderId:
+                  type: string
+                  description: ID of the order
+                message:
+                  type: string
+                  example: "Results submitted successfully"
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'

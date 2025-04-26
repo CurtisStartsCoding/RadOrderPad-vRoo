@@ -1,0 +1,21 @@
+# Security Schemes
+
+# JWT Bearer Authentication
+bearerAuth:
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: |
+    JWT token authentication. The token is obtained from the login endpoint and must be included in the
+    Authorization header of all authenticated requests.
+    
+    Example: Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    
+    The JWT contains the following claims:
+    - userId: The ID of the authenticated user
+    - organizationId: The ID of the user's organization
+    - role: The user's role (physician, admin_staff, etc.)
+    - exp: The expiration time of the token
+    
+    Access tokens expire after 1 hour. When an access token expires, use the refresh token endpoint
+    to obtain a new access token.

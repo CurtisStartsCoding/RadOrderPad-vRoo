@@ -92,7 +92,7 @@ API Endpoints Overview (Conceptual)
 -   `GET /radiology/orders/{orderId}`: Get full details of an incoming order. **(Scheduler/Radiology Admin Role)**
 -   `GET /radiology/orders/{orderId}/export/{format}`: Export order data (pdf, csv, json, etc.). **(Scheduler/Radiology Admin Role)**
 -   `POST /radiology/orders/{orderId}/update-status`: Update the order status (scheduled, completed). **(Scheduler Role)**
--   `POST /radiology/orders/{orderId}/request-info`: (Optional) Request missing information from referring group. **(Scheduler/Radiology Admin Role)**
+-   `POST /radiology/orders/{orderId}/request-info`: Request additional information from referring group. Requires `requestedInfoType` and `requestedInfoDetails` in the request body. Creates an entry in the `information_requests` table and logs the event in `order_history`. **(Scheduler/Radiology Admin Role)**
 -   `POST /radiology/orders/{orderId}/results`: (Planned) Endpoint for submitting results back. **(Radiologist Role - Future)**
 
 ## File Uploads (`/uploads`)

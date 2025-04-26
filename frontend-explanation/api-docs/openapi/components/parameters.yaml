@@ -1,0 +1,144 @@
+# Common Parameters
+
+# Pagination parameters
+PageParam:
+  name: page
+  in: query
+  description: Page number (1-based)
+  required: false
+  schema:
+    type: integer
+    minimum: 1
+    default: 1
+
+LimitParam:
+  name: limit
+  in: query
+  description: Number of items per page
+  required: false
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 20
+
+SortByParam:
+  name: sortBy
+  in: query
+  description: Field to sort by
+  required: false
+  schema:
+    type: string
+
+SortOrderParam:
+  name: sortOrder
+  in: query
+  description: Sort direction
+  required: false
+  schema:
+    type: string
+    enum: [asc, desc]
+    default: desc
+
+# Common path parameters
+OrderIdParam:
+  name: orderId
+  in: path
+  description: ID of the order
+  required: true
+  schema:
+    type: string
+
+UserIdParam:
+  name: userId
+  in: path
+  description: ID of the user
+  required: true
+  schema:
+    type: string
+
+OrganizationIdParam:
+  name: organizationId
+  in: path
+  description: ID of the organization
+  required: true
+  schema:
+    type: string
+
+# Common header parameters
+AuthorizationHeader:
+  name: Authorization
+  in: header
+  description: JWT Bearer token
+  required: true
+  schema:
+    type: string
+    pattern: '^Bearer [A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.[A-Za-z0-9-_.+/=]*$'
+    example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+
+# Validation-specific parameters
+ModalityTypeParam:
+  name: modalityType
+  in: query
+  description: Type of imaging modality
+  required: false
+  schema:
+    type: string
+    enum: [CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR]
+
+ValidationStatusParam:
+  name: validationStatus
+  in: query
+  description: Validation status filter
+  required: false
+  schema:
+    type: string
+    enum: [appropriate, inappropriate, needs_clarification, override]
+
+# Order-specific parameters
+OrderStatusParam:
+  name: status
+  in: query
+  description: Order status filter
+  required: false
+  schema:
+    type: string
+    enum: [draft, pending_validation, pending_admin, sent_to_radiology, scheduled, completed, cancelled]
+
+DateRangeStartParam:
+  name: dateRangeStart
+  in: query
+  description: Start date for filtering (inclusive)
+  required: false
+  schema:
+    type: string
+    format: date
+
+DateRangeEndParam:
+  name: dateRangeEnd
+  in: query
+  description: End date for filtering (inclusive)
+  required: false
+  schema:
+    type: string
+    format: date
+
+# Search parameters
+SearchQueryParam:
+  name: q
+  in: query
+  description: Search query string
+  required: false
+  schema:
+    type: string
+    minLength: 2
+
+# Trial-specific parameters
+TrialValidationsRemainingParam:
+  name: validationsRemaining
+  in: query
+  description: Number of validations remaining for trial user
+  required: false
+  schema:
+    type: integer
+    minimum: 0

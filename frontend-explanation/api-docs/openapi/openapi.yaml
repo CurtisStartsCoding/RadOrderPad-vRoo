@@ -1,0 +1,663 @@
+openapi: 3.1.0
+info:
+  title: RadOrderPad API
+  description: |
+    API for the RadOrderPad application that enables physicians to create and validate radiology orders,
+    administrative staff to finalize orders, and radiology organizations to process orders.
+    
+    The API is organized into several functional areas:
+    - Authentication and user management
+    - Organization and location management
+    - Connection management between organizations
+    - Order validation and processing
+    - Administrative finalization
+    - Radiology workflow
+    - File uploads
+    - Billing and credit management
+    - Superadmin functionality
+
+    ## Frontend Implementation Guidance
+
+    ### State Management
+
+    #### Order Validation Flow
+    - **orderId Handling**: The first call to `POST /api/orders/validate` returns an `orderId` which the frontend must store and send back on subsequent `/validate` calls (for clarifications/override) and for the final `PUT /api/orders/{orderId}`.
+    - **attemptCount Tracking**: The frontend should track the validation attempt count locally to know when to enable the "Override" button (typically after 3 failed attempts).
+    - **Cumulative Dictation**: For clarification attempts, the frontend should send the entire cumulative dictation text (original + all clarifications), not just the new clarification text.
+
+    ### Error Handling
+    - **401 Unauthorized**: Attempt token refresh; if that fails, redirect to login.
+    - **403 Forbidden**: Display an "Access Denied" message.
+    - **402 Payment Required** (on Send to Radiology): Display an "Insufficient Credits" message/modal with a link to billing.
+    - **503 Service Unavailable** (on Validate): Display "Validation service temporarily unavailable, please try again" message.
+
+    ### Trial Feature Limitations
+    Trial users cannot:
+    - Finalize orders
+    - Access admin features
+    - Manage connections
+    - Upload non-signature files
+    - Store PHI data
+    - Exceed their validation limit (default: 10)
+
+    ### Enum Values
+    All string enums are explicitly defined in the schemas. Key enums include:
+    - **Order Status**: pending_validation, pending_admin, pending_radiology, scheduled, completed, cancelled
+    - **Validation Status**: appropriate, inappropriate, needs_clarification
+    - **User Roles**: physician, admin_referring, admin_staff, admin_radiology, radiologist, scheduler, super_admin, trial_physician
+    - **Organization Types**: referring, radiology_group, both
+    - **Connection Status**: pending_approval, approved, rejected, terminated
+    - **Modality Types**: CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR
+  version: 1.9.0
+servers:
+  - url: https://api.radorderpad.com
+    description: Production server
+
+# Tags for API categorization
+tags:
+  - name: Authentication
+    description: Endpoints for user authentication and registration
+  - name: Users
+    description: User management endpoints
+  - name: Organizations
+    description: Organization management endpoints
+  - name: Connections
+    description: Connection management between organizations
+  - name: Orders
+    description: Order management endpoints
+  - name: Validation
+    description: Clinical validation endpoints
+  - name: Admin
+    description: Administrative endpoints
+  - name: Radiology
+    description: Radiology workflow endpoints
+  - name: Uploads
+    description: File upload endpoints
+  - name: Billing
+    description: Billing and credit management endpoints
+  - name: SuperAdmin
+    description: Superadmin functionality endpoints
+  - name: Trial
+    description: Trial user endpoints
+
+# Note: In a real implementation, these would be separate files referenced using $ref
+# For this example, we're including a simplified version directly in this file
+
+paths:
+  # Billing endpoint with specific error handling guidance
+  /api/billing/send-to-radiology:
+    post:
+      tags:
+        - Billing
+        - Orders
+      summary: Send order to radiology (consumes credits)
+      description: |
+        Finalizes an order and sends it to the connected radiology organization.
+        This operation consumes one credit from the organization's balance.
+        
+        **Frontend Error Handling:**
+        - **402 Payment Required**: This indicates insufficient credits. The frontend should:
+          1. Display an "Insufficient Credits" modal
+          2. Show the current credit balance (included in the error response)
+          3. Provide a direct link to the billing page for purchasing more credits
+          4. Optionally show quick-purchase options for common credit bundles
+      operationId: sendToRadiology
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - orderId
+                - radiologyOrganizationId
+              properties:
+                orderId:
+                  type: string
+                  description: ID of the order to send
+                radiologyOrganizationId:
+                  type: string
+                  description: ID of the radiology organization to send the order to
+      responses:
+        '200':
+          description: Order sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Order sent to radiology successfully"
+                  data:
+                    type: object
+                    properties:
+                      orderId:
+                        type: string
+                        description: ID of the sent order
+                      newCreditBalance:
+                        type: integer
+                        description: Updated credit balance after deduction
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid order ID or radiology organization ID"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Authentication required"
+        '402':
+          description: Payment Required - Insufficient Credits
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Insufficient credits to send order to radiology"
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "INSUFFICIENT_CREDITS"
+                      currentBalance:
+                        type: integer
+                        example: 0
+                      requiredCredits:
+                        type: integer
+                        example: 1
+                      billingUrl:
+                        type: string
+                        format: uri
+                        example: "/billing"
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Insufficient permissions"
+  
+  # Authentication endpoints
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticates a user and returns access and refresh tokens
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                        description: JWT access token
+                      refreshToken:
+                        type: string
+                        description: JWT refresh token
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            description: User ID
+                          firstName:
+                            type: string
+                            description: User's first name
+                          lastName:
+                            type: string
+                            description: User's last name
+                          email:
+                            type: string
+                            description: User's email
+                          role:
+                            type: string
+                            description: User's role
+                          organizationId:
+                            type: string
+                            description: User's organization ID
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid email or password format"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid email or password"
+
+  # Validation endpoint example
+  /api/orders/validate:
+    post:
+      tags:
+        - Orders
+        - Validation
+      summary: Submit dictation for validation
+      description: |
+        Submits clinical dictation for validation by the LLM engine.
+        
+        **Important Frontend Implementation Notes:**
+        
+        - **First Call**: Creates a draft order record and returns `orderId`. The frontend MUST store this ID.
+        - **Subsequent Calls**: Must include the `orderId` from the first call.
+        - **Clarification Flow**: When `requiresClarification` is true in the response, the frontend should:
+          1. Display the `clarificationPrompt` to the user
+          2. Collect additional information
+          3. Send another validation request with the ENTIRE cumulative dictation (original + all clarifications)
+          4. Include the same `orderId` from the first call
+        - **Override Flow**: After 3 failed attempts (tracked via `attemptNumber` in responses):
+          1. Enable an "Override" option in the UI
+          2. Collect override justification from the user
+          3. Send a final validation request with `isOverrideValidation: true`
+          4. Include the same `orderId` from the first call
+      operationId: validateOrder
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dictation:
+                  type: string
+                  description: The clinical dictation text to validate
+                orderId:
+                  type: string
+                  description: For subsequent validation attempts, the ID of the existing order
+                isOverrideValidation:
+                  type: boolean
+                  description: Whether this is an override validation after multiple failed attempts
+                patientInfo:
+                  type: object
+                  description: Optional patient information
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    dateOfBirth:
+                      type: string
+                      format: date
+                    gender:
+                      type: string
+                      enum: [male, female, other]
+                modalityType:
+                  type: string
+                  enum: [CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR]
+                  description: The type of imaging modality
+              required:
+                - dictation
+                - modalityType
+      responses:
+        '200':
+          description: Successful validation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      orderId:
+                        type: string
+                        description: The ID of the created or updated order
+                      validationResult:
+                        type: object
+                        properties:
+                          cptCode:
+                            type: string
+                            description: The assigned CPT code
+                          cptDescription:
+                            type: string
+                            description: Description of the CPT code
+                          icd10Codes:
+                            type: array
+                            items:
+                              type: string
+                            description: The assigned ICD-10 codes
+                          icd10Descriptions:
+                            type: array
+                            items:
+                              type: string
+                            description: Descriptions of the ICD-10 codes
+                          confidence:
+                            type: number
+                            format: float
+                            description: Confidence score of the validation
+                      requiresClarification:
+                        type: boolean
+                        description: Whether additional clarification is needed
+                      clarificationPrompt:
+                        type: string
+                        description: The prompt for clarification if needed
+                      attemptNumber:
+                        type: integer
+                        description: The current validation attempt number
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Missing required fields"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Authentication required"
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Insufficient permissions"
+        '503':
+          description: LLM Service Unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Validation service temporarily unavailable. Please try again later."
+
+  # Trial validation endpoint
+  /api/orders/validate/trial:
+    post:
+      tags:
+        - Orders
+        - Validation
+        - Trial
+      summary: Validate an order in trial mode
+      description: |
+        Validates a radiology order in trial mode without creating PHI records.
+        
+        **Trial Feature Limitations:**
+        - Limited to a fixed number of validations per trial user (default: 10)
+        - No PHI data is stored
+        - No order finalization
+        - No admin features access
+        - No connection management
+        - No file uploads (except signatures)
+        - Returns 403 Forbidden when validation limit is reached
+        
+        **Frontend Implementation Notes:**
+        - Track remaining validations from the `validationsRemaining` field in the response
+        - Display appropriate messaging when approaching the validation limit
+        - Provide clear upgrade path when limit is reached
+      operationId: validateOrderTrial
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - dictation
+                - modalityType
+              properties:
+                dictation:
+                  type: string
+                  description: The clinical dictation text to validate
+                modalityType:
+                  type: string
+                  enum: [CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR]
+                  description: The type of imaging modality
+      responses:
+        '200':
+          description: Successful validation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      validationResult:
+                        type: object
+                        properties:
+                          cptCode:
+                            type: string
+                            description: The assigned CPT code
+                          cptDescription:
+                            type: string
+                            description: Description of the CPT code
+                          icd10Codes:
+                            type: array
+                            items:
+                              type: string
+                            description: The assigned ICD-10 codes
+                          icd10Descriptions:
+                            type: array
+                            items:
+                              type: string
+                            description: Descriptions of the ICD-10 codes
+                          confidence:
+                            type: number
+                            format: float
+                            description: Confidence score of the validation
+                      validationsRemaining:
+                        type: integer
+                        description: Number of validations remaining for the trial user
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Missing required fields"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Authentication required"
+        '403':
+          description: Forbidden - Validation limit reached
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Validation limit reached. Please register for a full account to continue using the service."
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "VALIDATION_LIMIT_REACHED"
+                      validationsUsed:
+                        type: integer
+                        example: 10
+                      validationsLimit:
+                        type: integer
+                        example: 10
+        '503':
+          description: LLM Service Unavailable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Validation service temporarily unavailable. Please try again later."
+
+# Components section for reusable schemas and security definitions
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token authentication
+  
+  schemas:
+    # Common enum definitions for frontend reference
+    OrderStatus:
+      type: string
+      enum: [pending_validation, pending_admin, pending_radiology, scheduled, completed, cancelled]
+      description: Possible order status values
+    
+    ValidationStatus:
+      type: string
+      enum: [appropriate, inappropriate, needs_clarification]
+      description: Possible validation status values
+    
+    UserRole:
+      type: string
+      enum: [physician, admin_referring, admin_staff, admin_radiology, radiologist, scheduler, super_admin, trial_physician]
+      description: Possible user role values
+    
+    OrganizationType:
+      type: string
+      enum: [referring, radiology_group, both]
+      description: Possible organization type values
+    
+    ConnectionStatus:
+      type: string
+      enum: [pending_approval, approved, rejected, terminated]
+      description: Possible connection status values
+    
+    ModalityType:
+      type: string
+      enum: [CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR]
+      description: Possible imaging modality types

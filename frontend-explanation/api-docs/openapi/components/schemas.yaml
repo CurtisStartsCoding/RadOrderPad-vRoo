@@ -1,0 +1,260 @@
+# Common Schemas
+
+# Patient Information
+PatientInfo:
+  type: object
+  required:
+    - firstName
+    - lastName
+    - dateOfBirth
+    - gender
+  properties:
+    id:
+      type: string
+      description: Patient ID
+    firstName:
+      type: string
+      description: Patient's first name
+    lastName:
+      type: string
+      description: Patient's last name
+    dateOfBirth:
+      type: string
+      format: date
+      description: Patient's date of birth (YYYY-MM-DD)
+    gender:
+      type: string
+      enum: [male, female, other]
+      description: Patient's gender
+    mrn:
+      type: string
+      description: Medical Record Number
+    pidn:
+      type: string
+      description: Patient Identifier Number (e.g., P12345, P-98765, P00123)
+    age:
+      type: integer
+      description: Patient's age (can be derived from DOB)
+
+# Validation Result
+ValidationResult:
+  type: object
+  properties:
+    cptCode:
+      type: string
+      description: The assigned CPT code
+    cptDescription:
+      type: string
+      description: Description of the CPT code
+    icd10Codes:
+      type: array
+      items:
+        type: string
+      description: The assigned ICD-10 codes
+    icd10Descriptions:
+      type: array
+      items:
+        type: string
+      description: Descriptions of the ICD-10 codes
+    confidence:
+      type: number
+      format: float
+      minimum: 0
+      maximum: 1
+      description: Confidence score of the validation (0-1)
+    validationStatus:
+      type: string
+      enum: [appropriate, inappropriate, needs_clarification, override]
+      description: Status of the validation
+    feedback:
+      type: string
+      description: Textual explanation and educational content
+    internalReasoning:
+      type: string
+      description: Internal reasoning for the validation result (may not be present in all responses)
+
+# Order
+Order:
+  type: object
+  properties:
+    id:
+      type: string
+      description: Order ID
+    patientFirstName:
+      type: string
+      description: Patient's first name
+    patientLastName:
+      type: string
+      description: Patient's last name
+    patientDateOfBirth:
+      type: string
+      format: date
+      description: Patient's date of birth
+    patientGender:
+      type: string
+      description: Patient's gender
+    modalityType:
+      type: string
+      enum: [CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR]
+      description: The type of imaging modality
+    cptCode:
+      type: string
+      description: The assigned CPT code
+    cptDescription:
+      type: string
+      description: Description of the CPT code
+    icd10Codes:
+      type: array
+      items:
+        type: string
+      description: The assigned ICD-10 codes
+    icd10Descriptions:
+      type: array
+      items:
+        type: string
+      description: Descriptions of the ICD-10 codes
+    clinicalIndication:
+      type: string
+      description: The clinical indication text
+    status:
+      type: string
+      enum: [draft, pending_validation, pending_admin, sent_to_radiology, scheduled, completed, cancelled]
+      description: Current status of the order
+    createdAt:
+      type: string
+      format: date-time
+      description: When the order was created
+    signedAt:
+      type: string
+      format: date-time
+      description: When the order was signed
+    signedByUser:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID
+        firstName:
+          type: string
+          description: User's first name
+        lastName:
+          type: string
+          description: User's last name
+        role:
+          type: string
+          description: User's role
+
+# Order Finalization Request
+OrderFinalizationRequest:
+  type: object
+  required:
+    - finalValidationStatus
+    - finalCPTCode
+    - finalCPTCodeDescription
+    - finalICD10Codes
+    - finalICD10CodeDescriptions
+    - clinicalIndication
+    - signature
+    - status
+  properties:
+    finalValidationStatus:
+      type: string
+      enum: [appropriate, inappropriate, needs_clarification, override]
+      description: The final validation status
+    finalCPTCode:
+      type: string
+      description: The primary CPT code
+    finalCPTCodeDescription:
+      type: string
+      description: Description of the CPT code
+    finalICD10Codes:
+      type: array
+      items:
+        type: string
+      description: Array of ICD-10 codes
+    finalICD10CodeDescriptions:
+      type: array
+      items:
+        type: string
+      description: Array of ICD-10 code descriptions
+    clinicalIndication:
+      type: string
+      description: The clinical indication text
+    signature:
+      type: string
+      description: Base64-encoded signature image
+    status:
+      type: string
+      enum: [pending_admin]
+      description: Should be 'pending_admin'
+    overridden:
+      type: boolean
+      description: Whether validation was overridden
+    overrideJustification:
+      type: string
+      description: Justification for override
+    referring_organization_name:
+      type: string
+      description: Name of the referring organization
+
+# Error Response
+ErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      description: Error message
+    code:
+      type: string
+      description: Error code
+    status:
+      type: integer
+      description: HTTP status code
+
+# Pagination
+Pagination:
+  type: object
+  properties:
+    total:
+      type: integer
+      description: Total number of items
+    page:
+      type: integer
+      description: Current page number
+    limit:
+      type: integer
+      description: Number of items per page
+    pages:
+      type: integer
+      description: Total number of pages
+
+# User
+User:
+  type: object
+  properties:
+    id:
+      type: string
+      description: User ID
+    firstName:
+      type: string
+      description: User's first name
+    lastName:
+      type: string
+      description: User's last name
+    email:
+      type: string
+      format: email
+      description: User's email address
+    role:
+      type: string
+      enum: [admin_staff, physician, admin_referring, super_admin, admin_radiology, scheduler, radiologist, trial_physician]
+      description: User's role
+    organizationId:
+      type: string
+      description: User's organization ID
+    isActive:
+      type: boolean
+      description: Whether the user is active

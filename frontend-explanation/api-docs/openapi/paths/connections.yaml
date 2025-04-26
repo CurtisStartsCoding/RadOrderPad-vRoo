@@ -1,0 +1,843 @@
+# Connection Management Endpoints
+
+'/connections/request':
+  post:
+    tags:
+      - Connections
+    summary: Request a connection
+    description: |
+      Sends a connection request to another organization.
+      
+      This endpoint allows an organization to request a connection with another organization,
+      which enables them to exchange orders and other information.
+    operationId: requestConnection
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              targetOrganizationId:
+                type: string
+                description: ID of the organization to connect with
+              message:
+                type: string
+                description: Message to include with the connection request
+            required:
+              - targetOrganizationId
+    responses:
+      '201':
+        description: Connection request sent successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    connectionId:
+                      type: string
+                      description: ID of the connection request
+                    status:
+                      type: string
+                      enum: [pending_approval]
+                      description: Status of the connection request
+                    requestDate:
+                      type: string
+                      format: date-time
+                      description: Date the request was sent
+                    targetOrganization:
+                      $ref: '../components/schemas.yaml#/OrganizationBasic'
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        description: Target organization not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Target organization not found"
+      '409':
+        description: Connection already exists
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Connection already exists or is pending"
+
+'/connections/outgoing':
+  get:
+    tags:
+      - Connections
+    summary: List outgoing connection requests
+    description: |
+      Retrieves a list of outgoing connection requests.
+      
+      This endpoint returns a paginated list of connection requests sent by the current organization,
+      with optional filtering by status.
+    operationId: listOutgoingConnections
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: status
+        in: query
+        description: Filter by connection status
+        schema:
+          type: string
+          enum: [pending_approval, approved, rejected, canceled, all]
+          default: all
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of outgoing connection requests
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    connections:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/OutgoingConnection'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+
+'/connections/incoming':
+  get:
+    tags:
+      - Connections
+    summary: List incoming connection requests
+    description: |
+      Retrieves a list of incoming connection requests.
+      
+      This endpoint returns a paginated list of connection requests received by the current organization,
+      with optional filtering by status.
+    operationId: listIncomingConnections
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: status
+        in: query
+        description: Filter by connection status
+        schema:
+          type: string
+          enum: [pending_approval, approved, rejected, all]
+          default: pending_approval
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of incoming connection requests
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    connections:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/IncomingConnection'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+
+'/connections/established':
+  get:
+    tags:
+      - Connections
+    summary: List established connections
+    description: |
+      Retrieves a list of established connections.
+      
+      This endpoint returns a paginated list of active connections between the current organization
+      and other organizations.
+    operationId: listEstablishedConnections
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of established connections
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    connections:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/EstablishedConnection'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+
+'/connections/terminated':
+  get:
+    tags:
+      - Connections
+    summary: List terminated connections
+    description: |
+      Retrieves a list of terminated connections.
+      
+      This endpoint returns a paginated list of connections that have been terminated
+      by either the current organization or the connected organization.
+    operationId: listTerminatedConnections
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+    responses:
+      '200':
+        description: List of terminated connections
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    connections:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/TerminatedConnection'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+
+'/connections/{connectionId}':
+  get:
+    tags:
+      - Connections
+    summary: Get connection details
+    description: |
+      Retrieves detailed information about a specific connection.
+      
+      This endpoint returns comprehensive information about a connection,
+      including its status, history, and associated organizations.
+    operationId: getConnectionDetails
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: connectionId
+        in: path
+        description: ID of the connection to retrieve
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Connection details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/ConnectionDetails'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+
+'/connections/{connectionId}/approve':
+  post:
+    tags:
+      - Connections
+    summary: Approve connection request
+    description: |
+      Approves an incoming connection request.
+      
+      This endpoint allows an organization to approve a connection request received from another organization,
+      establishing a connection between the two organizations.
+    operationId: approveConnection
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: connectionId
+        in: path
+        description: ID of the connection request to approve
+        required: true
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              responseMessage:
+                type: string
+                description: Optional message to include with the approval
+    responses:
+      '200':
+        description: Connection request approved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Connection ID
+                    status:
+                      type: string
+                      enum: [approved]
+                      description: Updated connection status
+                    responseDate:
+                      type: string
+                      format: date-time
+                      description: Date of the approval
+                    responseMessage:
+                      type: string
+                      description: Response message
+                    sourceOrganization:
+                      $ref: '../components/schemas.yaml#/OrganizationBasic'
+                    targetOrganization:
+                      $ref: '../components/schemas.yaml#/OrganizationBasic'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Connection already approved or rejected
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Connection request has already been approved or rejected"
+
+'/connections/{connectionId}/reject':
+  post:
+    tags:
+      - Connections
+    summary: Reject connection request
+    description: |
+      Rejects an incoming connection request.
+      
+      This endpoint allows an organization to reject a connection request received from another organization.
+    operationId: rejectConnection
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: connectionId
+        in: path
+        description: ID of the connection request to reject
+        required: true
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              responseMessage:
+                type: string
+                description: Optional message explaining the rejection
+    responses:
+      '200':
+        description: Connection request rejected successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Connection ID
+                    status:
+                      type: string
+                      enum: [rejected]
+                      description: Updated connection status
+                    responseDate:
+                      type: string
+                      format: date-time
+                      description: Date of the rejection
+                    responseMessage:
+                      type: string
+                      description: Response message
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Connection already approved or rejected
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Connection request has already been approved or rejected"
+
+'/connections/{connectionId}/cancel':
+  post:
+    tags:
+      - Connections
+    summary: Cancel connection request
+    description: |
+      Cancels an outgoing connection request.
+      
+      This endpoint allows an organization to cancel a connection request they sent to another organization.
+    operationId: cancelConnection
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: connectionId
+        in: path
+        description: ID of the connection request to cancel
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Connection request canceled successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Connection ID
+                    status:
+                      type: string
+                      enum: [canceled]
+                      description: Updated connection status
+                    cancelDate:
+                      type: string
+                      format: date-time
+                      description: Date the request was canceled
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Connection already approved or rejected
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Connection request has already been approved or rejected"
+
+'/connections/{connectionId}/resend':
+  post:
+    tags:
+      - Connections
+    summary: Resend connection request
+    description: |
+      Resends a rejected connection request.
+      
+      This endpoint allows an organization to resend a connection request that was previously rejected.
+    operationId: resendConnection
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: connectionId
+        in: path
+        description: ID of the connection request to resend
+        required: true
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: New message for the connection request
+    responses:
+      '200':
+        description: Connection request resent successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Connection ID
+                    status:
+                      type: string
+                      enum: [pending_approval]
+                      description: Updated connection status
+                    requestDate:
+                      type: string
+                      format: date-time
+                      description: New request date
+                    message:
+                      type: string
+                      description: New request message
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Connection not in rejected status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Only rejected connection requests can be resent"
+
+'/connections/{connectionId}/terminate':
+  post:
+    tags:
+      - Connections
+    summary: Terminate connection
+    description: |
+      Terminates an established connection.
+      
+      This endpoint allows an organization to terminate an active connection with another organization,
+      with options for handling pending orders.
+    operationId: terminateConnection
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: connectionId
+        in: path
+        description: ID of the connection to terminate
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              reason:
+                type: string
+                description: Reason for termination
+              handlePendingOrders:
+                type: string
+                enum: [complete, cancel, transfer]
+                description: How to handle pending orders
+                default: complete
+              targetConnectionId:
+                type: string
+                description: Target connection ID for transferring orders (required if handlePendingOrders is 'transfer')
+            required:
+              - reason
+    responses:
+      '200':
+        description: Connection terminated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Connection ID
+                    status:
+                      type: string
+                      enum: [terminated]
+                      description: Updated connection status
+                    terminationDate:
+                      type: string
+                      format: date-time
+                      description: Date of the termination
+                    terminationReason:
+                      type: string
+                      description: Reason for termination
+                    pendingOrdersHandling:
+                      type: string
+                      enum: [complete, cancel, transfer]
+                      description: How pending orders were handled
+                    affectedOrderCount:
+                      type: integer
+                      description: Number of orders affected by the termination
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Connection already terminated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Connection has already been terminated"
+      '422':
+        description: Cannot terminate with pending orders
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Cannot terminate connection with pending orders without specifying how to handle them"
+
+'/connections/{connectionId}/reestablish':
+  post:
+    tags:
+      - Connections
+    summary: Reestablish terminated connection
+    description: |
+      Reestablishes a previously terminated connection.
+      
+      This endpoint allows an organization to request reestablishment of a connection
+      that was previously terminated.
+    operationId: reestablishConnection
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: connectionId
+        in: path
+        description: ID of the connection to reestablish
+        required: true
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Message for the reestablishment request
+    responses:
+      '200':
+        description: Connection reestablishment request sent successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Connection ID
+                    status:
+                      type: string
+                      enum: [pending_approval]
+                      description: Updated connection status
+                    requestDate:
+                      type: string
+                      format: date-time
+                      description: New request date
+                    message:
+                      type: string
+                      description: Request message
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '409':
+        description: Connection not in terminated status
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Only terminated connections can be reestablished"

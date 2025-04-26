@@ -1,0 +1,275 @@
+# Order Management Endpoints
+
+'/orders':
+  get:
+    tags:
+      - Orders
+    summary: List orders
+    description: |
+      Retrieves a list of orders for the current user's organization with optional filtering.
+      
+      This endpoint returns a paginated list of orders with filtering options for status,
+      date range, and other criteria. It's used to display orders in the dashboard.
+    operationId: listOrders
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: status
+        in: query
+        description: Filter by order status
+        schema:
+          type: string
+          enum: [pending_admin, pending_validation, all]
+          default: all
+      - name: page
+        in: query
+        description: Page number for pagination
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Number of items per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        schema:
+          type: string
+          enum: [created_at, updated_at, patient_name]
+          default: created_at
+      - name: sortOrder
+        in: query
+        description: Sort direction
+        schema:
+          type: string
+          enum: [asc, desc]
+          default: desc
+    responses:
+      '200':
+        description: List of orders
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orders:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/OrderSummary'
+                    pagination:
+                      $ref: '../components/schemas.yaml#/Pagination'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/orders/{orderId}':
+  get:
+    tags:
+      - Orders
+    summary: Get order details
+    description: |
+      Retrieves detailed information about a specific order.
+      
+      This endpoint returns comprehensive information about an order,
+      including patient details, validation results, and status information.
+    operationId: getOrderDetails
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to retrieve
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Order details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/OrderDetails'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+  
+  put:
+    tags:
+      - Orders
+    summary: Finalize order
+    description: |
+      Updates an order with finalized validation information and signature.
+      
+      This endpoint is used by physicians to finalize and sign an order after validation.
+      It changes the order status to "pending_admin" and makes it ready for admin processing.
+    operationId: finalizeOrder
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to update
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              final_validation_status:
+                type: string
+                enum: [appropriate, inappropriate, needs_clarification]
+                description: Final validation status
+              final_compliance_score:
+                type: number
+                format: float
+                description: Final compliance score
+              final_cpt_code:
+                type: string
+                description: Final CPT code
+              clinical_indication:
+                type: string
+                description: Clinical indication
+              overridden:
+                type: boolean
+                description: Whether the validation was overridden
+              override_justification:
+                type: string
+                description: Justification for override (required if overridden is true)
+              signed_by_user_id:
+                type: string
+                description: ID of the user who signed the order
+              signature_date:
+                type: string
+                format: date-time
+                description: Date and time of signature
+              signer_name:
+                type: string
+                description: Name of the signer
+            required:
+              - final_validation_status
+              - final_compliance_score
+              - final_cpt_code
+              - signed_by_user_id
+              - signature_date
+    responses:
+      '200':
+        description: Order finalized successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                orderId:
+                  type: string
+                  description: ID of the finalized order
+                message:
+                  type: string
+                  example: "Order submitted successfully."
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
+
+'/orders/{orderId}/admin-update':
+  post:
+    tags:
+      - Orders
+    summary: Add administrative updates to an order
+    description: |
+      Adds administrative updates to an order.
+      
+      This endpoint allows administrative staff to add notes or updates to an order
+      without changing its status or other critical fields.
+    operationId: addAdminUpdate
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: orderId
+        in: path
+        description: ID of the order to update
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              adminNotes:
+                type: string
+                description: Administrative notes to add to the order
+              updateType:
+                type: string
+                enum: [general, insurance, scheduling]
+                description: Type of administrative update
+            required:
+              - adminNotes
+              - updateType
+    responses:
+      '200':
+        description: Administrative update added successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                orderId:
+                  type: string
+                  description: ID of the updated order
+                message:
+                  type: string
+                  example: "Administrative update added successfully."
+      '400':
+        $ref: '../components/responses.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/Unauthorized'
+      '403':
+        $ref: '../components/responses.yaml#/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses.yaml#/InternalServerError'
