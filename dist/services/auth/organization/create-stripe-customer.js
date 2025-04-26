@@ -12,9 +12,9 @@ const logger_1 = __importDefault(require("../../../utils/logger"));
 async function createStripeCustomer(organizationId, organizationName, contactEmail) {
     try {
         const stripeCustomerId = await billing_1.default.createStripeCustomerForOrg({
-            orgId: organizationId,
-            orgName: organizationName,
-            orgEmail: contactEmail
+            organizationId: organizationId,
+            name: organizationName,
+            email: contactEmail
         });
         return stripeCustomerId;
     }

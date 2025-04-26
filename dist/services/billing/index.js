@@ -3,13 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reportRadiologyOrderUsage = exports.Stripe = exports.InsufficientCreditsError = void 0;
+exports.reportRadiologyOrderUsage = exports.Stripe = exports.CreditActionType = exports.InsufficientCreditsError = void 0;
 const credit_1 = require("./credit");
 const get_credit_balance_service_1 = require("./get-credit-balance.service");
 const get_credit_usage_history_service_1 = require("./get-credit-usage-history.service");
+const get_billing_overview_service_1 = require("./get-billing-overview.service");
 const stripe_1 = require("./stripe");
 const errors_1 = require("./errors");
 Object.defineProperty(exports, "InsufficientCreditsError", { enumerable: true, get: function () { return errors_1.InsufficientCreditsError; } });
+const types_1 = require("./types");
+Object.defineProperty(exports, "CreditActionType", { enumerable: true, get: function () { return types_1.CreditActionType; } });
 const stripe_2 = __importDefault(require("stripe"));
 exports.Stripe = stripe_2.default;
 const enhanced_logger_1 = __importDefault(require("../../utils/enhanced-logger"));
@@ -50,6 +53,15 @@ class BillingService {
      */
     static async getCreditBalance(orgId) {
         return (0, get_credit_balance_service_1.getCreditBalance)(orgId);
+    }
+    /**
+     * Get billing overview for an organization
+     *
+     * @param orgId Organization ID
+     * @returns Promise with billing overview or null if organization not found
+     */
+    static async getBillingOverview(orgId) {
+        return (0, get_billing_overview_service_1.getBillingOverview)(orgId);
     }
     /**
      * Get credit usage history for an organization

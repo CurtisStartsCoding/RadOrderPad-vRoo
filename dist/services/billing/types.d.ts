@@ -1,10 +1,6 @@
 /**
- * Types for the billing service
+ * Billing service types
  */
-/**
- * Action types for credit usage
- */
-export type CreditActionType = 'order_submitted';
 /**
  * Parameters for burning a credit
  */
@@ -15,10 +11,32 @@ export interface BurnCreditParams {
     actionType: CreditActionType;
 }
 /**
+ * Credit action types
+ */
+export declare enum CreditActionType {
+    ORDER_SUBMITTED = "order_submitted",
+    MANUAL_ADJUSTMENT = "manual_adjustment",
+    SUBSCRIPTION_RENEWAL = "subscription_renewal",
+    CREDIT_PURCHASE = "credit_purchase"
+}
+/**
  * Parameters for creating a Stripe customer
  */
 export interface CreateStripeCustomerParams {
-    orgId: number;
-    orgName: string;
-    orgEmail: string;
+    organizationId: number;
+    name: string;
+    email: string;
+}
+/**
+ * Response for billing overview
+ */
+export interface BillingOverviewResponse {
+    organizationStatus: string;
+    subscriptionTier: string | null;
+    currentCreditBalance: number;
+    stripeSubscriptionStatus: string | null;
+    currentPeriodEnd: string | null;
+    billingInterval: 'month' | 'year' | null;
+    cancelAtPeriodEnd: boolean | null;
+    stripeCustomerPortalUrl?: string;
 }

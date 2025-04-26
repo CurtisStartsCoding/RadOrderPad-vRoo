@@ -103,6 +103,7 @@ API Endpoints Overview (Conceptual)
 
 ## Billing (`/billing`)
 
+-   `GET /billing`: Get billing overview including subscription status, credit balance, and Stripe subscription details. **(Admin Referring or Admin Radiology Role)** [Implemented]
 -   `POST /billing/create-checkout-session`: Create a Stripe checkout session for purchasing credit bundles. **(Admin Referring Role)**
 -   `POST /billing/subscriptions`: Create a Stripe subscription for a specific pricing tier. Returns subscription details including client secret for payment confirmation if required. **(Admin Referring Role)**
 -   `GET /billing/credit-balance`: Get the current credit balance for the organization. **(Admin Referring Role)** [Implemented]

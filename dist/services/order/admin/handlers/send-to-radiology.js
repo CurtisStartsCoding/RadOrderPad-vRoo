@@ -85,7 +85,7 @@ async function sendToRadiology(orderId, userId) {
             organizationId,
             userId,
             orderId,
-            actionType: 'order_submitted'
+            actionType: billing_1.CreditActionType.ORDER_SUBMITTED
         });
         // TODO: Implement notification to Radiology group (future enhancement)
         return {

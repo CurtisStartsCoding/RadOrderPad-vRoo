@@ -21,7 +21,7 @@ function generateToken(user, expiresIn = '24h') {
         email: user.email
     };
     
-    return jwt.sign(payload, config.api.jwtSecret, { expiresIn });
+    return jwt.sign(payload, config.jwt.secret, { expiresIn });
 }
 
 /**

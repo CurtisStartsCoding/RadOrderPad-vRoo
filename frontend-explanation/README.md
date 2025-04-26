@@ -77,7 +77,34 @@ A test script that demonstrates how to properly use the Patient Identifier Numbe
 - Includes error handling and logging
 - Can be run using the [run-pidn-validation-test.bat](./run-pidn-validation-test.bat) script
 
-### 8. Debug Scripts
+### 8. [Super Admin Features](./API_IMPLEMENTATION_GUIDE/superadmin_feature.yaml)
+
+A comprehensive implementation of Super Admin features for system-wide administration, including:
+
+- Organization management
+- User management
+- Prompt template management
+- System logs viewing
+
+The Super Admin logs viewing capabilities include:
+
+- **LLM Validation Logs**: View logs of all LLM validation requests with basic filtering
+  - Endpoint: `GET /api/superadmin/logs/validation`
+  - Filters: organization_id, user_id, date range, status, llm_provider, model_name
+
+- **Enhanced LLM Validation Logs**: Advanced filtering for validation logs
+  - Endpoint: `GET /api/superadmin/logs/validation/enhanced`
+  - Advanced filters: multiple statuses, text search, date presets, sorting options
+
+- **Credit Usage Logs**: View logs of credit usage across the platform
+  - Endpoint: `GET /api/superadmin/logs/credits`
+  - Filters: organization_id, user_id, date range, action_type
+
+- **Purgatory Events**: View logs of organization purgatory status changes
+  - Endpoint: `GET /api/superadmin/logs/purgatory`
+  - Filters: organization_id, date range, status, reason
+
+### 9. Debug Scripts
 
 A collection of scripts for debugging the Admin Finalization workflow:
 
@@ -146,6 +173,11 @@ When integrating with the RadOrderPad backend, pay special attention to:
    - Handle 402 Payment Required errors (insufficient credits)
    - Validate all required fields (city, state, zip_code) before submission
    - Implement proper error handling for all possible response codes
+7. For Super Admin interfaces:
+   - Implement robust filtering and pagination for log viewing
+   - Use date presets for common time ranges (today, last 7 days, etc.)
+   - Provide text search capabilities for enhanced log filtering
+   - Display user-friendly names for organizations and users in log entries
 
 ## Support
 

@@ -13,6 +13,7 @@ The RadOrderPad API is organized into several logical sections:
    - [Admin Finalization API Specification](./openapi-admin-finalization.yaml) - OpenAPI specification focused on the admin finalization workflow
 5. [Radiology Order Management](./radiology-order-management.md) - Endpoints for radiology orders
 6. [Superadmin Management](./superadmin-management.md) - Superadmin-specific endpoints
+   - [Superadmin Logs](./superadmin-logs.md) - Detailed implementation of the Super Admin logs endpoints for system monitoring
 7. [Connection Management](./connection-management.md) - Managing connections between organizations
    - [Connection Management Details](./connection-management-details.md) - Detailed information about connection endpoints
    - [Connection Testing](./connection-testing.md) - Guide for testing connection endpoints
@@ -43,6 +44,8 @@ The RadOrderPad API is organized into several logical sections:
     - [Validation-Focused API Specification](./openapi-validation-focused.yaml) - OpenAPI specification focused on the validation engine
 13. [Workflow Guide](./workflow-guide.md) - End-to-end API workflow examples
 14. [Status Summary](./status-summary.md) - Overview of working and non-working endpoints
+15. [Trial Feature](./trial_feature.md) - Implementation of the Physician Trial Sandbox feature
+16. [Recent Implementations](./README-recent-implementations.md) - Detailed documentation of recent API implementations and fixes
 
 ## OpenAPI Specifications
 
@@ -216,6 +219,7 @@ The API implements role-based access control (RBAC) with these roles:
 - `admin_radiology` - Administrators at radiology organizations
 - `scheduler` - Schedulers at radiology organizations
 - `radiologist` - Radiologists at radiology organizations
+- `trial_physician` - Trial users with limited access
 
 Each endpoint specifies which roles are authorized to access it.
 
@@ -331,6 +335,8 @@ This section provides a comprehensive overview of the implementation status acro
   - POST /api/auth/register
   - POST /api/user-invites/invite
   - POST /api/user-invites/accept-invitation
+  - POST /api/auth/trial/register (new)
+  - POST /api/auth/trial/login (new)
 
 ### 4. Radiology Workflow (80-90% Complete)
 - Most endpoints are working and tested:
@@ -346,14 +352,14 @@ This section provides a comprehensive overview of the implementation status acro
   - GET /api/orders/{orderId}
   - POST /api/orders/validate
   - PUT /api/orders/{orderId}
+  - POST /api/orders/validate/trial (new)
 
-### 6. Billing Management (70-80% Complete)
-- Core endpoints are working:
+### 6. Billing Management (100% Complete)
+- All endpoints are working and tested:
+  - GET /api/billing (implemented - billing overview for organization admins)
   - POST /api/billing/create-checkout-session
   - POST /api/billing/subscriptions
   - GET /api/billing/credit-balance (implemented)
-- Missing endpoints:
-  - GET /api/billing (not implemented)
   - GET /api/billing/credit-usage (implemented)
 - Internal webhook handling and credit management are implemented
 
@@ -384,11 +390,21 @@ This section provides a comprehensive overview of the implementation status acro
   - GET /api/organizations/{organizationId} (by design)
   - PUT /api/organizations/{organizationId} (by design)
 
-### 9. Superadmin Management (50-60% Complete)
+### 9. Superadmin Management (100% Complete)
 - Working endpoints:
-  - GET /api/superadmin/organizations
-  - GET /api/superadmin/users
-- Other superadmin endpoints may not be implemented or tested
+  - GET /api/superadmin/organizations - List all organizations with filtering
+  - GET /api/superadmin/organizations/{orgId} - Get detailed organization info
+  - PUT /api/superadmin/organizations/{orgId}/status - Update organization status
+  - POST /api/superadmin/organizations/{orgId}/credits/adjust - Adjust organization credits
+  - GET /api/superadmin/users - List all users with filtering
+  - GET /api/superadmin/users/{userId} - Get detailed user info
+  - PUT /api/superadmin/users/{userId}/status - Update user status
+  - GET /api/superadmin/logs/validation - Basic validation logs
+  - GET /api/superadmin/logs/validation/enhanced - Enhanced validation logs with advanced filtering
+  - GET /api/superadmin/logs/credits - Credit usage logs
+  - GET /api/superadmin/logs/purgatory - Purgatory events logs
+  - All prompt template endpoints (/api/superadmin/prompts/templates/*)
+  - All prompt assignment endpoints (/api/superadmin/prompts/assignments/*)
 
 ### 10. Uploads Management (100% Complete)
 - Working endpoints:
@@ -402,7 +418,68 @@ This section provides a comprehensive overview of the implementation status acro
   - Comprehensive error handling and edge case testing
   - Authorization checks ensure users can only access files associated with their organization
 
+### 11. Trial Feature (100% Complete)
+- Working endpoints:
+  - POST /api/auth/trial/register - Register a trial user
+  - POST /api/auth/trial/login - Login as a trial user
+  - POST /api/orders/validate/trial - Submit dictation for validation as a trial user
+- Full implementation with:
+  - Separate trial_users table in the Main database
+  - Validation count tracking and limiting
+  - No PHI storage for trial users
+  - Proper authentication and authorization
+
 ## Recent Fixes
+
+For a comprehensive overview of all recent implementations and fixes, see the [Recent Implementations](./README-recent-implementations.md) document.
+
+### Super Admin Logs Implementation
+
+The Super Admin logs endpoints have been implemented to provide comprehensive visibility into system activities. These endpoints allow Super Admins to monitor and troubleshoot the platform with robust filtering, pagination, and sorting capabilities.
+
+Key aspects of the implementation include:
+
+1. **Four Log Types**
+   - Basic LLM validation logs (`GET /api/superadmin/logs/validation`)
+   - Enhanced LLM validation logs with advanced filtering (`GET /api/superadmin/logs/validation/enhanced`)
+   - Credit usage logs (`GET /api/superadmin/logs/credits`)
+   - Purgatory events (`GET /api/superadmin/logs/purgatory`)
+
+2. **Advanced Filtering Capabilities**
+   - Multiple status selection
+   - Text search across relevant fields
+   - Date presets for common time ranges
+   - Sorting options
+
+3. **Efficient Database Queries**
+   - Parameterized queries to prevent SQL injection
+   - Pagination to handle large volumes of log data
+   - Joins with related tables to include user and organization names
+
+For detailed implementation information, see the [Superadmin Logs](./superadmin-logs.md) document.
+
+### Trial Feature Implementation
+
+The Physician Trial Sandbox feature has been implemented to allow physicians to register for a limited trial account focused solely on testing the dictation-validation workflow. This feature provides a way for physicians to try the validation engine without full registration or PHI involvement.
+
+Key aspects of the implementation include:
+
+1. **Separate Trial User Management**
+   - New `trial_users` table in the Main database
+   - Limited validation count (default: 10)
+   - No PHI storage
+
+2. **Trial-specific Endpoints**
+   - `POST /api/auth/trial/register` - Register a trial user
+   - `POST /api/auth/trial/login` - Login as a trial user
+   - `POST /api/orders/validate/trial` - Submit dictation for validation as a trial user
+
+3. **Security Considerations**
+   - Complete separation between trial user data/workflows and production data/workflows
+   - No interaction with the PHI database
+   - Proper validation of trial user credentials
+
+For detailed implementation information, see the [Trial Feature](./trial_feature.md) document.
 
 ### Admin Finalization "Send to Radiology" Fix
 
@@ -423,300 +500,3 @@ The fix includes:
 - Comprehensive error handling
 
 For detailed implementation information, see the [Admin Finalization API Guide](./admin-finalization-api-guide.md) document.
-
-### Connection Approval Endpoint Fix
-
-The `POST /api/connections/{relationshipId}/approve` endpoint has been fixed and is now working correctly. This endpoint allows an admin (admin_referring, admin_radiology) of the target organization to approve a connection request initiated by another organization.
-
-#### Issue Description
-The endpoint was previously returning a 500 Internal Server Error due to an improper SQL query implementation. The service was using a custom query to check if the relationship exists, but it wasn't using the imported `GET_RELATIONSHIP_FOR_APPROVAL_QUERY` constant.
-
-The custom query only checked if the relationship exists by ID, but it didn't check if the related_organization_id matches the approvingOrgId or if the status is 'pending' in the SQL query itself. Instead, it did these checks after fetching the relationship, which could lead to issues if the relationship doesn't exist or if it's not in the expected state.
-
-#### Fix Implementation
-The fix was to update the `approve-connection.ts` service to use the imported `GET_RELATIONSHIP_FOR_APPROVAL_QUERY` constant, which includes all necessary checks in a single SQL query:
-
-```sql
-WHERE r.id = $1 AND r.related_organization_id = $2 AND r.status = 'pending'
-```
-
-This ensures that the endpoint properly validates that:
-1. The relationship exists
-2. The user is authorized to approve it (belongs to the target organization)
-3. The relationship is in 'pending' status
-
-All of these checks are now done in a single SQL query, which is more efficient and less error-prone.
-
-#### Testing
-The fix has been tested using the `test-connection-approve.js` script, which successfully approves a pending connection request. The test script has been updated to run from the correct directory, and both batch (.bat) and shell (.sh) scripts have been created to run the test.
-
-### Connection Rejection Endpoint Fix
-
-The `POST /api/connections/{relationshipId}/reject` endpoint has been fixed and is now working correctly. This endpoint allows an admin (admin_referring, admin_radiology) of the target organization to reject a connection request initiated by another organization.
-
-#### Issue Description
-The endpoint was previously returning a 500 Internal Server Error due to similar issues as the approval endpoint. The service was already using the imported `GET_RELATIONSHIP_FOR_APPROVAL_QUERY` constant, but needed additional debug logging and error handling improvements.
-
-#### Fix Implementation
-The fix involved enhancing the `reject-connection.ts` service with:
-
-1. Comprehensive debug logging throughout the service
-2. Better error handling for notification failures
-3. Improved transaction management
-4. Proper client release in the finally block
-
-The service already correctly used the `GET_RELATIONSHIP_FOR_APPROVAL_QUERY` constant, which includes all necessary checks in a single SQL query:
-
-```sql
-WHERE r.id = $1 AND r.related_organization_id = $2 AND r.status = 'pending'
-```
-
-This ensures that the endpoint properly validates that:
-1. The relationship exists
-2. The user is authorized to reject it (belongs to the target organization)
-3. The relationship is in 'pending' status
-
-#### Testing
-The fix has been tested using the `test-connection-reject.js` script, which successfully rejects a pending connection request. The test script has been updated to handle the expected 404 response when a relationship is not found, not in pending status, or the user is not authorized to reject it. Both batch (.bat) and shell (.sh) scripts have been created to run the test.
-
-### Connection Termination Endpoint Fix
-
-The `DELETE /api/connections/{relationshipId}` endpoint has been fixed and is now working correctly. This endpoint allows an admin (admin_referring, admin_radiology) to terminate an active connection between organizations.
-
-#### Issue Description
-The endpoint was previously returning a 500 Internal Server Error due to similar issues as the approval and rejection endpoints. The service needed additional debug logging, better error handling for notification failures, and improved transaction management.
-
-#### Fix Implementation
-The fix involved enhancing the `terminate-connection.ts` service with:
-
-1. Comprehensive debug logging throughout the service
-2. Better error handling for notification failures
-3. Improved transaction management
-4. Proper client release in the finally block
-5. Enhanced error handling in the rollback process
-
-The service uses the `GET_RELATIONSHIP_FOR_TERMINATION_QUERY` constant, which includes all necessary checks in a single SQL query:
-
-```sql
-WHERE r.id = $1 AND (r.organization_id = $2 OR r.related_organization_id = $2) AND r.status = 'active'
-```
-
-This ensures that the endpoint properly validates that:
-1. The relationship exists
-2. The user is authorized to terminate it (belongs to either organization in the relationship)
-3. The relationship is in 'active' status
-
-#### Testing
-The fix has been tested using the `test-connection-terminate.js` script, which successfully terminates an active connection. The test script has been created to handle the expected 404 response when a relationship is not found, not in active status, or the user is not authorized to terminate it. Both batch (.bat) and shell (.sh) scripts have been created to run the test.
-
-### User Profile Update Endpoint Implementation
-
-The `PUT /api/users/me` endpoint has been implemented and is now working correctly. This endpoint allows authenticated users to update their own profile information.
-
-#### Implementation Details
-
-The implementation follows the modular, single-responsibility approach with proper validation and error handling:
-
-1. A new service function `updateUserProfile` was created in `src/services/user/update-user-profile.service.ts` that:
-   - Handles updating user profile data
-   - Validates input fields
-   - Uses queryMainDb for database operations
-   - Returns the updated user profile
-
-2. The user controller was updated with an `updateMe` method that:
-   - Extracts allowed updatable fields from request body (firstName, lastName, phoneNumber, specialty, npi)
-   - Implements validation for request body fields
-   - Adds proper error handling with appropriate HTTP status codes
-   - Returns a 200 OK response with the updated user profile on success
-
-3. The user routes were updated to add the PUT /me route with:
-   - authenticateJWT middleware to ensure only authenticated users can access the endpoint
-   - JSDoc comments for API documentation
-
-#### Security Considerations
-
-The endpoint is designed with security in mind:
-- Only allows users to update their own profile
-- Restricts which fields can be updated (firstName, lastName, phoneNumber, specialty, npi)
-- Explicitly prevents updating sensitive fields like role, organization_id, is_active, email_verified, and email
-
-#### Testing
-
-The implementation has been tested using the `test-update-user-me.js` script, which:
-- Tests successful profile updates
-- Tests validation of input fields
-- Tests handling of restricted fields
-- Tests authentication requirements
-
-Both batch (.bat) and shell (.sh) scripts have been created to run the test.
-
-### User Update by ID Endpoint Implementation
-
-The `PUT /api/users/{userId}` endpoint has been implemented and is now working correctly. This endpoint allows organization administrators to update profile information for users within their organization.
-
-#### Implementation Details
-
-The implementation follows the modular, single-responsibility approach with proper validation, error handling, and organization boundary enforcement:
-
-1. A new service function `updateUserInOrg` was created in `src/services/user/update-user-in-org.service.ts` that:
-   - Handles updating user profile data for users within the admin's organization
-   - Enforces organization boundaries through SQL query constraints
-   - Validates input fields
-   - Uses queryMainDb for database operations
-   - Returns the updated user profile or null if the user is not found or not in the admin's organization
-
-2. The user controller was updated with an `updateOrgUserById` method that:
-   - Extracts and validates the userId from request parameters
-   - Extracts allowed updatable fields from request body (firstName, lastName, phoneNumber, specialty, npi, role, isActive)
-   - Implements validation for request body fields and role assignment restrictions
-   - Adds proper error handling with appropriate HTTP status codes (400, 401, 403, 404, 500)
-   - Returns a 200 OK response with the updated user profile on success
-
-3. The user routes were updated to add the PUT /:userId route with:
-   - authenticateJWT middleware to ensure only authenticated users can access the endpoint
-   - authorizeRole middleware to restrict access to admin_referring and admin_radiology roles
-   - JSDoc comments for API documentation
-
-#### Security Considerations
-
-The endpoint is designed with security in mind:
-- Enforces organization boundaries - admins can only update users within their own organization
-- Implements role-based restrictions for role assignment:
-  - admin_referring can only assign physician and admin_staff roles
-  - admin_radiology can only assign scheduler and radiologist roles
-- Prevents privilege escalation through role assignment restrictions
-- Restricts which fields can be updated (firstName, lastName, phoneNumber, specialty, npi, role, isActive)
-- Explicitly prevents updating sensitive fields like organization_id, email_verified, and email
-
-#### Testing
-
-The implementation has been tested using the `test-update-org-user.js` script, which:
-- Tests successful user updates within the admin's organization
-- Tests organization boundary enforcement (cannot update users in other organizations)
-- Tests role assignment restrictions
-- Tests validation of input fields
-- Tests authentication and authorization requirements
-
-Both batch (.bat) and shell (.sh) scripts have been created to run the test.
-
-### User Deactivation Endpoint Implementation
-
-The `DELETE /api/users/{userId}` endpoint has been implemented and is now working correctly. This endpoint allows organization administrators to deactivate users within their organization by setting their is_active flag to false.
-
-#### Implementation Details
-
-The implementation follows the modular, single-responsibility approach with proper validation, error handling, and organization boundary enforcement:
-
-1. A new service function `deactivateUserInOrg` was created in `src/services/user/deactivate-user-in-org.service.ts` that:
-   - Handles deactivating a user by setting is_active to false
-   - Enforces organization boundaries through SQL query constraints
-   - Uses queryMainDb for database operations
-   - Returns a boolean indicating success or failure
-
-2. The user controller was updated with a `deactivateOrgUserById` method that:
-   - Extracts and validates the userId from request parameters
-   - Prevents administrators from deactivating their own accounts
-   - Adds proper error handling with appropriate HTTP status codes (400, 401, 403, 404, 500)
-   - Returns a 200 OK response with a success message on successful deactivation
-
-### File Upload Endpoints Implementation
-
-The file upload endpoints have been implemented and are now working correctly. These endpoints enable secure file uploads to AWS S3 using the presigned URL pattern.
-
-#### Implementation Details
-
-1. **POST /api/uploads/presigned-url**
-   - Generates a presigned URL for direct S3 upload
-   - Validates file type, size, and other parameters
-   - Returns a presigned URL and file key to the client
-   - Supports various document types (signature, insurance_card, lab_report, etc.)
-   - Implements file size limits (20MB for PDFs, 5MB for other file types)
-
-2. **POST /api/uploads/confirm**
-   - Confirms that a file has been successfully uploaded to S3
-   - Verifies the file exists in S3 before creating a database record
-   - Creates a record in the document_uploads table in the PHI database
-   - Associates the uploaded file with an order and/or patient
-   - Implements proper validation and error handling
-
-#### Security Considerations
-
-The implementation follows the presigned URL pattern for enhanced security:
-- The backend controls access and generates temporary, scoped credentials
-- S3 bucket remains private with no public access
-- Backend AWS credentials are not exposed to the client
-- File uploads go directly to S3, offloading the backend API servers
-- File type validation prevents uploading of potentially malicious files
-
-#### Testing
-
-Both endpoints have been tested using comprehensive test scripts:
-- test-uploads-presigned-url.js/bat/sh for testing the presigned URL endpoint
-- test-uploads-confirm.js/bat/sh for testing the confirm endpoint
-- Tests include various scenarios: valid requests, missing fields, invalid file types, file size limits, authentication requirements
-
-3. The user routes were updated to add the DELETE /:userId route with:
-   - authenticateJWT middleware to ensure only authenticated users can access the endpoint
-   - authorizeRole middleware to restrict access to admin_referring and admin_radiology roles
-   - JSDoc comments for API documentation
-
-#### Security Considerations
-
-The endpoint is designed with security in mind:
-- Enforces organization boundaries - admins can only deactivate users within their own organization
-- Prevents self-deactivation to avoid administrators accidentally locking themselves out of the system
-- Implements a "soft delete" approach that preserves user records while preventing system access
-
-#### Testing
-
-The implementation has been tested using the `test-deactivate-org-user.js` script, which:
-- Tests successful user deactivation within the admin's organization
-- Tests organization boundary enforcement (cannot deactivate users in other organizations)
-- Tests self-deactivation prevention
-- Tests validation of input parameters
-- Tests authentication and authorization requirements
-
-Both batch (.bat) and shell (.sh) scripts have been created to run the test.
-
-### Organization Profile Update Endpoint Implementation
-
-The `PUT /api/organizations/mine` endpoint has been implemented and is now working correctly. This endpoint allows organization administrators to update their organization's profile information.
-
-#### Implementation Details
-
-The implementation follows the modular, single-responsibility approach with proper validation and error handling:
-
-1. A new service function `updateOrganizationProfile` was created in `src/services/organization/update-organization-profile.service.ts` that:
-   - Handles updating organization profile data
-   - Validates input fields
-   - Uses queryMainDb for database operations
-   - Returns the updated organization profile
-
-2. The organization controller was updated with an `updateMyOrganizationController` method that:
-   - Extracts allowed updatable fields from request body (name, npi, tax_id, address_line1, address_line2, city, state, zip_code, phone_number, fax_number, contact_email, website, logo_url)
-   - Implements validation for request body fields
-   - Adds proper error handling with appropriate HTTP status codes
-   - Returns a 200 OK response with the updated organization profile on success
-
-3. The organization routes were updated to add the PUT /mine route with:
-   - authenticateJWT middleware to ensure only authenticated users can access the endpoint
-   - authorizeRole middleware to restrict access to admin_referring and admin_radiology roles
-   - JSDoc comments for API documentation
-
-#### Security Considerations
-
-The endpoint is designed with security in mind:
-- Only allows administrators to update their own organization's profile
-- Restricts which fields can be updated (name, npi, tax_id, address_line1, address_line2, city, state, zip_code, phone_number, fax_number, contact_email, website, logo_url)
-- Explicitly prevents updating sensitive fields like id, type, status, credit_balance, billing_id, subscription_tier, assigned_account_manager_id
-- Validates email format and website URL format
-
-#### Testing
-
-The implementation has been tested using the `test-update-org-mine.js` script, which:
-- Tests successful organization profile updates
-- Tests validation of input fields
-- Tests handling of restricted fields
-- Tests authentication and authorization requirements
-
-Both batch (.bat) and shell (.sh) scripts have been created to run the test.

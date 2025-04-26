@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCreditUsageHistory = exports.getCreditBalance = exports.createSubscription = exports.createCheckoutSession = void 0;
+exports.getBillingOverview = exports.getCreditUsageHistory = exports.getCreditBalance = exports.createSubscription = exports.createCheckoutSession = void 0;
 /**
  * Billing controller exports
  */
@@ -12,4 +12,6 @@ var get_credit_balance_controller_1 = require("./get-credit-balance.controller")
 Object.defineProperty(exports, "getCreditBalance", { enumerable: true, get: function () { return get_credit_balance_controller_1.getCreditBalance; } });
 var get_credit_usage_controller_1 = require("./get-credit-usage.controller");
 Object.defineProperty(exports, "getCreditUsageHistory", { enumerable: true, get: function () { return get_credit_usage_controller_1.getCreditUsageHistory; } });
+var get_billing_overview_controller_1 = require("./get-billing-overview.controller");
+Object.defineProperty(exports, "getBillingOverview", { enumerable: true, get: function () { return get_billing_overview_controller_1.getBillingOverview; } });
 //# sourceMappingURL=index.js.map

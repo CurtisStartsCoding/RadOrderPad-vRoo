@@ -1,0 +1,410 @@
+---
+feature:
+  name: "Billing Management"
+  version: "1.0"
+  date: "2025-04-25"
+  description: "Billing management features for RadOrderPad, including subscription management, credit tracking, and usage reporting"
+
+core_principles:
+  - name: "Secure Payment Processing"
+    description: "All payment processing is handled securely through Stripe"
+  - name: "Credit-Based System"
+    description: "Referring organizations use credits for order submissions, with different subscription tiers offering different credit allocations"
+  - name: "Usage Tracking"
+    description: "All credit usage is tracked for billing and reporting purposes"
+  - name: "Transparent Billing"
+    description: "Organizations have full visibility into their billing status, credit balance, and usage history"
+
+database:
+  tables:
+    - name: "organizations"
+      relevant_columns:
+        - name: "billing_id"
+          type: "TEXT"
+          description: "Stripe customer ID for the organization"
+        - name: "credit_balance"
+          type: "INTEGER"
+          description: "Current credit balance for the organization"
+        - name: "subscription_tier"
+          type: "TEXT"
+          description: "Current subscription tier (tier_1, tier_2, tier_3, etc.)"
+    - name: "billing_events"
+      description: "Records all billing-related events such as credit purchases, credit usage, and subscription changes"
+      columns:
+        - name: "id"
+          type: "SERIAL"
+          constraints: "PRIMARY KEY"
+        - name: "organization_id"
+          type: "INTEGER"
+          constraints: "NOT NULL, REFERENCES organizations(id)"
+        - name: "user_id"
+          type: "INTEGER"
+          constraints: "REFERENCES users(id)"
+        - name: "event_type"
+          type: "TEXT"
+          constraints: "NOT NULL"
+          description: "Type of billing event (credit_purchase, credit_usage, subscription_change, etc.)"
+        - name: "amount"
+          type: "INTEGER"
+          description: "Amount of credits added or used"
+        - name: "order_id"
+          type: "INTEGER"
+          description: "Associated order ID for credit usage events"
+        - name: "stripe_event_id"
+          type: "TEXT"
+          description: "Associated Stripe event ID for payment-related events"
+        - name: "description"
+          type: "TEXT"
+          description: "Human-readable description of the event"
+        - name: "created_at"
+          type: "TIMESTAMP"
+          constraints: "DEFAULT NOW()"
+
+api_endpoints:
+  - name: "Billing Overview"
+    path: "/api/billing"
+    method: "GET"
+    authentication: true
+    auth_roles: ["admin_referring", "admin_radiology"]
+    description: "Get billing overview including subscription status, credit balance, and Stripe subscription details"
+    responses:
+      success:
+        status_code: 200
+        content_type: "application/json"
+        schema:
+          success: "boolean"
+          data:
+            organizationStatus: "string"
+            subscriptionTier: "string"
+            currentCreditBalance: "integer"
+            stripeSubscriptionStatus: "string"
+            currentPeriodEnd: "string (date-time)"
+            billingInterval: "string"
+            cancelAtPeriodEnd: "boolean"
+            customerPortalUrl: "string"
+        example: |
+          {
+            "success": true,
+            "data": {
+              "organizationStatus": "active",
+              "subscriptionTier": "tier_1",
+              "currentCreditBalance": 500,
+              "stripeSubscriptionStatus": "active",
+              "currentPeriodEnd": "2025-05-25T00:00:00.000Z",
+              "billingInterval": "month",
+              "cancelAtPeriodEnd": false,
+              "customerPortalUrl": "https://billing.stripe.com/p/session/..."
+            }
+          }
+      errors:
+        - status_code: 401
+          description: "Unauthorized"
+        - status_code: 403
+          description: "Forbidden - User does not have admin role"
+        - status_code: 500
+          description: "Server error"
+    database_interactions:
+      reads:
+        - table: "organizations"
+          purpose: "Get organization billing details"
+      external_apis:
+        - name: "Stripe API"
+          purpose: "Get subscription details if organization has a Stripe customer ID"
+
+  - name: "Create Checkout Session"
+    path: "/api/billing/create-checkout-session"
+    method: "POST"
+    authentication: true
+    auth_roles: ["admin_referring"]
+    description: "Create a Stripe checkout session for purchasing credit bundles"
+    request_body:
+      content_type: "application/json"
+      schema:
+        priceId: "string (required)"
+        successUrl: "string (required)"
+        cancelUrl: "string (required)"
+      example: |
+        {
+          "priceId": "price_1NcXYZABCDEFGHIJKLMNOPQR",
+          "successUrl": "https://app.radorderpad.com/billing/success",
+          "cancelUrl": "https://app.radorderpad.com/billing/cancel"
+        }
+    responses:
+      success:
+        status_code: 200
+        content_type: "application/json"
+        schema:
+          success: "boolean"
+          sessionId: "string"
+          checkoutUrl: "string"
+        example: |
+          {
+            "success": true,
+            "sessionId": "cs_test_a1b2c3d4e5f6g7h8i9j0",
+            "checkoutUrl": "https://checkout.stripe.com/pay/cs_test_a1b2c3d4e5f6g7h8i9j0"
+          }
+      errors:
+        - status_code: 400
+          description: "Invalid request - Missing required fields"
+        - status_code: 401
+          description: "Unauthorized"
+        - status_code: 403
+          description: "Forbidden - User does not have admin_referring role"
+        - status_code: 500
+          description: "Server error"
+    database_interactions:
+      reads:
+        - table: "organizations"
+          purpose: "Get organization billing ID"
+      external_apis:
+        - name: "Stripe API"
+          purpose: "Create checkout session"
+
+  - name: "Create Subscription"
+    path: "/api/billing/subscriptions"
+    method: "POST"
+    authentication: true
+    auth_roles: ["admin_referring"]
+    description: "Create a Stripe subscription for a specific pricing tier"
+    request_body:
+      content_type: "application/json"
+      schema:
+        priceId: "string (required)"
+        paymentMethodId: "string"
+      example: |
+        {
+          "priceId": "price_1NcXYZABCDEFGHIJKLMNOPQR",
+          "paymentMethodId": "pm_1NcXYZABCDEFGHIJKLMNOPQR"
+        }
+    responses:
+      success:
+        status_code: 200
+        content_type: "application/json"
+        schema:
+          success: "boolean"
+          subscription:
+            id: "string"
+            status: "string"
+            currentPeriodEnd: "string (date-time)"
+          clientSecret: "string"
+        example: |
+          {
+            "success": true,
+            "subscription": {
+              "id": "sub_1NcXYZABCDEFGHIJKLMNOPQR",
+              "status": "active",
+              "currentPeriodEnd": "2025-05-25T00:00:00.000Z"
+            },
+            "clientSecret": null
+          }
+      errors:
+        - status_code: 400
+          description: "Invalid request - Missing required fields"
+        - status_code: 401
+          description: "Unauthorized"
+        - status_code: 403
+          description: "Forbidden - User does not have admin_referring role"
+        - status_code: 500
+          description: "Server error"
+    database_interactions:
+      reads:
+        - table: "organizations"
+          purpose: "Get organization billing ID"
+      writes:
+        - table: "organizations"
+          purpose: "Update subscription_tier"
+        - table: "billing_events"
+          purpose: "Record subscription change event"
+      external_apis:
+        - name: "Stripe API"
+          purpose: "Create subscription"
+
+  - name: "Get Credit Balance"
+    path: "/api/billing/credit-balance"
+    method: "GET"
+    authentication: true
+    auth_roles: ["admin_referring"]
+    description: "Get the current credit balance for the organization"
+    responses:
+      success:
+        status_code: 200
+        content_type: "application/json"
+        schema:
+          success: "boolean"
+          creditBalance: "integer"
+        example: |
+          {
+            "success": true,
+            "creditBalance": 500
+          }
+      errors:
+        - status_code: 401
+          description: "Unauthorized"
+        - status_code: 403
+          description: "Forbidden - User does not have admin_referring role"
+        - status_code: 500
+          description: "Server error"
+    database_interactions:
+      reads:
+        - table: "organizations"
+          purpose: "Get organization credit balance"
+
+  - name: "Get Credit Usage"
+    path: "/api/billing/credit-usage"
+    method: "GET"
+    authentication: true
+    auth_roles: ["admin_referring"]
+    description: "Get credit usage history for the organization"
+    parameters:
+      - name: "startDate"
+        in: "query"
+        description: "Start date for filtering (YYYY-MM-DD)"
+        required: false
+      - name: "endDate"
+        in: "query"
+        description: "End date for filtering (YYYY-MM-DD)"
+        required: false
+      - name: "page"
+        in: "query"
+        description: "Page number for pagination"
+        required: false
+        default: 1
+      - name: "limit"
+        in: "query"
+        description: "Number of items per page"
+        required: false
+        default: 20
+    responses:
+      success:
+        status_code: 200
+        content_type: "application/json"
+        schema:
+          success: "boolean"
+          data:
+            events:
+              type: "array"
+              items:
+                id: "integer"
+                event_type: "string"
+                amount: "integer"
+                order_id: "integer"
+                description: "string"
+                created_at: "string (date-time)"
+            pagination:
+              total: "integer"
+              page: "integer"
+              limit: "integer"
+              pages: "integer"
+        example: |
+          {
+            "success": true,
+            "data": {
+              "events": [
+                {
+                  "id": 123,
+                  "event_type": "credit_usage",
+                  "amount": -1,
+                  "order_id": 456,
+                  "description": "Order submission",
+                  "created_at": "2025-04-20T14:30:20.424Z"
+                },
+                {
+                  "id": 122,
+                  "event_type": "credit_purchase",
+                  "amount": 100,
+                  "order_id": null,
+                  "description": "Credit bundle purchase",
+                  "created_at": "2025-04-15T10:15:30.123Z"
+                }
+              ],
+              "pagination": {
+                "total": 50,
+                "page": 1,
+                "limit": 20,
+                "pages": 3
+              }
+            }
+          }
+      errors:
+        - status_code: 401
+          description: "Unauthorized"
+        - status_code: 403
+          description: "Forbidden - User does not have admin_referring role"
+        - status_code: 500
+          description: "Server error"
+    database_interactions:
+      reads:
+        - table: "billing_events"
+          purpose: "Get organization credit usage history"
+
+implementation:
+  controllers:
+    - path: "src/controllers/billing/get-billing-overview.controller.ts"
+      description: "Handles GET /api/billing endpoint"
+    - path: "src/controllers/billing/create-checkout-session.controller.ts"
+      description: "Handles POST /api/billing/create-checkout-session endpoint"
+    - path: "src/controllers/billing/create-subscription.controller.ts"
+      description: "Handles POST /api/billing/subscriptions endpoint"
+    - path: "src/controllers/billing/get-credit-balance.controller.ts"
+      description: "Handles GET /api/billing/credit-balance endpoint"
+    - path: "src/controllers/billing/get-credit-usage.controller.ts"
+      description: "Handles GET /api/billing/credit-usage endpoint"
+  services:
+    - path: "src/services/billing/get-billing-overview.service.ts"
+      description: "Gets billing overview including subscription status and credit balance"
+    - path: "src/services/billing/create-checkout-session.service.ts"
+      description: "Creates a Stripe checkout session for credit purchases"
+    - path: "src/services/billing/create-subscription.service.ts"
+      description: "Creates a Stripe subscription for a specific pricing tier"
+    - path: "src/services/billing/get-credit-balance.service.ts"
+      description: "Gets the current credit balance for an organization"
+    - path: "src/services/billing/get-credit-usage.service.ts"
+      description: "Gets credit usage history for an organization"
+    - path: "src/services/billing/burn-credit.service.ts"
+      description: "Internal service for consuming credits when orders are submitted"
+    - path: "src/services/billing/report-radiology-order-usage.service.ts"
+      description: "Internal service for reporting radiology organization order usage for billing"
+
+testing:
+  scripts:
+    - path: "debug-scripts/vercel-tests/test-billing-overview.js"
+      description: "Tests the GET /api/billing endpoint"
+    - path: "debug-scripts/vercel-tests/test-create-checkout-session.js"
+      description: "Tests the POST /api/billing/create-checkout-session endpoint"
+    - path: "debug-scripts/vercel-tests/test-create-subscription.js"
+      description: "Tests the POST /api/billing/subscriptions endpoint"
+    - path: "debug-scripts/vercel-tests/test-credit-balance.js"
+      description: "Tests the GET /api/billing/credit-balance endpoint"
+    - path: "debug-scripts/vercel-tests/test-credit-usage.js"
+      description: "Tests the GET /api/billing/credit-usage endpoint"
+    - path: "debug-scripts/vercel-tests/run-billing-tests.bat"
+      description: "Batch script to run all billing tests"
+    - path: "debug-scripts/vercel-tests/run-billing-tests.sh"
+      description: "Shell script to run all billing tests"
+
+webhook_handling:
+  description: "Stripe webhooks are handled to process events such as successful payments, subscription updates, and subscription cancellations"
+  endpoints:
+    - path: "/api/webhooks/stripe"
+      method: "POST"
+      authentication: false
+      description: "Handles Stripe webhook events"
+  event_types:
+    - name: "checkout.session.completed"
+      description: "Triggered when a checkout session is completed"
+      handler: "src/services/billing/webhook-handlers/checkout-session-completed.ts"
+    - name: "customer.subscription.created"
+      description: "Triggered when a subscription is created"
+      handler: "src/services/billing/webhook-handlers/subscription-created.ts"
+    - name: "customer.subscription.updated"
+      description: "Triggered when a subscription is updated"
+      handler: "src/services/billing/webhook-handlers/subscription-updated.ts"
+    - name: "customer.subscription.deleted"
+      description: "Triggered when a subscription is cancelled"
+      handler: "src/services/billing/webhook-handlers/subscription-deleted.ts"
+    - name: "invoice.paid"
+      description: "Triggered when an invoice is paid"
+      handler: "src/services/billing/webhook-handlers/invoice-paid.ts"
+    - name: "invoice.payment_failed"
+      description: "Triggered when an invoice payment fails"
+      handler: "src/services/billing/webhook-handlers/invoice-payment-failed.ts"

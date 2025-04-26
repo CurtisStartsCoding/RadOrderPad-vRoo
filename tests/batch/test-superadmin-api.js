@@ -107,6 +107,81 @@ async function runTests() {
     process.exit(1);
   }
   
+  // Test 5: Update Organization Status
+  try {
+    console.log('\nTest 5: Update Organization Status');
+    const response = await fetch(`${ORGANIZATIONS_ENDPOINT}/1/status`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        newStatus: 'active'
+      })
+    });
+    
+    const data = await response.json();
+    assert.equal(response.status, 200, 'Status code should be 200');
+    assert.equal(data.success, true, 'Response should indicate success');
+    assert.ok(data.data && typeof data.data === 'object', 'Response data should be an object');
+    assert.equal(data.data.status, 'active', 'Organization status should be updated to active');
+    console.log('[PASS] Update Organization Status');
+  } catch (error) {
+    console.error('[FAIL] Update Organization Status:', error.message);
+    process.exit(1);
+  }
+  
+  // Test 6: Adjust Organization Credits
+  try {
+    console.log('\nTest 6: Adjust Organization Credits');
+    const response = await fetch(`${ORGANIZATIONS_ENDPOINT}/1/credits/adjust`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        amount: 100,
+        reason: 'Test credit adjustment'
+      })
+    });
+    
+    const data = await response.json();
+    assert.equal(response.status, 200, 'Status code should be 200');
+    assert.equal(data.success, true, 'Response should indicate success');
+    assert.ok(data.data && typeof data.data === 'object', 'Response data should be an object');
+    console.log('[PASS] Adjust Organization Credits');
+  } catch (error) {
+    console.error('[FAIL] Adjust Organization Credits:', error.message);
+    process.exit(1);
+  }
+  
+  // Test 7: Update User Status
+  try {
+    console.log('\nTest 7: Update User Status');
+    const response = await fetch(`${USERS_ENDPOINT}/1/status`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        isActive: true
+      })
+    });
+    
+    const data = await response.json();
+    assert.equal(response.status, 200, 'Status code should be 200');
+    assert.equal(data.success, true, 'Response should indicate success');
+    assert.ok(data.data && typeof data.data === 'object', 'Response data should be an object');
+    assert.equal(data.data.is_active, true, 'User status should be updated to active');
+    console.log('[PASS] Update User Status');
+  } catch (error) {
+    console.error('[FAIL] Update User Status:', error.message);
+    process.exit(1);
+  }
+  
   console.log('\nAll Super Admin API tests passed!');
 }
 

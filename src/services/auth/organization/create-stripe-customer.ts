@@ -11,9 +11,9 @@ export async function createStripeCustomer(
 ): Promise<string | null> {
   try {
     const stripeCustomerId = await BillingService.createStripeCustomerForOrg({
-      orgId: organizationId,
-      orgName: organizationName,
-      orgEmail: contactEmail
+      organizationId: organizationId,
+      name: organizationName,
+      email: contactEmail
     });
     
     return stripeCustomerId;

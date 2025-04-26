@@ -1,9 +1,10 @@
 import { burnCredit, hasCredits } from './credit';
 import { getCreditBalance } from './get-credit-balance.service';
 import { getCreditUsageHistory } from './get-credit-usage-history.service';
+import { getBillingOverview } from './get-billing-overview.service';
 import { createSubscription } from './stripe';
 import { InsufficientCreditsError } from './errors';
-import { BurnCreditParams, CreateStripeCustomerParams, CreditActionType } from './types';
+import { BurnCreditParams, CreateStripeCustomerParams, CreditActionType, BillingOverviewResponse } from './types';
 import Stripe from 'stripe';
 import enhancedLogger from '../../utils/enhanced-logger';
 import {
@@ -52,6 +53,16 @@ class BillingService {
    */
   static async getCreditBalance(orgId: number): Promise<{ creditBalance: number } | null> {
     return getCreditBalance(orgId);
+  }
+
+  /**
+   * Get billing overview for an organization
+   *
+   * @param orgId Organization ID
+   * @returns Promise with billing overview or null if organization not found
+   */
+  static async getBillingOverview(orgId: number): Promise<BillingOverviewResponse | null> {
+    return getBillingOverview(orgId);
   }
 
   /**

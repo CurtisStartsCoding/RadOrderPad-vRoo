@@ -2,7 +2,7 @@ import { withTransaction } from '../utils/transaction';
 import * as clinicalRecordManager from '../clinical-record-manager';
 import * as orderStatusManager from '../order-status-manager';
 import * as validation from '../validation';
-import BillingService, { InsufficientCreditsError } from '../../../../services/billing';
+import BillingService, { InsufficientCreditsError, CreditActionType } from '../../../../services/billing';
 import { SendToRadiologyResult } from '../types';
 
 /**
@@ -69,7 +69,7 @@ export async function sendToRadiology(
       organizationId,
       userId,
       orderId,
-      actionType: 'order_submitted'
+      actionType: CreditActionType.ORDER_SUBMITTED
     });
     
     // TODO: Implement notification to Radiology group (future enhancement)

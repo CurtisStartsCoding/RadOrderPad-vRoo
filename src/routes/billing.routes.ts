@@ -1,8 +1,26 @@
 import { Router } from 'express';
-import { createCheckoutSession, createSubscription, getCreditBalance, getCreditUsageHistory } from '../controllers/billing';
+import {
+  createCheckoutSession,
+  createSubscription,
+  getCreditBalance,
+  getCreditUsageHistory,
+  getBillingOverview
+} from '../controllers/billing';
 import { authenticateJWT, authorizeRole } from '../middleware/auth';
 
 const router = Router();
+
+/**
+ * @route GET /api/billing
+ * @desc Get billing overview including subscription status and credit balance
+ * @access Private - admin_referring or admin_radiology role only
+ */
+router.get(
+  '/',
+  authenticateJWT,
+  authorizeRole(['admin_referring', 'admin_radiology']),
+  getBillingOverview
+);
 
 /**
  * @route POST /api/billing/create-checkout-session

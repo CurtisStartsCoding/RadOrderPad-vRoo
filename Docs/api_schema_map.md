@@ -1,6 +1,6 @@
 # API Endpoint to Schema Map
 
-**Version:** 1.6 - Trial Feature Implementation
+**Version:** 1.7 - Super Admin Logs Implementation
 **Date:** 2025-04-25
 
 This document maps core API endpoints to the primary database tables they interact with in `radorder_main` (Main) and `radorder_phi` (PHI), based on the final reconciled schemas and the implemented override/draft order flow. This is not exhaustive but covers key interactions. Assumes RESTful endpoints.
@@ -168,6 +168,8 @@ This document maps core API endpoints to the primary database tables they intera
 
 ## Billing (`/api/billing`)
 
+-   **`GET /api/billing`** (Get billing overview)
+    -   Reads: `organizations` (Main), Stripe API (Customer, Subscription)
 -   **`POST /api/billing/create-checkout-session`** (Create Stripe checkout session)
     -   Reads: `organizations` (Main)
     -   Writes: `billing_events` (Main)
@@ -180,6 +182,8 @@ This document maps core API endpoints to the primary database tables they intera
     -   Reads: `credit_usage_logs` (Main)
 
 ## Super Admin (`/api/superadmin`)
+
+### Organizations and Users
 
 -   **`GET /api/superadmin/organizations`** (List all organizations)
     -   Reads: `organizations` (Main)
@@ -198,4 +202,46 @@ This document maps core API endpoints to the primary database tables they intera
 -   **`PUT /api/superadmin/users/{userId}/status`** (Update user status)
     -   Reads: `users` (Main), `organizations` (Main)
     -   Writes: `users` (Main)
--   Interacts with almost all tables in `radorder_main` and potentially read-access to `radorder_phi`. Endpoint specifics defined in `super_admin.md`.
+
+### Prompt Templates and Assignments
+
+-   **`POST /api/superadmin/prompts/templates`** (Create prompt template)
+    -   Writes: `prompt_templates` (Main)
+-   **`GET /api/superadmin/prompts/templates`** (List prompt templates)
+    -   Reads: `prompt_templates` (Main)
+-   **`GET /api/superadmin/prompts/templates/{templateId}`** (Get prompt template)
+    -   Reads: `prompt_templates` (Main)
+-   **`PUT /api/superadmin/prompts/templates/{templateId}`** (Update prompt template)
+    -   Reads: `prompt_templates` (Main)
+    -   Writes: `prompt_templates` (Main)
+-   **`DELETE /api/superadmin/prompts/templates/{templateId}`** (Delete prompt template)
+    -   Reads: `prompt_templates` (Main)
+    -   Writes: `prompt_templates` (Main)
+-   **`POST /api/superadmin/prompts/assignments`** (Create prompt assignment)
+    -   Reads: `prompt_templates` (Main), `users` (Main)
+    -   Writes: `prompt_assignments` (Main)
+-   **`GET /api/superadmin/prompts/assignments`** (List prompt assignments)
+    -   Reads: `prompt_assignments` (Main), `prompt_templates` (Main), `users` (Main)
+-   **`GET /api/superadmin/prompts/assignments/{assignmentId}`** (Get prompt assignment)
+    -   Reads: `prompt_assignments` (Main), `prompt_templates` (Main), `users` (Main)
+-   **`PUT /api/superadmin/prompts/assignments/{assignmentId}`** (Update prompt assignment)
+    -   Reads: `prompt_assignments` (Main), `prompt_templates` (Main), `users` (Main)
+    -   Writes: `prompt_assignments` (Main)
+-   **`DELETE /api/superadmin/prompts/assignments/{assignmentId}`** (Delete prompt assignment)
+    -   Reads: `prompt_assignments` (Main)
+    -   Writes: `prompt_assignments` (Main)
+
+### System Logs
+
+-   **`GET /api/superadmin/logs/validation`** (List LLM validation logs)
+    -   Reads: `llm_validation_logs` (Main), `users` (Main), `organizations` (Main)
+    -   **Description:** Retrieves LLM validation logs with basic filtering (organization_id, user_id, date range, status, llm_provider, model_name)
+-   **`GET /api/superadmin/logs/validation/enhanced`** (List enhanced LLM validation logs)
+    -   Reads: `llm_validation_logs` (Main), `users` (Main), `organizations` (Main), `prompt_templates` (Main)
+    -   **Description:** Retrieves LLM validation logs with advanced filtering capabilities including multiple status selection, text search, date presets, and sorting options
+-   **`GET /api/superadmin/logs/credits`** (List credit usage logs)
+    -   Reads: `credit_usage_logs` (Main), `users` (Main), `organizations` (Main)
+    -   **Description:** Retrieves credit usage logs with filtering (organization_id, user_id, date range, action_type)
+-   **`GET /api/superadmin/logs/purgatory`** (List purgatory events)
+    -   Reads: `purgatory_events` (Main), `organizations` (Main), `users` (Main)
+    -   **Description:** Retrieves purgatory events with filtering (organization_id, date range, status, reason)

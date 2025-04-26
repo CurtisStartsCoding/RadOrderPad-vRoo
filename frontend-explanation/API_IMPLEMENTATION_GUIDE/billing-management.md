@@ -186,53 +186,45 @@ This section covers endpoints related to billing, subscriptions, and credit mana
 - **Status:** Working
 - **Tested With:** test-get-credit-usage.bat, test-get-credit-usage.sh
 
-## Get Billing Information (Not Implemented)
+## Get Billing Overview
 
 **Endpoint:** `GET /api/billing`
 
-**Description:** This endpoint would retrieve billing information for the current organization, but it is not currently implemented.
+**Description:** Retrieves billing information for the current organization, including subscription status and credit balance.
 
-**Authentication:** Would require admin_referring role
+**Authentication:** Required (admin_referring or admin_radiology role)
 
-**Expected Response (if implemented):**
+**Response:**
 ```json
 {
   "success": true,
   "data": {
-    "organization": {
-      "id": 1,
-      "name": "Test Organization",
-      "billingId": "cus_1234567890",
-      "creditBalance": 500,
-      "subscriptionTier": "tier_1",
-      "status": "active"
-    },
-    "billingEvents": [
-      {
-        "id": 1,
-        "event_type": "credit_purchase",
-        "amount_cents": 10000,
-        "currency": "usd",
-        "description": "Purchase of 100 credits",
-        "created_at": "2025-04-22T13:11:56.390Z"
-      }
-    ]
+    "organizationStatus": "active",
+    "subscriptionTier": "tier_1",
+    "currentCreditBalance": 500,
+    "stripeSubscriptionStatus": "active",
+    "currentPeriodEnd": "2025-05-22T13:11:56.390Z",
+    "billingInterval": "month",
+    "cancelAtPeriodEnd": false,
+    "stripeCustomerPortalUrl": "https://billing.stripe.com/p/session/..."
   }
 }
 ```
 
-**Current Status:**
-- Returns 404 "Route not found" error
-- The dist/routes/billing.routes.js file does not define a handler for the base GET / path
-- Only POST routes for creating checkout sessions and subscriptions are implemented
+**Error Responses:**
+- 401 Unauthorized: If the user is not authenticated or not associated with an organization
+- 403 Forbidden: If the user does not have the admin_referring or admin_radiology role
+- 404 Not Found: If the organization is not found
+- 500 Internal Server Error: If there is a server error
 
-**Implementation Suggestion:**
-- Add a GET / route to the billing.routes.ts file
-- Create a controller function to retrieve billing information from the database
-- Return organization details and recent billing events
+**Usage Notes:**
+- This endpoint is used to retrieve billing information for the organization.
+- The response includes the organization's status, subscription tier, credit balance, and Stripe subscription details.
+- The stripeCustomerPortalUrl field provides a direct link to the Stripe Customer Portal for managing billing.
+- Use this endpoint to display billing information in the UI, such as in a dashboard or billing page.
 
 **Implementation Status:**
-- **Status:** Not Implemented
+- **Status:** Implemented
 - **Tested With:** test-billing-endpoint.js, test-superadmin-endpoints.js, test-comprehensive-api-with-roles.js
 
 ## Webhook Handling

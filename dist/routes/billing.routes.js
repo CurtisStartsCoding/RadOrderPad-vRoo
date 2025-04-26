@@ -5,6 +5,12 @@ const billing_1 = require("../controllers/billing");
 const auth_1 = require("../middleware/auth");
 const router = (0, express_1.Router)();
 /**
+ * @route GET /api/billing
+ * @desc Get billing overview including subscription status and credit balance
+ * @access Private - admin_referring or admin_radiology role only
+ */
+router.get('/', auth_1.authenticateJWT, (0, auth_1.authorizeRole)(['admin_referring', 'admin_radiology']), billing_1.getBillingOverview);
+/**
  * @route POST /api/billing/create-checkout-session
  * @desc Create a Stripe checkout session for purchasing credit bundles
  * @access Private - admin_referring role only

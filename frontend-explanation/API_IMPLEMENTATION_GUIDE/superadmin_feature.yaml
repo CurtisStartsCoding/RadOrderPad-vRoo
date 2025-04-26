@@ -1,0 +1,209 @@
+---
+feature:
+  name: "Superadmin Management"
+  version: "1.0"
+  date: "2025-04-25"
+  description: "Superadmin features for RadOrderPad, providing system-wide administration capabilities"
+
+core_principles:
+  - name: "Centralized Administration"
+    description: "Provides a centralized interface for managing all aspects of the RadOrderPad system"
+  - name: "Complete Visibility"
+    description: "Superadmins have visibility into all organizations, users, and system activities"
+  - name: "Audit Trail"
+    description: "All superadmin actions are logged for accountability and troubleshooting"
+  - name: "Granular Control"
+    description: "Provides fine-grained control over system components including organizations, users, and prompt templates"
+
+api_endpoints:
+  # Organizations endpoints
+  - name: "List Organizations"
+    path: "/api/superadmin/organizations"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "List all organizations with optional filtering by name, type, and status"
+    status: "Implemented"
+    
+  - name: "Get Organization Details"
+    path: "/api/superadmin/organizations/{orgId}"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Get detailed information about a specific organization, including users, connections, and billing history"
+    status: "Implemented"
+    
+  - name: "Update Organization Status"
+    path: "/api/superadmin/organizations/{orgId}/status"
+    method: "PUT"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Update an organization's status (active, on_hold, purgatory, terminated)"
+    status: "Partially Implemented"
+    
+  - name: "Adjust Organization Credits"
+    path: "/api/superadmin/organizations/{orgId}/credits/adjust"
+    method: "POST"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Adjust an organization's credit balance with a reason"
+    status: "Partially Implemented"
+
+  # Users endpoints
+  - name: "List Users"
+    path: "/api/superadmin/users"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "List all users with optional filtering by organization, email, role, and active status"
+    status: "Implemented"
+    
+  - name: "Get User Details"
+    path: "/api/superadmin/users/{userId}"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Get detailed information about a specific user, including organization and assigned locations"
+    status: "Implemented"
+    
+  - name: "Update User Status"
+    path: "/api/superadmin/users/{userId}/status"
+    method: "PUT"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Update a user's active status"
+    status: "Partially Implemented"
+
+  # Prompt Templates endpoints
+  - name: "Create Prompt Template"
+    path: "/api/superadmin/prompts/templates"
+    method: "POST"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Create a new prompt template"
+    status: "Not Implemented"
+    
+  - name: "List Prompt Templates"
+    path: "/api/superadmin/prompts/templates"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "List prompt templates with optional filtering"
+    status: "Not Implemented"
+    
+  - name: "Get Prompt Template"
+    path: "/api/superadmin/prompts/templates/{templateId}"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Get a specific prompt template by ID"
+    status: "Not Implemented"
+    
+  - name: "Update Prompt Template"
+    path: "/api/superadmin/prompts/templates/{templateId}"
+    method: "PUT"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Update an existing prompt template"
+    status: "Not Implemented"
+    
+  - name: "Delete Prompt Template"
+    path: "/api/superadmin/prompts/templates/{templateId}"
+    method: "DELETE"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Delete (soft delete) a prompt template"
+    status: "Not Implemented"
+
+  # Prompt Assignments endpoints
+  - name: "Create Prompt Assignment"
+    path: "/api/superadmin/prompts/assignments"
+    method: "POST"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Create a new prompt assignment, assigning a template to a physician"
+    status: "Not Implemented"
+    
+  - name: "List Prompt Assignments"
+    path: "/api/superadmin/prompts/assignments"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "List prompt assignments with optional filtering"
+    status: "Not Implemented"
+    
+  - name: "Get Prompt Assignment"
+    path: "/api/superadmin/prompts/assignments/{assignmentId}"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Get a specific prompt assignment by ID"
+    status: "Not Implemented"
+    
+  - name: "Update Prompt Assignment"
+    path: "/api/superadmin/prompts/assignments/{assignmentId}"
+    method: "PUT"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Update an existing prompt assignment"
+    status: "Not Implemented"
+    
+  - name: "Delete Prompt Assignment"
+    path: "/api/superadmin/prompts/assignments/{assignmentId}"
+    method: "DELETE"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "Delete a prompt assignment"
+    status: "Not Implemented"
+
+  # System Logs endpoints
+  - name: "Get Validation Logs"
+    path: "/api/superadmin/logs/validation"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "List LLM validation logs with optional filtering"
+    status: "Partially Implemented"
+    
+  - name: "Get Enhanced Validation Logs"
+    path: "/api/superadmin/logs/validation/enhanced"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "List LLM validation logs with advanced filtering capabilities"
+    status: "Implemented"
+    
+  - name: "Get Credit Usage Logs"
+    path: "/api/superadmin/logs/credits"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "List credit usage logs with optional filtering"
+    status: "Partially Implemented"
+    
+  - name: "Get Purgatory Events"
+    path: "/api/superadmin/logs/purgatory"
+    method: "GET"
+    authentication: true
+    auth_roles: ["super_admin"]
+    description: "List purgatory events with optional filtering"
+    status: "Partially Implemented"
+
+implementation_status:
+  overall: "50-60% Complete"
+  implemented:
+    - "GET /api/superadmin/organizations"
+    - "GET /api/superadmin/organizations/{orgId}"
+    - "GET /api/superadmin/users"
+    - "GET /api/superadmin/users/{userId}"
+    - "GET /api/superadmin/logs/validation/enhanced"
+  partially_implemented:
+    - "PUT /api/superadmin/organizations/{orgId}/status"
+    - "POST /api/superadmin/organizations/{orgId}/credits/adjust"
+    - "PUT /api/superadmin/users/{userId}/status"
+    - "GET /api/superadmin/logs/validation"
+    - "GET /api/superadmin/logs/credits"
+    - "GET /api/superadmin/logs/purgatory"
+  not_implemented:
+    - "All prompt template endpoints (/api/superadmin/prompts/templates/*)"
+    - "All prompt assignment endpoints (/api/superadmin/prompts/assignments/*)"

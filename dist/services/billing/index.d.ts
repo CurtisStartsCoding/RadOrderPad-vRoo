@@ -1,5 +1,5 @@
 import { InsufficientCreditsError } from './errors';
-import { BurnCreditParams, CreateStripeCustomerParams, CreditActionType } from './types';
+import { BurnCreditParams, CreateStripeCustomerParams, CreditActionType, BillingOverviewResponse } from './types';
 import Stripe from 'stripe';
 import { reportRadiologyOrderUsage } from './usage';
 /**
@@ -32,6 +32,13 @@ declare class BillingService {
     static getCreditBalance(orgId: number): Promise<{
         creditBalance: number;
     } | null>;
+    /**
+     * Get billing overview for an organization
+     *
+     * @param orgId Organization ID
+     * @returns Promise with billing overview or null if organization not found
+     */
+    static getBillingOverview(orgId: number): Promise<BillingOverviewResponse | null>;
     /**
      * Get credit usage history for an organization
      *
