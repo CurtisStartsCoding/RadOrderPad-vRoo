@@ -1,0 +1,138 @@
+{
+  "passed": 11,
+  "failed": 7,
+  "tests": [
+    {
+      "name": "Health Endpoint",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Authentication Endpoint",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/auth/login with admin_staff role",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      }
+    },
+    {
+      "name": "Endpoint /api/orders/607 with admin_staff role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/orders with admin_staff role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/admin/orders/607/send-to-radiology-fixed with admin_staff role",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      }
+    },
+    {
+      "name": "Endpoint /api/radiology/orders with scheduler role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/radiology/orders with admin_staff role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/uploads with admin_staff role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/webhooks with super_admin role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/connections with admin_referring role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/connections with physician role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/organizations with admin_referring role",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      }
+    },
+    {
+      "name": "Endpoint /api/users with admin_referring role",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      }
+    },
+    {
+      "name": "Endpoint /api/superadmin with super_admin role",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      }
+    },
+    {
+      "name": "Endpoint /api/superadmin with admin_referring role",
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Endpoint /api/billing with admin_referring role",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      }
+    },
+    {
+      "name": "Endpoint /api/billing with physician role",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      }
+    }
+  ]
+}

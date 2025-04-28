@@ -1,0 +1,431 @@
+{
+  "passed": 4,
+  "failed": 11,
+  "tests": [
+    {
+      "name": "Health Endpoint",
+      "passed": true,
+      "error": null,
+      "response": {
+        "status": 200,
+        "data": {
+          "status": "ok",
+          "timestamp": "2025-04-22T17:19:02.443Z"
+        }
+      }
+    },
+    {
+      "name": "POST /api/auth/login",
+      "passed": true,
+      "error": null,
+      "response": {
+        "status": 200,
+        "data": {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsIm9yZ0lkIjoxLCJyb2xlIjoiYWRtaW5fcmVmZXJyaW5nIiwiZW1haWwiOiJ0ZXN0LmFkbWluQGV4YW1wbGUuY29tIiwiaWF0IjoxNzQ1MzQyMzQyLCJleHAiOjE3NDU0Mjg3NDJ9.Czoghb9Vy8AgET7xdKswfaoHcU2liVuQ5_QJKSgF_Qo",
+          "user": {
+            "id": 3,
+            "email": "test.admin@example.com",
+            "first_name": "Test",
+            "last_name": "Admin",
+            "role": "admin_referring",
+            "organization_id": 1,
+            "npi": null,
+            "specialty": null,
+            "is_active": true,
+            "email_verified": false,
+            "created_at": "2025-04-21T03:11:56.516Z",
+            "updated_at": "2025-04-21T03:11:56.516Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "GET /api/orders",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "GET /api/orders/607",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "User not found"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "GET /api/admin/orders",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "POST /api/admin/orders/[id]/send-to-radiology-fixed",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "GET /api/radiology/orders",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 403",
+        "status": 403,
+        "data": {
+          "message": "Access denied: Insufficient permissions",
+          "requiredRoles": [
+            "scheduler",
+            "admin_radiology"
+          ],
+          "userRole": "super_admin"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "POST /api/uploads/url",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "POST /api/webhooks/stripe",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 400",
+        "status": 400,
+        "data": {
+          "message": "Missing stripe-signature header"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "GET /api/connections",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 403",
+        "status": 403,
+        "data": {
+          "message": "Access denied: Insufficient permissions",
+          "requiredRoles": [
+            "admin_referring",
+            "admin_radiology"
+          ],
+          "userRole": "super_admin"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "GET /api/organizations",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "GET /api/users",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      },
+      "response": null
+    },
+    {
+      "name": "GET /api/superadmin/organizations",
+      "passed": true,
+      "error": null,
+      "response": {
+        "status": 200,
+        "data": {
+          "success": true,
+          "count": 2,
+          "data": [
+            {
+              "id": 1,
+              "name": "Test Organization",
+              "type": "referring",
+              "npi": null,
+              "tax_id": null,
+              "address_line1": null,
+              "address_line2": null,
+              "city": null,
+              "state": null,
+              "zip_code": null,
+              "phone_number": null,
+              "fax_number": null,
+              "contact_email": null,
+              "website": null,
+              "logo_url": null,
+              "billing_id": "cus_TEST123456",
+              "credit_balance": 697,
+              "subscription_tier": "tier_1",
+              "status": "active",
+              "assigned_account_manager_id": null,
+              "created_at": "2025-04-13T16:34:44.148Z",
+              "updated_at": "2025-04-21T04:25:09.592Z"
+            },
+            {
+              "id": 2,
+              "name": "Test Radiology Group",
+              "type": "radiology_group",
+              "npi": "0987654321",
+              "tax_id": "98-7654321",
+              "address_line1": "456 Imaging Ave",
+              "address_line2": null,
+              "city": "Test City",
+              "state": "TS",
+              "zip_code": "12345",
+              "phone_number": "555-987-6543",
+              "fax_number": null,
+              "contact_email": "admin@testradiology.com",
+              "website": null,
+              "logo_url": null,
+              "billing_id": null,
+              "credit_balance": 10000,
+              "subscription_tier": null,
+              "status": "active",
+              "assigned_account_manager_id": null,
+              "created_at": "2025-04-13T21:53:08.889Z",
+              "updated_at": "2025-04-13T21:53:08.889Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET /api/superadmin/users",
+      "passed": true,
+      "error": null,
+      "response": {
+        "status": 200,
+        "data": {
+          "success": true,
+          "count": 10,
+          "data": [
+            {
+              "id": 2,
+              "email": "target.admin@example.com",
+              "first_name": "Target",
+              "last_name": "Admin",
+              "role": "admin_referring",
+              "is_active": true,
+              "last_login": null,
+              "created_at": "2025-04-13T21:53:08.895Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 2,
+              "organization_name": "Test Radiology Group",
+              "organization_type": "radiology_group"
+            },
+            {
+              "id": 3,
+              "email": "test.admin@example.com",
+              "first_name": "Test",
+              "last_name": "Admin",
+              "role": "admin_referring",
+              "is_active": true,
+              "last_login": "2025-04-22T17:19:02.766Z",
+              "created_at": "2025-04-21T03:11:56.516Z",
+              "email_verified": false,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 1,
+              "organization_name": "Test Organization",
+              "organization_type": "referring"
+            },
+            {
+              "id": 9,
+              "email": "test.admin_referring@example.com",
+              "first_name": "Test",
+              "last_name": "AdminReferring",
+              "role": "admin_referring",
+              "is_active": true,
+              "last_login": "2025-04-22T16:52:43.629Z",
+              "created_at": "2025-04-22T16:51:07.445Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 1,
+              "organization_name": "Test Organization",
+              "organization_type": "referring"
+            },
+            {
+              "id": 4,
+              "email": "test.admin_staff@example.com",
+              "first_name": "Test",
+              "last_name": "AdminStaff",
+              "role": "admin_staff",
+              "is_active": true,
+              "last_login": "2025-04-22T16:52:43.291Z",
+              "created_at": "2025-04-21T16:06:38.559Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 1,
+              "organization_name": "Test Organization",
+              "organization_type": "referring"
+            },
+            {
+              "id": 1,
+              "email": "test.physician@example.com",
+              "first_name": "Test",
+              "last_name": "Physician",
+              "role": "physician",
+              "is_active": true,
+              "last_login": "2025-04-22T16:52:43.463Z",
+              "created_at": "2025-04-13T16:34:49.727Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 1,
+              "organization_name": "Test Organization",
+              "organization_type": "referring"
+            },
+            {
+              "id": 7,
+              "email": "test.radiologist@example.com",
+              "first_name": "Test",
+              "last_name": "Radiologist",
+              "role": "radiologist",
+              "is_active": true,
+              "last_login": "2025-04-22T16:52:44.264Z",
+              "created_at": "2025-04-21T16:06:39.098Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 2,
+              "organization_name": "Test Radiology Group",
+              "organization_type": "radiology_group"
+            },
+            {
+              "id": 5,
+              "email": "test.admin_radiology@example.com",
+              "first_name": "Test",
+              "last_name": "RadiologyAdmin",
+              "role": "admin_radiology",
+              "is_active": true,
+              "last_login": "2025-04-22T16:52:43.935Z",
+              "created_at": "2025-04-21T16:06:38.735Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 2,
+              "organization_name": "Test Radiology Group",
+              "organization_type": "radiology_group"
+            },
+            {
+              "id": 6,
+              "email": "test.scheduler@example.com",
+              "first_name": "Test",
+              "last_name": "Scheduler",
+              "role": "scheduler",
+              "is_active": true,
+              "last_login": "2025-04-22T16:52:44.106Z",
+              "created_at": "2025-04-21T16:06:38.906Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 2,
+              "organization_name": "Test Radiology Group",
+              "organization_type": "radiology_group"
+            },
+            {
+              "id": 8,
+              "email": "test.super_admin@example.com",
+              "first_name": "Test",
+              "last_name": "SuperAdmin",
+              "role": "super_admin",
+              "is_active": true,
+              "last_login": null,
+              "created_at": "2025-04-21T16:06:39.274Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 1,
+              "organization_name": "Test Organization",
+              "organization_type": "referring"
+            },
+            {
+              "id": 10,
+              "email": "test.superadmin@example.com",
+              "first_name": "Test",
+              "last_name": "SuperAdmin",
+              "role": "super_admin",
+              "is_active": true,
+              "last_login": "2025-04-22T16:52:43.783Z",
+              "created_at": "2025-04-22T16:51:07.445Z",
+              "email_verified": true,
+              "npi": null,
+              "specialty": null,
+              "phone_number": null,
+              "organization_id": 1,
+              "organization_name": "Test Organization",
+              "organization_type": "referring"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET /api/billing",
+      "passed": false,
+      "error": {
+        "message": "Request failed with status code 404",
+        "status": 404,
+        "data": {
+          "message": "Route not found"
+        }
+      },
+      "response": null
+    }
+  ]
+}

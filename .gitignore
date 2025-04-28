@@ -54,7 +54,15 @@ Data/medical_*.sql
 sql-scripts/
 
 # Optimization and debug files
-debug-scripts/
+# Keep debug-scripts directory for database testing
+# debug-scripts/
+# Include debug-scripts/vercel-tests directory
+!debug-scripts/
+!debug-scripts/vercel-tests/
+!debug-scripts/vercel-tests/**/*
+# But exclude environment files in that directory
+debug-scripts/vercel-tests/.env*
+
 optimized-*.js
 *-optimized-*.js
 *-optimization-*.js

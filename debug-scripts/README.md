@@ -1,75 +1,37 @@
-# Medical Data Import and Validation Scripts
+# Debug Scripts
 
-This directory contains scripts for importing, validating, and managing medical data in the RadOrderPad database.
+This directory contains various scripts and tools for debugging, testing, and maintaining the application.
 
-## Import Scripts
+## Subdirectories
 
-### `import_using_node.js`
+### vercel-tests
 
-Imports medical data from SQL files using Node.js. This script properly handles multiline SQL statements and is more reliable than using psql directly.
+The `vercel-tests` directory contains scripts and configuration files for testing the application deployed on Vercel, particularly for database connectivity testing. See the [vercel-tests README](./vercel-tests/README.md) for more details.
 
-```bash
-node debug-scripts/import_using_node.js
-```
+## Purpose
 
-### `import_using_psql_fixed.js`
+These scripts are included in the repository to facilitate:
 
-An alternative import script that uses psql but with improved path handling. May encounter authentication issues with psql.
+1. **Database Testing**: Testing connectivity to different database configurations
+2. **API Testing**: Verifying API endpoints are working correctly
+3. **Deployment Testing**: Ensuring the application deploys and runs correctly on Vercel
+4. **Migration Testing**: Testing database migrations and changes
 
-```bash
-node debug-scripts/import_using_psql_fixed.js
-```
+## Usage Notes
 
-## Validation Scripts
+- Most scripts are designed to be run from the project root directory
+- Some scripts may require environment variables to be set
+- Scripts with sensitive information use `.env` files that are excluded from Git
 
-### `validate_data_integrity.js`
+## Important Files
 
-Performs a comprehensive validation of data integrity, checking referential integrity, data quality, distribution, and potential anomalies.
+- `vercel-tests/test-private-db-no-verify.bat`: Test connectivity to private databases
+- `vercel-tests/test-private-db-verify.bat`: Test connectivity with SSL verification
+- `vercel-tests/test-superadmin-api.js`: Test Super Admin API functionality
+- `vercel-tests/test-radiology-request-info.js`: Test radiology request info endpoint
 
-```bash
-node debug-scripts/validate_data_integrity.js
-```
+## Security Considerations
 
-### `analyze_duplicates_and_retired_codes.js`
-
-Analyzes duplicate mappings in detail and identifies retired CPT codes in markdown files.
-
-```bash
-node debug-scripts/analyze_duplicates_and_retired_codes.js
-```
-
-### `generate_fix_duplicates_sql.js`
-
-Generates SQL statements to fix duplicate mappings but does NOT execute them directly. Instead, it saves the SQL to a file for review.
-
-```bash
-node debug-scripts/generate_fix_duplicates_sql.js
-```
-
-## Utility Scripts
-
-### `check_db_connection.js`
-
-Checks the database connection details and runs a simple query to verify connectivity.
-
-```bash
-node debug-scripts/check_db_connection.js
-```
-
-### `show_exact_problematic_line.js`
-
-Shows the exact problematic line in a SQL file, useful for debugging import issues.
-
-```bash
-node debug-scripts/show_exact_problematic_line.js
-```
-
-## Documentation
-
-A comprehensive report on the medical data import process and data quality is available at:
-
-- `Docs/medical_data_import_report.md`
-
-Detailed analysis of duplicate mappings and retired codes is available at:
-
-- `Data/duplicates_and_retired_codes_report.md`
+- Environment files (`.env.*`) are excluded from Git to prevent credentials from being committed
+- When using these scripts in production environments, ensure proper security measures are in place
+- For database testing, consider using test databases rather than production databases when possible
