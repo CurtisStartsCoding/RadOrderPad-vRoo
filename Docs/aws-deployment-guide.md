@@ -103,6 +103,109 @@ For more control over the deployment environment:
    pm2 startup
    ```
 
+## HTTPS Configuration with Application Load Balancer
+
+For HIPAA compliance, all API traffic must be encrypted using HTTPS. We use AWS Application Load Balancer (ALB) to handle HTTPS termination and routing.
+
+### Setting Up Application Load Balancer
+
+1. **Create Target Groups**:
+   - Go to EC2 → Load Balancing → Target Groups
+   - Click "Create target group"
+   - Choose target type: "Instances"
+   - Name: `api-radorderpad-target`
+   - Protocol: HTTP
+   - Port: 3000 (the port your Node.js application is listening on)
+   - VPC: Select your VPC where the EC2 instance is running
+   - Health check settings:
+     - Protocol: HTTP
+     - Path: `/health`
+   - Register your EC2 instance with this target group
+
+2. **Create Application Load Balancer**:
+   - Go to EC2 → Load Balancing → Load Balancers
+   - Click "Create load balancer"
+   - Select "Application Load Balancer"
+   - Name: `radorderpad-alb`
+   - Scheme: Internet-facing
+   - IP address type: IPv4
+   - VPC: Same as your EC2 instance
+   - Select at least two Availability Zones and their public subnets
+   - Security Group: Create a new security group with:
+     - Inbound rules for HTTP (80) and HTTPS (443) from anywhere (0.0.0.0/0)
+   - Listeners:
+     - HTTP:80 - Redirect to HTTPS:443
+     - HTTPS:443 - Forward to your target group
+   - SSL Certificate: Upload or request a certificate for your domain
+   - Security Policy: ELBSecurityPolicy-TLS-1-2-2017-01 (for HIPAA compliance)
+
+3. **Update EC2 Security Group**:
+   - Modify your EC2 instance's security group to:
+     - Allow traffic on port 3000 only from the load balancer's security group
+     - Remove any rules allowing direct public access to port 3000
+
+### DNS Configuration with Cloudflare
+
+We use Cloudflare for DNS management with the following configuration:
+
+1. **DNS Records**:
+   - CNAME record for `api.radorderpad.com` pointing to your ALB's DNS name
+   - Set to "DNS Only" (gray cloud) to bypass Cloudflare's proxy for the API
+
+2. **SSL/TLS Settings**:
+   - SSL/TLS encryption mode: Full
+   - Always Use HTTPS: Disabled (handled by AWS ALB)
+   - Minimum TLS Version: 1.2
+
+3. **Troubleshooting DNS Issues**:
+   - If experiencing redirect loops, ensure "Always Use HTTPS" is disabled in Cloudflare
+   - Verify that the load balancer's HTTP listener is configured to redirect to HTTPS
+   - Check that security groups allow traffic on ports 80 and 443
+
+### Testing the HTTPS Setup
+
+To verify your HTTPS configuration:
+
+```powershell
+# Test direct access to the API
+Invoke-WebRequest -Uri "https://api.radorderpad.com/health"
+
+# Expected result: 200 OK with health check response
+```
+
+## Redis Cloud Configuration
+
+The application uses Redis Cloud for caching and search functionality. To ensure proper connectivity:
+
+1. **Find Your EC2 Public IP Address**:
+   ```bash
+   # Run this on your EC2 instance
+   curl -s https://api.ipify.org
+   ```
+   This will return the public IP address that your EC2 instance uses for outbound connections.
+
+2. **Configure Redis Cloud CIDR Allow List**:
+   - Go to Redis Cloud Console → Your Database → Configuration
+   - Under "CIDR allow list", add the public IP address from the previous step
+   - Format: `your-ip-address/32` (e.g., `3.145.57.115/32`)
+   - For testing purposes only, you can temporarily use `0.0.0.0/0` (not recommended for production)
+
+3. **Verify Redis Connection**:
+   - The application will log Redis connection status on startup
+   - If Redis connection fails, the application will fall back to PostgreSQL
+   - Check logs for "Redis Cloud connection test failed" messages
+
+4. **Redis Environment Variables**:
+   - Ensure these environment variables are correctly set:
+     - `REDIS_CLOUD_HOST`
+     - `REDIS_CLOUD_PORT`
+     - `REDIS_CLOUD_PASSWORD`
+
+5. **Troubleshooting Redis Connection Issues**:
+   - If connection fails, verify the IP address hasn't changed (EC2 IPs can change when instances restart)
+   - Consider using an Elastic IP for your EC2 instance to maintain a static public IP
+   - Check that your security groups allow outbound traffic to Redis Cloud
+
 ## Module System Configuration
 
 The RadOrderPad API uses CommonJS modules for compatibility with Node.js. This configuration is already set up in the repository:
@@ -120,16 +223,6 @@ The application requires two PostgreSQL databases:
 2. **PHI Database**: Stores protected health information (PHI)
 
 Make sure to set up both databases and provide the connection strings as environment variables.
-
-## Redis Configuration
-
-The application uses Redis for caching and search functionality:
-
-1. **Redis Cloud**: The application is configured to use Redis Cloud by default
-2. **Environment Variables**: Make sure to set the Redis environment variables:
-   - `REDIS_CLOUD_HOST`
-   - `REDIS_CLOUD_PORT`
-   - `REDIS_CLOUD_PASSWORD`
 
 ## Pre-Deployment Audit
 
@@ -170,6 +263,41 @@ If you encounter database connection issues:
 1. Verify that the database connection strings are correctly set in the environment variables
 2. Verify that the security groups allow traffic from the application to the database
 3. Verify that the database user has the necessary permissions
+
+### HTTPS and Load Balancer Issues
+
+If you encounter issues with HTTPS or the load balancer:
+
+1. Check that your EC2 instance is healthy in the target group
+2. Verify that the security group allows traffic from the load balancer to the EC2 instance
+3. Check that the load balancer listeners are correctly configured
+4. If using Cloudflare, ensure there are no conflicting redirect rules
+
+## HIPAA Compliance Considerations
+
+For HIPAA compliance, ensure:
+
+1. **Data Encryption**:
+   - All data in transit is encrypted using HTTPS (TLS 1.2+)
+   - All data at rest is encrypted (EBS volumes, RDS databases)
+
+2. **Access Controls**:
+   - EC2 security groups restrict access to necessary ports only
+   - IAM roles follow principle of least privilege
+   - Database users have appropriate permissions
+
+3. **Logging and Monitoring**:
+   - CloudWatch Logs capture application logs
+   - CloudTrail is enabled for API activity logging
+   - CloudWatch Alarms are set up for critical metrics
+
+4. **Backup and Recovery**:
+   - Regular database backups are configured
+   - Disaster recovery plan is documented and tested
+
+5. **Business Associate Agreements**:
+   - Ensure AWS BAA is in place
+   - Verify BAAs with any other service providers
 
 ## Monitoring and Logging
 

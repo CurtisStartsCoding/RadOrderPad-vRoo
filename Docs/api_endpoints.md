@@ -9,7 +9,19 @@ API Endpoints Overview (Conceptual)
 
 ## Base URL
 
-`/api` (Example)
+**Production Environment:**
+- HTTPS: `https://api.radorderpad.com/api`
+
+**Infrastructure Details:**
+- The API is hosted on AWS EC2 behind an Application Load Balancer
+- All traffic is encrypted using HTTPS (TLS 1.2+)
+- DNS is managed through Cloudflare with direct DNS routing (non-proxied) for the API subdomain
+- The load balancer handles HTTP to HTTPS redirection
+
+**HIPAA Compliance:**
+- All API communications are encrypted in transit
+- Security headers are implemented including HSTS, CSP, and other protective measures
+- Access is controlled through security groups at the AWS level
 
 ## Authentication (`/auth`)
 
