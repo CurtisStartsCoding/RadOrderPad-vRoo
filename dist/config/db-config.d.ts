@@ -1,7 +1,4 @@
 import { Pool } from 'pg';
-/**
- * Database configuration
- */
 export declare const mainDbConfig: {
     connectionString: string | undefined;
     ssl: boolean | {

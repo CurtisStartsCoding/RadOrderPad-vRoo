@@ -45,29 +45,44 @@ dotenv.config();
 /**
  * Database configuration
  */
+// Determine which database URLs to use based on USE_PRIVATE_DB flag
+const usePrivateDb = process.env.USE_PRIVATE_DB === 'true';
+enhanced_logger_1.default.info('Using private databases:', usePrivateDb);
 // Main database configuration
 exports.mainDbConfig = {
     connectionString: process.env.NODE_ENV === 'production'
-        ? process.env.MAIN_DATABASE_URL
+        ? (usePrivateDb ? process.env.PRIVATE_MAIN_DATABASE_URL : process.env.MAIN_DATABASE_URL)
         : process.env.DEV_MAIN_DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 };
 // PHI database configuration
 exports.phiDbConfig = {
     connectionString: process.env.NODE_ENV === 'production'
-        ? process.env.PHI_DATABASE_URL
+        ? (usePrivateDb ? process.env.PRIVATE_PHI_DATABASE_URL : process.env.PHI_DATABASE_URL)
         : process.env.DEV_PHI_DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 };
 // Log database connection strings
 enhanced_logger_1.default.info('Database connection strings:');
 enhanced_logger_1.default.info('Environment:', process.env.NODE_ENV);
-enhanced_logger_1.default.info('MAIN_DATABASE_URL:', process.env.NODE_ENV === 'production'
-    ? process.env.MAIN_DATABASE_URL
-    : process.env.DEV_MAIN_DATABASE_URL);
-enhanced_logger_1.default.info('PHI_DATABASE_URL:', process.env.NODE_ENV === 'production'
-    ? process.env.PHI_DATABASE_URL
-    : process.env.DEV_PHI_DATABASE_URL);
+// Log which database URLs are being used
+if (process.env.NODE_ENV === 'production') {
+    if (usePrivateDb) {
+        enhanced_logger_1.default.info('Using PRIVATE database connections');
+        enhanced_logger_1.default.info('PRIVATE_MAIN_DATABASE_URL:', process.env.PRIVATE_MAIN_DATABASE_URL);
+        enhanced_logger_1.default.info('PRIVATE_PHI_DATABASE_URL:', process.env.PRIVATE_PHI_DATABASE_URL);
+    }
+    else {
+        enhanced_logger_1.default.info('Using PUBLIC database connections');
+        enhanced_logger_1.default.info('MAIN_DATABASE_URL:', process.env.MAIN_DATABASE_URL);
+        enhanced_logger_1.default.info('PHI_DATABASE_URL:', process.env.PHI_DATABASE_URL);
+    }
+}
+else {
+    enhanced_logger_1.default.info('Using DEVELOPMENT database connections');
+    enhanced_logger_1.default.info('DEV_MAIN_DATABASE_URL:', process.env.DEV_MAIN_DATABASE_URL);
+    enhanced_logger_1.default.info('DEV_PHI_DATABASE_URL:', process.env.DEV_PHI_DATABASE_URL);
+}
 // Create connection pools
 exports.mainDbPool = new pg_1.Pool(exports.mainDbConfig);
 exports.phiDbPool = new pg_1.Pool(exports.phiDbConfig);
