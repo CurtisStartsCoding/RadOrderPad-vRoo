@@ -11,7 +11,27 @@ const app = express();
 
 // Middleware
 app.use(helmet()); // Security headers
-app.use(cors()); // Enable CORS
+
+// Configure CORS with specific options
+app.use(cors({
+  origin: [
+    'https://api.radorderpad.com',
+    'https://app.radorderpad.com',
+    'https://radorderpad.com',
+    // Replit domains
+    /\.repl\.co$/,        // Matches all Replit default domains (*.repl.co)
+    /\.replit\.dev$/,     // Matches all Replit dev domains (*.replit.dev)
+    // For local development
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:5000',
+    'http://localhost:8080'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,      // Allow cookies to be sent with requests
+  maxAge: 86400          // Cache preflight requests for 24 hours
+}));
 
 // Parse JSON bodies for all routes EXCEPT the Stripe webhook route
 // This is important because Stripe webhooks need the raw body for signature verification

@@ -363,3 +363,75 @@ To create a deployment package:
 This will create a `deployment.zip` file that can be uploaded to AWS Elastic Beanstalk.
 
 For detailed deployment instructions, refer to the `DEPLOYMENT_STEPS.md` file.
+
+## CORS Configuration for Replit Integration
+
+If you're developing a frontend application on Replit that needs to communicate with your AWS-hosted API, you'll need to configure CORS (Cross-Origin Resource Sharing) to allow requests from Replit domains.
+
+### Current CORS Configuration
+
+The application is configured with the following CORS settings in `src/index.ts`:
+
+```typescript
+app.use(cors({
+  origin: [
+    'https://api.radorderpad.com',
+    'https://app.radorderpad.com',
+    'https://radorderpad.com',
+    // Replit domains
+    /\.repl\.co$/,        // Matches all Replit default domains (*.repl.co)
+    /\.replit\.dev$/,     // Matches all Replit dev domains (*.replit.dev)
+    // For local development
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:5000',
+    'http://localhost:8080'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,      // Allow cookies to be sent with requests
+  maxAge: 86400          // Cache preflight requests for 24 hours
+}));
+```
+
+### Replit Domain Patterns
+
+Replit applications use the following domain patterns:
+
+1. **Default Replit Domains**: `<app-name>.<username>.repl.co`
+2. **Replit Dev Domains**: `<app-name>.<username>.replit.dev`
+3. **Wildcard Patterns**:
+   - The regex `/\.repl\.co$/` matches all Replit default domains
+   - The regex `/\.replit\.dev$/` matches all Replit dev domains
+
+### Customizing CORS for Your Replit App
+
+If you're using a specific Replit app or custom domain, you may need to update the CORS configuration:
+
+1. **For a specific Replit app**:
+   - Add the exact domain: `'https://your-app-name.your-username.repl.co'`
+
+2. **For a custom domain linked to your Replit app**:
+   - Add the custom domain: `'https://your-custom-domain.com'`
+
+3. **After making changes**:
+   - Rebuild and redeploy your application
+   - Test the CORS configuration by making requests from your Replit app to your API
+
+### Testing CORS Configuration
+
+To verify your CORS configuration is working correctly:
+
+1. From your Replit app, make a fetch request to your API:
+   ```javascript
+   fetch('https://api.radorderpad.com/health', {
+     method: 'GET',
+     credentials: 'include' // If using credentials
+   })
+   .then(response => response.json())
+   .then(data => console.log(data))
+   .catch(error => console.error('Error:', error));
+   ```
+
+2. Check the browser console for any CORS-related errors
+3. If you see errors, verify that your Replit domain is correctly included in the CORS configuration
