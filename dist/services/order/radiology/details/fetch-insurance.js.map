@@ -1,1 +1,0 @@
-{"version":3,"file":"fetch-insurance.js","sourceRoot":"","sources":["../../../../../src/services/order/radiology/details/fetch-insurance.ts"],"names":[],"mappings":";;AAQA,wCAUC;AAlBD,8CAAmD;AAGnD;;;;GAIG;AACI,KAAK,UAAU,cAAc,CAAC,SAAiB;IACpD,MAAM,eAAe,GAAG,MAAM,IAAA,eAAU,EACtC;;;gCAG4B,EAC5B,CAAC,SAAS,CAAC,CACZ,CAAC;IAEF,OAAO,eAAe,CAAC,IAAI,CAAC;AAC9B,CAAC"}

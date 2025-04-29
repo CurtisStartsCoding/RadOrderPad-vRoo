@@ -1,1 +1,0 @@
-{"version":3,"file":"fetch-document-uploads.js","sourceRoot":"","sources":["../../../../../src/services/order/radiology/details/fetch-document-uploads.ts"],"names":[],"mappings":";;AAQA,oDAUC;AAlBD,8CAAmD;AAGnD;;;;GAIG;AACI,KAAK,UAAU,oBAAoB,CAAC,OAAe;IACxD,MAAM,qBAAqB,GAAG,MAAM,IAAA,eAAU,EAC5C;;;kCAG8B,EAC9B,CAAC,OAAO,CAAC,CACV,CAAC;IAEF,OAAO,qBAAqB,CAAC,IAAI,CAAC;AACpC,CAAC"}

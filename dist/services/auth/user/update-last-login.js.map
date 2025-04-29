@@ -1,1 +1,0 @@
-{"version":3,"file":"update-last-login.js","sourceRoot":"","sources":["../../../../src/services/auth/user/update-last-login.ts"],"names":[],"mappings":";;AAKA,0CAKC;AAVD,2CAAiD;AAEjD;;GAEG;AACI,KAAK,UAAU,eAAe,CAAC,MAAc;IAClD,MAAM,IAAA,gBAAW,EACf,mDAAmD,EACnD,CAAC,MAAM,CAAC,CACT,CAAC;AACJ,CAAC"}

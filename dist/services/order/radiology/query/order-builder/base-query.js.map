@@ -1,1 +1,0 @@
-{"version":3,"file":"base-query.js","sourceRoot":"","sources":["../../../../../../src/services/order/radiology/query/order-builder/base-query.ts"],"names":[],"mappings":";;AAKA,0CAmBC;AAxBD;;;;GAIG;AACH,SAAgB,eAAe,CAAC,KAAa;IAK3C,MAAM,KAAK,GAAG;;;;;;;GAOb,CAAC;IAEF,OAAO;QACL,KAAK;QACL,MAAM,EAAE,CAAC,KAAK,CAAC;QACf,UAAU,EAAE,CAAC;KACd,CAAC;AACJ,CAAC;AAED,kBAAe,eAAe,CAAC"}
