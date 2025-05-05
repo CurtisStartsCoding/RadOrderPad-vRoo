@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
-import connectRedis from 'connect-redis';  // note the default import name
 import { createClient } from 'redis';
+// bring in the factory directly via require, so we get the raw function
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const connectRedis = require('connect-redis');
 import config from './config/config.js';
 import routes from './routes/index.js';
 import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';
