@@ -3,9 +3,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
 import { createClient } from 'redis';
-// bring in the factory directly via require, so we get the raw function
+// Import connect-redis with .default to get the correct export
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const connectRedis = require('connect-redis');
+const RedisStore = require('connect-redis').default;
 import config from './config/config.js';
 import routes from './routes/index.js';
 import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';
@@ -44,8 +44,6 @@ redisSessionClient.on('error', (err) => {
 })();
 
 // Initialize Redis session store with connect-redis v8 API
-// Initialize the store factory with the session module
-const RedisStore = connectRedis(session);
 // Instantiate the store with the Redis client
 const redisStore = new RedisStore({
   client: redisSessionClient,
