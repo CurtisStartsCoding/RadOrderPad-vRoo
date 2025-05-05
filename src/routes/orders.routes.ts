@@ -3,8 +3,16 @@ import orderValidationController from '../controllers/order-validation.controlle
 import orderManagementController from '../controllers/order-management';
 import trialValidateController from '../controllers/order-validation/trial-validate.controller';
 import { authenticateJWT, authorizeRole } from '../middleware/auth';
+import { createRateLimiter, getUserIdentifier } from '../middleware/rate-limit';
 
 const router = Router();
+
+// Create rate limiters
+const validateOrderRateLimiter = createRateLimiter(
+  60, // 60 requests per minute
+  60, // 60 seconds window
+  getUserIdentifier
+);
 
 /**
  * @route   GET /api/orders
@@ -26,6 +34,7 @@ router.post(
   '/validate',
   authenticateJWT,
   authorizeRole(['physician']),
+  validateOrderRateLimiter, // Apply rate limiting
   orderValidationController.validateOrder
 );
 
@@ -72,6 +81,7 @@ router.post(
 router.post(
   '/validate/trial',
   authenticateJWT,
+  validateOrderRateLimiter, // Apply rate limiting
   trialValidateController.validateTrialOrder
 );
 

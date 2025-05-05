@@ -1,0 +1,32 @@
+{
+  "model": "claude-3-7-sonnet-20250219",
+  "max_tokens": 4000,
+  "system": "You are RadValidator, an AI clinical decision support system for radiology order validation.\n\nYour task is to analyze a physician's dictation for a radiology order and produce the following outputs:\n1. Extract relevant ICD-10 diagnosis codes\n2. Extract or suggest appropriate CPT procedure codes \n3. Validate if the imaging order is clinically appropriate\n4. Assign a compliance score from 1-9 (9 being most appropriate)\n5. Provide brief educational feedback if the order is inappropriate\n\nThe dictation is for a patient with the specialty context: General Radiology.\n\n\nPOSTGRESQL DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from PostgreSQL database):\n- C47.4: Malignant neoplasm of peripheral nerves of abdomen (confidence: 80%)\n- C49.4: Malignant neoplasm of connective and soft tissue of abdomen (confidence: 80%)\n- C76.2: Malignant neoplasm of abdomen (confidence: 80%)\n- D21.4: Benign neoplasm of connective and other soft tissue of abdomen (confidence: 80%)\n- D36.15: Benign neoplasm of peripheral nerves and autonomic nervous system of abdomen (confidence: 80%)\n- M79.A3: Nontraumatic compartment syndrome of abdomen (confidence: 80%)\n- M99.09: Segmental and somatic dysfunction of abdomen and other regions (confidence: 80%)\n- M99.19: Subluxation complex (vertebral) of abdomen and other regions (confidence: 80%)\n- M99.29: Subluxation stenosis of neural canal of abdomen and other regions (confidence: 80%)\n- M99.39: Osseous stenosis of neural canal of abdomen and other regions (confidence: 80%)\n\nPOSSIBLE PROCEDURES (from PostgreSQL database):\n- 76376: 3D rendering with interpretation and reporting of computed tomography, magnetic resonance imaging, ultrasound, or other tomographic modality with image postprocessing under concurrent supervision; not requiring image postprocessing on an independent workstation (Multiple (CT, MRI, Ultrasound, or other tomographic modality)) (confidence: 80%)\n- 76881: Ultrasound, extremity, nonvascular, real-time with image documentation; complete (Ultrasound) (confidence: 80%)\n- 76700: Ultrasound, abdominal, complete (Ultrasound) (confidence: 80%)\n- 76705: Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up) (Ultrasound) (confidence: 80%)\n- 76770: Ultrasound, retroperitoneal (e.g., renal, aorta, nodes), real time with image documentation; complete (Ultrasound) (confidence: 80%)\n- 76775: Ultrasound, retroperitoneal; limited (Ultrasound) (confidence: 80%)\n- 76776: Ultrasound, transplanted kidney, real time and duplex Doppler with image documentation (Ultrasound) (confidence: 80%)\n- 76801: Ultrasound, pregnant uterus, real time with image documentation, fetal and maternal evaluation, first trimester (< 14 weeks 0 days), transabdominal approach; single or first gestation (Ultrasound) (confidence: 80%)\n- 76802: Ultrasound, pregnant uterus, real time with image documentation, fetal and maternal evaluation, after first trimester (> or = 14 weeks 0 days), transabdominal approach; each additional gestation (List separately in addition to code for primary procedure) (Ultrasound) (confidence: 80%)\n- 76805: Ultrasound, pregnant uterus, real time with image documentation, fetal and maternal evaluation, after first trimester (> or = 14 weeks 0 days), transabdominal approach; single or first gestation (Ultrasound) (confidence: 80%)\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.\n\n\nIMPORTANT GUIDELINES:\n- Validate based on ACR Appropriateness Criteria and evidence-based guidelines\n- For inappropriate orders, suggest alternative approaches\n- For spine imaging, MRI without contrast is usually sufficient for disc evaluation\n- Acute low back pain (<6 weeks) without red flags should be managed conservatively\n- Red flags include: trauma, cancer history, neurological deficits, infection signs\n\nOnly use contrast when there is a specific indication (infection, tumor, post-surgical).",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Please analyze this radiology order dictation:\n\n\"\"48-year-old female with chronic diarrhea for past 4 months, typically 4-5 loose stools daily. Reports upper right quadrant discomfort after meals. Patient has noted darkening of skin on knuckles and neck folds. Recent lab work shows mildly elevated ferritin and transaminases. Family history significant for father with cirrhosis of \"unknown cause.\" Order abdominal ultrasound to evaluate for possible gallbladder disease.\"\n\"\n\nRespond in JSON format with these fields:\n- diagnosisCodes: Array of {code, description} objects\n- procedureCodes: Array of {code, description} objects\n- validationStatus: \"valid\" or \"invalid\"\n- complianceScore: Number 1-9\n- feedback: Brief educational note for inappropriate orders (33 words target length for General Radiology)"
+    }
+  ]
+}
+
+{
+  "id": "msg_019Tp3TGXUkWsD9fSh4gkWvR",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-3-7-sonnet-20250219",
+  "content": [
+    {
+      "type": "text",
+      "text": "```json\n{\n  \"diagnosisCodes\": [\n    {\n      \"code\": \"K59.1\",\n      \"description\": \"Functional diarrhea\"\n    },\n    {\n      \"code\": \"R10.13\",\n      \"description\": \"Epigastric pain (Upper right quadrant pain)\"\n    },\n    {\n      \"code\": \"R74.0\",\n      \"description\": \"Nonspecific elevation of levels of transaminase\"\n    },\n    {\n      \"code\": \"E83.110\",\n      \"description\": \"Hemochromatosis, unspecified (suspected based on elevated ferritin)\"\n    }\n  ],\n  \"procedureCodes\": [\n    {\n      \"code\": \"76700\",\n      \"description\": \"Ultrasound, abdominal, complete\"\n    }\n  ],\n  \"validationStatus\": \"valid\",\n  \"complianceScore\": 8,\n  \"feedback\": \"Abdominal ultrasound is appropriate for evaluating chronic diarrhea with RUQ pain and abnormal LFTs. Consider additional workup for possible hemochromatosis given the skin changes, elevated ferritin, and family history of cirrhosis.\"\n}\n```"
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 1289,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 296
+  }
+}

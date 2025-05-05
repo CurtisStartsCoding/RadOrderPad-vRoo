@@ -194,8 +194,47 @@ else
 fi
 echo
 
+echo "===== 15. Running Redis Rate Limiting Tests ====="
+sleep 2
+../../debug-scripts/vercel-tests/test-rate-limit.sh > test-results/rate-limit-tests.log 2>&1
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
+    echo "[PASS] Redis Rate Limiting Tests"
+    ./update-test-audit-log.sh "Redis Rate Limiting Tests" "PASS" "Rate limiting middleware functioning correctly"
+else
+    echo "[FAIL] Redis Rate Limiting Tests - Check test-results/rate-limit-tests.log for details"
+    ./update-test-audit-log.sh "Redis Rate Limiting Tests" "FAIL" "Check test-results/rate-limit-tests.log for details"
+fi
+echo
+
+echo "===== 16. Running Redis Bulk Lookup Tests ====="
+sleep 2
+../../debug-scripts/redis-optimization/test-bulk-lookup.sh > test-results/bulk-lookup-tests.log 2>&1
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
+    echo "[PASS] Redis Bulk Lookup Tests"
+    ./update-test-audit-log.sh "Redis Bulk Lookup Tests" "PASS" "Lua-based bulk lookup functioning correctly"
+else
+    echo "[FAIL] Redis Bulk Lookup Tests - Check test-results/bulk-lookup-tests.log for details"
+    ./update-test-audit-log.sh "Redis Bulk Lookup Tests" "FAIL" "Check test-results/bulk-lookup-tests.log for details"
+fi
+echo
+
+echo "===== 17. Running Redis Fuzzy Search Tests ====="
+sleep 2
+../../debug-scripts/redis-optimization/test-redis-fuzzy-search.sh > test-results/fuzzy-search-tests.log 2>&1
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
+    echo "[PASS] Redis Fuzzy Search Tests"
+    ./update-test-audit-log.sh "Redis Fuzzy Search Tests" "PASS" "Fuzzy search for medical codes functioning correctly"
+else
+    echo "[FAIL] Redis Fuzzy Search Tests - Check test-results/fuzzy-search-tests.log for details"
+    ./update-test-audit-log.sh "Redis Fuzzy Search Tests" "FAIL" "Check test-results/fuzzy-search-tests.log for details"
+fi
+echo
+
 echo "===== Test Summary ====="
-echo "14 test suites executed."
+echo "17 test suites executed."
 echo "Test results have been saved to the test-results directory."
 echo "To view detailed logs, check the corresponding .log files."
 echo

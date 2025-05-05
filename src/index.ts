@@ -1,16 +1,46 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import session from 'express-session';
+import connectRedis from 'connect-redis';
 import config from './config/config.js';
 import routes from './routes/index.js';
 import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';
 import logger from './utils/logger';
+import { getRedisClient } from './config/redis.js';
+import { loadAndCacheScripts } from './services/bulk-lookup/script-loader';
+import {
+  createICD10SearchIndex,
+  createCPTSearchIndex,
+  createMappingSearchIndex
+} from './utils/cache/redis-search';
 
 // Create Express app
 const app = express();
 
+// Initialize Redis session store
+const RedisStore = connectRedis(session);
+const redisClient = getRedisClient();
+
 // Middleware
 app.use(helmet()); // Security headers
+
+// Configure session middleware
+app.use(session({
+  store: new RedisStore({ client: redisClient }),
+  secret: config.jwtSecret, // Use the same secret as JWT for consistency
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: config.nodeEnv === 'production', // Requires HTTPS in production
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: 'lax'
+  }
+}));
+
+// Log successful session store setup
+logger.info('Redis session store initialized successfully');
 
 // Configure CORS with specific options
 app.use(cors({
@@ -83,6 +113,26 @@ const server = app.listen(PORT, async () => {
     logger.warn('Server will continue running, but some features may not work properly.');
     // Don't shut down the server, just log a warning
     // await shutdownServer();
+  }
+  
+  // Load and cache Lua scripts
+  try {
+    await loadAndCacheScripts();
+    logger.info('Lua scripts loaded and cached successfully');
+  } catch (error) {
+    logger.error('Error loading Lua scripts:', { error });
+    logger.warn('Bulk lookup operations may not work properly');
+  }
+  
+  // Initialize Redis search indices
+  try {
+    await createICD10SearchIndex();
+    await createCPTSearchIndex();
+    await createMappingSearchIndex();
+    logger.info('Redis search indices initialized successfully');
+  } catch (error) {
+    logger.error('Error initializing Redis search indices:', { error });
+    logger.warn('Advanced search features may not work properly, falling back to PostgreSQL search');
   }
 });
 
