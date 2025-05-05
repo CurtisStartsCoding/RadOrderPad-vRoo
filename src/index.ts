@@ -2,8 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
-// Import connect-redis with proper type
-import RedisStoreFactory from 'connect-redis';
+// Import RedisStore as a named export from connect-redis
+import { RedisStore } from 'connect-redis';
 import { createClient } from 'redis';
 import config from './config/config.js';
 import routes from './routes/index.js';
@@ -43,9 +43,7 @@ redisSessionClient.on('error', (err) => {
 })();
 
 // Initialize Redis session store with connect-redis v8 API
-// Create Redis store using the factory pattern (connect-redis v8)
-const RedisStore = RedisStoreFactory(session);
-// Then instantiate the store with our Redis client
+// Create Redis store instance directly
 const redisStore = new RedisStore({
   client: redisSessionClient,
   prefix: "radorderpad:"
