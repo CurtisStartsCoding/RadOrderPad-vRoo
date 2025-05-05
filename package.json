@@ -45,7 +45,8 @@
     "redis": "^4.7.0",
     "stripe": "^18.0.0",
     "uuid": "^11.1.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -63,7 +64,6 @@
     "chai": "^5.2.0",
     "eslint": "^9.25.1",
     "jest": "^29.7.0",
-    "jsonwebtoken": "^9.0.2",
     "node-fetch": "^2.7.0",
     "sinon": "^20.0.0",
     "supertest": "^7.1.0",
