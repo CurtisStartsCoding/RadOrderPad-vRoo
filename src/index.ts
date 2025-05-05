@@ -22,32 +22,108 @@ import {
 // Create Express app
 const app = express();
 
-// Initialize Redis client for session store (using redis client for connect-redis v8)
+// Initialize Redis client for session store with enhanced configuration
 const redisSessionClient = createClient({
-  url: `redis://${process.env.REDIS_CLOUD_HOST}:${process.env.REDIS_CLOUD_PORT}`,
-  password: process.env.REDIS_CLOUD_PASSWORD
+  // Use rediss:// protocol for TLS connection to Redis Cloud
+  url: `rediss://${process.env.REDIS_CLOUD_HOST}:${process.env.REDIS_CLOUD_PORT}`,
+  password: process.env.REDIS_CLOUD_PASSWORD,
+  socket: {
+    tls: true,
+    rejectUnauthorized: false, // Accept self-signed certificates
+    connectTimeout: 10000, // 10 seconds
+    keepAlive: 5000, // Send keep-alive every 5 seconds
+    reconnectStrategy: (retries) => {
+      const delay = Math.min(retries * 500, 10000); // Max 10 second delay
+      logger.info(`Redis reconnect attempt ${retries} in ${delay}ms`);
+      return delay;
+    }
+  },
+  pingInterval: 10000 // Ping every 10 seconds to keep connection alive
 });
 
-// Handle Redis session client errors
+// Add detailed Redis client event handlers
+redisSessionClient.on('connect', () => {
+  logger.info('Redis client connecting...');
+});
+
+redisSessionClient.on('ready', () => {
+  logger.info('Redis client ready and connected');
+});
+
 redisSessionClient.on('error', (err) => {
-  logger.error('Redis Session Client Error', err);
+  logger.error(`Redis Session Client Error: ${err.message}`, { error: err });
+});
+
+redisSessionClient.on('reconnecting', () => {
+  logger.info('Redis client reconnecting...');
+});
+
+redisSessionClient.on('end', () => {
+  logger.info('Redis client connection closed');
 });
 
 // Connect to Redis for session store
 (async (): Promise<void> => {
   try {
+    logger.info('Connecting to Redis...');
     await redisSessionClient.connect();
     logger.info('Redis session client connected successfully');
-  } catch (error) {
-    logger.error('Failed to connect Redis session client', error);
+    
+    // Test the connection with a simple ping
+    const pingResult = await redisSessionClient.ping();
+    logger.info(`Redis ping result: ${pingResult}`);
+    
+    // Initialize Redis session store with connect-redis v8 API
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { RedisStore } = require('connect-redis');
+    
+    // Create the Redis store with enhanced options
+    const redisStore = new RedisStore({
+      client: redisSessionClient,
+      prefix: "radorderpad:",
+      ttl: 86400, // 1 day in seconds
+      disableTouch: false, // Update TTL on session access
+    });
+    
+    logger.info('Redis session store initialized successfully');
+    
+    // Configure session middleware
+    app.use(session({
+      store: redisStore,
+      secret: config.jwtSecret, // Use the same secret as JWT for consistency
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: config.nodeEnv === 'production', // Requires HTTPS in production
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        sameSite: 'lax'
+      }
+    }));
+    
+  } catch (error: any) {
+    logger.error(`Failed to initialize Redis session store: ${error.message || 'Unknown error'}`, { error });
+    throw new Error(`Redis session store initialization failed: ${error.message || 'Unknown error'}`);
   }
 })();
 
-// Initialize Redis session store with connect-redis v8 API
-// Instantiate the store with the Redis client
-const redisStore = new RedisStore({
-  client: redisSessionClient,
-  prefix: "radorderpad:"
+// Set up graceful shutdown for Redis client
+process.on('SIGTERM', async () => {
+  try {
+    await redisSessionClient.disconnect();
+    logger.info('Redis session client disconnected');
+  } catch (error: any) {
+    logger.error(`Error disconnecting Redis client: ${error.message || 'Unknown error'}`, { error });
+  }
+});
+
+process.on('SIGINT', async () => {
+  try {
+    await redisSessionClient.disconnect();
+    logger.info('Redis session client disconnected');
+  } catch (error: any) {
+    logger.error(`Error disconnecting Redis client: ${error.message || 'Unknown error'}`, { error });
+  }
 });
 
 // Note: We don't need to store the Redis client in a variable
@@ -56,22 +132,7 @@ const redisStore = new RedisStore({
 // Middleware
 app.use(helmet()); // Security headers
 
-// Configure session middleware
-app.use(session({
-  store: redisStore,
-  secret: config.jwtSecret, // Use the same secret as JWT for consistency
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: config.nodeEnv === 'production', // Requires HTTPS in production
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: 'lax'
-  }
-}));
-
-// Log successful session store setup
-logger.info('Redis session store initialized successfully');
+// Note: Session middleware is now configured in the async IIFE above
 
 // Configure CORS with specific options
 app.use(cors({
@@ -177,13 +238,7 @@ async function shutdownServer(): Promise<void> {
   // Close database connections
   await closeDatabaseConnections();
   
-  // Close Redis session client
-  try {
-    await redisSessionClient.disconnect();
-    logger.info('Redis session client disconnected');
-  } catch (error) {
-    logger.error('Error disconnecting Redis session client', error);
-  }
+  // Redis session client is now disconnected in the SIGTERM/SIGINT handlers above
   
   // Close server
   server.close(() => {
