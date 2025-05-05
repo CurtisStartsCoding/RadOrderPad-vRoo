@@ -2,8 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
-// Import RedisStore as a named export from connect-redis
-import { RedisStore } from 'connect-redis';
 import { createClient } from 'redis';
 import config from './config/config.js';
 import routes from './routes/index.js';
@@ -43,7 +41,10 @@ redisSessionClient.on('error', (err) => {
 })();
 
 // Initialize Redis session store with connect-redis v8 API
-// Create Redis store instance directly
+// Use CommonJS require for connect-redis to avoid TypeScript issues
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const connectRedis = require('connect-redis');
+const RedisStore = connectRedis(session);
 const redisStore = new RedisStore({
   client: redisSessionClient,
   prefix: "radorderpad:"
