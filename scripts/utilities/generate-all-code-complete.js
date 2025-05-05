@@ -3,8 +3,7 @@ const path = require('path');
 
 // Configuration
 const rootDir = path.resolve(__dirname, '../..');  // Root directory (2 levels up from scripts/utilities)
-const srcDir = path.join(rootDir, 'src');  // src directory
-const outputFile = path.join(rootDir, 'all-source-code.txt');  // Output file in the root directory
+const outputFile = path.join(rootDir, 'all-code-complete.txt');  // Output file in the root directory
 const excludeDirs = [
   'node_modules',
   '.git',
@@ -14,23 +13,10 @@ const excludeDirs = [
   'eb-deploy',
   'vercel-deploy'
 ];
-const includeExtensions = [
-  '.js',
-  '.ts',
-  '.jsx',
-  '.tsx',
-  '.json',
-  '.md'
-];
+// No file extension filtering - include all files
 
 // Initialize output file
 fs.writeFileSync(outputFile, '', 'utf8');
-
-// Function to get current timestamp
-function getCurrentTimestamp() {
-  const now = new Date();
-  return now.toLocaleString();
-}
 
 // Function to append content to the output file
 function appendToOutput(content) {
@@ -40,33 +26,42 @@ function appendToOutput(content) {
 // Function to process a file
 function processFile(filePath) {
   const relativePath = path.relative(rootDir, filePath).replace(/\\/g, '/');
-  const ext = path.extname(filePath).toLowerCase();
-  
-  // Skip files with extensions not in the include list
-  if (!includeExtensions.includes(ext)) {
-    console.log(`Skipping file with excluded extension: ${relativePath}`);
-    return;
-  }
   
   try {
+    // Check if file is binary
+    const buffer = Buffer.alloc(4096);
+    const fd = fs.openSync(filePath, 'r');
+    const bytesRead = fs.readSync(fd, buffer, 0, 4096, 0);
+    fs.closeSync(fd);
+    
+    // Simple binary check - if there are null bytes or too many non-printable characters
+    const slice = buffer.slice(0, bytesRead);
+    const isBinary = slice.includes(0) || 
+                     slice.filter(b => b < 9).length > 0 ||
+                     (slice.filter(b => b < 32 && b !== 9 && b !== 10 && b !== 13).length / bytesRead > 0.3);
+    
+    if (isBinary) {
+      appendToOutput(`---------${relativePath}-------\n`);
+      appendToOutput(`[Binary file - content not included]\n`);
+      appendToOutput(`--------------------\n\n`);
+      console.log(`Skipped binary file: ${relativePath}`);
+      return;
+    }
+    
     // Read file content
     const fileContent = fs.readFileSync(filePath, 'utf8');
-    const timestamp = getCurrentTimestamp();
     
-    // Format and write to output file with timestamp
-    appendToOutput(`\n\n${'='.repeat(80)}\n`);
-    appendToOutput(`FILE: ${relativePath} | TIMESTAMP: ${timestamp}\n`);
-    appendToOutput(`${'='.repeat(80)}\n\n`);
+    // Format and write to output file
+    appendToOutput(`---------${relativePath}-------\n`);
     appendToOutput(`${fileContent}\n`);
+    appendToOutput(`--------------------\n\n`);
     
     console.log(`Processed: ${relativePath}`);
   } catch (error) {
     // Handle binary files or other read errors
-    const timestamp = getCurrentTimestamp();
-    appendToOutput(`\n\n${'='.repeat(80)}\n`);
-    appendToOutput(`FILE: ${relativePath} | TIMESTAMP: ${timestamp}\n`);
-    appendToOutput(`${'='.repeat(80)}\n\n`);
-    appendToOutput(`[Binary file or error reading file: ${error.message}]\n`);
+    appendToOutput(`---------${relativePath}-------\n`);
+    appendToOutput(`[Error reading file: ${error.message}]\n`);
+    appendToOutput(`--------------------\n\n`);
     
     console.log(`Error processing: ${relativePath} - ${error.message}`);
   }
@@ -90,7 +85,7 @@ function traverseDirectory(dirPath) {
       // Recursively process subdirectory
       traverseDirectory(itemPath);
     } else if (stats.isFile()) {
-      // Process file
+      // Process file (no extension filtering)
       processFile(itemPath);
     }
   }
@@ -98,14 +93,14 @@ function traverseDirectory(dirPath) {
 
 // Main execution
 console.log('Starting directory traversal...');
-console.log(`Processing the src directory`);
+console.log(`Processing the entire project directory`);
 console.log(`Output will be written to: ${outputFile}`);
 
 try {
-  // Traverse only the src directory
-  traverseDirectory(srcDir);
+  // Traverse the entire project directory
+  traverseDirectory(rootDir);
   console.log('Directory traversal complete!');
-  console.log(`File listing has been written to: ${outputFile}`);
+  console.log(`Complete file listing has been written to: ${outputFile}`);
 } catch (error) {
   console.error('Error during directory traversal:', error);
 }

@@ -3,24 +3,20 @@ const path = require('path');
 
 // Configuration
 const rootDir = path.resolve(__dirname, '../..');  // Root directory (2 levels up from scripts/utilities)
-const srcDir = path.join(rootDir, 'src');  // src directory
-const outputFile = path.join(rootDir, 'all-source-code.txt');  // Output file in the root directory
+const docsDir = path.join(rootDir, 'DOCS');  // DOCS directory
+const outputFile = path.join(rootDir, 'all-docs.txt');  // Output file in the root directory
 const excludeDirs = [
   'node_modules',
   '.git',
   '.vercel',
-  'dist',
-  'deployment',
-  'eb-deploy',
-  'vercel-deploy'
+  'dist'
 ];
 const includeExtensions = [
-  '.js',
-  '.ts',
-  '.jsx',
-  '.tsx',
+  '.md',
+  '.txt',
   '.json',
-  '.md'
+  '.js',
+  '.ts'
 ];
 
 // Initialize output file
@@ -98,14 +94,19 @@ function traverseDirectory(dirPath) {
 
 // Main execution
 console.log('Starting directory traversal...');
-console.log(`Processing the src directory`);
+console.log(`Processing the DOCS directory`);
 console.log(`Output will be written to: ${outputFile}`);
 
 try {
-  // Traverse only the src directory
-  traverseDirectory(srcDir);
-  console.log('Directory traversal complete!');
-  console.log(`File listing has been written to: ${outputFile}`);
+  // Check if DOCS directory exists
+  if (fs.existsSync(docsDir)) {
+    // Traverse the DOCS directory
+    traverseDirectory(docsDir);
+    console.log('Directory traversal complete!');
+    console.log(`File listing has been written to: ${outputFile}`);
+  } else {
+    console.log(`DOCS directory not found at: ${docsDir}`);
+  }
 } catch (error) {
   console.error('Error during directory traversal:', error);
 }

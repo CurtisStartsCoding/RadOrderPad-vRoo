@@ -26,10 +26,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'default_jwt_secret';
 
 // Test data
 const testTrialUser = {
-  email: 'trial-test@example.com',
-  password: 'password123',
-  firstName: 'Trial',
-  lastName: 'User',
+  email: 'curtis@test.com',
+  password: 'password',
+  firstName: 'Curtis',
+  lastName: 'Test',
   specialty: 'Cardiology'
 };
 

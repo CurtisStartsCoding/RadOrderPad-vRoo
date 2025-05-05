@@ -1,0 +1,2622 @@
+
+
+================================================================================
+OrderInterface.tsx
+================================================================================
+
+import React, { useState } from 'react';
+import PatientInfoCard from './components/PatientInfoCard';
+import DictationForm from './components/DictationForm';
+import ValidationView from './components/ValidationView';
+import SignatureForm from './components/SignatureForm';
+import OverrideDialog from './components/OverrideDialog';
+import PatientIdentificationDictation from './components/PatientIdentificationDictation';
+import OrderProgressIndicator from './components/OrderProgressIndicator';
+import { Patient, ProcessedDictation } from './types';
+
+interface OrderInterfaceProps {
+  initialPatient?: Patient;
+  onOrderSubmitted?: (orderId: number) => void;
+  onBack?: () => void;
+}
+
+/**
+ * Main component for the radiology order interface
+ * Integrates all the order flow components
+ */
+const OrderInterface: React.FC<OrderInterfaceProps> = ({
+  initialPatient,
+  onOrderSubmitted,
+  onBack
+}) => {
+  // Order flow state
+  const [orderStep, setOrderStep] = useState(1);
+  const [dictationText, setDictationText] = useState("");
+  const [validationResult, setValidationResult] = useState<ProcessedDictation | null>(null);
+  const [validationFeedback, setValidationFeedback] = useState<string | undefined>(undefined);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [isOverrideDialogOpen, setIsOverrideDialogOpen] = useState(false);
+  const [isPatientIdentificationOpen, setIsPatientIdentificationOpen] = useState(false);
+  
+  // Create a placeholder patient for the "Unknown Patient" workflow
+  const [patient, setPatient] = useState<Patient>(initialPatient || { 
+    id: 0, 
+    name: "Unknown Patient", 
+    dob: "Unknown", 
+    mrn: `${Math.floor(1000000000000 + Math.random() * 9000000000000).toString()}`,
+    radiologyGroupId: null,
+    referringPracticeId: null,
+    externalPatientId: null, 
+    demographics: undefined, 
+    encryptedData: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    gender: "unknown"
+  });
+
+  // Handle dictation processing
+  const handleProcessDictation = (result: ProcessedDictation) => {
+    setValidationResult(result);
+    
+    if (result.validationStatus === 'valid') {
+      // Only navigate to validation screen if valid
+      setOrderStep(2);
+      setValidationFeedback(undefined);
+    } else {
+      // Stay on dictation page and show feedback
+      setValidationFeedback(result.feedback || "Validation failed. Please provide additional information.");
+      setAttemptCount(prev => prev + 1);
+    }
+  };
+  
+  // Clear validation feedback
+  const handleClearFeedback = () => {
+    setValidationFeedback(undefined);
+  };
+  
+  // Handle override request
+  const handleOverrideRequest = () => {
+    setIsOverrideDialogOpen(true);
+  };
+  
+  // Handle override confirmation
+  const handleOverrideConfirm = (justification: string) => {
+    if (validationResult) {
+      const overriddenResult: ProcessedDictation = {
+        ...validationResult,
+        validationStatus: 'valid', // Force valid status
+        overridden: true,
+        overrideJustification: justification
+      };
+      
+      setValidationResult(overriddenResult);
+      setOrderStep(2); // Move to validation screen
+      setValidationFeedback(undefined);
+      setIsOverrideDialogOpen(false);
+    }
+  };
+
+  // Handle moving back to dictation from validation
+  const handleBackToDictation = () => {
+    setOrderStep(1);
+  };
+
+  // Handle signing of the order
+  const handleSignOrder = () => {
+    setOrderStep(3);
+  };
+
+  // Handle successful order submission
+  const handleOrderSubmitted = (orderId: number) => {
+    if (onOrderSubmitted) {
+      onOrderSubmitted(orderId);
+    } else {
+      alert(`Order #${orderId} submitted successfully!`);
+      
+      // Reset the form for a new order
+      setTimeout(() => {
+        setOrderStep(1);
+        setDictationText("");
+        setValidationResult(null);
+        setValidationFeedback(undefined);
+      }, 3000);
+    }
+  };
+  
+  // Handle patient detail editing
+  const handleEditPatient = () => {
+    // Show patient identification dictation dialog
+    setIsPatientIdentificationOpen(true);
+  };
+  
+  // Handle identified patient information
+  const handlePatientIdentified = (patientInfo: { name: string; dob: string }) => {
+    // Create updated patient with the identified information
+    const updatedPatient: Patient = {
+      ...patient,
+      name: patientInfo.name,
+      dob: patientInfo.dob
+    };
+    
+    // Update the component state with the new patient information
+    setPatient(updatedPatient);
+    
+    // Close the identification dialog
+    setIsPatientIdentificationOpen(false);
+  };
+
+  // Check if this is a temporary patient
+  const isTemporaryPatient = patient.id === 0;
+
+  return (
+    <div className="py-1 sm:py-2">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="relative">
+          {/* Back button if provided */}
+          {onBack && (
+            <div className="mb-2">
+              <button 
+                className="flex items-center text-gray-600 hover:text-gray-900"
+                onClick={onBack}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1">
+                  <path d="m12 19-7-7 7-7"></path>
+                  <path d="M19 12H5"></path>
+                </svg>
+                Back
+              </button>
+            </div>
+          )}
+          
+          {/* Main content area */}
+          <div className="bg-white rounded-lg shadow p-0 overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 border-b border-gray-200">
+              <div className="flex flex-col sm:flex-row sm:items-center mb-2 sm:mb-0">
+                <h1 className="text-lg font-semibold text-gray-900">
+                  Radiology Order {isTemporaryPatient ? '- Unknown Patient' : `- ${patient.name}`}
+                </h1>
+                <div className="mt-1 sm:mt-0 sm:ml-4 px-2 py-1 bg-blue-50 rounded-md text-xs text-blue-700 font-medium">
+                  Step {orderStep} of 3: {orderStep === 1 ? 'Dictation' : orderStep === 2 ? 'Validation' : 'Signature'}
+                </div>
+              </div>
+              <div className="flex items-center justify-between sm:justify-end sm:space-x-4">
+                <OrderProgressIndicator currentStep={orderStep} />
+              </div>
+            </div>
+            
+            {/* Main workflow area */}
+            <div className="p-3 sm:p-4">
+              {/* Patient information card */}
+              <div className="mb-2 space-y-3">
+                <PatientInfoCard 
+                  patient={patient} 
+                  onEditPatient={handleEditPatient} 
+                />
+              </div>
+              
+              {/* Step 1: Dictation area */}
+              {orderStep === 1 && (
+                <DictationForm 
+                  dictationText={dictationText} 
+                  setDictationText={setDictationText}
+                  patient={patient}
+                  onProcessed={handleProcessDictation}
+                  validationFeedback={validationFeedback}
+                  onClearFeedback={handleClearFeedback}
+                  attemptCount={attemptCount}
+                  onOverride={handleOverrideRequest}
+                />
+              )}
+              
+              {/* Step 2: Validation view */}
+              {orderStep === 2 && validationResult && (
+                <ValidationView 
+                  dictationText={dictationText}
+                  validationResult={validationResult}
+                  onBack={handleBackToDictation}
+                  onSign={handleSignOrder}
+                />
+              )}
+              
+              {/* Step 3: Signature form */}
+              {orderStep === 3 && validationResult && (
+                <SignatureForm 
+                  patient={patient}
+                  dictationText={dictationText}
+                  validationResult={validationResult}
+                  onBack={handleBackToDictation}
+                  onSubmitted={handleOrderSubmitted}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Override dialog */}
+      <OverrideDialog 
+        isOpen={isOverrideDialogOpen}
+        onClose={() => setIsOverrideDialogOpen(false)}
+        onConfirm={handleOverrideConfirm}
+      />
+      
+      {/* Patient identification dialog */}
+      <PatientIdentificationDictation 
+        open={isPatientIdentificationOpen}
+        onCancel={() => setIsPatientIdentificationOpen(false)}
+        onIdentify={handlePatientIdentified}
+      />
+    </div>
+  );
+};
+
+export default OrderInterface;
+
+================================================================================
+README.md
+================================================================================
+
+# Radiology Order UI Components
+
+This package contains a complete set of UI components for implementing a radiology order flow with patient identification, clinical dictation, validation, and signature capture.
+
+## Features
+
+- **Patient Identification**: Add or edit patient information with voice recognition
+- **Clinical Dictation**: Enter clinical indications with voice recognition support
+- **Validation**: Display validation results with diagnosis and procedure codes
+- **Digital Signature**: Capture signatures and submit orders
+- **Responsive Design**: Works on desktop and mobile devices
+- **Accessibility**: Keyboard navigation and screen reader support
+
+## Installation
+
+### 1. Copy the Components
+
+Copy the `order-ui-export` folder to your project.
+
+### 2. Install Dependencies
+
+```bash
+npm install lucide-react
+npm install -D tailwindcss
+```
+
+### 3. Configure Tailwind CSS
+
+Create or update your `tailwind.config.js` file:
+
+```js
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./order-ui-export/**/*.{js,jsx,ts,tsx}"
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#1e40af', // Blue color used in the components
+      },
+    },
+  },
+  plugins: [],
+}
+```
+
+### 4. Import Styles
+
+Import the styles in your main CSS file:
+
+```css
+@import 'order-ui-export/styles/index.css';
+```
+
+## Usage
+
+### Basic Usage
+
+```jsx
+import React from 'react';
+import { OrderInterface } from './order-ui-export';
+
+function App() {
+  return (
+    <div className="App">
+      <OrderInterface 
+        onOrderSubmitted={(orderId) => {
+          console.log(`Order ${orderId} submitted successfully!`);
+        }}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### With Initial Patient Data
+
+```jsx
+import React from 'react';
+import { OrderInterface } from './order-ui-export';
+
+function App() {
+  const patient = {
+    id: 123,
+    name: "John Smith",
+    dob: "01/15/1980",
+    mrn: "MRN12345",
+    radiologyGroupId: null,
+    referringPracticeId: null,
+    externalPatientId: null,
+    encryptedData: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    gender: "male"
+  };
+
+  return (
+    <div className="App">
+      <OrderInterface 
+        initialPatient={patient}
+        onOrderSubmitted={(orderId) => {
+          console.log(`Order ${orderId} submitted successfully!`);
+        }}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Using Individual Components
+
+You can also use the individual components if you need more control:
+
+```jsx
+import React, { useState } from 'react';
+import { 
+  PatientInfoCard, 
+  DictationForm,
+  PatientIdentificationDictation
+} from './order-ui-export';
+
+function CustomOrderFlow() {
+  const [patient, setPatient] = useState({
+    id: 0,
+    name: "Unknown Patient",
+    dob: "Unknown",
+    // ... other required fields
+  });
+  
+  const [isPatientDialogOpen, setIsPatientDialogOpen] = useState(false);
+  const [dictationText, setDictationText] = useState("");
+  
+  const handlePatientIdentified = (patientInfo) => {
+    setPatient({
+      ...patient,
+      name: patientInfo.name,
+      dob: patientInfo.dob
+    });
+    setIsPatientDialogOpen(false);
+  };
+  
+  return (
+    <div>
+      <PatientInfoCard 
+        patient={patient} 
+        onEditPatient={() => setIsPatientDialogOpen(true)} 
+      />
+      
+      <DictationForm 
+        dictationText={dictationText} 
+        setDictationText={setDictationText}
+        patient={patient}
+        onProcessed={(result) => console.log(result)}
+      />
+      
+      <PatientIdentificationDictation 
+        open={isPatientDialogOpen}
+        onCancel={() => setIsPatientDialogOpen(false)}
+        onIdentify={handlePatientIdentified}
+      />
+    </div>
+  );
+}
+```
+
+## API Reference
+
+### OrderInterface
+
+The main component that integrates all the order flow components.
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `initialPatient` | `Patient` | (Optional) Initial patient data |
+| `onOrderSubmitted` | `(orderId: number) => void` | (Optional) Callback when an order is submitted |
+| `onBack` | `() => void` | (Optional) Callback for the back button |
+
+### Patient Type
+
+```typescript
+interface Patient {
+  id: number;
+  name: string;
+  dob: string;
+  mrn?: string;
+  pidn?: string;
+  radiologyGroupId: number | null;
+  referringPracticeId: number | null;
+  externalPatientId: string | null;
+  demographics?: string;
+  encryptedData: string;
+  createdAt: Date;
+  updatedAt: Date;
+  gender: string;
+}
+```
+
+## Voice Recognition
+
+The components use the Web Speech API for voice recognition, which is supported in most modern browsers. For browsers that don't support it, the components will fall back to manual input.
+
+## Integration with Backend
+
+In a real implementation, you would need to:
+
+1. Replace the mock validation in `DictationForm` with a real API call
+2. Implement the order submission in `SignatureForm`
+3. Add authentication and user management
+
+## Customization
+
+### Styling
+
+The components use Tailwind CSS for styling. You can customize the appearance by:
+
+1. Modifying the Tailwind configuration
+2. Adding custom CSS in `order-ui-export/styles/index.css`
+3. Passing additional className props to components
+
+### Validation Logic
+
+The validation logic is currently mocked in the `DictationForm` component. In a real implementation, you would replace this with an API call to your validation service.
+
+## License
+
+This code is provided as-is with no warranties. You are free to use, modify, and distribute it as needed.
+
+================================================================================
+components/DictationForm.tsx
+================================================================================
+
+import React, { useState, useRef } from "react";
+import { ProcessedDictation, Patient } from "../types";
+import { useVoiceRecognition } from "../hooks/useVoiceRecognition";
+
+interface DictationFormProps {
+  dictationText: string;
+  setDictationText: (text: string) => void;
+  patient: Patient;
+  onProcessed: (result: ProcessedDictation) => void;
+  validationFeedback?: string;
+  onClearFeedback?: () => void;
+  attemptCount?: number;
+  onOverride?: () => void;
+}
+
+/**
+ * Form for entering clinical dictation with voice recognition support
+ */
+const DictationForm: React.FC<DictationFormProps> = ({ 
+  dictationText, 
+  setDictationText, 
+  patient, 
+  onProcessed,
+  validationFeedback,
+  onClearFeedback,
+  attemptCount = 0,
+  onOverride
+}) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Use the voice recognition hook
+  const {
+    isListening,
+    startListening,
+    stopListening,
+    isSupported
+  } = useVoiceRecognition({
+    onResult: (transcript) => {
+      // Always append to existing text when using speech recognition
+      const updatedText = dictationText && dictationText.trim().length > 0
+        ? `${dictationText}\n${transcript}`
+        : transcript;
+      setDictationText(updatedText);
+    }
+  });
+
+  const toggleRecording = () => {
+    if (!isSupported) {
+      alert("Voice recognition is not available in your browser. Please use Chrome or Safari.");
+      return;
+    }
+    
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
+  const handleProcessDictation = async () => {
+    if (dictationText.length < 20) {
+      alert("Dictation too short. Please provide a more detailed clinical description.");
+      return;
+    }
+    
+    setIsProcessing(true);
+    
+    try {
+      // In a real implementation, this would call an API
+      // For this example, we'll simulate a successful validation
+      setTimeout(() => {
+        const mockResult: ProcessedDictation = {
+          validationStatus: 'valid',
+          feedback: "Dictation processed successfully.",
+          clinicalInformation: dictationText,
+          complianceScore: 90,
+          diagnosisCodes: [
+            { code: "M54.5", description: "Low back pain" }
+          ],
+          procedureCodes: [
+            { code: "72148", description: "MRI, lumbar spine, without contrast" }
+          ]
+        };
+        
+        onProcessed(mockResult);
+        setIsProcessing(false);
+      }, 1500);
+    } catch (error) {
+      console.error("Error processing dictation:", error);
+      setIsProcessing(false);
+      alert("Failed to process the dictation. Please try again.");
+    }
+  };
+  
+  // Focus the textarea when clicked
+  const focusTextarea = () => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
+  
+  // Clear the textarea
+  const clearDictation = () => {
+    setDictationText("");
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
+  
+  // Function to add additional clarification section
+  const addAdditionalClarification = () => {
+    const newText = dictationText + "\n\n--------Additional Clarification----------\n\n";
+    setDictationText(newText);
+    
+    // Focus and move cursor to end of textarea
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.selectionStart = newText.length;
+        textareaRef.current.selectionEnd = newText.length;
+      }
+    }, 0);
+  };
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm mt-2">
+      <div className="pb-0 pt-3 px-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <span className="text-base font-medium text-gray-900">Clinical Dictation</span>
+            <div className="ml-2 bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full text-xs font-medium flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 mr-1">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              HIPAA Protected
+            </div>
+          </div>
+        </div>
+        <p className="text-sm text-gray-600 mt-1">
+          Include clinical indications, relevant history, and requested study details.
+          {dictationText.trim().length > 0 && (
+            <span className="ml-1 text-blue-600 font-medium">
+              You may edit or append to your existing text.
+            </span>
+          )}
+        </p>
+      </div>
+      
+      <div className="pt-4 px-4 pb-4">
+        {/* Validation feedback panel */}
+        {validationFeedback && (
+          <div className="mb-4 border border-red-300 rounded-md overflow-hidden">
+            <div className="bg-red-100 px-4 py-2 flex justify-between items-center">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-red-600 mr-2">
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                  <path d="M12 9v4"></path>
+                  <path d="M12 17h.01"></path>
+                </svg>
+                <h3 className="text-sm font-medium text-red-800">Issues with Dictation</h3>
+              </div>
+              {onClearFeedback && (
+                <button 
+                  onClick={onClearFeedback}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                  </svg>
+                </button>
+              )}
+            </div>
+            <div className="bg-white px-4 py-3 text-sm text-gray-700 border-t border-red-200">
+              <p>{validationFeedback}</p>
+              
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  className="h-8 text-xs px-3 py-1 border border-gray-300 rounded-md"
+                  onClick={addAdditionalClarification}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 mr-1 inline-block">
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5v14"></path>
+                  </svg>
+                  Add Clarification
+                </button>
+                
+                {attemptCount >= 3 && onOverride && (
+                  <button
+                    type="button"
+                    className="h-8 text-xs px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-md hover:bg-amber-100"
+                    onClick={onOverride}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 mr-1 inline-block">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+                      <path d="M8 11h8"></path>
+                      <path d="M12 15V7"></path>
+                    </svg>
+                    Override
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <div 
+          className="border border-gray-200 rounded-md bg-white overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
+          onClick={focusTextarea}
+        >
+          <textarea 
+            ref={textareaRef}
+            value={dictationText}
+            onChange={(e) => setDictationText(e.target.value)}
+            className="w-full min-h-[300px] sm:min-h-[240px] p-4 border-0 shadow-none focus:outline-none resize-none text-gray-700 text-base rounded-none"
+            placeholder="Examples: '55-year-old female with newly diagnosed breast cancer. Request CT chest, abdomen and pelvis for staging.'"
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={true}
+          />
+          
+          <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t border-gray-200">
+            <div className="flex space-x-2">
+              <button 
+                type="button" 
+                className="h-8 px-2 text-xs border border-gray-300 rounded-md"
+                onClick={clearDictation}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 mr-1 inline-block">
+                  <path d="M21 12a9 9 0 0 1-9 9"></path>
+                  <path d="M3 12a9 9 0 0 1 9-9"></path>
+                  <path d="m21 3-6 6"></path>
+                  <path d="m21 3-6-6"></path>
+                  <path d="m3 21 6-6"></path>
+                  <path d="m3 21 6 6"></path>
+                </svg>
+                Clear
+              </button>
+              
+              <button 
+                type="button" 
+                className={`h-8 px-2 text-xs border rounded-md ${isListening ? 'bg-red-100 text-red-700 border-red-300' : 'border-gray-300'}`}
+                onClick={toggleRecording}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-3 w-3 mr-1 inline-block ${isListening ? 'animate-pulse text-red-600' : ''}`}>
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" x2="12" y1="19" y2="22"></line>
+                </svg>
+                {isListening ? 'Recording...' : 'Voice Input'}
+              </button>
+            </div>
+            
+            <div className="text-xs text-gray-500">
+              {dictationText.length} characters
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-end items-center mt-6 sm:mt-10">
+          <button
+            onClick={handleProcessDictation}
+            disabled={dictationText.length < 20 || isProcessing}
+            className={`inline-flex items-center shadow-sm bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-8 h-12 sm:h-14 text-sm sm:text-base font-medium rounded-lg ${(dictationText.length < 20 || isProcessing) ? 'opacity-50 cursor-not-allowed' : ''}`}
+            style={{ minWidth: '140px', touchAction: 'manipulation' }}
+          >
+            {isProcessing ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processing...
+              </>
+            ) : (
+              "Process Order"
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DictationForm;
+
+================================================================================
+components/OrderProgressIndicator.tsx
+================================================================================
+
+import React from 'react';
+
+interface OrderProgressIndicatorProps {
+  currentStep: number;
+  totalSteps?: number;
+}
+
+/**
+ * A component that displays the current step in the order process
+ */
+const OrderProgressIndicator: React.FC<OrderProgressIndicatorProps> = ({ 
+  currentStep, 
+  totalSteps = 3 
+}) => {
+  return (
+    <div className="flex items-center space-x-2">
+      {Array.from({ length: totalSteps }).map((_, index) => {
+        const stepNumber = index + 1;
+        const isActive = stepNumber === currentStep;
+        const isCompleted = stepNumber < currentStep;
+        
+        return (
+          <div 
+            key={stepNumber}
+            className={`w-2.5 h-2.5 rounded-full ${
+              isActive 
+                ? 'bg-blue-600' 
+                : isCompleted 
+                  ? 'bg-green-500' 
+                  : 'bg-gray-300'
+            }`}
+            aria-label={`Step ${stepNumber} of ${totalSteps}`}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+export default OrderProgressIndicator;
+
+================================================================================
+components/OverrideDialog.tsx
+================================================================================
+
+import React, { useState } from 'react';
+
+interface OverrideDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (justification: string) => void;
+}
+
+/**
+ * Dialog for overriding validation warnings
+ */
+const OverrideDialog: React.FC<OverrideDialogProps> = ({ 
+  isOpen, 
+  onClose, 
+  onConfirm 
+}) => {
+  const [justification, setJustification] = useState('');
+  const [error, setError] = useState('');
+  
+  const handleConfirm = () => {
+    if (justification.trim().length < 10) {
+      setError('Please provide a more detailed justification (at least 10 characters)');
+      return;
+    }
+    
+    onConfirm(justification);
+    setJustification('');
+    setError('');
+  };
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+        <div className="p-4 border-b">
+          <h2 className="text-lg font-medium">Physician Override</h2>
+          <p className="text-sm text-gray-600">
+            Please provide a clinical justification for overriding the validation warnings.
+          </p>
+        </div>
+        
+        <div className="p-4">
+          <div className="mb-4 bg-amber-50 border border-amber-200 rounded-md p-3">
+            <div className="flex items-start">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 mt-0.5 mr-2">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                <path d="M12 9v4"></path>
+                <path d="M12 17h.01"></path>
+              </svg>
+              <div className="text-sm text-amber-800">
+                <p className="font-medium">Important Notice</p>
+                <p className="mt-1">
+                  Overriding validation warnings should only be done when clinically necessary. 
+                  Your justification will be recorded for compliance purposes.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-4">
+            <label htmlFor="justification" className="block text-sm font-medium text-gray-700 mb-1">
+              Clinical Justification
+            </label>
+            <textarea
+              id="justification"
+              value={justification}
+              onChange={(e) => {
+                setJustification(e.target.value);
+                if (e.target.value.trim().length >= 10) {
+                  setError('');
+                }
+              }}
+              className="w-full min-h-[100px] p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Explain why this order is clinically appropriate despite the validation warnings..."
+            />
+            {error && (
+              <p className="mt-1 text-sm text-red-600">{error}</p>
+            )}
+          </div>
+        </div>
+        
+        <div className="p-4 border-t flex justify-end space-x-3">
+          <button 
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            onClick={() => {
+              onClose();
+              setJustification('');
+              setError('');
+            }}
+          >
+            Cancel
+          </button>
+          <button 
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleConfirm}
+            disabled={justification.trim().length < 10}
+          >
+            Confirm Override
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default OverrideDialog;
+
+================================================================================
+components/PatientIdentificationDictation.tsx
+================================================================================
+
+import React, { useState, useEffect } from 'react';
+import { PatientSuggestion } from '../types';
+import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
+import { parsePatientInfo } from '../utils/patientParser';
+
+interface PatientIdentificationDictationProps {
+  onIdentify: (patientInfo: { name: string; dob: string }) => void;
+  onCancel: () => void;
+  open: boolean;
+}
+
+/**
+ * A component for dictating patient identification information
+ * Uses the browser's native Web Speech API for recognition
+ */
+const PatientIdentificationDictation: React.FC<PatientIdentificationDictationProps> = ({ 
+  onIdentify, 
+  onCancel,
+  open
+}) => {
+  const [isParsing, setIsParsing] = useState(false);
+  const [error, setError] = useState("");
+  const [manualTranscript, setManualTranscript] = useState("");
+  
+  // State for suggestions confirmation dialog
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [patientSuggestions, setPatientSuggestions] = useState<PatientSuggestion[]>([]);
+
+  // Use the voice recognition hook
+  const {
+    isListening,
+    transcript,
+    startListening,
+    stopListening,
+    resetTranscript,
+    error: recognitionError,
+    isSupported
+  } = useVoiceRecognition({
+    onError: (e) => {
+      setError(`Speech recognition error: ${e.error}. Please try again or type manually.`);
+    }
+  });
+
+  // Toggle speech recognition
+  const toggleRecording = () => {
+    if (isListening) {
+      stopListening();
+      
+      if (transcript.trim()) {
+        handleParsePatientInfo(transcript);
+      }
+    } else {
+      resetTranscript();
+      setError("");
+      
+      if (isSupported) {
+        startListening();
+      } else {
+        setError("Speech recognition is not available. Please reload the page or try a different browser.");
+      }
+    }
+  };
+
+  // Handle parsing patient info
+  const handleParsePatientInfo = (text: string) => {
+    if (!text.trim()) {
+      return;
+    }
+    
+    setIsParsing(true);
+    
+    try {
+      // Use the parser utility to get suggestions
+      const suggestions = parsePatientInfo(text);
+      
+      // Show suggestions dialog
+      setPatientSuggestions(suggestions);
+      setShowSuggestions(true);
+      setIsParsing(false);
+    } catch (e) {
+      console.error("Error parsing patient info:", e);
+      setError(`Error parsing patient information: ${(e as Error).message}`);
+      setIsParsing(false);
+    }
+  };
+
+  // Handle selection of a suggestion
+  const handleSelectSuggestion = (suggestion: PatientSuggestion) => {
+    onIdentify({
+      name: suggestion.name,
+      dob: suggestion.dob
+    });
+    setShowSuggestions(false);
+  };
+
+  // Handle manual text input
+  const handleManualInput = () => {
+    // Just use the raw transcript as the name
+    onIdentify({
+      name: manualTranscript || transcript,
+      dob: "01/01/2000" // Default date
+    });
+    setShowSuggestions(false);
+  };
+
+  // Clean up when dialog is closed
+  useEffect(() => {
+    if (!open) {
+      resetTranscript();
+      setManualTranscript("");
+      setError("");
+      setShowSuggestions(false);
+      if (isListening) {
+        stopListening();
+      }
+    }
+  }, [open, isListening, resetTranscript, stopListening]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+        <div className="p-4 border-b">
+          <h2 className="text-lg font-medium">Patient Identification</h2>
+          <p className="text-sm text-gray-600">
+            Please speak or type the patient's name and date of birth.
+          </p>
+        </div>
+        
+        <div className="p-4 space-y-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <span className="text-sm text-gray-700">
+                {isListening ? (
+                  <span className="flex items-center text-blue-600">
+                    <span className="animate-pulse mr-1">●</span> Recording...
+                  </span>
+                ) : (
+                  <span>Say name and date of birth</span>
+                )}
+              </span>
+            </div>
+            <button
+              className={`h-8 w-8 p-0 rounded-full flex items-center justify-center ${isListening ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+              onClick={toggleRecording}
+              disabled={isParsing}
+              title={isListening ? "Stop recording" : "Start recording"}
+              aria-label={isListening ? "Stop recording" : "Start recording"}
+            >
+              {isListening ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="16" height="16" x="4" y="4"></rect>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" x2="12" y1="19" y2="22"></line>
+                </svg>
+              )}
+            </button>
+          </div>
+          
+          {isListening && (
+            <div className="text-sm border p-2 rounded-md bg-gray-50">
+              <span className="font-medium text-blue-600">Saying: </span>
+              <span className="italic">{transcript || "..."}</span>
+              <p className="text-xs text-gray-500 mt-1">
+                Example: "Patient John Smith, date of birth January 15, 1980"
+              </p>
+            </div>
+          )}
+          
+          {error && (
+            <div className="text-sm text-red-500 flex items-start p-2 border border-red-200 rounded-md bg-red-50">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                <path d="M12 9v4"></path>
+                <path d="M12 17h.01"></path>
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
+          
+          {/* Manual input */}
+          <div className="pt-2">
+            <div className="text-sm mb-2">Or type patient information:</div>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Type name and date of birth" 
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm flex-1"
+                value={manualTranscript}
+                onChange={(e) => {
+                  setError("");
+                  setManualTranscript(e.target.value);
+                }}
+              />
+              <button
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+                onClick={() => handleParsePatientInfo(manualTranscript)}
+                disabled={!manualTranscript.trim() || isParsing}
+              >
+                Parse
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-4 border-t flex justify-between">
+          <button 
+            className="px-4 py-2 text-gray-700 hover:text-gray-900"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+          <button 
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            onClick={() => handleParsePatientInfo(manualTranscript || transcript)}
+            disabled={!(manualTranscript || transcript).trim() || isParsing}
+          >
+            Identify Patient
+          </button>
+        </div>
+      </div>
+      
+      {/* Patient suggestions dialog */}
+      {showSuggestions && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+            <div className="p-4 border-b">
+              <h2 className="text-lg font-medium">Confirm Patient Information</h2>
+              <p className="text-sm text-gray-600">
+                Please select the correct interpretation of your dictation:
+              </p>
+            </div>
+            
+            <div className="p-4 space-y-3">
+              {/* Show the original transcript */}
+              <div className="bg-gray-50 p-3 rounded-md text-sm">
+                <span className="font-semibold">You said:</span>
+                <div className="italic mt-1">{transcript}</div>
+              </div>
+              
+              {/* Map suggestions to selectable cards */}
+              <div className="space-y-2">
+                <div className="text-sm font-medium">Select the correct patient information:</div>
+                
+                {patientSuggestions.map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className="border border-gray-200 hover:border-blue-500 rounded-md p-3 cursor-pointer transition-colors flex items-start"
+                    onClick={() => handleSelectSuggestion(suggestion)}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-2 text-gray-500">
+                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span className="font-medium">{suggestion.name}</span>
+                      </div>
+                      <div className="flex items-center mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-2 text-gray-500">
+                          <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                          <line x1="16" x2="16" y1="2" y2="6"></line>
+                          <line x1="8" x2="8" y1="2" y2="6"></line>
+                          <line x1="3" x2="21" y1="10" y2="10"></line>
+                        </svg>
+                        <span>{suggestion.dob}</span>
+                      </div>
+                    </div>
+                    <div className="ml-2">
+                      <button 
+                        className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectSuggestion(suggestion);
+                        }}
+                      >
+                        Select
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Option to use raw text as name */}
+              <button
+                className="w-full text-xs text-gray-600 hover:text-gray-900 py-2"
+                onClick={handleManualInput}
+              >
+                Use entire text as patient name
+              </button>
+            </div>
+            
+            <div className="p-4 border-t flex justify-end">
+              <button 
+                className="px-4 py-2 border border-gray-300 rounded-md"
+                onClick={() => setShowSuggestions(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PatientIdentificationDictation;
+
+================================================================================
+components/PatientInfoCard.tsx
+================================================================================
+
+import React from 'react';
+import { Patient } from '../types';
+
+interface PatientInfoCardProps {
+  patient: Patient;
+  onEditPatient?: () => void;
+}
+
+/**
+ * A compact card showing patient information with a mobile-friendly layout
+ */
+const PatientInfoCard: React.FC<PatientInfoCardProps> = ({ patient, onEditPatient }) => {
+  // Check if this is a temporary patient
+  const isTemporaryPatient = patient.id === 0;
+  
+  // Check if patient has real information (not the default "Unknown Patient")
+  const hasRealInfo = patient.name !== "Unknown Patient" && patient.dob !== "Unknown";
+  
+  // Apply yellow background to the entire card when it's a temporary patient
+  const cardBgClass = isTemporaryPatient ? "bg-amber-50" : "bg-white";
+  
+  return (
+    <div className={`${cardBgClass} border border-gray-200 rounded-lg overflow-hidden`}>
+      <div className="px-3 py-2 flex items-center justify-between">
+        {/* Left side: Patient info */}
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-gray-600">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          
+          <div>
+            <div className="flex items-center">
+              <h2 className="text-sm font-semibold text-gray-900 truncate">{patient.name}</h2>
+              {!hasRealInfo && (
+                <div className="ml-2 flex items-center text-amber-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 mr-1">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                    <path d="M12 9v4"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                  <span className="text-xs">Temporary</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center text-xs text-gray-600 mt-0.5 space-x-3">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 h-3 w-3 text-gray-500 flex-shrink-0">
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                  <line x1="16" x2="16" y1="2" y2="6"></line>
+                  <line x1="8" x2="8" y1="2" y2="6"></line>
+                  <line x1="3" x2="21" y1="10" y2="10"></line>
+                </svg>
+                <span>{patient.dob}</span>
+              </div>
+              
+              <div className="flex items-center">
+                <span className="font-medium text-gray-500 mr-1">PIDN:</span>
+                <span>{patient.pidn || patient.mrn || 'Unknown'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Right side: Action button (always visible for temporary patients) */}
+        {isTemporaryPatient && onEditPatient && (
+          <button 
+            className="border-amber-200 text-amber-700 hover:bg-amber-100 hover:text-amber-900 text-xs px-2 py-1 h-7 ml-2 flex-shrink-0 rounded border flex items-center"
+            onClick={onEditPatient}
+          >
+            {hasRealInfo ? (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 mr-1">
+                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                </svg>
+                <span className="hidden sm:inline">Edit</span> Patient
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3 mr-1">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span className="hidden sm:inline">Add</span> Patient
+              </>
+            )}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default PatientInfoCard;
+
+================================================================================
+components/SignatureForm.tsx
+================================================================================
+
+import React, { useState, useRef, useEffect } from 'react';
+import { Patient, ProcessedDictation } from '../types';
+
+interface SignatureFormProps {
+  patient: Patient;
+  dictationText: string;
+  validationResult: ProcessedDictation;
+  onBack: () => void;
+  onSubmitted: (orderId: number) => void;
+}
+
+/**
+ * Form for capturing digital signatures and submitting orders
+ */
+const SignatureForm: React.FC<SignatureFormProps> = ({
+  patient,
+  dictationText,
+  validationResult,
+  onBack,
+  onSubmitted
+}) => {
+  const [fullName, setFullName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [hasSignature, setHasSignature] = useState(false);
+  
+  // Check if this is a temporary patient
+  const isTemporaryPatient = patient?.id === 0;
+  
+  // Check if patient has required minimum info (name and DOB)
+  const hasRequiredPatientInfo = Boolean(
+    patient && 
+    patient.name !== "Unknown Patient" && 
+    patient.dob !== "Unknown"
+  );
+
+  // Handle signature drawing with both mouse and touch events
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    setIsDrawing(true);
+    setHasSignature(true);
+
+    const rect = canvas.getBoundingClientRect();
+    
+    // Handle both mouse and touch events
+    let x, y;
+    if ('touches' in e) {
+      // Touch event
+      x = e.touches[0].clientX - rect.left;
+      y = e.touches[0].clientY - rect.top;
+    } else {
+      // Mouse event
+      x = e.clientX - rect.left;
+      y = e.clientY - rect.top;
+    }
+    
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  };
+
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    
+    // Handle both mouse and touch events
+    let x, y;
+    if ('touches' in e) {
+      // Touch event
+      x = e.touches[0].clientX - rect.left;
+      y = e.touches[0].clientY - rect.top;
+    } else {
+      // Mouse event
+      x = e.clientX - rect.left;
+      y = e.clientY - rect.top;
+    }
+    
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    setIsDrawing(false);
+  };
+
+  const clearSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setHasSignature(false);
+  };
+
+  const handleSubmitOrder = async () => {
+    if (!hasRequiredPatientInfo) {
+      alert("Please identify a patient with name and date of birth before signing the order");
+      return;
+    }
+    
+    if (!hasSignature || !fullName) {
+      alert("Please sign and type your full name to confirm");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      // In a real implementation, this would call an API
+      // For this example, we'll simulate a successful submission
+      setTimeout(() => {
+        // Generate a random order ID
+        const orderId = Math.floor(10000 + Math.random() * 90000);
+        onSubmitted(orderId);
+        setIsSubmitting(false);
+      }, 1500);
+    } catch (error) {
+      console.error("Error submitting order:", error);
+      alert("Failed to submit the order. Please try again.");
+      setIsSubmitting(false);
+    }
+  };
+
+  // Use effect to initialize and handle the canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Set canvas drawing styles
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#1e40af'; // Blue color for signature
+    
+    // Set canvas to be responsive
+    function resizeCanvas() {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      const container = canvas.parentElement;
+      if (!container) return;
+      
+      // Get the parent's dimensions
+      const containerWidth = container.clientWidth - 16; // Adjusting for padding
+      
+      // Set canvas size
+      canvas.width = Math.min(450, containerWidth);
+      canvas.height = 140;
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      // Reset drawing settings (they get reset on resize)
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#1e40af';
+    }
+    
+    // Initial sizing
+    resizeCanvas();
+    
+    // Resize on window resize
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm mt-6">
+      <div className="px-4 py-5 sm:p-6">
+        <h2 className="text-lg font-medium text-gray-900 mb-4">Digital Signature</h2>
+        
+        <div className="mb-6 bg-blue-50 p-4 rounded-md">
+          <p className="text-sm text-blue-700">
+            By electronically signing this order, I certify that this radiology study is medically necessary and appropriate according to AUC guidelines. This order has been validated with {((validationResult.complianceScore ?? 80) / 10).toFixed(1)}% compliance.
+          </p>
+        </div>
+        
+        <div className="mb-6">
+          <div className="border border-gray-300 rounded-md p-4">
+            <div className="flex items-center justify-center h-32 bg-gray-50 mb-4">
+              <canvas
+                ref={canvasRef}
+                width={400}
+                height={120}
+                onMouseDown={startDrawing}
+                onMouseMove={draw}
+                onMouseUp={stopDrawing}
+                onMouseLeave={stopDrawing}
+                onTouchStart={startDrawing}
+                onTouchMove={draw}
+                onTouchEnd={stopDrawing}
+                onTouchCancel={stopDrawing}
+                className="signature-pad touch-manipulate" 
+                style={{ touchAction: 'none' }}
+              />
+            </div>
+            <div className="flex justify-between">
+              <button
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+                onClick={clearSignature}
+              >
+                Clear
+              </button>
+              <div className="text-sm text-gray-500">Type your full name to confirm</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mb-6">
+          <label htmlFor="signature-name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <input
+            id="signature-name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Type your full name"
+          />
+        </div>
+        
+        {/* Show temporary patient notice if applicable */}
+        {isTemporaryPatient && (
+          <div className="mb-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-md">
+            <div className="flex items-start">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-amber-500 mt-0.5 mr-2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <div className="text-sm text-amber-800">
+                <p className="font-medium">Temporary Patient Detected</p>
+                <p className="mt-1">This order will be queued for administrative staff to attach complete patient information.</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <div className="flex justify-between mt-8">
+          <button
+            className="min-h-[44px] px-6 border border-gray-300 rounded-md"
+            onClick={onBack}
+            disabled={isSubmitting}
+          >
+            Back
+          </button>
+          <button
+            onClick={handleSubmitOrder}
+            disabled={isSubmitting || !hasSignature || !fullName || !hasRequiredPatientInfo}
+            className={`min-h-[44px] px-6 bg-blue-600 text-white rounded-md ${(isSubmitting || !hasSignature || !fullName || !hasRequiredPatientInfo) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
+          >
+            {isSubmitting ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting...
+              </>
+            ) : (
+              isTemporaryPatient ? "Sign & Queue for Admin" : "Submit Order"
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SignatureForm;
+
+================================================================================
+components/ValidationView.tsx
+================================================================================
+
+import React from 'react';
+import { ProcessedDictation, MedicalCode } from '../types';
+
+interface ValidationViewProps {
+  dictationText: string;
+  validationResult: ProcessedDictation;
+  onBack: () => void;
+  onSign: () => void;
+}
+
+/**
+ * Component for displaying validation results
+ */
+const ValidationView: React.FC<ValidationViewProps> = ({ 
+  dictationText, 
+  validationResult, 
+  onBack, 
+  onSign 
+}) => {
+  // Format compliance score for display (on a scale of 0-9)
+  const displayComplianceScore = validationResult.complianceScore ? 
+    `${validationResult.complianceScore}/9` : 
+    null;
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm mt-6">
+      <div className="pb-0 p-4 border-b border-gray-200">
+        <div className="text-lg font-medium flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 mr-2 text-blue-600">
+            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+          Order Validation
+          {validationResult.validationStatus === 'valid' && (
+            <span className="ml-2 bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium">
+              AUC Compliant
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="px-4 py-5 sm:p-6">
+        {/* Feedback panel - Only displayed when there's feedback */}
+        {validationResult.feedback && (
+          <div className="mb-6">
+            <h3 className="text-md font-medium text-gray-900 mb-2 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-2 text-gray-600">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              Feedback
+            </h3>
+            <div className="bg-gray-50 p-4 rounded-md">
+              <p className="text-sm text-gray-800">{validationResult.feedback}</p>
+              
+              {validationResult.complianceScore && validationResult.validationStatus === 'valid' && (
+                <div className="mt-2 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-green-500 mr-2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                  <span className="text-sm text-green-700">Compliance Score: {displayComplianceScore}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {/* Clinical Information Section - ACR Required */}
+        <div className="mb-6">
+          <h3 className="text-md font-medium text-gray-900 mb-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-2 text-gray-600">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            Clinical Information
+          </h3>
+          <div className="bg-gray-50 p-4 rounded-md">
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-medium">Dictated Notes</p>
+              <p className="text-sm text-gray-700">{dictationText}</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Diagnosis and Procedure Codes - Required for billing/compliance */}
+        <div className="mb-6">
+          <h3 className="text-md font-medium text-gray-900 mb-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-2 text-gray-600">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            Coding & Billing Information
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-medium mb-2">ICD-10 Diagnosis Codes</p>
+              <div className="bg-gray-50 p-4 rounded-md">
+                {validationResult.diagnosisCodes && validationResult.diagnosisCodes.length > 0 ? (
+                  <ul className="space-y-2">
+                    {validationResult.diagnosisCodes.map((code: MedicalCode, index: number) => (
+                      <li key={index} className="text-sm">
+                        <span className="font-mono text-blue-600 font-medium">{code.code}</span>
+                        <span className="text-gray-700 block">{code.description}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">No diagnosis codes identified.</p>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-medium mb-2">CPT Procedure Codes</p>
+              <div className="bg-gray-50 p-4 rounded-md">
+                {validationResult.procedureCodes && validationResult.procedureCodes.length > 0 ? (
+                  <ul className="space-y-2">
+                    {validationResult.procedureCodes.map((code: MedicalCode, index: number) => (
+                      <li key={index} className="text-sm">
+                        <span className="font-mono text-blue-600 font-medium">{code.code}</span>
+                        <span className="text-gray-700 block">{code.description}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">No procedure codes identified.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Guidelines and AUC Compliance Summary */}
+        <div className="mb-6">
+          <h3 className="text-md font-medium text-gray-900 mb-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-2 text-gray-600">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Guidelines & AUC Compliance
+          </h3>
+          <div className="bg-gray-50 p-4 rounded-md">
+            <div className="flex items-center mb-3">
+              <p className="text-sm font-semibold text-gray-700">Appropriateness Validation</p>
+              <div className="ml-auto flex items-center gap-3 mr-1">
+                {validationResult.validationStatus === 'valid' ? (
+                  <div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span className="text-xs font-medium">Compliant</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-2 py-1 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span className="text-xs font-medium">Review Required</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-x-8 gap-y-2 mb-4 text-sm">
+              <div className="flex items-center">
+                <span className="text-gray-600">ACR Guidelines</span>
+                {validationResult.validationStatus === 'valid' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-green-500 ml-2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                )}
+              </div>
+              <div className="flex items-center">
+                <span className="text-gray-600">CMS AUC</span>
+                {validationResult.validationStatus === 'valid' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-green-500 ml-2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                )}
+              </div>
+              <div className="flex items-center">
+                <span className="text-gray-600">NCCN Guidelines</span>
+                {validationResult.validationStatus === 'valid' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-green-500 ml-2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                )}
+              </div>
+              <div className="flex items-center">
+                <span className="text-gray-600">Medicare AUC</span>
+                {validationResult.validationStatus === 'valid' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-green-500 ml-2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex justify-between mt-8">
+          <button
+            className="min-h-[44px] px-6 border border-gray-300 rounded-md"
+            onClick={onBack}
+          >
+            Edit Dictation
+          </button>
+          <button
+            onClick={onSign}
+            disabled={validationResult.validationStatus !== 'valid'}
+            className={`min-h-[44px] px-6 bg-blue-600 text-white rounded-md ${validationResult.validationStatus !== 'valid' ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
+          >
+            Sign Order
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ValidationView;
+
+================================================================================
+example.tsx
+================================================================================
+
+import React from 'react';
+import { OrderInterface } from './index';
+
+/**
+ * Example usage of the OrderInterface component
+ */
+const OrderExample: React.FC = () => {
+  // Handle order submission
+  const handleOrderSubmitted = (orderId: number) => {
+    console.log(`Order ${orderId} submitted successfully!`);
+    alert(`Order ${orderId} submitted successfully!`);
+  };
+
+  // Handle back button click
+  const handleBack = () => {
+    console.log('Back button clicked');
+    // In a real app, you might navigate to a different page
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <h1 className="text-xl font-bold text-gray-900">RadOrderPad</h1>
+        </div>
+      </header>
+
+      <main>
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          {/* The OrderInterface component */}
+          <OrderInterface
+            onOrderSubmitted={handleOrderSubmitted}
+            onBack={handleBack}
+          />
+        </div>
+      </main>
+
+      <footer className="bg-white shadow mt-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm text-gray-500">
+            &copy; 2025 RadOrderPad. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default OrderExample;
+
+/**
+ * Example with a predefined patient
+ */
+export const OrderWithPatientExample: React.FC = () => {
+  // Create a sample patient
+  const samplePatient = {
+    id: 123,
+    name: "John Smith",
+    dob: "01/15/1980",
+    mrn: "MRN12345",
+    pidn: "PIDN67890",
+    radiologyGroupId: null,
+    referringPracticeId: null,
+    externalPatientId: null,
+    demographics: undefined,
+    encryptedData: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    gender: "male"
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <main>
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          {/* The OrderInterface component with initial patient */}
+          <OrderInterface
+            initialPatient={samplePatient}
+            onOrderSubmitted={(orderId) => {
+              console.log(`Order ${orderId} submitted for ${samplePatient.name}`);
+            }}
+          />
+        </div>
+      </main>
+    </div>
+  );
+};
+
+================================================================================
+hooks/useToast.ts
+================================================================================
+
+import { useState, useCallback } from 'react';
+import { Toast } from '../types';
+
+interface UseToastReturn {
+  toasts: Toast[];
+  toast: (toast: Omit<Toast, 'id'>) => void;
+  dismiss: (id: string) => void;
+  dismissAll: () => void;
+}
+
+/**
+ * Custom hook for managing toast notifications
+ */
+export function useToast(): UseToastReturn {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const toast = useCallback((props: Omit<Toast, 'id'>) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    const newToast: Toast = { id, ...props };
+    
+    setToasts((prevToasts) => [...prevToasts, newToast]);
+    
+    // Auto-dismiss after duration (default: 5000ms)
+    if (props.duration !== Infinity) {
+      const duration = props.duration || 5000;
+      setTimeout(() => {
+        dismiss(id);
+      }, duration);
+    }
+    
+    return id;
+  }, []);
+
+  const dismiss = useCallback((id: string) => {
+    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
+  }, []);
+
+  const dismissAll = useCallback(() => {
+    setToasts([]);
+  }, []);
+
+  return {
+    toasts,
+    toast,
+    dismiss,
+    dismissAll,
+  };
+}
+
+// Create a context for the toast
+import { createContext, useContext } from 'react';
+
+type ToastContextType = ReturnType<typeof useToast> | null;
+
+export const ToastContext = createContext<ToastContextType>(null);
+
+export const useToastContext = () => {
+  const context = useContext(ToastContext);
+  
+  if (!context) {
+    throw new Error('useToast must be used within a ToastProvider');
+  }
+  
+  return context;
+};
+
+================================================================================
+hooks/useVoiceRecognition.ts
+================================================================================
+
+import { useState, useEffect, useRef, useCallback } from 'react';
+
+interface VoiceRecognitionOptions {
+  continuous?: boolean;
+  interimResults?: boolean;
+  language?: string;
+  onResult?: (transcript: string) => void;
+  onError?: (error: any) => void;
+  onEnd?: () => void;
+}
+
+interface UseVoiceRecognitionReturn {
+  isListening: boolean;
+  transcript: string;
+  startListening: () => void;
+  stopListening: () => void;
+  resetTranscript: () => void;
+  error: string | null;
+  isSupported: boolean;
+}
+
+/**
+ * Custom hook for voice recognition using the Web Speech API
+ */
+export function useVoiceRecognition({
+  continuous = true,
+  interimResults = true,
+  language = 'en-US',
+  onResult,
+  onError,
+  onEnd
+}: VoiceRecognitionOptions = {}): UseVoiceRecognitionReturn {
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isSupported, setIsSupported] = useState(false);
+  
+  const recognitionRef = useRef<any>(null);
+  
+  // Initialize speech recognition
+  useEffect(() => {
+    // Check if browser supports speech recognition
+    const SpeechRecognition = (window as any).SpeechRecognition || 
+                              (window as any).webkitSpeechRecognition;
+    
+    if (SpeechRecognition) {
+      setIsSupported(true);
+      
+      const recognition = new SpeechRecognition();
+      recognition.continuous = continuous;
+      recognition.interimResults = interimResults;
+      recognition.lang = language;
+      
+      recognition.onresult = (event: any) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        
+        const fullTranscript = finalTranscript || interimTranscript;
+        setTranscript(fullTranscript);
+        
+        if (onResult) {
+          onResult(fullTranscript);
+        }
+      };
+      
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error', event);
+        setError(`Speech recognition error: ${event.error}`);
+        setIsListening(false);
+        
+        if (onError) {
+          onError(event);
+        }
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+        
+        if (onEnd) {
+          onEnd();
+        }
+      };
+      
+      recognitionRef.current = recognition;
+    } else {
+      setIsSupported(false);
+      setError('Speech recognition not supported in this browser');
+    }
+    
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {
+          console.error('Error stopping recognition on cleanup:', e);
+        }
+      }
+    };
+  }, [continuous, interimResults, language, onResult, onError, onEnd]);
+  
+  // Start listening
+  const startListening = useCallback(() => {
+    setError(null);
+    
+    if (!recognitionRef.current) {
+      setError('Speech recognition not initialized');
+      return;
+    }
+    
+    try {
+      recognitionRef.current.start();
+      setIsListening(true);
+    } catch (e) {
+      console.error('Error starting recognition:', e);
+      setError(`Error starting recognition: ${(e as Error).message}`);
+    }
+  }, []);
+  
+  // Stop listening
+  const stopListening = useCallback(() => {
+    if (!recognitionRef.current) return;
+    
+    try {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } catch (e) {
+      console.error('Error stopping recognition:', e);
+      setError(`Error stopping recognition: ${(e as Error).message}`);
+    }
+  }, []);
+  
+  // Reset transcript
+  const resetTranscript = useCallback(() => {
+    setTranscript('');
+  }, []);
+  
+  return {
+    isListening,
+    transcript,
+    startListening,
+    stopListening,
+    resetTranscript,
+    error,
+    isSupported
+  };
+}
+
+================================================================================
+index.ts
+================================================================================
+
+// Main component export
+export { default as OrderInterface } from './OrderInterface';
+
+// Component exports
+export { default as PatientInfoCard } from './components/PatientInfoCard';
+export { default as DictationForm } from './components/DictationForm';
+export { default as ValidationView } from './components/ValidationView';
+export { default as SignatureForm } from './components/SignatureForm';
+export { default as OverrideDialog } from './components/OverrideDialog';
+export { default as PatientIdentificationDictation } from './components/PatientIdentificationDictation';
+export { default as OrderProgressIndicator } from './components/OrderProgressIndicator';
+
+// Hook exports
+export { useVoiceRecognition } from './hooks/useVoiceRecognition';
+export { useToast, ToastContext } from './hooks/useToast';
+
+// Utility exports
+export { parsePatientInfo } from './utils/patientParser';
+
+// Type exports
+export * from './types';
+
+================================================================================
+package.json
+================================================================================
+
+{
+  "name": "radiology-order-ui",
+  "version": "1.0.0",
+  "description": "UI components for radiology order flow with patient identification, dictation, validation, and signature",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "radiology",
+    "order",
+    "medical",
+    "healthcare",
+    "ui",
+    "components",
+    "react",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "lucide-react": "^0.x.x"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "tailwindcss": "^3.x.x",
+    "typescript": "^4.9.0 || ^5.0.0"
+  }
+}
+
+================================================================================
+styles/index.css
+================================================================================
+
+/* Base styles for the order UI components */
+
+/* Ensure the signature canvas has proper touch handling */
+.signature-pad {
+  touch-action: none;
+}
+
+/* Ensure proper scrolling behavior */
+.overflow-scroll-fix {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tailwind classes can be used for most styling, but these are some additional styles */
+
+/* Pulse animation for recording indicator */
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Spin animation for loading indicators */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Focus styles */
+.focus-within\:ring-2:focus-within {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus-within\:ring-blue-500:focus-within {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgba(59, 130, 246, var(--tw-ring-opacity));
+}
+
+.focus-within\:border-blue-500:focus-within {
+  --tw-border-opacity: 1;
+  border-color: rgba(59, 130, 246, var(--tw-border-opacity));
+}
+
+/* Touch manipulation for better mobile experience */
+.touch-manipulate {
+  touch-action: manipulation;
+}
+
+================================================================================
+tailwind.config.js
+================================================================================
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#1e40af', // Blue color used in the components
+      },
+    },
+  },
+  plugins: [],
+}
+
+================================================================================
+tsconfig.json
+================================================================================
+
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "declaration": true,
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}
+
+================================================================================
+types/index.ts
+================================================================================
+
+// Types for the order UI components
+
+// Patient type
+export interface Patient {
+  id: number;
+  name: string;
+  dob: string;
+  mrn?: string;
+  pidn?: string;  // Patient Identification Number
+  radiologyGroupId: number | null;
+  referringPracticeId: number | null;
+  externalPatientId: string | null;
+  demographics?: string;
+  encryptedData: string;
+  createdAt: Date;
+  updatedAt: Date;
+  gender: string;
+}
+
+// Medical code interfaces
+export interface MedicalCode {
+  code: string;
+  description: string;
+}
+
+// Processed dictation result
+export interface ProcessedDictation {
+  validationStatus: 'valid' | 'invalid' | 'warning';
+  feedback: string;
+  patientContext?: any;
+  cptCode?: string;
+  icd10Code?: string;
+  clinicalInformation?: string;
+  orderNotes?: string;
+  procedureDescription?: string;
+  clinicalHistory?: string;
+  overridden?: boolean;
+  overrideJustification?: string;
+  confidence?: number;
+  modality?: string;
+  procedureType?: string;
+  priority?: string;
+  bodyPart?: string;
+  complianceScore?: number;
+  diagnosisCodes?: MedicalCode[];
+  procedureCodes?: MedicalCode[];
+  keywords?: string[];
+}
+
+// Patient suggestion interface for identification
+export interface PatientSuggestion {
+  name: string;
+  dob: string;
+  confidence: number;
+}
+
+// Toast notification interface
+export interface Toast {
+  id: string;
+  title?: string;
+  description?: React.ReactNode;
+  action?: React.ReactNode;
+  variant?: 'default' | 'destructive';
+  duration?: number;
+}
+
+================================================================================
+utils/patientParser.ts
+================================================================================
+
+import { PatientSuggestion } from '../types';
+
+/**
+ * Parse patient information from text input
+ * Uses multiple approaches to extract name and date of birth
+ * 
+ * @param text The input text to parse
+ * @returns Array of patient suggestions with confidence scores
+ */
+export function parsePatientInfo(text: string): PatientSuggestion[] {
+  if (!text.trim()) {
+    return [];
+  }
+  
+  // Define a list of potential parses with confidence scores
+  const potentialParses: PatientSuggestion[] = [];
+  
+  // Clean up the input text
+  const cleanText = text.trim().replace(/\s+/g, ' ');
+  
+  // Define month names and their numeric values
+  const months: Record<string, string> = {
+    'january': '01', 'jan': '01',
+    'february': '02', 'feb': '02',
+    'march': '03', 'mar': '03',
+    'april': '04', 'apr': '04',
+    'may': '05',
+    'june': '06', 'jun': '06',
+    'july': '07', 'jul': '07',
+    'august': '08', 'aug': '08',
+    'september': '09', 'sept': '09', 'sep': '09',
+    'october': '10', 'oct': '10',
+    'november': '11', 'nov': '11',
+    'december': '12', 'dec': '12'
+  };
+  
+  // Parse into words for different analyses
+  const words = cleanText.split(' ');
+  
+  // --- APPROACH 1: Look for "patient name... dob..." pattern ---
+  const dobKeywords = ["date of birth", "dob", "born", "birthdate", "birth date"];
+  for (const keyword of dobKeywords) {
+    const keywordPos = cleanText.toLowerCase().indexOf(keyword);
+    if (keywordPos > 0) {
+      const namePart = cleanText.substring(0, keywordPos).trim();
+      const dobPart = cleanText.substring(keywordPos + keyword.length).trim();
+      
+      // Try to extract a date from the DOB part
+      let extractedMonth = "";
+      let extractedDay = "";
+      let extractedYear = "";
+      
+      // Check for YYYY
+      const yearMatch = dobPart.match(/\b(19\d{2}|20[0-2]\d)\b/);
+      if (yearMatch) {
+        extractedYear = yearMatch[1];
+        
+        // Look for month name
+        for (const [monthName, monthValue] of Object.entries(months)) {
+          if (dobPart.toLowerCase().includes(monthName)) {
+            extractedMonth = monthValue;
+            
+            // Look for day
+            const afterMonth = dobPart.substring(dobPart.toLowerCase().indexOf(monthName) + monthName.length);
+            const dayMatch = afterMonth.match(/\s+(\d{1,2})(?:st|nd|rd|th)?/);
+            if (dayMatch) {
+              extractedDay = dayMatch[1].padStart(2, '0');
+            }
+            break;
+          }
+        }
+        
+        // If we found month and day
+        if (extractedMonth && extractedDay) {
+          potentialParses.push({
+            name: namePart,
+            dob: `${extractedMonth}/${extractedDay}/${extractedYear}`,
+            confidence: 0.9
+          });
+        } else if (extractedYear) {
+          // Just use January 1st if we only found the year
+          potentialParses.push({
+            name: namePart,
+            dob: `01/01/${extractedYear}`,
+            confidence: 0.5
+          });
+        }
+      }
+    }
+  }
+  
+  // --- APPROACH 2: "Name Month Day Year" pattern ---
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i].toLowerCase();
+    let matchedMonth = '';
+    
+    // Check if this word is a month name
+    for (const monthName of Object.keys(months)) {
+      if (word === monthName || word.startsWith(monthName)) {
+        matchedMonth = monthName;
+        break;
+      }
+    }
+    
+    if (matchedMonth && i + 2 < words.length) {
+      // Found a month, check if it's followed by day and year
+      const potentialDay = words[i + 1].replace(/\D/g, '');
+      const potentialYear = words[i + 2];
+      
+      if (potentialDay && 
+          parseInt(potentialDay) >= 1 && 
+          parseInt(potentialDay) <= 31 &&
+          /^(19|20)\d{2}$/.test(potentialYear)) {
+        
+        // This is our "Name Month Day Year" pattern
+        const nameWords = words.slice(0, i);
+        const name = nameWords.join(' ');
+        const monthNum = months[matchedMonth];
+        const day = potentialDay.padStart(2, '0');
+        
+        potentialParses.push({
+          name,
+          dob: `${monthNum}/${day}/${potentialYear}`,
+          confidence: 0.95
+        });
+      }
+    }
+  }
+  
+  // Add a fallback option if no parses were found
+  if (potentialParses.length === 0) {
+    potentialParses.push({
+      name: cleanText,
+      dob: "01/01/2000", // Generic date
+      confidence: 0.1
+    });
+  }
+  
+  // Sort the parses by confidence (highest first)
+  potentialParses.sort((a, b) => b.confidence - a.confidence);
+  
+  // Take the top 3 suggestions
+  return potentialParses.slice(0, 3);
+}

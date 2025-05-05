@@ -3,24 +3,24 @@ const path = require('path');
 
 // Configuration
 const rootDir = path.resolve(__dirname, '../..');  // Root directory (2 levels up from scripts/utilities)
-const srcDir = path.join(rootDir, 'src');  // src directory
-const outputFile = path.join(rootDir, 'all-source-code.txt');  // Output file in the root directory
+const frontendDir = path.join(rootDir, 'frontend-explanation');  // frontend-explanation directory
+const outputFile = path.join(rootDir, 'all-frontend-explanation.txt');  // Output file in the root directory
 const excludeDirs = [
   'node_modules',
   '.git',
   '.vercel',
   'dist',
-  'deployment',
-  'eb-deploy',
-  'vercel-deploy'
+  'debug_scripts',  // Exclude debug_scripts as requested
+  'gemini-guides'   // Exclude gemini-guides as requested
 ];
 const includeExtensions = [
+  '.md',
+  '.txt',
+  '.json',
   '.js',
   '.ts',
-  '.jsx',
-  '.tsx',
-  '.json',
-  '.md'
+  '.html',
+  '.css'
 ];
 
 // Initialize output file
@@ -98,14 +98,19 @@ function traverseDirectory(dirPath) {
 
 // Main execution
 console.log('Starting directory traversal...');
-console.log(`Processing the src directory`);
+console.log(`Processing the frontend-explanation directory (excluding debug_scripts and gemini-guides)`);
 console.log(`Output will be written to: ${outputFile}`);
 
 try {
-  // Traverse only the src directory
-  traverseDirectory(srcDir);
-  console.log('Directory traversal complete!');
-  console.log(`File listing has been written to: ${outputFile}`);
+  // Check if frontend-explanation directory exists
+  if (fs.existsSync(frontendDir)) {
+    // Traverse the frontend-explanation directory
+    traverseDirectory(frontendDir);
+    console.log('Directory traversal complete!');
+    console.log(`File listing has been written to: ${outputFile}`);
+  } else {
+    console.log(`frontend-explanation directory not found at: ${frontendDir}`);
+  }
 } catch (error) {
   console.error('Error during directory traversal:', error);
 }
