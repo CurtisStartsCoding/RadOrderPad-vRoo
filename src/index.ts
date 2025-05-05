@@ -2,7 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
-import connectRedis from 'connect-redis';
+// Import connect-redis with proper type
+import RedisStoreFactory from 'connect-redis';
 import { createClient } from 'redis';
 import config from './config/config.js';
 import routes from './routes/index.js';
@@ -42,7 +43,13 @@ redisSessionClient.on('error', (err) => {
 })();
 
 // Initialize Redis session store with connect-redis v8 API
-const RedisStore = connectRedis(session);
+// Create Redis store using the factory pattern (connect-redis v8)
+const RedisStore = RedisStoreFactory(session);
+// Then instantiate the store with our Redis client
+const redisStore = new RedisStore({
+  client: redisSessionClient,
+  prefix: "radorderpad:"
+});
 
 // Note: We don't need to store the Redis client in a variable
 // The functions that need it will call getRedisClient() directly
@@ -52,7 +59,7 @@ app.use(helmet()); // Security headers
 
 // Configure session middleware
 app.use(session({
-  store: new RedisStore({ client: redisSessionClient }),
+  store: redisStore,
   secret: config.jwtSecret, // Use the same secret as JWT for consistency
   resave: false,
   saveUninitialized: false,
