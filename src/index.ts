@@ -3,9 +3,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
 import { createClient } from 'redis';
-// Import connect-redis with .default to get the correct export
+// Import RedisStore using destructuring - this is the approach that works based on our tests
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const RedisStore = require('connect-redis').default;
+const { RedisStore } = require('connect-redis');
 import config from './config/config.js';
 import routes from './routes/index.js';
 import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';
