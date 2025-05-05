@@ -3,10 +3,12 @@ import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
+import { createClient } from 'redis';
 import config from './config/config.js';
 import routes from './routes/index.js';
 import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';
 import logger from './utils/logger';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getRedisClient } from './config/redis.js';
 import { loadAndCacheScripts } from './services/bulk-lookup/script-loader';
 import {
@@ -18,16 +20,39 @@ import {
 // Create Express app
 const app = express();
 
-// Initialize Redis session store
+// Initialize Redis client for session store (using redis client for connect-redis v8)
+const redisSessionClient = createClient({
+  url: `redis://${process.env.REDIS_CLOUD_HOST}:${process.env.REDIS_CLOUD_PORT}`,
+  password: process.env.REDIS_CLOUD_PASSWORD
+});
+
+// Handle Redis session client errors
+redisSessionClient.on('error', (err) => {
+  logger.error('Redis Session Client Error', err);
+});
+
+// Connect to Redis for session store
+(async (): Promise<void> => {
+  try {
+    await redisSessionClient.connect();
+    logger.info('Redis session client connected successfully');
+  } catch (error) {
+    logger.error('Failed to connect Redis session client', error);
+  }
+})();
+
+// Initialize Redis session store with connect-redis v8 API
 const RedisStore = connectRedis(session);
-const redisClient = getRedisClient();
+
+// Note: We don't need to store the Redis client in a variable
+// The functions that need it will call getRedisClient() directly
 
 // Middleware
 app.use(helmet()); // Security headers
 
 // Configure session middleware
 app.use(session({
-  store: new RedisStore({ client: redisClient }),
+  store: new RedisStore({ client: redisSessionClient }),
   secret: config.jwtSecret, // Use the same secret as JWT for consistency
   resave: false,
   saveUninitialized: false,
@@ -145,6 +170,14 @@ async function shutdownServer(): Promise<void> {
   
   // Close database connections
   await closeDatabaseConnections();
+  
+  // Close Redis session client
+  try {
+    await redisSessionClient.disconnect();
+    logger.info('Redis session client disconnected');
+  } catch (error) {
+    logger.error('Error disconnecting Redis session client', error);
+  }
   
   // Close server
   server.close(() => {
