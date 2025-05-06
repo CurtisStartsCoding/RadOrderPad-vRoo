@@ -1,7 +1,7 @@
 # Redis Implementation v2: Advanced Features
 
-**Version:** 2.0.0
-**Last Updated:** May 5, 2025 7:43 AM (America/Los_Angeles)
+**Version:** 2.1.0
+**Last Updated:** May 5, 2025 9:24 PM (America/Los_Angeles)
 **Author:** capecoma
 
 This document describes the enhanced Redis implementation for the RadOrderPad API backend, focusing on:
@@ -18,6 +18,29 @@ The implementation leverages two complementary Redis strategies:
 The primary strategy uses Redis as a cache for:
 - Individual medical codes (CPT, ICD-10)
 - Code mappings (ICD-10 to CPT)
+- PostgreSQL search results
+
+#### Key Format Standardization
+
+All Redis keys follow a standardized format:
+
+- CPT codes: `cpt:code:{cpt_code}` (e.g., `cpt:code:73221`)
+- ICD-10 codes: `icd10:code:{icd10_code}` (e.g., `icd10:code:M25.511`)
+- Mappings: `mapping:icd10-to-cpt:{icd10_code}` (e.g., `mapping:icd10-to-cpt:M25.511`)
+
+#### Automatic Population on Server Startup
+
+The server automatically populates Redis with data from PostgreSQL during startup:
+
+1. The `populateRedisFromPostgres()` function in `src/utils/cache/redis-populate.ts` is called during server initialization
+2. It checks if Redis already has data (to avoid unnecessary repopulation)
+3. If empty, it fetches data from PostgreSQL and stores it in Redis using the correct key formats
+4. This ensures Redis is always populated with the necessary data without manual intervention
+
+Benefits:
+- No need to manually run population scripts
+- Redis is automatically repopulated if data is lost
+- Ensures consistent key formats between storage and retrieval
 - PostgreSQL weighted search results
 
 This pattern:

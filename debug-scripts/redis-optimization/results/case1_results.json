@@ -1,0 +1,71 @@
+{
+  "testCase": {
+    "id": 1,
+    "dictation": "42-year-old female presents with right upper quadrant pain. Patient has elevated liver enzymes and a history of gallstones. Requesting abdominal ultrasound to evaluate liver and gallbladder.",
+    "expectedPrimaryCode": "R10.11",
+    "expectedSecondaryCodes": [
+      "R74.8",
+      "K80.20",
+      "K76.9",
+      "R16.0"
+    ],
+    "expectedCptCode": "76700"
+  },
+  "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+  "llmResults": [
+    {
+      "llm": "Claude",
+      "oldPrompt": {
+        "responseTime": 3836,
+        "responseContent": "```json\n{\n  \"diagnosisCodes\": [\n    {\"code\": \"R10.11\", \"description\": \"Right upper quadrant pain\"},\n    {\"code\": \"R74.8\", \"description\": \"Abnormal levels of liver enzymes\"},\n    {\"code\": \"K80.20\", \"description\": \"Calculus of gallbladder without cholecystitis, without obstruction\"}\n  ],\n  \"procedureCodes\": [\n    {\"code\": \"76700\", \"description\": \"Ultrasound, abdominal, complete\"}\n  ],\n  \"validationStatus\": \"valid\",\n  \"complianceScore\": 9,\n  \"feedback\": \"Excellent order. Ultrasound is the first-line imaging for right upper quadrant pain, elevated liver enzymes, and known gallstones. No radiation exposure and high sensitivity for gallbladder pathology make this the appropriate initial study.\"\n}\n```",
+        "codeCheck": {
+          "success": true,
+          "message": "Primary code found, CPT code found",
+          "primaryCodeFound": true,
+          "secondaryCodesFound": [
+            "R74.8",
+            "K80.20"
+          ],
+          "cptCodeFound": true
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4058,
+        "responseContent": "```json\n{\n  \"suggestedICD10Codes\": [\n    {\n      \"code\": \"R10.11\",\n      \"description\": \"Right upper quadrant pain\",\n      \"isPrimary\": true\n    },\n    {\n      \"code\": \"R74.8\",\n      \"description\": \"Abnormal levels of other serum enzymes\",\n      \"isPrimary\": false\n    },\n    {\n      \"code\": \"K80.20\",\n      \"description\": \"Calculus of gallbladder without cholecystitis without obstruction\",\n      \"isPrimary\": false\n    }\n  ],\n  \"suggestedCPTCodes\": [\n    {\n      \"code\": \"76700\",\n      \"description\": \"Ultrasound, abdominal, complete\"\n    }\n  ],\n  \"validationStatus\": \"appropriate\",\n  \"complianceScore\": 9,\n  \"priority\": \"routine\",\n  \"feedback\": \"Abdominal ultrasound is the appropriate first-line imaging study for right upper quadrant pain with elevated liver enzymes and history of gallstones. This follows ACR appropriateness criteria.\"\n}\n```",
+        "codeCheck": {
+          "success": true,
+          "message": "Primary code found, CPT code found",
+          "primaryCodeFound": true,
+          "secondaryCodesFound": [
+            "R74.8",
+            "K80.20"
+          ],
+          "cptCodeFound": true
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "oldPrompt": {
+        "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+        "codeCheck": {
+          "success": false,
+          "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "primaryCodeFound": false,
+          "secondaryCodesFound": [],
+          "cptCodeFound": false
+        }
+      },
+      "newPrompt": {
+        "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+        "codeCheck": {
+          "success": false,
+          "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "primaryCodeFound": false,
+          "secondaryCodesFound": [],
+          "cptCodeFound": false
+        }
+      }
+    }
+  ]
+}

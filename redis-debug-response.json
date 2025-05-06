@@ -1,10 +1,10 @@
 {
   "success": true,
-  "orderId": 711,
+  "orderId": 717,
   "validationResult": {
     "validationStatus": "appropriate",
     "complianceScore": 8,
-    "feedback": "Abdominal ultrasound is appropriate for evaluating this patient with RUQ pain, chronic diarrhea, elevated liver enzymes, and family history of cirrhosis. Clinical features (skin changes, elevated ferritin) suggest possible hemochromatosis with cirrhosis.",
+    "feedback": "Clinical presentation suggests possible cirrhosis (chronic diarrhea, RUQ pain, skin changes, elevated ferritin/transaminases, family history). Complete abdominal ultrasound is appropriate for initial evaluation of suspected cirrhosis and to assess for gallbladder disease.",
     "suggestedICD10Codes": [
       {
         "code": "K74.60",
@@ -13,7 +13,7 @@
       },
       {
         "code": "R10.13",
-        "description": "Right upper quadrant abdominal pain",
+        "description": "Right upper quadrant pain",
         "isPrimary": false
       },
       {

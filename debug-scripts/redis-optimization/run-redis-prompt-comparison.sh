@@ -1,0 +1,30 @@
+#!/bin/bash
+
+echo "===== Redis Fuzzy Search + Prompt Comparison Test ====="
+echo
+echo "This test combines Redis fuzzy search with prompt comparison:"
+echo "1. Uses Redis fuzzy search to get medical codes for a given query"
+echo "2. Generates a database context using these codes"
+echo "3. Tests both old and new prompts with the same context"
+echo "4. Compares results across multiple LLMs (Claude, GPT, Grok)"
+echo "5. Focuses on detecting rare diseases like hemochromatosis"
+echo
+
+echo "Using Redis Cloud configuration from .env.production:"
+echo "Host: redis-11584.crce197.us-east-2-1.ec2.redns.redis-cloud.com"
+echo "Port: 11584"
+echo
+
+# Install required packages if not already installed
+echo "Checking for required npm packages..."
+npm list axios || npm install axios
+npm list dotenv || npm install dotenv
+npm list openai || npm install openai
+npm list ioredis || npm install ioredis
+
+echo "Running test..."
+node debug-scripts/redis-optimization/redis-prompt-comparison-test.js
+
+echo
+echo "===== Redis Prompt Comparison Test Complete ====="
+echo "Results saved to debug-scripts/redis-optimization/redis-prompt-results/"

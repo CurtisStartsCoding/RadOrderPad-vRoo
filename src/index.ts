@@ -5,7 +5,7 @@ import session from 'express-session';
 import { createClient } from 'redis';
 // Import RedisStore using destructuring - this is the approach that works based on our tests
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { RedisStore } = require('connect-redis');
+const { RedisStore: _RedisStore } = require('connect-redis');
 import config from './config/config.js';
 import routes from './routes/index.js';
 import { testDatabaseConnections, closeDatabaseConnections } from './config/db.js';
@@ -18,6 +18,7 @@ import {
   createCPTSearchIndex,
   createMappingSearchIndex
 } from './utils/cache/redis-search';
+import { populateRedisFromPostgres } from './utils/cache';
 
 // Create Express app
 const app = express();
@@ -101,9 +102,10 @@ redisSessionClient.on('end', () => {
       }
     }));
     
-  } catch (error: any) {
-    logger.error(`Failed to initialize Redis session store: ${error.message || 'Unknown error'}`, { error });
-    throw new Error(`Redis session store initialization failed: ${error.message || 'Unknown error'}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`Failed to initialize Redis session store: ${errorMessage}`, { error });
+    throw new Error(`Redis session store initialization failed: ${errorMessage}`);
   }
 })();
 
@@ -112,8 +114,9 @@ process.on('SIGTERM', async () => {
   try {
     await redisSessionClient.disconnect();
     logger.info('Redis session client disconnected');
-  } catch (error: any) {
-    logger.error(`Error disconnecting Redis client: ${error.message || 'Unknown error'}`, { error });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`Error disconnecting Redis client: ${errorMessage}`, { error });
   }
 });
 
@@ -121,8 +124,9 @@ process.on('SIGINT', async () => {
   try {
     await redisSessionClient.disconnect();
     logger.info('Redis session client disconnected');
-  } catch (error: any) {
-    logger.error(`Error disconnecting Redis client: ${error.message || 'Unknown error'}`, { error });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`Error disconnecting Redis client: ${errorMessage}`, { error });
   }
 });
 
@@ -225,6 +229,15 @@ const server = app.listen(PORT, async () => {
   } catch (error) {
     logger.error('Error initializing Redis search indices:', { error });
     logger.warn('Advanced search features may not work properly, falling back to PostgreSQL search');
+  }
+  
+  // Populate Redis with data from PostgreSQL
+  try {
+    await populateRedisFromPostgres();
+    logger.info('Redis populated with data from PostgreSQL');
+  } catch (error) {
+    logger.error('Error populating Redis from PostgreSQL:', { error });
+    logger.warn('Redis cache may be empty, falling back to PostgreSQL for data');
   }
 });
 

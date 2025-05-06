@@ -1,0 +1,60 @@
+{
+  "testCase": {
+    "id": 7,
+    "dictation": "62-year-old postmenopausal female with family history of osteoporosis. Requesting bone density scan (DEXA) for osteoporosis screening.",
+    "expectedPrimaryCode": "Z13.820",
+    "expectedSecondaryCodes": [
+      "Z80.8"
+    ],
+    "expectedCptCode": "77080"
+  },
+  "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+  "llmResults": [
+    {
+      "llm": "Claude",
+      "oldPrompt": {
+        "error": "Request failed with status code 401",
+        "codeCheck": {
+          "success": false,
+          "message": "Error: Request failed with status code 401",
+          "primaryCodeFound": false,
+          "secondaryCodesFound": [],
+          "cptCodeFound": false
+        }
+      },
+      "newPrompt": {
+        "error": "Request failed with status code 401",
+        "codeCheck": {
+          "success": false,
+          "message": "Error: Request failed with status code 401",
+          "primaryCodeFound": false,
+          "secondaryCodesFound": [],
+          "cptCodeFound": false
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "oldPrompt": {
+        "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+        "codeCheck": {
+          "success": false,
+          "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "primaryCodeFound": false,
+          "secondaryCodesFound": [],
+          "cptCodeFound": false
+        }
+      },
+      "newPrompt": {
+        "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+        "codeCheck": {
+          "success": false,
+          "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "primaryCodeFound": false,
+          "secondaryCodesFound": [],
+          "cptCodeFound": false
+        }
+      }
+    }
+  ]
+}

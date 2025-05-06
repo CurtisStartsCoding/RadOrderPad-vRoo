@@ -1,0 +1,18 @@
+POSTGRESQL DATABASE CONTEXT:
+POSSIBLE DIAGNOSES (from PostgreSQL database):
+- K59.1: Functional diarrhea (confidence: 80%)
+- R10.13: Epigastric pain (confidence: 80%)
+- R17: Unspecified jaundice (confidence: 80%)
+- K76.9: Liver disease, unspecified (confidence: 80%)
+- E83.110: Hereditary hemochromatosis (confidence: 80%)
+
+POSSIBLE PROCEDURES (from PostgreSQL database):
+- 76700: Ultrasound, abdominal, complete (confidence: 80%)
+- 76705: Ultrasound, abdominal, limited (confidence: 80%)
+- 74150: CT abdomen without contrast (confidence: 80%)
+- 74160: CT abdomen with contrast (confidence: 80%)
+- 74170: CT abdomen without and with contrast (confidence: 80%)
+
+No appropriateness mappings found in database.
+
+No medical documentation found in database.

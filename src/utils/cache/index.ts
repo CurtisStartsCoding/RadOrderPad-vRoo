@@ -17,3 +17,5 @@ export {
   getCacheMetrics,
   bulkGetCachedData
 } from './redis-cache-helpers';
+
+export { populateRedisFromPostgres } from './redis-populate';

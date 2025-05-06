@@ -1,0 +1,11 @@
+{
+  "testCase": "Simple Gallbladder Case",
+  "dictation": "45-year-old male with right upper quadrant pain after fatty meals. No fever or jaundice. Order abdominal ultrasound to evaluate for gallstones.",
+  "expectedCodes": [
+    "K80.20"
+  ],
+  "preauthorizationCritical": false,
+  "oldValidation": null,
+  "newValidation": null,
+  "error": "Request failed with status code 404"
+}

@@ -10,7 +10,7 @@
  * ```
  */
 
-import { testRedisConnection } from '../dist/config/redis.js';
+import { testRedisConnection } from '../../dist/config/redis.js';
 import * as dotenv from 'dotenv';
 import axios from 'axios';
 

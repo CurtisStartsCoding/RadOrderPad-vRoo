@@ -1,0 +1,437 @@
+[
+  {
+    "testCase": {
+      "id": 1,
+      "dictation": "42-year-old female presents with right upper quadrant pain. Patient has elevated liver enzymes and a history of gallstones. Requesting abdominal ultrasound to evaluate liver and gallbladder.",
+      "expectedPrimaryCode": "R10.11",
+      "expectedSecondaryCodes": [
+        "R74.8",
+        "K80.20",
+        "K76.9",
+        "R16.0"
+      ],
+      "expectedCptCode": "76700"
+    },
+    "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+    "llmResults": [
+      {
+        "llm": "Claude",
+        "oldPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      },
+      {
+        "llm": "GPT",
+        "oldPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "testCase": {
+      "id": 2,
+      "dictation": "68-year-old male with progressive memory loss, confusion, and headaches. Family history of dementia. Requesting MRI brain with and without contrast to evaluate for neurodegenerative disease.",
+      "expectedPrimaryCode": "R41.2",
+      "expectedSecondaryCodes": [
+        "R41.0",
+        "R51.9",
+        "Z82.0",
+        "G31.84"
+      ],
+      "expectedCptCode": "70553"
+    },
+    "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+    "llmResults": [
+      {
+        "llm": "Claude",
+        "oldPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      },
+      {
+        "llm": "GPT",
+        "oldPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "testCase": {
+      "id": 3,
+      "dictation": "56-year-old female with palpable right breast lump and nipple discharge. Family history of breast cancer. Requesting diagnostic mammogram to evaluate for malignancy.",
+      "expectedPrimaryCode": "N63",
+      "expectedSecondaryCodes": [
+        "R92.8",
+        "N64.52",
+        "Z80.3",
+        "Z12.31"
+      ],
+      "expectedCptCode": "77065"
+    },
+    "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+    "llmResults": [
+      {
+        "llm": "Claude",
+        "oldPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      },
+      {
+        "llm": "GPT",
+        "oldPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "testCase": {
+      "id": 4,
+      "dictation": "72-year-old male with persistent cough and shortness of breath. Former smoker with abnormal chest X-ray showing nodule. Requesting CT chest with contrast for further evaluation.",
+      "expectedPrimaryCode": "R91.1",
+      "expectedSecondaryCodes": [
+        "R05",
+        "R06.02",
+        "Z87.891",
+        "J98.9"
+      ],
+      "expectedCptCode": "71260"
+    },
+    "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+    "llmResults": [
+      {
+        "llm": "Claude",
+        "oldPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      },
+      {
+        "llm": "GPT",
+        "oldPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "testCase": {
+      "id": 5,
+      "dictation": "35-year-old female with lower back pain radiating to left leg and numbness in left foot. Suspected herniated disc. Requesting MRI lumbar spine without contrast.",
+      "expectedPrimaryCode": "M54.5",
+      "expectedSecondaryCodes": [
+        "M54.16",
+        "R20.2",
+        "M51.26",
+        "G83.14"
+      ],
+      "expectedCptCode": "72148"
+    },
+    "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+    "llmResults": [
+      {
+        "llm": "Claude",
+        "oldPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      },
+      {
+        "llm": "GPT",
+        "oldPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "testCase": {
+      "id": 6,
+      "dictation": "28-year-old male who fell on outstretched hand. Presents with right wrist pain and swelling. Requesting X-ray of right wrist to rule out fracture.",
+      "expectedPrimaryCode": "S62.10XA",
+      "expectedSecondaryCodes": [
+        "W01.198A"
+      ],
+      "expectedCptCode": "73100"
+    },
+    "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+    "llmResults": [
+      {
+        "llm": "Claude",
+        "oldPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      },
+      {
+        "llm": "GPT",
+        "oldPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      }
+    ]
+  },
+  {
+    "testCase": {
+      "id": 7,
+      "dictation": "62-year-old postmenopausal female with family history of osteoporosis. Requesting bone density scan (DEXA) for osteoporosis screening.",
+      "expectedPrimaryCode": "Z13.820",
+      "expectedSecondaryCodes": [
+        "Z80.8"
+      ],
+      "expectedCptCode": "77080"
+    },
+    "databaseContext": "REDIS DATABASE CONTEXT:\nPOSSIBLE DIAGNOSES (from Redis database):\nNo relevant diagnoses found in database.\n\nPOSSIBLE PROCEDURES (from Redis database):\nNo relevant procedures found in database.\n\nNo appropriateness mappings found in database.\n\nNo medical documentation found in database.",
+    "llmResults": [
+      {
+        "llm": "Claude",
+        "oldPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Request failed with status code 401",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Request failed with status code 401",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      },
+      {
+        "llm": "GPT",
+        "oldPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        },
+        "newPrompt": {
+          "error": "Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+          "codeCheck": {
+            "success": false,
+            "message": "Error: Converting circular structure to JSON\n    --> starting at object with constructor 'ClientRequest'\n    |     property 'res' -> object with constructor 'IncomingMessage'\n    --- property 'req' closes the circle",
+            "primaryCodeFound": false,
+            "secondaryCodesFound": [],
+            "cptCodeFound": false
+          }
+        }
+      }
+    ]
+  }
+]

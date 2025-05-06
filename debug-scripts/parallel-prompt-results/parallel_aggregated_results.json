@@ -1,0 +1,2207 @@
+{
+  "dictationText": "48-year-old female with chronic diarrhea for past 4 months, typically 4-5 loose stools daily. Reports upper right quadrant discomfort after meals. Patient has noted darkening of skin on knuckles and neck folds. Recent lab work shows mildly elevated ferritin and transaminases. Family history significant for father with cirrhosis of \"unknown cause.\" Order abdominal ultrasound to evaluate for possible gallbladder disease.",
+  "iterations": 10,
+  "oldPromptResults": {
+    "Claude": {
+      "hemochromatosisDetected": 10,
+      "totalRuns": 10,
+      "detectionRate": 1
+    },
+    "GPT": {
+      "hemochromatosisDetected": 10,
+      "totalRuns": 10,
+      "detectionRate": 1
+    },
+    "Grok": {
+      "hemochromatosisDetected": 10,
+      "totalRuns": 10,
+      "detectionRate": 1
+    }
+  },
+  "newPromptResults": {
+    "Claude": {
+      "hemochromatosisDetected": 0,
+      "totalRuns": 10,
+      "detectionRate": 0
+    },
+    "GPT": {
+      "hemochromatosisDetected": 10,
+      "totalRuns": 10,
+      "detectionRate": 1
+    },
+    "Grok": {
+      "hemochromatosisDetected": 10,
+      "totalRuns": 10,
+      "detectionRate": 1
+    }
+  },
+  "allResults": [
+    {
+      "llm": "Claude",
+      "iteration": 1,
+      "oldPrompt": {
+        "responseTime": 4296,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.13",
+              "description": "Epigastric pain"
+            },
+            {
+              "code": "R74.0",
+              "description": "Elevation of levels of transaminase"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Good choice of ultrasound for initial evaluation. Clinical presentation (skin changes, elevated ferritin, family history) suggests possible hemochromatosis in addition to gallbladder concerns. Consider genetic testing and hepatology referral if ultrasound confirms liver abnormalities."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4038,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R23.8",
+              "description": "Other skin changes",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "needs_clarification",
+          "complianceScore": 6,
+          "priority": "routine",
+          "feedback": "Consider adding iron studies to evaluate for hemochromatosis given family history, skin changes, and elevated ferritin. Abdominal ultrasound is appropriate for evaluation of RUQ pain and possible gallbladder disease."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 1,
+      "oldPrompt": {
+        "responseTime": 10966,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": null
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 8364,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Appropriate use of abdominal ultrasound to assess suspected hereditary hemochromatosis with liver involvement, given clinical presentation and family history."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 1,
+      "oldPrompt": {
+        "responseTime": 2805,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating right upper quadrant discomfort and possible gallbladder disease, especially with chronic diarrhea and lab abnormalities suggestive of hemochromatosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4571,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "E83.52",
+              "description": "Hypercalcemia",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate upper right quadrant discomfort and possible gallbladder disease. Consider further genetic testing for hemochromatosis given family history and clinical presentation. (33 words)"
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 2,
+      "oldPrompt": {
+        "responseTime": 4099,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant abdominal pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Complete abdominal ultrasound is appropriate. Consider genetic testing for hemochromatosis given skin hyperpigmentation, elevated ferritin, and family history of cirrhosis. Follow-up with MRI may be needed if hemochromatosis is suspected."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4316,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R23.8",
+              "description": "Other skin changes",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "needs_clarification",
+          "complianceScore": 6,
+          "priority": "routine",
+          "feedback": "Consider serum iron panel and transferrin saturation to evaluate for hemochromatosis, given skin changes, elevated ferritin, transaminases, and family history of cirrhosis. Complete abdominal ultrasound is appropriate initial imaging."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 2,
+      "oldPrompt": {
+        "responseTime": 2489,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 9,
+          "feedback": ""
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 8452,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": false
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76705",
+              "description": "Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 7,
+          "priority": "routine",
+          "feedback": "The ultrasound order is appropriate considering the symptoms and historical indications of a familial link to liver conditions such as cirrhosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 2,
+      "oldPrompt": {
+        "responseTime": 2106,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating upper right quadrant discomfort and possible gallbladder disease, especially with chronic diarrhea and lab abnormalities suggestive of hemochromatosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 2949,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "E83.52",
+              "description": "Hypercalcemia",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate upper right quadrant discomfort and possible gallbladder disease. Consider further testing for hemochromatosis given skin changes and family history of cirrhosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 3,
+      "oldPrompt": {
+        "responseTime": 4400,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.13",
+              "description": "Right upper quadrant abdominal pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Good order choice. Clinical presentation with RUQ pain, elevated ferritin/transaminases, skin changes, and family history of cirrhosis suggests possible hemochromatosis in addition to gallbladder disease. Complete abdominal US appropriate for initial evaluation."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 5353,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R79.0",
+              "description": "Abnormal level of blood mineral",
+              "isPrimary": false
+            },
+            {
+              "code": "R74.0",
+              "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 7,
+          "priority": "routine",
+          "feedback": "Consider evaluation for hemochromatosis given elevated ferritin, darkening skin, and family history of cirrhosis. Liver function tests and iron studies would be appropriate follow-up depending on ultrasound findings."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 3,
+      "oldPrompt": {
+        "responseTime": 2479,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 9,
+          "feedback": ""
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 5896,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": false
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76705",
+              "description": "Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Ensure abdominal ultrasound focuses on gallbladder, liver, and iron overload assessment to correlate symptoms with possible hemochromatosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 3,
+      "oldPrompt": {
+        "responseTime": 2964,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating right upper quadrant discomfort and possible gallbladder disease. Consider correlation with hereditary hemochromatosis due to skin changes and family history."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 1903,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate upper right quadrant discomfort and possible gallbladder disease. Consider further genetic testing for hemochromatosis given family history and clinical findings."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 4,
+      "oldPrompt": {
+        "responseTime": 4447,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.13",
+              "description": "Right upper quadrant abdominal pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Excellent choice of abdominal ultrasound for this patient. Clinical presentation (RUQ pain, elevated liver enzymes, skin changes, family history) suggests possible hemochromatosis in addition to gallbladder disease. Consider genetic testing and iron studies if ultrasound confirms liver abnormalities."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4445,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R74.0",
+              "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "needs_clarification",
+          "complianceScore": 6,
+          "priority": "routine",
+          "feedback": "Consider additional workup for hemochromatosis given family history, elevated ferritin, and skin changes. Abdominal ultrasound is appropriate for RUQ pain but may not fully evaluate chronic diarrhea etiology."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 4,
+      "oldPrompt": {
+        "responseTime": 3126,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": ""
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4987,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "K82.A",
+              "description": "Disorder of gallbladder, unspecified",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order appears clinically relevant given symptoms and familial history, enhancing targeted evaluation and ongoing management of hereditary disorders."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 4,
+      "oldPrompt": {
+        "responseTime": 10527,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating right upper quadrant discomfort and possible gallbladder disease, especially with chronic diarrhea and elevated ferritin suggesting potential hemochromatosis-related liver issues."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4397,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "E83.52",
+              "description": "Hypercalcemia",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate right upper quadrant discomfort and possible gallbladder disease. Consider further testing for hereditary hemochromatosis given skin changes and family history of cirrhosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 5,
+      "oldPrompt": {
+        "responseTime": 4363,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant abdominal pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 9,
+          "feedback": "Appropriate study. Clinical presentation with RUQ pain, chronic diarrhea, skin hyperpigmentation, elevated ferritin, and family history of cirrhosis suggests possible hemochromatosis. Complete abdominal ultrasound can evaluate liver parenchyma, gallbladder, and other abdominal structures."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4094,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R23.8",
+              "description": "Other skin changes",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "needs_clarification",
+          "complianceScore": 6,
+          "priority": "routine",
+          "feedback": "Consider evaluating for hemochromatosis given elevated ferritin, skin changes, and family history of cirrhosis. Abdominal ultrasound is appropriate but additional workup including iron studies might be warranted."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 5,
+      "oldPrompt": {
+        "responseTime": 3537,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K82",
+              "description": "Diseases of gallbladder"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 9,
+          "feedback": ""
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 5355,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": false
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 9,
+          "priority": "routine",
+          "feedback": "The abdominal ultrasound for evaluation of possible gallbladder disease with symptoms of upper right quadrant discomfort is clinically appropriate and well-justified."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 5,
+      "oldPrompt": {
+        "responseTime": 2178,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating upper right quadrant discomfort and possible gallbladder disease, especially with chronic diarrhea and elevated ferritin suggesting potential hemochromatosis-related liver issues."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 5146,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "E83.52",
+              "description": "Hypercalcemia",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate right upper quadrant discomfort and possible gallbladder disease. Consider further testing for hemochromatosis given family history and clinical presentation. Monitor symptoms closely."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 6,
+      "oldPrompt": {
+        "responseTime": 4559,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K52.9",
+              "description": "Noninfective gastroenteritis and colitis, unspecified"
+            },
+            {
+              "code": "R10.13",
+              "description": "Right upper quadrant pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Abdominal ultrasound is appropriate for RUQ pain evaluation. Consider also measuring transferrin saturation to further assess for hemochromatosis given family history, darkening skin, and elevated ferritin."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 5180,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R23.0",
+              "description": "Cyanosis",
+              "isPrimary": false
+            },
+            {
+              "code": "R79.0",
+              "description": "Abnormal level of blood mineral",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 7,
+          "priority": "routine",
+          "feedback": "Complete abdominal ultrasound is appropriate for evaluating chronic diarrhea with RUQ pain. Consider hemochromatosis in differential diagnosis given skin changes, elevated ferritin, and family history of cirrhosis."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 6,
+      "oldPrompt": {
+        "responseTime": 3533,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Ultrasound is appropriate for suspected gallbladder disease with chronic diarrhea and upper right quadrant discomfort, coupled with abnormalities in ferritin and transaminases."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4950,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "K82.8",
+              "description": "Other specified diseases of gallbladder",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Abdominal ultrasound is appropriate for hereditary hemochromatosis with symptoms. Ensure complete workup and follow up on elevated ferritin relating to potential liver issues."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 6,
+      "oldPrompt": {
+        "responseTime": 1823,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating upper right quadrant discomfort and possible gallbladder disease, with clinical suspicion of hemochromatosis supported by elevated ferritin and family history."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 7163,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate upper right quadrant discomfort and possible gallbladder disease. Consider further genetic testing for hemochromatosis given family history and clinical findings."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 7,
+      "oldPrompt": {
+        "responseTime": 4277,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.13",
+              "description": "Right upper quadrant abdominal pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Clinical presentation of chronic diarrhea, RUQ pain, skin changes, elevated ferritin and family history raises concern for hemochromatosis in addition to possible gallbladder disease. Abdominal ultrasound is an appropriate initial imaging test."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4002,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R23.0",
+              "description": "Cyanosis (for skin darkening)",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 7,
+          "priority": "routine",
+          "feedback": "Consider adding iron studies given skin changes and elevated ferritin which may suggest hemochromatosis. Family history of cirrhosis further supports this evaluation alongside gallbladder assessment."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 7,
+      "oldPrompt": {
+        "responseTime": 2729,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 9,
+          "feedback": ""
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 7465,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": false
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "The ultrasound is appropriate for evaluating potential gallbladder disease and potential iron overload states given the symptoms and familial history."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 7,
+      "oldPrompt": {
+        "responseTime": 7810,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating right upper quadrant discomfort and possible gallbladder disease, with clinical suspicion of hemochromatosis supported by family history and lab findings."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4818,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "E83.52",
+              "description": "Hypercalcemia",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate upper right quadrant discomfort and possible gallbladder disease. Consider further testing for hereditary hemochromatosis given skin changes and family history of cirrhosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 8,
+      "oldPrompt": {
+        "responseTime": 3972,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Complete abdominal ultrasound is appropriate. Clinical presentation suggests possible hemochromatosis (elevated ferritin, skin changes, family history) alongside potential gallbladder disease. Consider follow-up MRI if hemochromatosis is suspected after ultrasound."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 5131,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.13",
+              "description": "Right upper quadrant abdominal pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R79.0",
+              "description": "Abnormal level of blood mineral",
+              "isPrimary": false
+            },
+            {
+              "code": "R74.0",
+              "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "needs_clarification",
+          "complianceScore": 6,
+          "priority": "routine",
+          "feedback": "Consider adding iron studies and transferrin saturation given skin changes and family history suggesting possible hemochromatosis. Abdominal ultrasound appropriate but may need additional testing based on results."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 8,
+      "oldPrompt": {
+        "responseTime": 4200,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Appropriate imaging order for suspected gallbladder disease and possible hemochromatosis based on symptoms and family history. Ensure clinical follow-up on liver function and ferritin levels."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4846,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "E83.3",
+              "description": "Disorders of phosphorus metabolism and phosphatases",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 9,
+          "priority": "routine",
+          "feedback": "The ultrasound order for evaluation of gallbladder disease on this patient, with darkening skin and elevated ferritin, aligns well with suspected hemochromatosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 8,
+      "oldPrompt": {
+        "responseTime": 10190,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating upper right quadrant discomfort and possible gallbladder disease. Consider hereditary hemochromatosis given skin changes and family history of cirrhosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 2326,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "E83.52",
+              "description": "Hypercalcemia",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate upper right quadrant discomfort and possible gallbladder disease. Consider further workup for hereditary hemochromatosis given family history and clinical presentation."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 9,
+      "oldPrompt": {
+        "responseTime": 3693,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Complete abdominal ultrasound is indicated to evaluate gallbladder disease and potential hepatic involvement. Clinical presentation with hyperpigmentation, elevated ferritin, and family history is concerning for hereditary hemochromatosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4191,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.13",
+              "description": "Epigastric pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R23.2",
+              "description": "Discoloration of skin",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "needs_clarification",
+          "complianceScore": 5,
+          "priority": "routine",
+          "feedback": "Consider expanded workup including iron studies given skin changes and family history suggestive of hemochromatosis. Abdominal ultrasound is reasonable for initial evaluation, but additional testing may be needed."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 9,
+      "oldPrompt": {
+        "responseTime": 3527,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 9,
+          "feedback": ""
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 7086,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "K82.8",
+              "description": "Other specified diseases of gallbladder",
+              "isPrimary": false
+            },
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76705",
+              "description": "Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order is clinically appropriate for evaluating gallbladder disease. Ensure lab results correlate with clinical symptoms to adjust further diagnostic steps."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 9,
+      "oldPrompt": {
+        "responseTime": 10103,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating upper right quadrant discomfort and possible gallbladder disease, especially with chronic diarrhea and lab findings suggestive of hemochromatosis."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 3334,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate upper right quadrant discomfort and potential gallbladder disease. Consider further genetic testing for hemochromatosis given family history and clinical findings."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Claude",
+      "iteration": 10,
+      "oldPrompt": {
+        "responseTime": 4187,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea"
+            },
+            {
+              "code": "R10.13",
+              "description": "Right upper quadrant abdominal pain"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "This US is appropriate to evaluate gallbladder given RUQ pain. Note clinical findings (skin changes, elevated ferritin/LFTs, family history) suggest possible hemochromatosis, which US can also help identify via liver evaluation."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 4598,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "K59.1",
+              "description": "Functional diarrhea",
+              "isPrimary": true
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            },
+            {
+              "code": "R23.0",
+              "description": "Cyanosis",
+              "isPrimary": false
+            },
+            {
+              "code": "R79.0",
+              "description": "Abnormal level of blood mineral",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 7,
+          "priority": "routine",
+          "feedback": "Consider adding liver evaluation given family history of cirrhosis, elevated ferritin and transaminases, and skin hyperpigmentation which may suggest hemochromatosis. A complete abdominal ultrasound would be appropriate."
+        },
+        "hemochromatosisCheck": {
+          "found": false,
+          "message": "Hemochromatosis code E83.110 not found"
+        }
+      }
+    },
+    {
+      "llm": "GPT",
+      "iteration": 10,
+      "oldPrompt": {
+        "responseTime": 2440,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": null
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 5351,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "R19.7",
+              "description": "Diarrhea, unspecified",
+              "isPrimary": false
+            },
+            {
+              "code": "R10.11",
+              "description": "Right upper quadrant pain",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order is clinically appropriate for symptoms including right quadrant pain and elevated ferritin, but consider additional liver screening given family history."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    },
+    {
+      "llm": "Grok",
+      "iteration": 10,
+      "oldPrompt": {
+        "responseTime": 1880,
+        "parsedResponse": {
+          "diagnosisCodes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            }
+          ],
+          "procedureCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "valid",
+          "complianceScore": 8,
+          "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating upper right quadrant discomfort and possible gallbladder disease, with clinical suspicion of hemochromatosis supported by family history and lab findings."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          "message": "Hemochromatosis code E83.110 found"
+        }
+      },
+      "newPrompt": {
+        "responseTime": 3559,
+        "parsedResponse": {
+          "suggestedICD10Codes": [
+            {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis",
+              "isPrimary": true
+            },
+            {
+              "code": "E83.52",
+              "description": "Hypercalcemia",
+              "isPrimary": false
+            }
+          ],
+          "suggestedCPTCodes": [
+            {
+              "code": "76700",
+              "description": "Ultrasound, abdominal, complete"
+            }
+          ],
+          "validationStatus": "appropriate",
+          "complianceScore": 8,
+          "priority": "routine",
+          "feedback": "Order for abdominal ultrasound is appropriate to evaluate right upper quadrant discomfort and possible gallbladder disease. Consider further correlation with lab findings for hemochromatosis. No immediate concerns noted in dictation."
+        },
+        "hemochromatosisCheck": {
+          "found": true,
+          "code": {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": true
+          },
+          "message": "Hemochromatosis code E83.110 found (marked as primary)"
+        }
+      }
+    }
+  ]
+}

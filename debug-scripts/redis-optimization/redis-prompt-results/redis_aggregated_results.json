@@ -1,0 +1,739 @@
+{
+  "dictationText": "48-year-old female with chronic diarrhea for past 4 months, typically 4-5 loose stools daily. Reports upper right quadrant discomfort after meals. Patient has noted darkening of skin on knuckles and neck folds. Recent lab work shows mildly elevated ferritin and transaminases. Family history significant for father with cirrhosis of \"unknown cause.\" Order abdominal ultrasound to evaluate for possible gallbladder disease.",
+  "oldPromptResults": {
+    "GPT": {
+      "hemochromatosisDetected": 5,
+      "totalRuns": 5
+    },
+    "Grok": {
+      "hemochromatosisDetected": 5,
+      "totalRuns": 5
+    }
+  },
+  "newPromptResults": {
+    "GPT": {
+      "hemochromatosisDetected": 5,
+      "totalRuns": 5
+    },
+    "Grok": {
+      "hemochromatosisDetected": 0,
+      "totalRuns": 5
+    }
+  },
+  "allResults": [
+    {
+      "iteration": 1,
+      "provider": "GPT",
+      "promptType": "old",
+      "responseTime": 4335,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R17",
+            "description": "Unspecified jaundice"
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": ""
+      }
+    },
+    {
+      "iteration": 1,
+      "provider": "GPT",
+      "promptType": "new",
+      "responseTime": 8228,
+      "hemochromatosisDetected": true,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R17",
+            "description": "Unspecified jaundice",
+            "isPrimary": false
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          },
+          {
+            "code": "74150",
+            "description": "CT abdomen without contrast"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "Order is appropriate given symptoms. Consider additional labs for hemochromatosis if abdominal imaging is inconclusive or findings suggest liver abnormalities."
+      }
+    },
+    {
+      "iteration": 1,
+      "provider": "Grok",
+      "promptType": "old",
+      "responseTime": 3895,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating gallbladder disease and liver abnormalities in the context of chronic diarrhea, upper quadrant pain, and suspected hemochromatosis based on family history and labs."
+      }
+    },
+    {
+      "iteration": 1,
+      "provider": "Grok",
+      "promptType": "new",
+      "responseTime": 7061,
+      "hemochromatosisDetected": false,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain",
+            "isPrimary": false
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "Order for abdominal ultrasound is appropriate to evaluate chronic diarrhea and right upper quadrant discomfort. Consider broader hepatic evaluation given family history and lab findings if ultrasound is inconclusive."
+      }
+    },
+    {
+      "iteration": 2,
+      "provider": "GPT",
+      "promptType": "old",
+      "responseTime": 8192,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": null
+      }
+    },
+    {
+      "iteration": 2,
+      "provider": "GPT",
+      "promptType": "new",
+      "responseTime": 12786,
+      "hemochromatosisDetected": true,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain",
+            "isPrimary": false
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": false
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified",
+            "isPrimary": false
+          },
+          {
+            "code": "R17",
+            "description": "Unspecified jaundice",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "The ultrasound is appropriate for evaluating gallbladder disease based on symptoms and family history. Good choice for initial noninvasive imaging."
+      }
+    },
+    {
+      "iteration": 2,
+      "provider": "Grok",
+      "promptType": "old",
+      "responseTime": 2393,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating gallbladder disease and liver pathology in the context of chronic diarrhea, upper right quadrant discomfort, and suspected hereditary hemochromatosis."
+      }
+    },
+    {
+      "iteration": 2,
+      "provider": "Grok",
+      "promptType": "new",
+      "responseTime": 9202,
+      "hemochromatosisDetected": false,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain",
+            "isPrimary": false
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "Order for abdominal ultrasound is appropriate to evaluate chronic diarrhea and upper right quadrant discomfort. Consider including liver and gallbladder assessment given family history and lab findings. Good clinical correlation."
+      }
+    },
+    {
+      "iteration": 3,
+      "provider": "GPT",
+      "promptType": "old",
+      "responseTime": 3747,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": "Order for abdominal ultrasound is clinically appropriate and likely to provide diagnostic information on gallbladder as described."
+      }
+    },
+    {
+      "iteration": 3,
+      "provider": "GPT",
+      "promptType": "new",
+      "responseTime": 4609,
+      "hemochromatosisDetected": true,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain",
+            "isPrimary": false
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 9,
+        "priority": "routine",
+        "feedback": "Order is clinically appropriate for the reported symptoms. Ensure that all relevant clinical details are always documented to support imaging decisions."
+      }
+    },
+    {
+      "iteration": 3,
+      "provider": "Grok",
+      "promptType": "old",
+      "responseTime": 16894,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": "Order is appropriate. Abdominal ultrasound is suitable for initial evaluation of right upper quadrant discomfort and possible gallbladder or liver pathology, especially with history and lab findings suggesting hemochromatosis."
+      }
+    },
+    {
+      "iteration": 3,
+      "provider": "Grok",
+      "promptType": "new",
+      "responseTime": 4333,
+      "hemochromatosisDetected": false,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain",
+            "isPrimary": false
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "Order for abdominal ultrasound is appropriate to evaluate chronic diarrhea and upper right quadrant discomfort. It aligns with ACR criteria for assessing potential gallbladder or liver pathology. No alternative imaging is suggested."
+      }
+    },
+    {
+      "iteration": 4,
+      "provider": "GPT",
+      "promptType": "old",
+      "responseTime": 3568,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 9,
+        "feedback": ""
+      }
+    },
+    {
+      "iteration": 4,
+      "provider": "GPT",
+      "promptType": "new",
+      "responseTime": 5072,
+      "hemochromatosisDetected": true,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain",
+            "isPrimary": false
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "The order is appropriate. Ensure all relevant symptoms and findings are considered for accurate diagnostic imaging and follow-up."
+      }
+    },
+    {
+      "iteration": 4,
+      "provider": "Grok",
+      "promptType": "old",
+      "responseTime": 5500,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": "Order is appropriate. Abdominal ultrasound is suitable for initial evaluation of right upper quadrant discomfort and possible gallbladder disease. Consider further imaging if ultrasound is inconclusive for hemochromatosis-related liver changes."
+      }
+    },
+    {
+      "iteration": 4,
+      "provider": "Grok",
+      "promptType": "new",
+      "responseTime": 4523,
+      "hemochromatosisDetected": false,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain",
+            "isPrimary": false
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "Order for abdominal ultrasound is appropriate to evaluate chronic diarrhea and upper right quadrant discomfort. Consider additional liver-specific imaging or testing if ultrasound is inconclusive, given family history and lab findings."
+      }
+    },
+    {
+      "iteration": 5,
+      "provider": "GPT",
+      "promptType": "old",
+      "responseTime": 3665,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": "The order for an abdominal ultrasound is clinically appropriate given the patient's symptoms and family history."
+      }
+    },
+    {
+      "iteration": 5,
+      "provider": "GPT",
+      "promptType": "new",
+      "responseTime": 5631,
+      "hemochromatosisDetected": true,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R17",
+            "description": "Unspecified jaundice",
+            "isPrimary": false
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "Order for abdominal ultrasound is appropriate to investigate gallbladder disease in light of symptoms and clinical findings."
+      }
+    },
+    {
+      "iteration": 5,
+      "provider": "Grok",
+      "promptType": "old",
+      "responseTime": 2773,
+      "hemochromatosisDetected": true,
+      "response": {
+        "diagnosisCodes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hereditary hemochromatosis"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": "Order is appropriate. Abdominal ultrasound is suitable for evaluating gallbladder disease and liver abnormalities in the context of chronic diarrhea, upper quadrant pain, and possible hemochromatosis based on clinical history."
+      }
+    },
+    {
+      "iteration": 5,
+      "provider": "Grok",
+      "promptType": "new",
+      "responseTime": 13395,
+      "hemochromatosisDetected": false,
+      "response": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.13",
+            "description": "Epigastric pain",
+            "isPrimary": false
+          },
+          {
+            "code": "K76.9",
+            "description": "Liver disease, unspecified",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "Order for abdominal ultrasound is appropriate to evaluate chronic diarrhea and upper right quadrant discomfort. Consider additional imaging or testing if ultrasound is inconclusive for gallbladder or liver pathology. (33 words)"
+      }
+    }
+  ]
+}

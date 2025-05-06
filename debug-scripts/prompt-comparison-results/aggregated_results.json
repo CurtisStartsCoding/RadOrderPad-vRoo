@@ -1,0 +1,1469 @@
+{
+  "dictationText": "48-year-old female with chronic diarrhea for past 4 months, typically 4-5 loose stools daily. Reports upper right quadrant discomfort after meals. Patient has noted darkening of skin on knuckles and neck folds. Recent lab work shows mildly elevated ferritin and transaminases. Family history significant for father with cirrhosis of \"unknown cause.\" Order abdominal ultrasound to evaluate for possible gallbladder disease.",
+  "iterations": 10,
+  "oldPromptResults": {
+    "Claude": {
+      "hemochromatosisDetected": 0,
+      "totalRuns": 10,
+      "detectionRate": 0
+    },
+    "GPT": {
+      "hemochromatosisDetected": 2,
+      "totalRuns": 10,
+      "detectionRate": 0.2
+    }
+  },
+  "newPromptResults": {
+    "Claude": {
+      "hemochromatosisDetected": 0,
+      "totalRuns": 10,
+      "detectionRate": 0
+    },
+    "GPT": {
+      "hemochromatosisDetected": 0,
+      "totalRuns": 10,
+      "detectionRate": 0
+    }
+  },
+  "allResults": [
+    {
+      "iteration": 1,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4478,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.13",
+                "description": "Right upper quadrant pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Elevation of levels of transaminase"
+              },
+              {
+                "code": "E83.10",
+                "description": "Disorder of iron metabolism, unspecified"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Abdominal ultrasound is highly appropriate for evaluating gallbladder disease, RUQ pain, and abnormal liver enzymes. Consider adding hepatobiliary specific lab tests and elastography if clinical suspicion for hereditary hemochromatosis or cirrhosis exists."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 4440,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified"
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": ""
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4567,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for evaluating gallbladder disease with symptoms of RUQ pain and abnormal liver enzymes. Consider additional workup for metabolic conditions given skin changes and family history of cirrhosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 6362,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.A1",
+                "description": "Gallbladder disorder in diseases classified elsewhere",
+                "isPrimary": true
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": false
+              },
+              {
+                "code": "R16.0",
+                "description": "Hepatomegaly, not elsewhere classified",
+                "isPrimary": false
+              },
+              {
+                "code": "L81.4",
+                "description": "Other melanin hyperpigmentation",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Ordered imaging aligns with clinical symptoms suggesting gallbladder disease. Consider patient history and symptoms for potential additional imaging or testing if clinically indicated."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 2,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4102,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase"
+              },
+              {
+                "code": "E83.10",
+                "description": "Disorder of iron metabolism, unspecified"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Appropriate exam for chronic diarrhea with RUQ pain, elevated liver enzymes, and suspected gallbladder disease. Consider also evaluating for hemochromatosis given elevated ferritin, skin changes, and family history of cirrhosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 3570,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K82",
+                "description": "Gallbladder disease"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 9,
+            "feedback": "The order for an abdominal ultrasound is clinically appropriate given the symptoms and clinical indications."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4803,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.13",
+                "description": "Right upper quadrant abdominal pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for evaluating chronic diarrhea with RUQ pain and abnormal LFTs. Consider adding MRCP if ultrasound is inconclusive for biliary pathology. The skin changes could suggest metabolic disorders."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 8074,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.A",
+                "description": "Disorder of gallbladder",
+                "isPrimary": true
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Order for abdominal ultrasound is appropriate given clinical signs suggestive of gallbladder disease. Follow-up is crucial to confirm diagnosis and manage conditions."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 3,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4728,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.13",
+                "description": "Right upper quadrant pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of transaminase levels"
+              },
+              {
+                "code": "R79.89",
+                "description": "Other specified abnormal findings of blood chemistry (elevated ferritin)"
+              },
+              {
+                "code": "L83",
+                "description": "Acanthosis nigricans (darkening of skin on knuckles and neck folds)"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Abdominal ultrasound is appropriate for suspected gallbladder disease with RUQ pain. Consider adding liver evaluation given elevated transaminases, ferritin, and family history of cirrhosis as findings suggest possible hemochromatosis or NAFLD."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 3143,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified"
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 9,
+            "feedback": "The abdominal ultrasound is appropriate to investigate gallbladder disease given the patient's symptoms and family medical history."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4706,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.13",
+                "description": "Epigastric pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 7,
+            "priority": "routine",
+            "feedback": "Consider adding laboratory tests for hemochromatosis given the elevated ferritin, skin changes, and family history of cirrhosis. A complete abdominal ultrasound is appropriate to evaluate hepatobiliary system."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 5761,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.A1",
+                "description": "Disorder of gallbladder in diseases classified elsewhere",
+                "isPrimary": true
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": false
+              },
+              {
+                "code": "L81.5",
+                "description": "Other hyperpigmentation of skin",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "This ultrasound order is clinically appropriate for suspected gallbladder disease evaluation based on patient symptoms and abnormal lab results."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 4,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4514,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.13",
+                "description": "Epigastric pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 9,
+            "feedback": "Abdominal ultrasound is highly appropriate for evaluating right upper quadrant pain, elevated liver enzymes, and possible gallbladder disease. Consider adding additional tests to evaluate for hemochromatosis given skin changes and family history of cirrhosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 5883,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified"
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain"
+              },
+              {
+                "code": "R23.4",
+                "description": "Changes in skin texture"
+              },
+              {
+                "code": "K82.8",
+                "description": "Other specified diseases of gallbladder"
+              },
+              {
+                "code": "E83.110",
+                "description": "Hereditary hemochromatosis"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "The ordered abdominal ultrasound is appropriate for evaluation of gallbladder disease given the patient's symptoms and medical history. No further recommendations."
+          },
+          "hemochromatosisCheck": {
+            "found": true,
+            "code": {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            "message": "Hemochromatosis code E83.110 found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4412,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant abdominal pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "This is an appropriate order. Consider also evaluating for hemochromatosis given elevated ferritin, skin changes, and family history of cirrhosis. Follow-up laboratory testing may be warranted based on ultrasound findings."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 6396,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.A1",
+                "description": "Cholecystitis",
+                "isPrimary": true
+              },
+              {
+                "code": "E70.2",
+                "description": "Disorders of tyrosine metabolism",
+                "isPrimary": false
+              },
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for evaluating symptoms suggestive of gallbladder disease, aligned with presenting symptoms and family history."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 5,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4155,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.13",
+                "description": "Epigastric pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Appropriate study for evaluating gallbladder disease. Consider also checking hemochromatosis given elevated ferritin, skin changes, and family history of liver disease. A complete abdominal ultrasound will evaluate all abdominal organs including liver architecture."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 3748,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K82.A",
+                "description": "Disorder of gallbladder, unspecified"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "The order is appropriate for evaluating suspected gallbladder disease given the patient's symptoms and history. Continue monitoring the results and clinical progression."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4576,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for evaluating right upper quadrant pain with abnormal liver enzymes. Consider additional tests like HFE gene testing given family history and skin changes suggesting possible hemochromatosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 6440,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.A1",
+                "description": "Disorder of gallbladder, unspecified, with other specified disorders",
+                "isPrimary": true
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": false
+              },
+              {
+                "code": "R68.83",
+                "description": "Chronic fatigue, unspecified",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real-time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 9,
+            "priority": "routine",
+            "feedback": "The abdominal ultrasound order is clinically appropriate to evaluate suspected gallbladder disease given the patient's symptoms and clinical history."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 6,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4214,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.13",
+                "description": "Right upper quadrant abdominal pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase"
+              },
+              {
+                "code": "R78.89",
+                "description": "Finding of other specified substances, not normally found in blood (elevated ferritin)"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Abdominal ultrasound is appropriate for evaluating gallbladder disease with RUQ pain. Consider adding screening for hemochromatosis given elevated ferritin, skin changes, and family history of liver disease."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 2042,
+          "parsedResponse": {
+            "diagnosisCodes": [],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 9,
+            "feedback": ""
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4330,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for evaluation of RUQ pain and abnormal LFTs to assess for gallbladder disease. Consider additional testing to evaluate chronic diarrhea and skin changes which could suggest underlying metabolic disorders."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 8175,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.8",
+                "description": "Other specified diseases of gallbladder",
+                "isPrimary": true
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": false
+              },
+              {
+                "code": "R16.0",
+                "description": "Hepatomegaly, not elsewhere classified",
+                "isPrimary": false
+              },
+              {
+                "code": "L81.4",
+                "description": "Other melanin hyperpigmentation",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for suspected gallbladder issues in this clinical context. Code appropriately for symptoms and family history of liver disease."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 7,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4812,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of transaminase levels"
+              },
+              {
+                "code": "R78.89",
+                "description": "Finding of other specified substances, not normally found in blood (elevated ferritin)"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Appropriate initial imaging for chronic diarrhea with RUQ pain, elevated liver enzymes, and possible metabolic disorder. Consider including hepatic iron quantification if hemochromatosis is suspected based on skin changes and elevated ferritin."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 6359,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K92.1",
+                "description": "Melena"
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified"
+              },
+              {
+                "code": "R16.0",
+                "description": "Hepatomegaly, not elsewhere classified"
+              },
+              {
+                "code": "E83.110",
+                "description": "Hereditary hemochromatosis"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 9,
+            "feedback": ""
+          },
+          "hemochromatosisCheck": {
+            "found": true,
+            "code": {
+              "code": "E83.110",
+              "description": "Hereditary hemochromatosis"
+            },
+            "message": "Hemochromatosis code E83.110 found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 5620,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.13",
+                "description": "Right upper quadrant abdominal pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R79.0",
+                "description": "Abnormal level of blood mineral",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Complete abdominal ultrasound is appropriate given chronic diarrhea, RUQ pain, and abnormal labs. Consider additional workup for metabolic conditions given skin changes and family history of cirrhosis, which could suggest hemochromatosis or other metabolic disorders."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 7065,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.A1",
+                "description": "Dyskinesia of gallbladder",
+                "isPrimary": true
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": false
+              },
+              {
+                "code": "R68.83",
+                "description": "Chronic fatigue, unspecified",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is clinically appropriate for suspected gallbladder disease given symptoms and elevated liver enzymes. Good choice for initial imaging evaluation."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 8,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4514,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.13",
+                "description": "Right upper quadrant abdominal pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Elevation of levels of transaminase"
+              },
+              {
+                "code": "R79.89",
+                "description": "Other specified abnormal findings of blood chemistry (elevated ferritin)"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Appropriate initial imaging for RUQ pain with abnormal liver enzymes. Clinical presentation suggests possible NAFLD/NASH with insulin resistance (skin changes). Consider adding abdominal CT if ultrasound is inconclusive for hepatic evaluation given family history of cirrhosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 6018,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified"
+              },
+              {
+                "code": "R16.0",
+                "description": "Hepatomegaly, not elsewhere classified"
+              },
+              {
+                "code": "R23.3",
+                "description": "Spontaneous ecchymoses"
+              },
+              {
+                "code": "R16.2",
+                "description": "Hepatomegaly with splenomegaly, not elsewhere classified"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 9,
+            "feedback": ""
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4820,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for evaluating RUQ pain with abnormal LFTs. Consider additional workup for skin hyperpigmentation and family history of cirrhosis which may suggest hemochromatosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 7887,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.A1",
+                "description": "Disorder of gallbladder, unspecified, with cholangitis",
+                "isPrimary": true
+              },
+              {
+                "code": "E70.30",
+                "description": "Disorder of tyrosine metabolism, unspecified",
+                "isPrimary": false
+              },
+              {
+                "code": "K37.5",
+                "description": "Chronic diarrhea",
+                "isPrimary": false
+              },
+              {
+                "code": "R10.2*",
+                "description": "Pelvic and perineal pain",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Ultrasound is appropriate for evaluating gallbladder disease given clinical symptoms and elevated liver enzymes."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 9,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 3786,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.13",
+                "description": "Epigastric pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Elevation of levels of transaminase"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Abdominal ultrasound is appropriate for evaluation of chronic diarrhea with RUQ pain and elevated LFTs. Consider additional workup for possible hemochromatosis given skin changes and family history of cirrhosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 2658,
+          "parsedResponse": {
+            "diagnosisCodes": [],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": ""
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4303,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Complete abdominal ultrasound is appropriate for evaluating chronic diarrhea with RUQ pain and elevated liver enzymes. Consider additional workup for hemochromatosis given skin changes, elevated ferritin, and family history of cirrhosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 4806,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.A",
+                "description": "Dysfunction of gallbladder",
+                "isPrimary": true
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": false
+              },
+              {
+                "code": "R16.0",
+                "description": "Hepatomegaly, not elsewhere classified",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for evaluation of gallbladder disease in patients presenting with upper quadrant discomfort and relevant symptoms."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    },
+    {
+      "iteration": 10,
+      "oldPromptResults": {
+        "Claude": {
+          "responseTime": 4164,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea"
+              },
+              {
+                "code": "R10.13",
+                "description": "Epigastric pain"
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "Abdominal ultrasound is appropriate for evaluating upper right quadrant pain and abnormal liver enzymes. Consider also screening for hemochromatosis given the darkening skin, elevated ferritin, and family history of cirrhosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 3630,
+          "parsedResponse": {
+            "diagnosisCodes": [
+              {
+                "code": "K82.A",
+                "description": "Disorder of gallbladder, unspecified"
+              }
+            ],
+            "procedureCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "valid",
+            "complianceScore": 8,
+            "feedback": "The request for an abdominal ultrasound to assess the gallbladder based on the patient's symptoms and family history is appropriate."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      },
+      "newPromptResults": {
+        "Claude": {
+          "responseTime": 4602,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K59.1",
+                "description": "Functional diarrhea",
+                "isPrimary": true
+              },
+              {
+                "code": "R10.11",
+                "description": "Right upper quadrant pain",
+                "isPrimary": false
+              },
+              {
+                "code": "R74.0",
+                "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76700",
+                "description": "Ultrasound, abdominal, complete"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 7,
+            "priority": "routine",
+            "feedback": "Abdominal ultrasound is appropriate for evaluating chronic diarrhea with RUQ pain and abnormal liver enzymes. Consider additional workup for hemochromatosis given skin changes and family history of cirrhosis."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        },
+        "GPT": {
+          "responseTime": 4715,
+          "parsedResponse": {
+            "suggestedICD10Codes": [
+              {
+                "code": "K82.8",
+                "description": "Other specified diseases of gallbladder",
+                "isPrimary": true
+              },
+              {
+                "code": "R19.7",
+                "description": "Diarrhea, unspecified",
+                "isPrimary": false
+              },
+              {
+                "code": "R16.0",
+                "description": "Hepatomegaly, not elsewhere classified",
+                "isPrimary": false
+              }
+            ],
+            "suggestedCPTCodes": [
+              {
+                "code": "76705",
+                "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+              }
+            ],
+            "validationStatus": "appropriate",
+            "complianceScore": 8,
+            "priority": "routine",
+            "feedback": "The ordered ultrasound is clinically justified to evaluate suspected gallbladder disease given the patient's symptoms and family history."
+          },
+          "hemochromatosisCheck": {
+            "found": false,
+            "message": "Hemochromatosis code E83.110 not found"
+          }
+        }
+      }
+    }
+  ]
+}

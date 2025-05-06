@@ -1,0 +1,141 @@
+{
+  "dictationText": "48-year-old female with chronic diarrhea for past 4 months, typically 4-5 loose stools daily. Reports upper right quadrant discomfort after meals. Patient has noted darkening of skin on knuckles and neck folds. Recent lab work shows mildly elevated ferritin and transaminases. Family history significant for father with cirrhosis of \"unknown cause.\" Order abdominal ultrasound to evaluate for possible gallbladder disease.",
+  "oldPromptResults": {
+    "Claude": {
+      "responseTime": 4577,
+      "parsedResponse": {
+        "diagnosisCodes": [
+          {
+            "code": "K58.0",
+            "description": "Irritable bowel syndrome with diarrhea"
+          },
+          {
+            "code": "R10.13",
+            "description": "Right upper quadrant abdominal pain"
+          },
+          {
+            "code": "R74.0",
+            "description": "Nonspecific elevation of levels of transaminase"
+          },
+          {
+            "code": "E83.110",
+            "description": "Hemochromatosis, unspecified"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 8,
+        "feedback": "Appropriate initial imaging for RUQ pain and abnormal LFTs. Consider adding hemochromatosis screening to workup given family history of cirrhosis, elevated ferritin, and skin changes suggestive of bronze diabetes."
+      },
+      "hemochromatosisCheck": {
+        "found": true,
+        "code": {
+          "code": "E83.110",
+          "description": "Hemochromatosis, unspecified"
+        },
+        "message": "Hemochromatosis code E83.110 found"
+      }
+    },
+    "GPT": {
+      "responseTime": 7189,
+      "parsedResponse": {
+        "diagnosisCodes": [
+          {
+            "code": "K82.8",
+            "description": "Other specified diseases of gallbladder"
+          },
+          {
+            "code": "R19.7",
+            "description": "Diarrhea, unspecified"
+          },
+          {
+            "code": "R63.8",
+            "description": "Other symptoms and signs involving eating and feeding habits"
+          }
+        ],
+        "procedureCodes": [
+          {
+            "code": "76705",
+            "description": "Ultrasound, abdominal, real time with image documentation; limited (e.g., single organ, quadrant, follow-up)"
+          }
+        ],
+        "validationStatus": "valid",
+        "complianceScore": 9,
+        "feedback": ""
+      },
+      "hemochromatosisCheck": {
+        "found": false,
+        "message": "Hemochromatosis code E83.110 not found"
+      }
+    }
+  },
+  "newPromptResults": {
+    "Claude": {
+      "responseTime": 4706,
+      "parsedResponse": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K59.1",
+            "description": "Functional diarrhea",
+            "isPrimary": true
+          },
+          {
+            "code": "R10.11",
+            "description": "Right upper quadrant pain",
+            "isPrimary": false
+          },
+          {
+            "code": "R74.0",
+            "description": "Nonspecific elevation of levels of transaminase and lactic acid dehydrogenase [LDH]",
+            "isPrimary": false
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76700",
+            "description": "Ultrasound, abdominal, complete"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 7,
+        "priority": "routine",
+        "feedback": "Abdominal ultrasound is appropriate for evaluating potential gallbladder disease in a patient with RUQ pain and abnormal LFTs. Consider additional workup for hereditary hemochromatosis given skin changes, elevated ferritin, and family history of cirrhosis."
+      },
+      "hemochromatosisCheck": {
+        "found": false,
+        "message": "Hemochromatosis code E83.110 not found"
+      }
+    },
+    "GPT": {
+      "responseTime": 7983,
+      "parsedResponse": {
+        "suggestedICD10Codes": [
+          {
+            "code": "K82.A1",
+            "description": "Disorder of gallbladder in diseases classified elsewhere",
+            "isPrimary": true
+          }
+        ],
+        "suggestedCPTCodes": [
+          {
+            "code": "76705",
+            "description": "Ultrasound, abdominal, real time with image documentation; limited (eg, single organ, quadrant, follow-up)"
+          }
+        ],
+        "validationStatus": "appropriate",
+        "complianceScore": 8,
+        "priority": "routine",
+        "feedback": "Abdominal ultrasound is appropriate for evaluating gallbladder pathology in a patient with chronic diarrhea and upper quadrant discomfort."
+      },
+      "hemochromatosisCheck": {
+        "found": false,
+        "message": "Hemochromatosis code E83.110 not found"
+      }
+    }
+  }
+}

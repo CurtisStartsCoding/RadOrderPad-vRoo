@@ -1,0 +1,11 @@
+{
+  "testCase": "Multiple Sclerosis Case",
+  "dictation": "32-year-old female with recurring episodes of blurred vision, numbness in extremities, and fatigue lasting 2-3 weeks. Recent episode included difficulty with balance. Patient reports family history of autoimmune disorders. Neurological exam shows mild nystagmus and decreased sensation in right leg. Order brain MRI with and without contrast to evaluate for demyelinating disease.",
+  "expectedCodes": [
+    "G35"
+  ],
+  "preauthorizationCritical": true,
+  "oldValidation": null,
+  "newValidation": null,
+  "error": "Request failed with status code 404"
+}

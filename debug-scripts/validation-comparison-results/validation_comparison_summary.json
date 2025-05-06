@@ -1,0 +1,16 @@
+{
+  "totalCases": 3,
+  "preauthorizationCriticalCases": 2,
+  "oldValidation": {
+    "totalDetections": 0,
+    "preauthorizationCriticalDetections": 0,
+    "totalDetectionRate": 0,
+    "preauthorizationCriticalDetectionRate": 0
+  },
+  "newValidation": {
+    "totalDetections": 0,
+    "preauthorizationCriticalDetections": 0,
+    "totalDetectionRate": 0,
+    "preauthorizationCriticalDetectionRate": 0
+  }
+}

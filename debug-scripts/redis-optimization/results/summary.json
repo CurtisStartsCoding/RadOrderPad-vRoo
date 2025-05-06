@@ -1,0 +1,29 @@
+{
+  "totalTestCases": 7,
+  "byLlm": {
+    "Claude": {
+      "oldPrompt": {
+        "primaryCorrect": 0,
+        "cptCorrect": 0,
+        "secondaryCorrect": 0
+      },
+      "newPrompt": {
+        "primaryCorrect": 0,
+        "cptCorrect": 0,
+        "secondaryCorrect": 0
+      }
+    },
+    "GPT": {
+      "oldPrompt": {
+        "primaryCorrect": 0,
+        "cptCorrect": 0,
+        "secondaryCorrect": 0
+      },
+      "newPrompt": {
+        "primaryCorrect": 0,
+        "cptCorrect": 0,
+        "secondaryCorrect": 0
+      }
+    }
+  }
+}

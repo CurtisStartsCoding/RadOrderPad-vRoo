@@ -1,8 +1,8 @@
 /**
  * Script to populate Redis with ALL data from PostgreSQL
  */
-import { queryMainDb } from '../dist/config/db.js';
-import { getRedisClient, closeRedisConnection, cacheDataWithRedisJson } from '../dist/config/redis.js';
+import { queryMainDb } from '../../dist/config/db.js';
+import { getRedisClient, closeRedisConnection, cacheDataWithRedisJson } from '../../dist/config/redis.js';
 
 async function populateRedisFull() {
   try {

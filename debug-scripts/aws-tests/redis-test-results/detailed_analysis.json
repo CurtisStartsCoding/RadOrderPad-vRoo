@@ -1,0 +1,694 @@
+{
+  "testSummary": {
+    "totalTests": 30,
+    "totalTime": 2611.9934,
+    "llmComparison": {
+      "Claude": {
+        "totalTests": 10,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0
+      },
+      "Grok": {
+        "totalTests": 10,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0
+      },
+      "GPT": {
+        "totalTests": 10,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0
+      }
+    },
+    "testCaseComparison": {
+      "Hemochromatosis": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Multiple Sclerosis": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Pulmonary Embolism": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Appendicitis": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Breast Cancer": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Kidney Stones": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Stroke": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Lung Cancer": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Crohn's Disease": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      },
+      "Spinal Stenosis": {
+        "totalTests": 3,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0,
+        "byLLM": {
+          "Claude": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "Grok": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          },
+          "GPT": {
+            "diagnosisAccuracy": 0,
+            "procedureAccuracy": 0,
+            "keywordCount": 0,
+            "responseTime": 0
+          }
+        }
+      }
+    },
+    "keywordAnalysis": {
+      "average": 0,
+      "min": 0,
+      "max": 0
+    },
+    "accuracyAnalysis": {
+      "diagnosis": {
+        "average": 0,
+        "byLLM": {
+          "Claude": 0,
+          "Grok": 0,
+          "GPT": 0
+        }
+      },
+      "procedure": {
+        "average": 0,
+        "byLLM": {
+          "Claude": 0,
+          "Grok": 0,
+          "GPT": 0
+        }
+      }
+    }
+  },
+  "keywordAnalysis": {
+    "totalUniqueKeywords": [],
+    "keywordFrequency": {},
+    "keywordsByLLM": {},
+    "keywordsByTestCase": {},
+    "correlationWithAccuracy": {
+      "diagnosis": 0,
+      "procedure": 0
+    },
+    "topKeywords": []
+  },
+  "diagnosisAnalysis": {
+    "overallAccuracy": 0,
+    "byLLM": {
+      "Claude": 0,
+      "Grok": 0,
+      "GPT": 0
+    },
+    "byTestCase": {},
+    "mostMissedCodes": {},
+    "mostUnexpectedCodes": {},
+    "topMissedCodes": [],
+    "topUnexpectedCodes": []
+  },
+  "procedureAnalysis": {
+    "overallAccuracy": 0,
+    "byLLM": {
+      "Claude": 0,
+      "Grok": 0,
+      "GPT": 0
+    },
+    "byTestCase": {},
+    "mostMissedCodes": {},
+    "mostUnexpectedCodes": {},
+    "topMissedCodes": [],
+    "topUnexpectedCodes": []
+  },
+  "llmComparison": {
+    "overall": {
+      "Claude": {
+        "totalTests": 10,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0
+      },
+      "Grok": {
+        "totalTests": 10,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0
+      },
+      "GPT": {
+        "totalTests": 10,
+        "averageResponseTime": 0,
+        "averageDiagnosisAccuracy": 0,
+        "averageProcedureAccuracy": 0,
+        "averageKeywordCount": 0
+      }
+    },
+    "byMetric": {
+      "diagnosisAccuracy": [
+        {
+          "llm": "Claude",
+          "value": 0
+        },
+        {
+          "llm": "Grok",
+          "value": 0
+        },
+        {
+          "llm": "GPT",
+          "value": 0
+        }
+      ],
+      "procedureAccuracy": [
+        {
+          "llm": "Claude",
+          "value": 0
+        },
+        {
+          "llm": "Grok",
+          "value": 0
+        },
+        {
+          "llm": "GPT",
+          "value": 0
+        }
+      ],
+      "keywordCount": [
+        {
+          "llm": "Claude",
+          "value": 0
+        },
+        {
+          "llm": "Grok",
+          "value": 0
+        },
+        {
+          "llm": "GPT",
+          "value": 0
+        }
+      ],
+      "responseTime": [
+        {
+          "llm": "Claude",
+          "value": 0
+        },
+        {
+          "llm": "Grok",
+          "value": 0
+        },
+        {
+          "llm": "GPT",
+          "value": 0
+        }
+      ]
+    },
+    "strengths": {
+      "Claude": [],
+      "Grok": [],
+      "GPT": []
+    },
+    "weaknesses": {
+      "Claude": [
+        "Below average diagnosis accuracy",
+        "Below average procedure accuracy",
+        "Below average keyword extraction",
+        "Slower than average response time"
+      ],
+      "Grok": [
+        "Below average diagnosis accuracy",
+        "Below average procedure accuracy",
+        "Below average keyword extraction",
+        "Slower than average response time"
+      ],
+      "GPT": [
+        "Below average diagnosis accuracy",
+        "Below average procedure accuracy",
+        "Below average keyword extraction",
+        "Slower than average response time"
+      ]
+    }
+  },
+  "testCaseAnalysis": {
+    "byAccuracy": {
+      "diagnosis": [
+        {
+          "testCase": "Hemochromatosis",
+          "value": 0
+        },
+        {
+          "testCase": "Multiple Sclerosis",
+          "value": 0
+        },
+        {
+          "testCase": "Pulmonary Embolism",
+          "value": 0
+        },
+        {
+          "testCase": "Appendicitis",
+          "value": 0
+        },
+        {
+          "testCase": "Breast Cancer",
+          "value": 0
+        },
+        {
+          "testCase": "Kidney Stones",
+          "value": 0
+        },
+        {
+          "testCase": "Stroke",
+          "value": 0
+        },
+        {
+          "testCase": "Lung Cancer",
+          "value": 0
+        },
+        {
+          "testCase": "Crohn's Disease",
+          "value": 0
+        },
+        {
+          "testCase": "Spinal Stenosis",
+          "value": 0
+        }
+      ],
+      "procedure": [
+        {
+          "testCase": "Hemochromatosis",
+          "value": 0
+        },
+        {
+          "testCase": "Multiple Sclerosis",
+          "value": 0
+        },
+        {
+          "testCase": "Pulmonary Embolism",
+          "value": 0
+        },
+        {
+          "testCase": "Appendicitis",
+          "value": 0
+        },
+        {
+          "testCase": "Breast Cancer",
+          "value": 0
+        },
+        {
+          "testCase": "Kidney Stones",
+          "value": 0
+        },
+        {
+          "testCase": "Stroke",
+          "value": 0
+        },
+        {
+          "testCase": "Lung Cancer",
+          "value": 0
+        },
+        {
+          "testCase": "Crohn's Disease",
+          "value": 0
+        },
+        {
+          "testCase": "Spinal Stenosis",
+          "value": 0
+        }
+      ]
+    },
+    "byKeywordCount": [
+      {
+        "testCase": "Hemochromatosis",
+        "value": 0
+      },
+      {
+        "testCase": "Multiple Sclerosis",
+        "value": 0
+      },
+      {
+        "testCase": "Pulmonary Embolism",
+        "value": 0
+      },
+      {
+        "testCase": "Appendicitis",
+        "value": 0
+      },
+      {
+        "testCase": "Breast Cancer",
+        "value": 0
+      },
+      {
+        "testCase": "Kidney Stones",
+        "value": 0
+      },
+      {
+        "testCase": "Stroke",
+        "value": 0
+      },
+      {
+        "testCase": "Lung Cancer",
+        "value": 0
+      },
+      {
+        "testCase": "Crohn's Disease",
+        "value": 0
+      },
+      {
+        "testCase": "Spinal Stenosis",
+        "value": 0
+      }
+    ],
+    "byResponseTime": [
+      {
+        "testCase": "Hemochromatosis",
+        "value": 0
+      },
+      {
+        "testCase": "Multiple Sclerosis",
+        "value": 0
+      },
+      {
+        "testCase": "Pulmonary Embolism",
+        "value": 0
+      },
+      {
+        "testCase": "Appendicitis",
+        "value": 0
+      },
+      {
+        "testCase": "Breast Cancer",
+        "value": 0
+      },
+      {
+        "testCase": "Kidney Stones",
+        "value": 0
+      },
+      {
+        "testCase": "Stroke",
+        "value": 0
+      },
+      {
+        "testCase": "Lung Cancer",
+        "value": 0
+      },
+      {
+        "testCase": "Crohn's Disease",
+        "value": 0
+      },
+      {
+        "testCase": "Spinal Stenosis",
+        "value": 0
+      }
+    ],
+    "mostChallenging": [
+      {
+        "testCase": "Hemochromatosis",
+        "diagnosisAccuracy": 0,
+        "procedureAccuracy": 0,
+        "keywordCount": 0
+      },
+      {
+        "testCase": "Multiple Sclerosis",
+        "diagnosisAccuracy": 0,
+        "procedureAccuracy": 0,
+        "keywordCount": 0
+      },
+      {
+        "testCase": "Pulmonary Embolism",
+        "diagnosisAccuracy": 0,
+        "procedureAccuracy": 0,
+        "keywordCount": 0
+      }
+    ],
+    "leastChallenging": [
+      {
+        "testCase": "Hemochromatosis",
+        "diagnosisAccuracy": 0,
+        "procedureAccuracy": 0,
+        "keywordCount": 0
+      },
+      {
+        "testCase": "Multiple Sclerosis",
+        "diagnosisAccuracy": 0,
+        "procedureAccuracy": 0,
+        "keywordCount": 0
+      },
+      {
+        "testCase": "Pulmonary Embolism",
+        "diagnosisAccuracy": 0,
+        "procedureAccuracy": 0,
+        "keywordCount": 0
+      }
+    ]
+  },
+  "recommendations": {
+    "keywordExtraction": [
+      "Consider implementing n-gram analysis to extract multi-word medical terms"
+    ],
+    "searchStrategy": [
+      "Implement a hybrid search approach that combines weighted search with fallback to more exhaustive search",
+      "Increase the result limit from 20 to a higher number for complex cases"
+    ],
+    "llmSelection": [],
+    "testCaseFocus": [
+      "Focus on improving accuracy for challenging cases: Hemochromatosis, Multiple Sclerosis, Pulmonary Embolism"
+    ]
+  }
+}
