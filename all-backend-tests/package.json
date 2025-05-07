@@ -1,0 +1,15 @@
+{
+  "name": "all-backend-tests",
+  "version": "1.0.0",
+  "description": "Consolidated backend API tests",
+  "main": "run-all-tests.bat",
+  "scripts": {
+    "test": "run-all-tests.bat"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.0.1",
+    "form-data": "^4.0.0"
+  }
+}

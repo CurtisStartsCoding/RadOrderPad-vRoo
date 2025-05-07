@@ -18,6 +18,12 @@ const excludeDirs = [
 // Initialize output file
 fs.writeFileSync(outputFile, '', 'utf8');
 
+// Function to get current timestamp
+function getCurrentTimestamp() {
+  const now = new Date();
+  return now.toLocaleString();
+}
+
 // Function to append content to the output file
 function appendToOutput(content) {
   fs.appendFileSync(outputFile, content, 'utf8');
@@ -41,9 +47,10 @@ function processFile(filePath) {
                      (slice.filter(b => b < 32 && b !== 9 && b !== 10 && b !== 13).length / bytesRead > 0.3);
     
     if (isBinary) {
-      appendToOutput(`---------${relativePath}-------\n`);
+      appendToOutput(`\n\n${'='.repeat(80)}\n`);
+      appendToOutput(`FILE: ${relativePath} | TIMESTAMP: ${getCurrentTimestamp()}\n`);
+      appendToOutput(`${'='.repeat(80)}\n\n`);
       appendToOutput(`[Binary file - content not included]\n`);
-      appendToOutput(`--------------------\n\n`);
       console.log(`Skipped binary file: ${relativePath}`);
       return;
     }
@@ -51,17 +58,19 @@ function processFile(filePath) {
     // Read file content
     const fileContent = fs.readFileSync(filePath, 'utf8');
     
-    // Format and write to output file
-    appendToOutput(`---------${relativePath}-------\n`);
+    // Format and write to output file with timestamp and clear separator
+    appendToOutput(`\n\n${'='.repeat(80)}\n`);
+    appendToOutput(`FILE: ${relativePath} | TIMESTAMP: ${getCurrentTimestamp()}\n`);
+    appendToOutput(`${'='.repeat(80)}\n\n`);
     appendToOutput(`${fileContent}\n`);
-    appendToOutput(`--------------------\n\n`);
     
     console.log(`Processed: ${relativePath}`);
   } catch (error) {
     // Handle binary files or other read errors
-    appendToOutput(`---------${relativePath}-------\n`);
+    appendToOutput(`\n\n${'='.repeat(80)}\n`);
+    appendToOutput(`FILE: ${relativePath} | TIMESTAMP: ${getCurrentTimestamp()}\n`);
+    appendToOutput(`${'='.repeat(80)}\n\n`);
     appendToOutput(`[Error reading file: ${error.message}]\n`);
-    appendToOutput(`--------------------\n\n`);
     
     console.log(`Error processing: ${relativePath} - ${error.message}`);
   }

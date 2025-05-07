@@ -1,0 +1,410 @@
+===== Running Working API Tests (Part 2) =====
+Project root directory: c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\
+
+Generating fresh tokens for all roles...
+=== GENERATING TOKENS FOR ALL ROLES ===
+API URL: https://api.radorderpad.com
+=======================================
+
+
+🔑 Generating token for admin_staff role...
+   Email: test.admin_staff@example.com
+✅ Token received successfully for admin_staff
+   Token saved to c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\admin_staff-token.txt
+
+🔑 Generating token for physician role...
+   Email: test.physician@example.com
+✅ Token received successfully for physician
+   Token saved to c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\physician-token.txt
+
+🔑 Generating token for admin_referring role...
+   Email: test.admin_referring@example.com
+✅ Token received successfully for admin_referring
+   Token saved to c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\admin_referring-token.txt
+
+🔑 Generating token for super_admin role...
+   Email: superadmin.20141244@example.com
+✅ Token received successfully for super_admin
+   Token saved to c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\super_admin-token.txt
+
+🔑 Generating token for admin_radiology role...
+   Email: test.admin_radiology@example.com
+✅ Token received successfully for admin_radiology
+   Token saved to c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\admin_radiology-token.txt
+
+🔑 Generating token for scheduler role...
+   Email: test.scheduler@example.com
+✅ Token received successfully for scheduler
+   Token saved to c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\scheduler-token.txt
+
+🔑 Generating token for radiologist role...
+   Email: test.radiologist@example.com
+✅ Token received successfully for radiologist
+   Token saved to c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\radiologist-token.txt
+
+=== TOKEN GENERATION SUMMARY ===
+Total Roles: 7
+Successful: 7
+Failed: 0
+
+=== RESULTS BY ROLE ===
+✅ admin_staff: Token generated successfully
+   File: c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\admin_staff-token.txt
+✅ physician: Token generated successfully
+   File: c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\physician-token.txt
+✅ admin_referring: Token generated successfully
+   File: c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\admin_referring-token.txt
+✅ super_admin: Token generated successfully
+   File: c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\super_admin-token.txt
+✅ admin_radiology: Token generated successfully
+   File: c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\admin_radiology-token.txt
+✅ scheduler: Token generated successfully
+   File: c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\scheduler-token.txt
+✅ radiologist: Token generated successfully
+   File: c:\Users\curti\Dropbox\Apps\ROP Roo Backend Finalization\all-backend-tests\tokens\radiologist-token.txt
+
+Creating convenience scripts for setting token environment variables...
+Created Windows batch script: set-token-env-vars.bat
+Created PowerShell script: Set-TokenEnvVars.ps1
+
+=== TOKEN GENERATION COMPLETE ===
+
+Setting environment variables for tokens...
+Admin Referring Token loaded successfully.
+Admin Radiology Token loaded successfully.
+Admin Staff Token loaded successfully.
+Physician Token loaded successfully.
+
+Running Connection Terminate Tests...
+Testing connection termination endpoint...
+Testing connection termination endpoint...
+API URL: https://api.radorderpad.com
+Relationship ID: 1
+Expected 404 response (relationship validation working correctly):
+Status: 404
+Response: {
+  "message": "Relationship not found, not authorized, or not in active status"
+}
+Test completed successfully
+
+Running Update User Me Tests...
+Testing update user profile endpoint...
+Testing update user profile endpoint...
+API URL: https://api.radorderpad.com
+Fetching current user profile...
+Current user profile:
+{
+  "id": 1,
+  "email": "test.physician@example.com",
+  "first_name": "Valid Name",
+  "last_name": "Physician",
+  "role": "physician",
+  "organization_id": 1,
+  "is_active": true,
+  "email_verified": true,
+  "created_at": "2025-04-13T16:34:49.727Z",
+  "updated_at": "2025-05-07T00:37:06.670Z",
+  "specialty": "General Practice"
+}
+Updating user profile with:
+{
+  "firstName": "Valid Name (Updated 2025-05-07T00-38-15-116Z)",
+  "lastName": "Physician",
+  "phoneNumber": "555-123-4567",
+  "specialty": "General Practice"
+}
+User profile update successful!
+Status: 200
+Response: {
+  "success": true,
+  "message": "User profile updated successfully",
+  "data": {
+    "id": 1,
+    "email": "test.physician@example.com",
+    "first_name": "Valid Name (Updated 2025-05-07T00-38-15-116Z)",
+    "last_name": "Physician",
+    "role": "physician",
+    "organization_id": 1,
+    "is_active": true,
+    "email_verified": true,
+    "created_at": "2025-04-13T16:34:49.727Z",
+    "updated_at": "2025-05-07T00:38:15.770Z",
+    "specialty": "General Practice"
+  }
+}
+✓ First name was updated correctly
+
+Testing update with invalid data...
+✓ Empty update correctly rejected with 400 Bad Request
+Response: {
+  "success": false,
+  "message": "No valid fields provided for update"
+}
+
+Testing update with restricted fields...
+✓ Update with restricted fields succeeded (restricted fields should be ignored)
+Response: {
+  "success": true,
+  "message": "User profile updated successfully",
+  "data": {
+    "id": 1,
+    "email": "test.physician@example.com",
+    "first_name": "Valid Name",
+    "last_name": "Physician",
+    "role": "physician",
+    "organization_id": 1,
+    "is_active": true,
+    "email_verified": true,
+    "created_at": "2025-04-13T16:34:49.727Z",
+    "updated_at": "2025-05-07T00:38:15.925Z",
+    "specialty": "General Practice"
+  }
+}
+✓ Valid field (firstName) was updated correctly
+✓ Restricted field (role) was correctly ignored
+✓ Restricted field (email) was correctly ignored
+
+Testing update without authentication...
+✓ Unauthenticated request correctly rejected with 401 Unauthorized
+Response: {
+  "message": "Authorization header missing"
+}
+
+✓ All tests passed!
+Test completed successfully
+
+Running List Organization Users Tests...
+API URL: https://api.radorderpad.com
+Admin Referring Token file: ..\tokens\admin_referring-token.txt
+Admin Radiology Token file: ..\tokens\admin_radiology-token.txt
+Physician Token file: ..\tokens\physician-token.txt
+
+
+Testing GET /api/users endpoint with admin_referring role...
+
+{"success":true,"data":{"users":[{"id":3,"email":"test.admin@example.com","first_name":"Test","last_name":"Admin","role":"admin_referring","organization_id":1,"is_active":true,"email_verified":false,"created_at":"2025-04-21T03:11:56.516Z","updated_at":"2025-04-21T03:11:56.516Z"},{"id":4,"email":"test.admin_staff@example.com","first_name":"Test","last_name":"AdminStaff","role":"admin_staff","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:38.559Z","updated_at":"2025-04-21T16:06:38.559Z"},{"id":9,"email":"test.admin_referring@example.com","first_name":"Updated","last_name":"Name","role":"admin_referring","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-22T16:51:07.445Z","updated_at":"2025-05-07T00:37:09.802Z","specialty":"Updated Specialty"},{"id":1,"email":"test.physician@example.com","first_name":"Valid Name","last_name":"Physician","role":"physician","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-13T16:34:49.727Z","updated_at":"2025-05-07T00:38:15.925Z","specialty":"General Practice"},{"id":8,"email":"test.super_admin@example.com","first_name":"Test","last_name":"SuperAdmin","role":"super_admin","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:39.274Z","updated_at":"2025-04-21T16:06:39.274Z"},{"id":10,"email":"test.superadmin@example.com","first_name":"Test","last_name":"SuperAdmin","role":"super_admin","organization_id":1,"is_active":false,"email_verified":true,"created_at":"2025-04-22T16:51:07.445Z","updated_at":"2025-05-07T00:37:10.666Z"}],"pagination":{"total":6,"page":1,"limit":20,"pages":1}}}
+
+Testing with pagination and sorting...
+
+{"success":true,"data":{"users":[{"id":3,"email":"test.admin@example.com","first_name":"Test","last_name":"Admin","role":"admin_referring","organization_id":1,"is_active":true,"email_verified":false,"created_at":"2025-04-21T03:11:56.516Z","updated_at":"2025-04-21T03:11:56.516Z"},{"id":9,"email":"test.admin_referring@example.com","first_name":"Updated","last_name":"Name","role":"admin_referring","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-22T16:51:07.445Z","updated_at":"2025-05-07T00:37:09.802Z","specialty":"Updated Specialty"}],"pagination":{"total":6,"page":1,"limit":2,"pages":3}}}
+
+Testing with role filter...
+
+{"success":true,"data":{"users":[{"id":1,"email":"test.physician@example.com","first_name":"Valid Name","last_name":"Physician","role":"physician","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-13T16:34:49.727Z","updated_at":"2025-05-07T00:38:15.925Z","specialty":"General Practice"}],"pagination":{"total":1,"page":1,"limit":20,"pages":1}}}
+
+Testing with status filter...
+
+{"success":true,"data":{"users":[{"id":3,"email":"test.admin@example.com","first_name":"Test","last_name":"Admin","role":"admin_referring","organization_id":1,"is_active":true,"email_verified":false,"created_at":"2025-04-21T03:11:56.516Z","updated_at":"2025-04-21T03:11:56.516Z"},{"id":4,"email":"test.admin_staff@example.com","first_name":"Test","last_name":"AdminStaff","role":"admin_staff","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:38.559Z","updated_at":"2025-04-21T16:06:38.559Z"},{"id":9,"email":"test.admin_referring@example.com","first_name":"Updated","last_name":"Name","role":"admin_referring","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-22T16:51:07.445Z","updated_at":"2025-05-07T00:37:09.802Z","specialty":"Updated Specialty"},{"id":1,"email":"test.physician@example.com","first_name":"Valid Name","last_name":"Physician","role":"physician","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-13T16:34:49.727Z","updated_at":"2025-05-07T00:38:15.925Z","specialty":"General Practice"},{"id":8,"email":"test.super_admin@example.com","first_name":"Test","last_name":"SuperAdmin","role":"super_admin","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:39.274Z","updated_at":"2025-04-21T16:06:39.274Z"}],"pagination":{"total":5,"page":1,"limit":20,"pages":1}}}
+
+Testing with name search...
+
+{"success":true,"data":{"users":[{"id":3,"email":"test.admin@example.com","first_name":"Test","last_name":"Admin","role":"admin_referring","organization_id":1,"is_active":true,"email_verified":false,"created_at":"2025-04-21T03:11:56.516Z","updated_at":"2025-04-21T03:11:56.516Z"},{"id":4,"email":"test.admin_staff@example.com","first_name":"Test","last_name":"AdminStaff","role":"admin_staff","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:38.559Z","updated_at":"2025-04-21T16:06:38.559Z"},{"id":8,"email":"test.super_admin@example.com","first_name":"Test","last_name":"SuperAdmin","role":"super_admin","organization_id":1,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:39.274Z","updated_at":"2025-04-21T16:06:39.274Z"},{"id":10,"email":"test.superadmin@example.com","first_name":"Test","last_name":"SuperAdmin","role":"super_admin","organization_id":1,"is_active":false,"email_verified":true,"created_at":"2025-04-22T16:51:07.445Z","updated_at":"2025-05-07T00:37:10.666Z"}],"pagination":{"total":4,"page":1,"limit":20,"pages":1}}}
+
+Testing GET /api/users endpoint with admin_radiology role...
+
+{"success":true,"data":{"users":[{"id":2,"email":"target.admin@example.com","first_name":"Target","last_name":"Admin","role":"admin_referring","organization_id":2,"is_active":true,"email_verified":true,"created_at":"2025-04-13T21:53:08.895Z","updated_at":"2025-04-13T21:53:08.895Z"},{"id":7,"email":"test.radiologist@example.com","first_name":"Test","last_name":"Radiologist","role":"radiologist","organization_id":2,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:39.098Z","updated_at":"2025-04-21T16:06:39.098Z"},{"id":5,"email":"test.admin_radiology@example.com","first_name":"Test","last_name":"RadiologyAdmin","role":"admin_radiology","organization_id":2,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:38.735Z","updated_at":"2025-04-21T16:06:38.735Z"},{"id":6,"email":"test.scheduler@example.com","first_name":"Test","last_name":"Scheduler","role":"scheduler","organization_id":2,"is_active":true,"email_verified":true,"created_at":"2025-04-21T16:06:38.906Z","updated_at":"2025-04-21T16:06:38.906Z"}],"pagination":{"total":4,"page":1,"limit":20,"pages":1}}}
+
+Testing GET /api/users endpoint with physician role (should be forbidden)...
+
+{"message":"Access denied: Insufficient permissions","requiredRoles":["admin_referring","admin_radiology"],"userRole":"physician"}
+
+Testing unauthorized access (no token)...
+
+{"message":"Authorization header missing"}
+
+Test completed.
+
+Running Update Organization User Tests...
+Testing update user by ID endpoint...
+API URL: https://api.radorderpad.com
+Using admin token for authentication
+
+Test 1: Update user in admin's organization (ID: 9)
+Response status: 200
+Response data: {
+  "success": true,
+  "message": "User profile updated successfully",
+  "data": {
+    "id": 9,
+    "email": "test.admin_referring@example.com",
+    "first_name": "Updated",
+    "last_name": "Name",
+    "role": "admin_referring",
+    "organization_id": 1,
+    "is_active": true,
+    "email_verified": true,
+    "created_at": "2025-04-22T16:51:07.445Z",
+    "updated_at": "2025-05-07T00:38:19.086Z",
+    "specialty": "Updated Specialty"
+  }
+}
+✓ Successfully updated user in admin's organization
+
+Test 2: Update user in different organization (ID: 2)
+Response status: 404
+Response: {
+  "success": false,
+  "message": "User not found or not in your organization"
+}
+✓ Correctly rejected with 404 Not Found (user not in admin's organization)
+
+Test 3: Update non-existent user (ID: 99999)
+Response status: 404
+Response: {
+  "success": false,
+  "message": "User not found or not in your organization"
+}
+✓ Correctly rejected with 404 Not Found (user does not exist)
+
+Test 4: Update user with invalid ID format (ID: abc)
+Response status: 400
+Response: {
+  "success": false,
+  "message": "Invalid user ID format"
+}
+✓ Correctly rejected with 400 Bad Request (invalid ID format)
+
+Test 5: Update user with invalid role
+Response status: 400
+Response: {
+  "success": false,
+  "message": "You are not authorized to assign the 'super_admin' role. Allowed roles: physician, admin_staff"
+}
+✓ Correctly rejected with 400 Bad Request (invalid role)
+
+Test 6: Update user with non-admin token
+Response status: 403
+Response: {
+  "message": "Access denied: Insufficient permissions",
+  "requiredRoles": [
+    "admin_referring",
+    "admin_radiology"
+  ],
+  "userRole": "physician"
+}
+✓ Correctly rejected with 403 Forbidden (non-admin token)
+
+Test 7: Update user without authentication
+Response status: 401
+Response: {
+  "message": "Authorization header missing"
+}
+✓ Correctly rejected with 401 Unauthorized (no authentication)
+
+All tests completed!
+
+Running Deactivate Organization User Tests...
+Testing deactivate user endpoint...
+API URL: https://api.radorderpad.com
+Using admin token for authentication
+
+Test 1: Deactivate user in admin's organization (ID: 10 )
+Response status: 200
+Response data: {
+  "success": true,
+  "message": "User deactivated successfully"
+}
+✓ Successfully deactivated user in admin's organization
+
+Test 2: Deactivate user in different organization (ID: 2 )
+Response status: 404
+Response: {
+  "success": false,
+  "message": "User not found or not in your organization"
+}
+✓ Correctly rejected with 404 Not Found (user not in admin's organization)
+
+Test 3: Attempt to deactivate self (admin's own account) (ID: 9 )
+Response status: 400
+Response: {
+  "success": false,
+  "message": "Administrators cannot deactivate their own account"
+}
+✓ Correctly rejected with 400 Bad Request (cannot deactivate self)
+
+Test 4: Deactivate with invalid ID format (ID: abc)
+Response status: 400
+Response: {
+  "success": false,
+  "message": "Invalid user ID format"
+}
+✓ Correctly rejected with 400 Bad Request (invalid ID format)
+
+Test 5: Deactivate non-existent user (ID: 99999)
+Response status: 404
+Response: {
+  "success": false,
+  "message": "User not found or not in your organization"
+}
+✓ Correctly rejected with 404 Not Found (user does not exist)
+
+Test 6: Deactivate with non-admin token
+Response status: 403
+Response: {
+  "message": "Access denied: Insufficient permissions",
+  "requiredRoles": [
+    "admin_referring",
+    "admin_radiology"
+  ],
+  "userRole": "physician"
+}
+✓ Correctly rejected with 403 Forbidden (non-admin token)
+
+All tests completed!
+
+Running User Location Assignment Tests...
+=== Testing User Location Assignment Endpoints ===
+
+Using API URL: https://api.radorderpad.com
+Testing User Location Assignment Endpoints
+
+Test 1: Assign User X to Location L1
+
+Test 2: Get locations for User X
+
+Test 3: Assign User X to Location L1 again
+
+Test 4: Try to assign User X to Location L2 (should fail)
+{
+  "error": true,
+  "status": 404,
+  "data": {
+    "message": "User 29 not found or not authorized"
+  }
+}
+
+Test 5: Unassign User X from Location L1
+
+Test 6: Get locations for User X (should be empty now)
+
+Test 7: Unassign User X from Location L1 again (should return 404)
+{
+  "error": true,
+  "status": 404,
+  "data": {
+    "message": "User 29 not found or not authorized"
+  }
+}
+
+Test 8: Try to assign User Y (Org B) using Org A token (should return 404)
+{
+  "error": true,
+  "status": 404,
+  "data": {
+    "message": "User 39 not found or not authorized"
+  }
+}
+
+Test 9: Try with invalid user ID format (should return 400)
+{
+  "error": true,
+  "status": 400,
+  "data": {
+    "message": "Invalid user ID"
+  }
+}
+
+Tests completed
+
+=== Test Completed ===
+Press any key to continue . . . 

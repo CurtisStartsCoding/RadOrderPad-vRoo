@@ -1,5 +1,5 @@
 # Detailed Redis Implementation in RadOrderPad
-
+From Replit!!!
 ## Core Redis Functionality
 
 ### 1. Caching for Medical Code Lookups

@@ -10,8 +10,15 @@ const excludeDirs = [
   '.git',
   '.vercel',
   'dist',
-  'debug_scripts',  // Exclude debug_scripts as requested
-  'gemini-guides'   // Exclude gemini-guides as requested
+  'gemini-guides',  // Exclude gemini-guides as requested
+  'api-docs'        // Exclude api-docs as it's handled by a separate script
+];
+
+// Files with these extensions will be excluded
+const excludeExtensions = [
+  '.bat',
+  '.sh',
+  '.exe'
 ];
 const includeExtensions = [
   '.md',
@@ -20,7 +27,9 @@ const includeExtensions = [
   '.js',
   '.ts',
   '.html',
-  '.css'
+  '.css',
+  '.yaml',
+  '.yml'
 ];
 
 // Initialize output file
@@ -41,6 +50,12 @@ function appendToOutput(content) {
 function processFile(filePath) {
   const relativePath = path.relative(rootDir, filePath).replace(/\\/g, '/');
   const ext = path.extname(filePath).toLowerCase();
+  
+  // Skip files with extensions in the exclude list
+  if (excludeExtensions.includes(ext)) {
+    console.log(`Skipping file with excluded extension: ${relativePath}`);
+    return;
+  }
   
   // Skip files with extensions not in the include list
   if (!includeExtensions.includes(ext)) {
@@ -98,7 +113,7 @@ function traverseDirectory(dirPath) {
 
 // Main execution
 console.log('Starting directory traversal...');
-console.log(`Processing the frontend-explanation directory (excluding debug_scripts and gemini-guides)`);
+console.log(`Processing the frontend-explanation directory (excluding gemini-guides and api-docs)`);
 console.log(`Output will be written to: ${outputFile}`);
 
 try {

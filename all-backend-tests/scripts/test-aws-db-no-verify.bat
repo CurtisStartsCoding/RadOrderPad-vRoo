@@ -1,0 +1,7 @@
+@echo off
+echo Testing with AWS Database (sslmode=no-verify)...
+set NODE_ENV=production
+set API_URL=https://api.radorderpad.com
+set JWT_SECRET=radorderpad-secure-jwt-secret-f8a72c1e9b5d3e7f4a6b2c8d9e0f1a2b3c4d5e6f
+node -r dotenv/config debug-scripts/vercel-tests/test-superadmin-api.js dotenv_config_path=debug-scripts/vercel-tests/.env.aws-test-new
+pause
