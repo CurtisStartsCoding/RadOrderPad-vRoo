@@ -406,10 +406,10 @@ To test the validation engine:
 
 ```powershell
 # Test the health endpoint
-curl -v http://localhost:3000/health
+curl -v https://api.radorderpad.com/health
 
 # Test the validation endpoint with a persistent headache scenario
-Invoke-WebRequest -Uri "http://localhost:3000/api/orders/validate" -Method POST -Headers @{"Authorization"="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm9yZ0lkIjoxLCJyb2xlIjoicGh5c2ljaWFuIiwiZW1haWwiOiJ0ZXN0LnBoeXNpY2lhbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0NDU1NzQ4MCwiZXhwIjoxNzQ0NjQzODgwfQ.LNPodxOGryfJj3xt7YBkHY4qvjQMx67XT8JyJm2Hg40"; "Content-Type"="application/json"} -Body '{"dictationText":"Patient with persistent headache for 3 weeks, worsening with movement. History of migraines. Request MRI brain to rule out structural abnormalities.", "patientInfo": {"id": 1}, "radiologyOrganizationId": 1}' | ConvertFrom-Json | ConvertTo-Json -Depth 10
+Invoke-WebRequest -Uri "https://api.radorderpad.com/api/orders/validate" -Method POST -Headers @{"Authorization"="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm9yZ0lkIjoxLCJyb2xlIjoicGh5c2ljaWFuIiwiZW1haWwiOiJ0ZXN0LnBoeXNpY2lhbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0NDU1NzQ4MCwiZXhwIjoxNzQ0NjQzODgwfQ.LNPodxOGryfJj3xt7YBkHY4qvjQMx67XT8JyJm2Hg40"; "Content-Type"="application/json"} -Body '{"dictationText":"Patient with persistent headache for 3 weeks, worsening with movement. History of migraines. Request MRI brain to rule out structural abnormalities.", "patientInfo": {"id": 1}, "radiologyOrganizationId": 1}' | ConvertFrom-Json | ConvertTo-Json -Depth 10
 ```
 
 ## Conclusion
