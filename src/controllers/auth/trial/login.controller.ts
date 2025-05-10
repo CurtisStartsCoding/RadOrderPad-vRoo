@@ -24,7 +24,8 @@ export class TrialLoginController {
       
       res.status(200).json({
         success: true,
-        token: result.token
+        token: result.token,
+        validationsRemaining: result.validationsRemaining
       });
     } catch (error) {
       enhancedLogger.error('Error in trial user login:', error);

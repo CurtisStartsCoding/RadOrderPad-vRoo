@@ -41,7 +41,7 @@ export class AuthService {
   /**
    * Login a trial user
    */
-  async loginTrialUser(email: string, password: string): Promise<{ token: string }> {
+  async loginTrialUser(email: string, password: string): Promise<{ token: string, validationsRemaining: number }> {
     return loginTrialUser(email, password);
   }
   

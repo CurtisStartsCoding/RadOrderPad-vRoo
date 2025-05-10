@@ -13,11 +13,11 @@ import enhancedLogger from '../../../utils/enhanced-logger';
 export async function loginTrialUser(
   email: string,
   password: string
-): Promise<{ token: string }> {
+): Promise<{ token: string, validationsRemaining: number }> {
   try {
     // Get trial user by email
     const userResult = await queryMainDb(
-      'SELECT id, email, password_hash, specialty FROM trial_users WHERE email = $1',
+      'SELECT id, email, password_hash, specialty, validation_count, max_validations FROM trial_users WHERE email = $1',
       [email]
     );
     
@@ -57,7 +57,10 @@ export async function loginTrialUser(
       email: user.email 
     });
     
-    return { token };
+    // Calculate remaining validations
+    const validationsRemaining = user.max_validations - user.validation_count;
+    
+    return { token, validationsRemaining };
   } catch (error) {
     enhancedLogger.error('Error in loginTrialUser service:', error);
     throw error;
