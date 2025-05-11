@@ -14,29 +14,23 @@ for (const key in envConfig) {
   process.env[key] = envConfig[key];
 }
 
-// Configuration for main database (Production)
-const mainDbConfig = {
-  host: process.env.PROD_MAIN_DB_HOST,
-  port: process.env.PROD_MAIN_DB_PORT,
-  database: process.env.PROD_MAIN_DB_NAME,
-  user: process.env.PROD_DB_USER,
-  password: process.env.PROD_DB_PASSWORD,
-  ssl: { rejectUnauthorized: false }
-};
+// Get connection strings from .env.production
+const mainDbUrl = process.env.DEV_MAIN_DATABASE_URL;
+const phiDbUrl = process.env.DEV_PHI_DATABASE_URL;
 
-// Configuration for PHI database (Production)
-const phiDbConfig = {
-  host: process.env.PROD_PHI_DB_HOST,
-  port: process.env.PROD_PHI_DB_PORT,
-  database: process.env.PROD_PHI_DB_NAME,
-  user: process.env.PROD_DB_USER,
-  password: process.env.PROD_DB_PASSWORD,
-  ssl: { rejectUnauthorized: false }
-};
+console.log('Using DEV connection strings from .env.production:');
+console.log(`DEV Main DB URL: ${mainDbUrl}`);
+console.log(`DEV PHI DB URL: ${phiDbUrl}`);
 
-// Create connection pools
-const mainPool = new Pool(mainDbConfig);
-const phiPool = new Pool(phiDbConfig);
+// Create connection pools using connection strings
+const mainPool = new Pool({
+  connectionString: mainDbUrl,
+  ssl: { rejectUnauthorized: false }
+});
+const phiPool = new Pool({
+  connectionString: phiDbUrl,
+  ssl: { rejectUnauthorized: false }
+});
 
 /**
  * Query the prompt_templates table in the main database
