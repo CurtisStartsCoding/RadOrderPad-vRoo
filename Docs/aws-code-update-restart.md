@@ -13,11 +13,23 @@ echo "Backup created at: ~/code/RadOrderPad-vRoo-backup-$BACKUP_DATE"
 
 # Update and restart application
 cd ~/code/RadOrderPad-vRoo
+
+# Stash any local changes to avoid merge conflicts
+git stash
+
+# Update code from repository
 git fetch --all
 git pull --ff-only origin backend-v1.0-release
+
+# Optionally reapply local changes (comment out if not needed)
+# git stash pop
+
+# Install dependencies and build
 npm install
 npm run build
 npm prune --production
+
+# Restart the application
 pm2 stop RadOrderPad
 pm2 delete RadOrderPad
 pm2 start dist/index.js --name RadOrderPad --update-env

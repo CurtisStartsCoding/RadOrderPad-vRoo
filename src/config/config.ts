@@ -66,6 +66,9 @@ export default {
     
     // Other LLM settings
     maxTokens: parseInt(process.env.LLM_MAX_TOKENS || '4000'),
-    timeout: parseInt(process.env.LLM_TIMEOUT || '30000') // 30 seconds
+    timeout: parseInt(process.env.LLM_TIMEOUT || '30000'), // 30 seconds
+    
+    // Logging settings
+    logLlmContext: process.env.LOG_LLM_CONTEXT === 'true' || false
   }
 };

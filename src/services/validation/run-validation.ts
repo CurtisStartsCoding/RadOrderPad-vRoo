@@ -15,6 +15,8 @@ import {
 import { processLLMResponse } from '../../utils/response';
 import { ValidationContext, ValidationOptions } from './types';
 import { logValidationAttempt } from './logging';
+import config from '../../config/config';
+import enhancedLogger from '../../utils/enhanced-logger';
 
 /**
  * Run validation on the provided text and context
@@ -25,32 +27,34 @@ export async function runValidation(
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   try {
-    // eslint-disable-next-line no-console
-    console.log('Starting validation process...');
+    enhancedLogger.info('Starting validation process...');
     
     // 1. Strip PHI from the text
     const sanitizedText = stripPHI(text);
-    // eslint-disable-next-line no-console
-    console.log('PHI sanitization completed');
+    enhancedLogger.info('PHI sanitization completed');
     
     // 2. Extract medical keywords for context generation
     const keywords = extractMedicalKeywords(sanitizedText);
-    // eslint-disable-next-line no-console
-    console.log('Extracted keywords count:', keywords.length);
+    enhancedLogger.info(`Extracted keywords count: ${keywords.length}`);
     
     // 3. Get the active default prompt template
     const promptTemplate = await getActivePromptTemplate();
-    // eslint-disable-next-line no-console
-    console.log('Using prompt template ID:', promptTemplate.id);
+    enhancedLogger.info(`Using prompt template ID: ${promptTemplate.id}`);
     
     // 4. Generate database context based on keywords using RedisSearch
     const databaseContext = await generateDatabaseContextWithRedis(keywords);
-    // eslint-disable-next-line no-console
-    console.log('Database context generation completed');
+    enhancedLogger.info('Database context generation completed');
+    
+    // Log database context if enabled
+    if (config.llm.logLlmContext) {
+      enhancedLogger.info('--- START GENERATED DATABASE CONTEXT ---');
+      enhancedLogger.info(`Context Length: ${databaseContext.length} characters`);
+      enhancedLogger.info(databaseContext);
+      enhancedLogger.info('--- END GENERATED DATABASE CONTEXT ---');
+    }
     
     // 5. Construct the prompt with hard-coded word limit of 33
-    // eslint-disable-next-line no-console
-    console.log('Using word count limit: 33');
+    enhancedLogger.info('Using word count limit: 33');
     
     const prompt = constructPrompt(
       promptTemplate.content_template,
@@ -59,20 +63,24 @@ export async function runValidation(
       33, // Hard-coded to 33 words
       context.isOverrideValidation || false
     );
-    // eslint-disable-next-line no-console
-    console.log('Prompt construction completed');
+    enhancedLogger.info('Prompt construction completed');
+    
+    // Log final LLM prompt if enabled
+    if (config.llm.logLlmContext) {
+      enhancedLogger.info('--- START FINAL LLM PROMPT ---');
+      enhancedLogger.info(`Prompt Length: ${prompt.length} characters`);
+      enhancedLogger.info(prompt);
+      enhancedLogger.info('--- END FINAL LLM PROMPT ---');
+    }
     
     // 7. Call LLM with fallback logic
     const llmResponse = await callLLMWithFallback(prompt);
-    // eslint-disable-next-line no-console
-    console.log(`LLM call completed using ${llmResponse.provider}`);
-    // eslint-disable-next-line no-console
-    console.log(`Performance metrics - Tokens: ${llmResponse.totalTokens}, Latency: ${llmResponse.latencyMs}ms`);
+    enhancedLogger.info(`LLM call completed using ${llmResponse.provider}`);
+    enhancedLogger.info(`Performance metrics - Tokens: ${llmResponse.totalTokens}, Latency: ${llmResponse.latencyMs}ms`);
     
     // 8. Process the LLM response
     const validationResult = processLLMResponse(llmResponse.content);
-    // eslint-disable-next-line no-console
-    console.log('Response processing completed');
+    enhancedLogger.info('Response processing completed');
     
     // 9. Log the validation attempt to the PHI database (skip if in test mode)
     if (!options.testMode) {
@@ -83,19 +91,16 @@ export async function runValidation(
         context.orderId,
         context.userId || 1 // Default to user ID 1 if not provided
       );
-      // eslint-disable-next-line no-console
-      console.log('Validation attempt logging completed');
+      enhancedLogger.info('Validation attempt logging completed');
     } else {
-      // eslint-disable-next-line no-console
-      console.log('Test mode active: Validation logging skipped');
+      enhancedLogger.info('Test mode active: Validation logging skipped');
     }
     
     // 10. Return the validation result
     return validationResult;
   } catch (error) {
     // Log error without including potentially sensitive details
-    // eslint-disable-next-line no-console
-    console.error('Error in validation process - check server logs for details');
+    enhancedLogger.error('Error in validation process - check server logs for details', error);
     
     // Still throw the error for proper error handling up the chain
     throw error;
