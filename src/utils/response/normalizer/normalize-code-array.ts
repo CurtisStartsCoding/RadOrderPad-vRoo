@@ -5,6 +5,7 @@ type CodeObject = {
   code: string;
   description: string;
   isPrimary?: boolean;
+  confidence?: number;
 };
 
 /**
@@ -20,7 +21,8 @@ export function normalizeCodeArray(
     return (codes as CodeObject[]).map(item => ({
       code: item.code || '',
       description: item.description || '',
-      isPrimary: Boolean(item.isPrimary)
+      isPrimary: Boolean(item.isPrimary),
+      confidence: typeof item.confidence === 'number' ? item.confidence : 0.8 // Default confidence of 80%
     }));
   }
   
@@ -30,7 +32,8 @@ export function normalizeCodeArray(
     return (codes as string[]).map((code, index) => ({
       code,
       description: '',
-      isPrimary: index === 0
+      isPrimary: index === 0,
+      confidence: 0.8 // Default confidence of 80%
     }));
   }
   
@@ -40,7 +43,8 @@ export function normalizeCodeArray(
     return codes.split(',').map((code, index) => ({
       code: code.trim(),
       description: '',
-      isPrimary: index === 0
+      isPrimary: index === 0,
+      confidence: 0.8 // Default confidence of 80%
     }));
   }
   

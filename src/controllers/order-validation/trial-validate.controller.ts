@@ -8,6 +8,7 @@ interface RequestWithUser extends Request {
 import ValidationService from '../../services/validation';
 import { queryMainDb } from '../../config/db';
 import enhancedLogger from '../../utils/enhanced-logger';
+import { enhanceValidationResult } from '../../utils/response';
 
 /**
  * Controller for handling trial order validation
@@ -68,7 +69,7 @@ export class TrialValidateController {
       }
       
       // Run validation
-      const validationResult = await ValidationService.runValidation(
+      let validationResult = await ValidationService.runValidation(
         dictationText,
         {
           // Pass specialty as part of the context
@@ -76,6 +77,9 @@ export class TrialValidateController {
         },
         true // Use test mode to prevent PHI logging
       );
+      
+      // Enhance the validation result with confidence scores
+      validationResult = await enhanceValidationResult(validationResult, dictationText);
       
       // Increment validation count
       await queryMainDb(

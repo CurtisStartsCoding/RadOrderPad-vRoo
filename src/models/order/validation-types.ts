@@ -34,8 +34,8 @@ export interface ValidationResult {
   validationStatus: ValidationStatus;
   complianceScore: number;
   feedback: string;
-  suggestedICD10Codes: Array<{ code: string; description: string }>;
-  suggestedCPTCodes: Array<{ code: string; description: string }>;
+  suggestedICD10Codes: Array<{ code: string; description: string; confidence?: number }>;
+  suggestedCPTCodes: Array<{ code: string; description: string; confidence?: number }>;
   internalReasoning: string;
 }
 

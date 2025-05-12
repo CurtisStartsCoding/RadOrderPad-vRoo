@@ -7,8 +7,8 @@ import { ValidationResult, ValidationStatus } from '../../models';
 export interface PartialInformation {
   complianceScore?: number;
   feedback?: string;
-  icd10Codes?: Array<{ code: string; description: string }>;
-  cptCodes?: Array<{ code: string; description: string }>;
+  icd10Codes?: Array<{ code: string; description: string; confidence?: number }>;
+  cptCodes?: Array<{ code: string; description: string; confidence?: number }>;
 }
 
 /**
@@ -18,8 +18,8 @@ export interface NormalizedResponse {
   validationStatus: string;
   complianceScore: number;
   feedback: string;
-  suggestedICD10Codes: Array<{ code: string; description: string; isPrimary?: boolean }>;
-  suggestedCPTCodes: Array<{ code: string; description: string; isPrimary?: boolean }>;
+  suggestedICD10Codes: Array<{ code: string; description: string; isPrimary?: boolean; confidence?: number }>;
+  suggestedCPTCodes: Array<{ code: string; description: string; isPrimary?: boolean; confidence?: number }>;
   internalReasoning?: string;
 }
 

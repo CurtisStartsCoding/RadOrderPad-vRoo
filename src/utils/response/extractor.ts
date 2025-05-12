@@ -24,7 +24,8 @@ export function extractPartialInformation(responseContent: string): PartialInfor
     // Use Array.from instead of spread operator with Set
     result.icd10Codes = Array.from(new Set(icd10Matches)).map(code => ({
       code,
-      description: ''
+      description: '',
+      confidence: 0.8 // Default confidence of 80%
     }));
   }
   
@@ -36,7 +37,8 @@ export function extractPartialInformation(responseContent: string): PartialInfor
     if (likelyCptCodes.length > 0) {
       result.cptCodes = likelyCptCodes.map(code => ({
         code,
-        description: ''
+        description: '',
+        confidence: 0.8 // Default confidence of 80%
       }));
     }
   }

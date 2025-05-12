@@ -11,6 +11,7 @@ import {
 import { createDraftOrder } from './draft-order';
 import { getNextAttemptNumber, logValidationAttempt } from './attempt-tracking';
 import logger from '../../../utils/logger';
+import { enhanceValidationResult } from '../../../utils/response';
 
 /**
  * Handle validation request for an order
@@ -56,7 +57,11 @@ export async function handleValidationRequest(
       isOverrideValidation
     };
     
-    const validationResult: ValidationResult = await ValidationService.runValidation(dictationText, validationContext);
+    // Get the validation result from the validation service
+    let validationResult: ValidationResult = await ValidationService.runValidation(dictationText, validationContext);
+    
+    // Enhance the validation result with confidence scores
+    validationResult = await enhanceValidationResult(validationResult, dictationText);
     
     // Log the validation attempt in the PHI database
     await logValidationAttempt(
