@@ -11,15 +11,27 @@ import enhancedLogger from '../../../utils/enhanced-logger';
  * @param firstName User first name
  * @param lastName User last name
  * @param specialty User specialty
- * @returns Object containing JWT token
+ * @returns Object containing JWT token and trial information
  */
+/**
+ * Interface for trial registration result including validation usage information
+ */
+export interface TrialRegisterResult {
+  token: string;
+  trialInfo: {
+    validationsUsed: number;
+    maxValidations: number;
+    validationsRemaining: number;
+  };
+}
+
 export async function registerTrialUser(
   email: string,
   password: string,
   firstName: string,
   lastName: string,
   specialty: string
-): Promise<{ token: string }> {
+): Promise<TrialRegisterResult> {
   try {
     // Check if email exists in users table (Main DB)
     const existingUserResult = await queryMainDb(
@@ -80,13 +92,25 @@ export async function registerTrialUser(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const token = (jwt as any).sign(payload, secret, { expiresIn });
     
-    enhancedLogger.info('Trial user registered successfully', { 
-      trialUserId, 
+    enhancedLogger.info('Trial user registered successfully', {
+      trialUserId,
       email,
-      specialty 
+      specialty
     });
     
-    return { token };
+    // Initial validation counts for new trial users
+    const validationsUsed = 0;
+    const maxValidations = 100;
+    const validationsRemaining = maxValidations;
+    
+    return {
+      token,
+      trialInfo: {
+        validationsUsed,
+        maxValidations,
+        validationsRemaining
+      }
+    };
   } catch (error) {
     enhancedLogger.error('Error in registerTrialUser service:', error);
     throw error;

@@ -3,6 +3,8 @@ import { login } from './user';
 import { registerOrganization } from './organization';
 import { generateToken } from './token';
 import { registerTrialUser, loginTrialUser } from './trial';
+import { TrialLoginResult } from './trial/login-trial-user.service';
+import { TrialRegisterResult } from './trial/register-trial-user.service';
 
 /**
  * Service for handling authentication-related operations
@@ -34,14 +36,14 @@ export class AuthService {
     firstName: string,
     lastName: string,
     specialty: string
-  ): Promise<{ token: string }> {
+  ): Promise<TrialRegisterResult> {
     return registerTrialUser(email, password, firstName, lastName, specialty);
   }
   
   /**
    * Login a trial user
    */
-  async loginTrialUser(email: string, password: string): Promise<{ token: string }> {
+  async loginTrialUser(email: string, password: string): Promise<TrialLoginResult> {
     return loginTrialUser(email, password);
   }
   

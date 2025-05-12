@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import authService from '../../../services/auth';
+import { TrialLoginResult } from '../../../services/auth/trial/login-trial-user.service';
 import enhancedLogger from '../../../utils/enhanced-logger';
 
 /**
@@ -20,11 +21,12 @@ export class TrialLoginController {
       }
       
       // Call service to login trial user
-      const result = await authService.loginTrialUser(email, password);
+      const result: TrialLoginResult = await authService.loginTrialUser(email, password);
       
       res.status(200).json({
         success: true,
-        token: result.token
+        token: result.token,
+        trialInfo: result.trialInfo
       });
     } catch (error) {
       enhancedLogger.error('Error in trial user login:', error);

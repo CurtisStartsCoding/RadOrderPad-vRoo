@@ -10,14 +10,26 @@ import enhancedLogger from '../../../utils/enhanced-logger';
  * @param password User password
  * @returns Object containing JWT token
  */
+/**
+ * Interface for trial login result including validation usage information
+ */
+export interface TrialLoginResult {
+  token: string;
+  trialInfo: {
+    validationsUsed: number;
+    maxValidations: number;
+    validationsRemaining: number;
+  };
+}
+
 export async function loginTrialUser(
   email: string,
   password: string
-): Promise<{ token: string }> {
+): Promise<TrialLoginResult> {
   try {
-    // Get trial user by email
+    // Get trial user by email including validation information
     const userResult = await queryMainDb(
-      'SELECT id, email, password_hash, specialty FROM trial_users WHERE email = $1',
+      'SELECT id, email, password_hash, specialty, validation_count, max_validations FROM trial_users WHERE email = $1',
       [email]
     );
     
@@ -57,7 +69,19 @@ export async function loginTrialUser(
       email: user.email 
     });
     
-    return { token };
+    // Calculate validation information
+    const validationsUsed = user.validation_count || 0;
+    const maxValidations = user.max_validations || 100;
+    const validationsRemaining = Math.max(0, maxValidations - validationsUsed);
+    
+    return {
+      token,
+      trialInfo: {
+        validationsUsed,
+        maxValidations,
+        validationsRemaining
+      }
+    };
   } catch (error) {
     enhancedLogger.error('Error in loginTrialUser service:', error);
     throw error;

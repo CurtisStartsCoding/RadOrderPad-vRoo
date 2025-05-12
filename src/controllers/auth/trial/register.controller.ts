@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import authService from '../../../services/auth';
+import { TrialRegisterResult } from '../../../services/auth/trial/register-trial-user.service';
 import { validateEmail } from '../../../utils/validation';
 import enhancedLogger from '../../../utils/enhanced-logger';
 
@@ -33,7 +34,7 @@ export class TrialRegisterController {
       }
       
       // Call service to register trial user
-      const result = await authService.registerTrialUser(
+      const result: TrialRegisterResult = await authService.registerTrialUser(
         email,
         password,
         firstName || '',
@@ -44,7 +45,8 @@ export class TrialRegisterController {
       res.status(201).json({
         success: true,
         message: 'Trial account created.',
-        token: result.token
+        token: result.token,
+        trialInfo: result.trialInfo
       });
     } catch (error) {
       enhancedLogger.error('Error in trial user registration:', error);

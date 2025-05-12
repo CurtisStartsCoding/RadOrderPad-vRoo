@@ -48,6 +48,12 @@ describe('Physician Trial Sandbox Feature', () => {
       expect(response.data).to.have.property('message', 'Trial account created.');
       expect(response.data).to.have.property('token');
       
+      // Check for trialInfo property
+      expect(response.data).to.have.property('trialInfo');
+      expect(response.data.trialInfo).to.have.property('validationsUsed', 0);
+      expect(response.data.trialInfo).to.have.property('maxValidations', 100);
+      expect(response.data.trialInfo).to.have.property('validationsRemaining', 100);
+      
       // Verify user was created in database
       const result = await queryMainDb('SELECT * FROM trial_users WHERE email = $1', [testTrialUser.email]);
       expect(result.rows.length).to.equal(1);
@@ -56,7 +62,7 @@ describe('Physician Trial Sandbox Feature', () => {
       expect(result.rows[0].last_name).to.equal(testTrialUser.lastName);
       expect(result.rows[0].specialty).to.equal(testTrialUser.specialty);
       expect(result.rows[0].validation_count).to.equal(0);
-      expect(result.rows[0].max_validations).to.equal(10);
+      expect(result.rows[0].max_validations).to.equal(100);
       
       // Verify password was hashed
       const isPasswordValid = await bcrypt.compare(testTrialUser.password, result.rows[0].password_hash);
@@ -117,6 +123,16 @@ describe('Physician Trial Sandbox Feature', () => {
       expect(response.status).to.equal(200);
       expect(response.data).to.have.property('success', true);
       expect(response.data).to.have.property('token');
+      
+      // Check for trialInfo property
+      expect(response.data).to.have.property('trialInfo');
+      expect(response.data.trialInfo).to.have.property('validationsUsed');
+      expect(response.data.trialInfo).to.have.property('maxValidations');
+      expect(response.data.trialInfo).to.have.property('validationsRemaining');
+      
+      // Verify validationsRemaining calculation
+      const { validationsUsed, maxValidations, validationsRemaining } = response.data.trialInfo;
+      expect(validationsRemaining).to.equal(Math.max(0, maxValidations - validationsUsed));
       
       // Verify token structure
       const token = response.data.token;
@@ -188,6 +204,16 @@ describe('Physician Trial Sandbox Feature', () => {
       expect(response.data.validationResult).to.have.property('complianceScore');
       expect(response.data.validationResult).to.have.property('feedback');
       
+      // Check for trialInfo property
+      expect(response.data).to.have.property('trialInfo');
+      expect(response.data.trialInfo).to.have.property('validationsUsed', 1); // Should be incremented to 1
+      expect(response.data.trialInfo).to.have.property('maxValidations');
+      expect(response.data.trialInfo).to.have.property('validationsRemaining');
+      
+      // Verify validationsRemaining calculation
+      const { validationsUsed, maxValidations, validationsRemaining } = response.data.trialInfo;
+      expect(validationsRemaining).to.equal(Math.max(0, maxValidations - validationsUsed));
+      
       // Verify validation count was incremented
       const result = await queryMainDb('SELECT validation_count FROM trial_users WHERE email = $1', [testTrialUser.email]);
       expect(result.rows[0].validation_count).to.equal(1);
@@ -242,6 +268,12 @@ describe('Physician Trial Sandbox Feature', () => {
         expect(error.response.status).to.equal(403);
         expect(error.response.data).to.have.property('success', false);
         expect(error.response.data.message).to.include('Validation limit reached');
+        
+        // Check for trialInfo property in error response
+        expect(error.response.data).to.have.property('trialInfo');
+        expect(error.response.data.trialInfo).to.have.property('validationsUsed');
+        expect(error.response.data.trialInfo).to.have.property('maxValidations');
+        expect(error.response.data.trialInfo).to.have.property('validationsRemaining', 0); // Should be 0 when limit reached
       }
     });
   });

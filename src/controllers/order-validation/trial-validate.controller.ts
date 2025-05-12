@@ -60,9 +60,19 @@ export class TrialValidateController {
       const trialUser = trialUserResult.rows[0];
       
       if (trialUser.validation_count >= trialUser.max_validations) {
+        // Include trialInfo in the error response
+        const validationsUsed = trialUser.validation_count;
+        const maxValidations = trialUser.max_validations;
+        const validationsRemaining = 0;
+        
         res.status(403).json({
           success: false,
-          message: 'Validation limit reached. Please contact support to upgrade to a full account.'
+          message: 'Validation limit reached. Please contact support to upgrade to a full account.',
+          trialInfo: {
+            validationsUsed,
+            maxValidations,
+            validationsRemaining
+          }
         });
         return;
       }
@@ -77,16 +87,26 @@ export class TrialValidateController {
         true // Use test mode to prevent PHI logging
       );
       
-      // Increment validation count
-      await queryMainDb(
-        'UPDATE trial_users SET validation_count = validation_count + 1, last_validation_at = NOW() WHERE id = $1',
+      // Increment validation count and get the new count
+      const updateResult = await queryMainDb(
+        'UPDATE trial_users SET validation_count = validation_count + 1, last_validation_at = NOW() WHERE id = $1 RETURNING validation_count',
         [trialUserId]
       );
       
-      // Return validation result
+      // Calculate validation information with updated count
+      const newValidationCount = updateResult.rows[0].validation_count;
+      const maxValidations = trialUser.max_validations;
+      const validationsRemaining = Math.max(0, maxValidations - newValidationCount);
+      
+      // Return validation result with trial info
       res.status(200).json({
         success: true,
-        validationResult
+        validationResult,
+        trialInfo: {
+          validationsUsed: newValidationCount,
+          maxValidations,
+          validationsRemaining
+        }
       });
     } catch (error) {
       enhancedLogger.error('Error in trial validation:', error);

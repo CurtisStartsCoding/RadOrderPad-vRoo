@@ -32,8 +32,8 @@ API Endpoints Overview (Conceptual)
 -   `POST /auth/verify-email`: Verify email via token.
 -   `POST /auth/request-password-reset`: Initiate password reset flow.
 -   `POST /auth/reset-password`: Complete password reset using token.
--   `POST /auth/trial/register`: Register a new trial user with email, password, name, and specialty. Creates a trial user record and returns a trial JWT token. No organization association. **(Public Access)**
--   `POST /auth/trial/login`: Trial user login. Authenticates trial user credentials and returns a trial JWT token. **(Public Access)**
+-   `POST /auth/trial/register`: Register a new trial user with email, password, name, and specialty. Creates a trial user record and returns a trial JWT token along with validation usage information (`trialInfo` object containing `validationsUsed`, `maxValidations`, and `validationsRemaining`). No organization association. **(Public Access)**
+-   `POST /auth/trial/login`: Trial user login. Authenticates trial user credentials and returns a trial JWT token along with validation usage information (`trialInfo` object). **(Public Access)**
 
 ## Organizations (`/organizations`)
 
@@ -80,7 +80,7 @@ API Endpoints Overview (Conceptual)
 
 -   `POST /orders/start`: (Optional) Initiate patient tagging for a new order draft. **(Physician/Admin Staff Role)**
 -   `POST /orders/validate`: Submits dictation for validation. **On first call for an order, creates a draft `orders` record and returns `orderId`.** Handles subsequent clarifications and the final override validation call (using provided `orderId` and `isOverrideValidation` flag). Triggers validation engine and logs attempts. No credit consumption occurs at this stage. Returns validation result and `orderId`. **Error Handling:** Must handle LLM unavailability gracefully (e.g., 503 response). **(Physician Role)**
--   `POST /orders/validate/trial`: Submits dictation for validation in trial mode. Does not create any PHI records. Checks the trial user's validation count against their maximum allowed validations. Increments the validation count on successful validation. Returns validation result only. **Error Handling:** Returns 403 Forbidden when validation limit is reached. Must handle LLM unavailability gracefully (e.g., 503 response). **(Trial User Role)**
+-   `POST /orders/validate/trial`: Submits dictation for validation in trial mode. Does not create any PHI records. Checks the trial user's validation count against their maximum allowed validations. Increments the validation count on successful validation. Returns validation result along with updated validation usage information (`trialInfo` object). **Error Handling:** Returns 403 Forbidden when validation limit is reached, including `trialInfo` in the error response. Must handle LLM unavailability gracefully (e.g., 503 response). **(Trial User Role)**
 -   `GET /orders`: List orders relevant to the user (e.g., created by them, for their org, including drafts). **(Authenticated)**
 -   `GET /orders/{orderId}`: Get details of a specific order the user has access to. **(Authenticated)**
 

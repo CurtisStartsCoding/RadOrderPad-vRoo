@@ -27,6 +27,11 @@ export async function runValidation(
   options: ValidationOptions = {}
 ): Promise<ValidationResult> {
   try {
+    // Debug logging to check environment variable and config
+    enhancedLogger.info(`LOG_LLM_CONTEXT env var: ${process.env.LOG_LLM_CONTEXT}`);
+    enhancedLogger.info(`config.llm.logLlmContext value: ${config.llm.logLlmContext}`);
+    enhancedLogger.info(`Test mode: ${options.testMode}`);
+    
     enhancedLogger.info('Starting validation process...');
     
     // 1. Strip PHI from the text
@@ -45,12 +50,25 @@ export async function runValidation(
     const databaseContext = await generateDatabaseContextWithRedis(keywords);
     enhancedLogger.info('Database context generation completed');
     
-    // Log database context if enabled
+    // Log database context if enabled - with additional debug info
+    enhancedLogger.info(`About to check logLlmContext: ${config.llm.logLlmContext}`);
     if (config.llm.logLlmContext) {
-      enhancedLogger.info('--- START GENERATED DATABASE CONTEXT ---');
+      enhancedLogger.info('!!! LOGGING ENABLED - START GENERATED DATABASE CONTEXT !!!');
       enhancedLogger.info(`Context Length: ${databaseContext.length} characters`);
-      enhancedLogger.info(databaseContext);
-      enhancedLogger.info('--- END GENERATED DATABASE CONTEXT ---');
+      
+      // Log in smaller chunks to avoid truncation
+      const maxChunkSize = 1000;
+      if (databaseContext.length > maxChunkSize) {
+        enhancedLogger.info('Logging database context in chunks due to size...');
+        for (let i = 0; i < databaseContext.length; i += maxChunkSize) {
+          const chunk = databaseContext.substring(i, i + maxChunkSize);
+          enhancedLogger.info(`CONTEXT CHUNK ${Math.floor(i/maxChunkSize) + 1}: ${chunk}`);
+        }
+      } else {
+        enhancedLogger.info(`FULL CONTEXT: ${databaseContext}`);
+      }
+      
+      enhancedLogger.info('!!! LOGGING ENABLED - END GENERATED DATABASE CONTEXT !!!');
     }
     
     // 5. Construct the prompt with hard-coded word limit of 33
@@ -65,12 +83,25 @@ export async function runValidation(
     );
     enhancedLogger.info('Prompt construction completed');
     
-    // Log final LLM prompt if enabled
+    // Log final LLM prompt if enabled - with additional debug info
+    enhancedLogger.info(`About to check logLlmContext again: ${config.llm.logLlmContext}`);
     if (config.llm.logLlmContext) {
-      enhancedLogger.info('--- START FINAL LLM PROMPT ---');
+      enhancedLogger.info('!!! LOGGING ENABLED - START FINAL LLM PROMPT !!!');
       enhancedLogger.info(`Prompt Length: ${prompt.length} characters`);
-      enhancedLogger.info(prompt);
-      enhancedLogger.info('--- END FINAL LLM PROMPT ---');
+      
+      // Log in smaller chunks to avoid truncation
+      const maxChunkSize = 1000;
+      if (prompt.length > maxChunkSize) {
+        enhancedLogger.info('Logging LLM prompt in chunks due to size...');
+        for (let i = 0; i < prompt.length; i += maxChunkSize) {
+          const chunk = prompt.substring(i, i + maxChunkSize);
+          enhancedLogger.info(`PROMPT CHUNK ${Math.floor(i/maxChunkSize) + 1}: ${chunk}`);
+        }
+      } else {
+        enhancedLogger.info(`FULL PROMPT: ${prompt}`);
+      }
+      
+      enhancedLogger.info('!!! LOGGING ENABLED - END FINAL LLM PROMPT !!!');
     }
     
     // 7. Call LLM with fallback logic
@@ -83,6 +114,9 @@ export async function runValidation(
     enhancedLogger.info('Response processing completed');
     
     // 9. Log the validation attempt to the PHI database (skip if in test mode)
+    // Note: Our context/prompt logging should work regardless of test mode
+    enhancedLogger.info(`Test mode before validation logging: ${options.testMode}`);
+    
     if (!options.testMode) {
       await logValidationAttempt(
         text,
@@ -93,7 +127,7 @@ export async function runValidation(
       );
       enhancedLogger.info('Validation attempt logging completed');
     } else {
-      enhancedLogger.info('Test mode active: Validation logging skipped');
+      enhancedLogger.info('Test mode active: Database validation logging skipped (but context/prompt logging should still work)');
     }
     
     // 10. Return the validation result
