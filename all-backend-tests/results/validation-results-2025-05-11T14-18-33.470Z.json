@@ -1,0 +1,157 @@
+[
+{
+  "testCase": "Shoulder Pain - MRI",
+  "dictationText": "55 yo F with right shoulder pain x 3 weeks, worse with overhead activity. Rule out rotator cuff tear. Request MRI right shoulder without contrast.",
+  "validationResult": {
+    "validationStatus": "needs_clarification",
+    "complianceScore": 5,
+    "feedback": "Initial radiographs should precede MRI for new shoulder pain per ACR guidelines. Consider X-ray first to rule out fracture, arthritis, or calcifications before proceeding to advanced imaging.",
+    "suggestedICD10Codes": [
+      {
+        "code": "M25.511",
+        "description": "Pain in right shoulder",
+        "isPrimary": true
+      },
+      {
+        "code": "M75.41",
+        "description": "Impingement syndrome of right shoulder",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "73030",
+        "description": "Radiologic examination, shoulder; complete, minimum of two views",
+        "isPrimary": false
+      },
+      {
+        "code": "73221",
+        "description": "Magnetic resonance (eg, proton) imaging, any joint of upper extremity; without contrast material(s)",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:18:39.055Z"
+},
+{
+  "testCase": "Headache - CT",
+  "dictationText": "42-year-old male with severe headache for 2 days, no prior history of migraines. Experiencing nausea and photophobia. No focal neurological deficits. Request CT head without contrast to rule out intracranial pathology.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 7,
+    "feedback": "CT head without contrast is appropriate for severe new-onset headache with nausea and photophobia to exclude emergent intracranial pathology. Consider MRI if CT is negative and symptoms persist.",
+    "suggestedICD10Codes": [
+      {
+        "code": "R51.9",
+        "description": "Headache, unspecified",
+        "isPrimary": true
+      },
+      {
+        "code": "R11.2",
+        "description": "Nausea with vomiting, unspecified",
+        "isPrimary": false
+      },
+      {
+        "code": "H53.14",
+        "description": "Photophobia",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "70450",
+        "description": "Computed tomography, head or brain; without contrast material",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:18:45.406Z"
+},
+{
+  "testCase": "Abdominal Pain - Ultrasound",
+  "dictationText": "38-year-old female with RUQ abdominal pain, elevated liver enzymes. History of gallstones. No fever. Pain worse after meals. Request abdominal ultrasound to evaluate for cholecystitis.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 9,
+    "feedback": "Abdominal ultrasound is the recommended first-line imaging for RUQ pain with elevated liver enzymes and history of gallstones. This non-invasive study can evaluate for gallbladder wall thickening, stones, biliary dilation, and liver parenchyma without radiation exposure.",
+    "suggestedICD10Codes": [
+      {
+        "code": "R10.10",
+        "description": "Upper abdominal pain, unspecified",
+        "isPrimary": true
+      },
+      {
+        "code": "K80.20",
+        "description": "Calculus of gallbladder without cholecystitis without obstruction",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "76700",
+        "description": "Ultrasound, abdominal, complete",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:18:50.836Z"
+},
+{
+  "testCase": "Chest Pain - X-ray STAT",
+  "dictationText": "62-year-old male with chest pain and shortness of breath for 1 day. History of COPD. No fever. Oxygen saturation 92% on room air. Request chest x-ray to evaluate for pneumonia or pneumothorax. STAT.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 8,
+    "feedback": "Chest x-ray is an appropriate first-line imaging study for evaluating chest pain with shortness of breath, especially in a COPD patient with decreased oxygen saturation. STAT designation is justified given the clinical presentation.",
+    "suggestedICD10Codes": [
+      {
+        "code": "R07.9",
+        "description": "Chest pain, unspecified",
+        "isPrimary": true
+      },
+      {
+        "code": "R06.02",
+        "description": "Shortness of breath",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "71020",
+        "description": "Radiologic examination, chest, two views, frontal and lateral",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:18:55.338Z"
+},
+{
+  "testCase": "Back Pain - X-ray",
+  "dictationText": "45-year-old female with lower back pain after lifting heavy object. No radicular symptoms. Request lumbar spine x-ray to evaluate for fracture or degenerative changes.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 8,
+    "feedback": "Lumbar x-ray is appropriate for acute back pain after trauma to rule out fracture. No red flags or radicular symptoms noted that would warrant advanced imaging at initial presentation.",
+    "suggestedICD10Codes": [
+      {
+        "code": "M54.5",
+        "description": "Low back pain",
+        "isPrimary": true
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "72100",
+        "description": "Radiologic examination, spine, lumbosacral; anteroposterior and lateral views",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:19:02.101Z"
+}
+]

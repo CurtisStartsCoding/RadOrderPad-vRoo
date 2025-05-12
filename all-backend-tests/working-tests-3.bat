@@ -62,6 +62,12 @@ call test-order-validation.bat
 cd ..
 
 echo.
+echo Running Enhanced Order Validation Tests with Detailed Logging...
+cd scripts
+call test-order-validation-enhanced.bat
+cd ..
+
+echo.
 echo Running Super Admin API Tests...
 cd scripts
 call run-superadmin-api-test.bat

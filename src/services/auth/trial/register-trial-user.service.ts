@@ -57,7 +57,7 @@ export async function registerTrialUser(
         max_validations, 
         created_at
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING id`,
-      [email, passwordHash, firstName, lastName, specialty, 0, 10]
+      [email, passwordHash, firstName, lastName, specialty, 0, 100]
     );
     
     const trialUserId = insertResult.rows[0].id;

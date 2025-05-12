@@ -10,7 +10,7 @@ const path = require('path');
 dotenv.config();
 
 // Configuration
-const API_URL = process.env.API_URL || 'http://localhost:3000/api';
+const API_URL = process.env.API_URL || 'https://api.radorderpad.com/api';
 const TOKEN_FILE = path.join(__dirname, '..', 'superadmin-test-token.txt');
 
 // Read the token from file

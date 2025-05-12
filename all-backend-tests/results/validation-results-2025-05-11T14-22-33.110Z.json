@@ -1,0 +1,392 @@
+[
+{
+  "testCase": "Shoulder Pain - MRI",
+  "dictationText": "55 yo F with right shoulder pain x 3 weeks, worse with overhead activity. Rule out rotator cuff tear. Request MRI right shoulder without contrast.",
+  "validationResult": {
+    "validationStatus": "needs_clarification",
+    "complianceScore": 5,
+    "feedback": "Initial radiographs should precede MRI for shoulder pain. X-ray can identify fractures, arthritis, or calcifications that may alter management. Consider MRI after X-ray if conservative management fails.",
+    "suggestedICD10Codes": [
+      {
+        "code": "M25.511",
+        "description": "Pain in right shoulder",
+        "isPrimary": true
+      },
+      {
+        "code": "M75.41",
+        "description": "Impingement syndrome of right shoulder",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "73030",
+        "description": "Radiologic examination, shoulder; complete, minimum of two views",
+        "isPrimary": false
+      },
+      {
+        "code": "73221",
+        "description": "Magnetic resonance imaging, any joint of upper extremity; without contrast material(s)",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:22:39.392Z"
+},
+{
+  "testCase": "Headache - CT",
+  "dictationText": "42-year-old male with severe headache for 2 days, no prior history of migraines. Experiencing nausea and photophobia. No focal neurological deficits. Request CT head without contrast to rule out intracranial pathology.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 7,
+    "feedback": "CT head without contrast is appropriate for severe headache with concerning features (sudden onset, nausea, photophobia). Consider adding neurological exam details and onset timing to strengthen clinical indication.",
+    "suggestedICD10Codes": [
+      {
+        "code": "R51.9",
+        "description": "Headache, unspecified",
+        "isPrimary": true
+      },
+      {
+        "code": "R11.2",
+        "description": "Nausea with vomiting, unspecified",
+        "isPrimary": false
+      },
+      {
+        "code": "H53.14",
+        "description": "Photophobia",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "70450",
+        "description": "Computed tomography, head or brain; without contrast material",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:22:44.408Z"
+},
+{
+  "testCase": "Abdominal Pain - Ultrasound",
+  "dictationText": "38-year-old female with RUQ abdominal pain, elevated liver enzymes. History of gallstones. No fever. Pain worse after meals. Request abdominal ultrasound to evaluate for cholecystitis.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 9,
+    "feedback": "Abdominal ultrasound is first-line imaging for RUQ pain with history of gallstones. Clinical presentation suggests biliary colic. No fever indicates lower likelihood of acute cholecystitis, supporting routine rather than stat priority.",
+    "suggestedICD10Codes": [
+      {
+        "code": "R10.10",
+        "description": "Upper abdominal pain, unspecified",
+        "isPrimary": true
+      },
+      {
+        "code": "K80.20",
+        "description": "Calculus of gallbladder without cholecystitis without obstruction",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "76700",
+        "description": "Ultrasound, abdominal, complete",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:22:50.934Z"
+},
+{
+  "testCase": "Chest Pain - X-ray STAT",
+  "dictationText": "62-year-old male with chest pain and shortness of breath for 1 day. History of COPD. No fever. Oxygen saturation 92% on room air. Request chest x-ray to evaluate for pneumonia or pneumothorax. STAT.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 8,
+    "feedback": "Order is appropriate. Chest x-ray is the recommended first-line imaging for chest pain with shortness of breath to evaluate for pulmonary causes like pneumonia or pneumothorax, especially in a COPD patient with decreased oxygen saturation.",
+    "suggestedICD10Codes": [
+      {
+        "code": "R07.9",
+        "description": "Chest pain, unspecified",
+        "isPrimary": true
+      },
+      {
+        "code": "R06.02",
+        "description": "Shortness of breath",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "71020",
+        "description": "Radiologic examination, chest, two views, frontal and lateral",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:22:55.777Z"
+},
+{
+  "testCase": "Back Pain - X-ray",
+  "dictationText": "45-year-old female with lower back pain after lifting heavy object. No radicular symptoms. Request lumbar spine x-ray to evaluate for fracture or degenerative changes.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 8,
+    "feedback": "Lumbar spine x-ray is appropriate for initial evaluation of acute low back pain following trauma when fracture is suspected, though most mechanical back pain resolves with conservative treatment within 4-6 weeks.",
+    "suggestedICD10Codes": [
+      {
+        "code": "M54.5",
+        "description": "Low back pain",
+        "isPrimary": true
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "72100",
+        "description": "Radiologic examination, spine, lumbosacral; anteroposterior and lateral views",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:22:59.498Z"
+},
+{
+  "testCase": "Multi-Trauma - CT Scans",
+  "dictationText": "72-year-old male involved in high-speed MVA with loss of consciousness. GCS 14 on arrival. Complains of severe chest pain, abdominal pain, and right hip pain. Vital signs: BP 100/60, HR 110, RR 24, O2 sat 94% on 2L. Multiple abrasions and contusions. Decreased breath sounds right side. Tender right upper quadrant and right hip. Request CT head, CT cervical spine, CT chest, CT abdomen/pelvis with IV contrast, and CT right hip to evaluate for traumatic injuries. STAT.",
+  "validationResult": {
+    "validationStatus": "needs_clarification",
+    "complianceScore": 6,
+    "feedback": "High-energy trauma patient requires focused CT based on clinical findings. CT head and cervical spine are appropriate given LOC. Consider selective CT of specific regions rather than full-body CT to reduce radiation exposure. Right hip imaging should begin with X-ray before CT.",
+    "suggestedICD10Codes": [
+      {
+        "code": "S33.9",
+        "description": "Sprain of unspecified parts of lumbar spine and pelvis",
+        "isPrimary": true
+      },
+      {
+        "code": "S13.4XXA",
+        "description": "Sprain of cervical spine, initial encounter",
+        "isPrimary": false
+      },
+      {
+        "code": "R07.8",
+        "description": "Other chest pain",
+        "isPrimary": false
+      },
+      {
+        "code": "R10.11",
+        "description": "Right upper quadrant pain",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "74176",
+        "description": "Computed tomography, abdomen and pelvis; without contrast material",
+        "isPrimary": false
+      },
+      {
+        "code": "74177",
+        "description": "Computed tomography, abdomen and pelvis; with contrast material(s)",
+        "isPrimary": false
+      },
+      {
+        "code": "72050",
+        "description": "Radiologic examination, spine, cervical; 4 or 5 views",
+        "isPrimary": false
+      },
+      {
+        "code": "72125",
+        "description": "CT scan of cervical spine; without contrast material",
+        "isPrimary": false
+      },
+      {
+        "code": "72170",
+        "description": "Radiologic examination, pelvis; 1 or 2 views",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:23:07.665Z"
+},
+{
+  "testCase": "Oncology Staging - Multiple Studies",
+  "dictationText": "65-year-old female with newly diagnosed stage IIIB non-small cell lung cancer (adenocarcinoma) of right upper lobe. History of COPD, hypertension, and type 2 diabetes. Patient reports 30 lb weight loss over 3 months, fatigue, and occasional hemoptysis. Request CT chest with contrast, CT abdomen/pelvis with contrast, brain MRI with and without contrast, and PET/CT for comprehensive staging prior to treatment planning.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 9,
+    "feedback": "Initial staging workup for Stage IIIB NSCLC is fully compliant with NCCN Guidelines. CT chest/abdomen/pelvis, brain MRI, and PET/CT represent standard of care for comprehensive staging prior to treatment planning.",
+    "suggestedICD10Codes": [
+      {
+        "code": "C34.11",
+        "description": "Malignant neoplasm of upper lobe, right bronchus or lung",
+        "isPrimary": true
+      },
+      {
+        "code": "J44.9",
+        "description": "Chronic obstructive pulmonary disease, unspecified",
+        "isPrimary": false
+      },
+      {
+        "code": "I10",
+        "description": "Essential (primary) hypertension",
+        "isPrimary": false
+      },
+      {
+        "code": "E11.9",
+        "description": "Type 2 diabetes mellitus without complications",
+        "isPrimary": false
+      },
+      {
+        "code": "R04.2",
+        "description": "Hemoptysis",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "71260",
+        "description": "CT chest with contrast",
+        "isPrimary": false
+      },
+      {
+        "code": "74177",
+        "description": "CT abdomen and pelvis with contrast",
+        "isPrimary": false
+      },
+      {
+        "code": "70553",
+        "description": "MRI brain without and with contrast",
+        "isPrimary": false
+      },
+      {
+        "code": "78815",
+        "description": "PET/CT imaging; skull base to mid-thigh",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:23:14.549Z"
+},
+{
+  "testCase": "Rheumatologic Workup - Multiple Joints",
+  "dictationText": "58-year-old female with 6-month history of symmetric polyarthritis affecting hands, wrists, knees, and feet. Morning stiffness lasting >1 hour. Positive rheumatoid factor and anti-CCP antibodies. ESR 42, CRP 3.8. Clinical diagnosis of rheumatoid arthritis. Request bilateral hand/wrist X-rays, bilateral foot X-rays, and bilateral knee X-rays to establish baseline and assess for erosive changes prior to starting DMARD therapy.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 9,
+    "feedback": "Baseline radiographs are essential for newly diagnosed rheumatoid arthritis before starting DMARD therapy. X-rays help identify early erosive changes and establish reference for monitoring disease progression and treatment response.",
+    "suggestedICD10Codes": [
+      {
+        "code": "M06.9",
+        "description": "Rheumatoid arthritis, unspecified",
+        "isPrimary": true
+      },
+      {
+        "code": "M05.79",
+        "description": "Rheumatoid arthritis with rheumatoid factor of multiple sites without organ or systems involvement",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "73565",
+        "description": "Radiologic examination, knee; both knees, standing, anteroposterior",
+        "isPrimary": false
+      },
+      {
+        "code": "73130",
+        "description": "Radiologic examination, hand; minimum of 3 views",
+        "isPrimary": false
+      },
+      {
+        "code": "73110",
+        "description": "Radiologic examination, wrist; complete, minimum of 3 views",
+        "isPrimary": false
+      },
+      {
+        "code": "73630",
+        "description": "Radiologic examination, foot; complete, minimum of 3 views",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:23:21.744Z"
+},
+{
+  "testCase": "Neurological Workup - Multiple Modalities",
+  "dictationText": "34-year-old female with new onset right-sided weakness, numbness, visual disturbances, and balance problems over the past month. Family history of multiple sclerosis. Neurological exam shows right hemiparesis, decreased sensation right side, dysmetria on finger-to-nose testing, and positive Romberg test. Request brain MRI with and without contrast, cervical spine MRI with and without contrast, and thoracic spine MRI with and without contrast to evaluate for demyelinating disease.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 9,
+    "feedback": "Imaging request is appropriate for evaluating suspected demyelinating disease given multiple neurological symptoms, physical findings, and family history of multiple sclerosis. Contrast-enhanced MRIs will help identify demyelinating lesions.",
+    "suggestedICD10Codes": [
+      {
+        "code": "G54.2",
+        "description": "Cervical root disorders, not elsewhere classified",
+        "isPrimary": true
+      },
+      {
+        "code": "G54.3",
+        "description": "Thoracic root disorders, not elsewhere classified",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "72156",
+        "description": "Magnetic resonance (e.g., proton) imaging, spinal canal and contents, without and with contrast material(s), cervical and thoracic",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:23:26.934Z"
+},
+{
+  "testCase": "Vascular Disease - Multiple Studies",
+  "dictationText": "78-year-old male with history of coronary artery disease s/p CABG, hypertension, hyperlipidemia, type 2 diabetes, and 60-pack-year smoking history. Presents with bilateral lower extremity claudication, right worse than left, and non-healing ulcer on right great toe. Diminished pulses bilaterally. ABI right 0.6, left 0.7. Request bilateral lower extremity arterial doppler ultrasound, CT angiography of abdominal aorta and bilateral lower extremities with runoff, and chest X-ray for preoperative evaluation.",
+  "validationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 8,
+    "feedback": "The requested imaging studies are appropriate for this patient with symptomatic peripheral arterial disease and abnormal ABIs. Duplex ultrasound and CTA will help guide revascularization planning for claudication and limb salvage.",
+    "suggestedICD10Codes": [
+      {
+        "code": "I74.0",
+        "description": "Embolism and thrombosis of abdominal aorta",
+        "isPrimary": true
+      },
+      {
+        "code": "I70.0",
+        "description": "Atherosclerosis of aorta",
+        "isPrimary": false
+      }
+    ],
+    "suggestedCPTCodes": [
+      {
+        "code": "93925",
+        "description": "Duplex scan of lower extremity arteries or arterial bypass grafts; complete bilateral study",
+        "isPrimary": false
+      },
+      {
+        "code": "75630",
+        "description": "Aortography, abdominal, by serialography, radiological supervision and interpretation",
+        "isPrimary": false
+      },
+      {
+        "code": "73630",
+        "description": "Radiologic examination, foot; complete, minimum of 3 views",
+        "isPrimary": false
+      }
+    ],
+    "internalReasoning": "No internal reasoning provided"
+  },
+  "timestamp": "2025-05-11T14:23:33.088Z"
+}
+]
