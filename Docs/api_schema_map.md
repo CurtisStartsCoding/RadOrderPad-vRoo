@@ -24,7 +24,10 @@ This document maps core API endpoints to the primary database tables they intera
     -   **Constraint:** Public endpoint for trial user registration.
 -   **`POST /api/auth/trial/login`**
     -   Reads: `trial_users` (Main)
-    -   **Note:** No session tracking for trial users, just JWT token generation.
+    -   **Note:** No session tracking for trial users, just JWT token generation and user profile retrieval.
+-   **`GET /api/auth/trial/me`**
+    -   Reads: `trial_users` (Main)
+    -   **Note:** Validates JWT token and returns trial user profile and validation usage information.
 -   **`POST /api/auth/refresh`**
     -   Reads: `refresh_tokens` (Main), `users` (Main)
     -   Writes: `sessions` (Main), `refresh_tokens` (rotate/update)

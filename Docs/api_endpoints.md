@@ -33,7 +33,8 @@ API Endpoints Overview (Conceptual)
 -   `POST /auth/request-password-reset`: Initiate password reset flow.
 -   `POST /auth/reset-password`: Complete password reset using token.
 -   `POST /auth/trial/register`: Register a new trial user with email, password, name, and specialty. Creates a trial user record and returns a trial JWT token along with validation usage information (`trialInfo` object containing `validationsUsed`, `maxValidations`, and `validationsRemaining`). No organization association. **(Public Access)**
--   `POST /auth/trial/login`: Trial user login. Authenticates trial user credentials and returns a trial JWT token along with validation usage information (`trialInfo` object). **(Public Access)**
+-   `POST /auth/trial/login`: Trial user login. Authenticates trial user credentials and returns a trial JWT token, user profile information, and validation usage information (`trialInfo` object). **(Public Access)**
+-   `GET /auth/trial/me`: Get the profile and trial status of the currently authenticated trial user. Returns the user profile and validation usage information (`trialInfo` object). **(Authenticated - Trial User JWT)**
 
 ## Organizations (`/organizations`)
 

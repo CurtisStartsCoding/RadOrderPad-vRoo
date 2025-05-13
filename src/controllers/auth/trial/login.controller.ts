@@ -26,6 +26,7 @@ export class TrialLoginController {
       res.status(200).json({
         success: true,
         token: result.token,
+        user: result.user,
         trialInfo: result.trialInfo
       });
     } catch (error) {

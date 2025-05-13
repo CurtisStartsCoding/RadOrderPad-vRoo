@@ -3,6 +3,8 @@ import registerController from '../controllers/auth/register.controller';
 import authController from '../controllers/auth.controller.js';
 import trialRegisterController from '../controllers/auth/trial/register.controller';
 import trialLoginController from '../controllers/auth/trial/login.controller';
+import trialMeController from '../controllers/auth/trial/me.controller';
+import { authenticateJWT } from '../middleware/auth/authenticate-jwt';
 
 const router = Router();
 
@@ -42,5 +44,12 @@ router.post('/trial/register', trialRegisterController.registerTrialUser);
  * @access  Public
  */
 router.post('/trial/login', trialLoginController.loginTrialUser);
+
+/**
+ * @route   GET /api/auth/trial/me
+ * @desc    Get the profile and trial status of the currently authenticated trial user
+ * @access  Authenticated (Trial User JWT)
+ */
+router.get('/trial/me', authenticateJWT, trialMeController.getTrialMe);
 
 export default router;

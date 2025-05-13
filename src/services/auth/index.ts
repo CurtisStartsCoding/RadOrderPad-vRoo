@@ -2,9 +2,10 @@ import { User, UserRegistrationDTO, UserLoginDTO, OrganizationRegistrationDTO, L
 import { login } from './user';
 import { registerOrganization } from './organization';
 import { generateToken } from './token';
-import { registerTrialUser, loginTrialUser } from './trial';
+import { registerTrialUser, loginTrialUser, getTrialUserProfile } from './trial';
 import { TrialLoginResult } from './trial/login-trial-user.service';
 import { TrialRegisterResult } from './trial/register-trial-user.service';
+import { TrialUserProfileResult } from './trial/get-trial-user-profile.service';
 
 /**
  * Service for handling authentication-related operations
@@ -45,6 +46,13 @@ export class AuthService {
    */
   async loginTrialUser(email: string, password: string): Promise<TrialLoginResult> {
     return loginTrialUser(email, password);
+  }
+  
+  /**
+   * Get a trial user's profile by ID
+   */
+  async getTrialUserProfile(trialUserId: number): Promise<TrialUserProfileResult | null> {
+    return getTrialUserProfile(trialUserId);
   }
   
   /**

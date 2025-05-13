@@ -11,10 +11,19 @@ import enhancedLogger from '../../../utils/enhanced-logger';
  * @returns Object containing JWT token
  */
 /**
- * Interface for trial login result including validation usage information
+ * Interface for trial login result including user profile and validation usage information
  */
 export interface TrialLoginResult {
   token: string;
+  user: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    specialty: string | null;
+    isTrial: true;
+    createdAt: Date;
+  };
   trialInfo: {
     validationsUsed: number;
     maxValidations: number;
@@ -27,9 +36,9 @@ export async function loginTrialUser(
   password: string
 ): Promise<TrialLoginResult> {
   try {
-    // Get trial user by email including validation information
+    // Get trial user by email including profile and validation information
     const userResult = await queryMainDb(
-      'SELECT id, email, password_hash, specialty, validation_count, max_validations FROM trial_users WHERE email = $1',
+      'SELECT id, email, password_hash, first_name, last_name, specialty, validation_count, max_validations, created_at FROM trial_users WHERE email = $1',
       [email]
     );
     
@@ -74,8 +83,28 @@ export async function loginTrialUser(
     const maxValidations = user.max_validations || 100;
     const validationsRemaining = Math.max(0, maxValidations - validationsUsed);
     
+    // Construct user profile object
+    const userProfile: {
+      id: number;
+      email: string;
+      firstName: string;
+      lastName: string;
+      specialty: string | null;
+      isTrial: true;
+      createdAt: Date;
+    } = {
+      id: user.id,
+      email: user.email,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      specialty: user.specialty || null,
+      isTrial: true as const,
+      createdAt: user.created_at
+    };
+
     return {
       token,
+      user: userProfile,
       trialInfo: {
         validationsUsed,
         maxValidations,
