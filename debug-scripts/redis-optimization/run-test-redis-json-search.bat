@@ -1,4 +1,4 @@
 @echo off
 echo Running Redis JSON Search Test...
-npx ts-node "%~dp0test-redis-json-search.ts"
+node debug-scripts/redis-optimization/test-redis-json-search.js
 pause

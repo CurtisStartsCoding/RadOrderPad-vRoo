@@ -16,11 +16,11 @@ export async function createICD10SearchIndex(): Promise<void> {
   try {
     const client = getRedisClient();
     
-    // Check if index exists
+    // Check if index exists and drop it to ensure it's recreated with the correct configuration
     const indices = await client.call('FT._LIST') as string[];
     if (indices.includes('idx:icd10')) {
-      enhancedLogger.debug('ICD-10 search index already exists');
-      return;
+      enhancedLogger.info('Dropping existing ICD-10 search index to recreate with JSON configuration');
+      await client.call('FT.DROPINDEX', 'idx:icd10');
     }
     
     // Create index with fields for full-text search and filtering using JSON
@@ -54,11 +54,11 @@ export async function createCPTSearchIndex(): Promise<void> {
   try {
     const client = getRedisClient();
     
-    // Check if index exists
+    // Check if index exists and drop it to ensure it's recreated with the correct configuration
     const indices = await client.call('FT._LIST') as string[];
     if (indices.includes('idx:cpt')) {
-      enhancedLogger.debug('CPT search index already exists');
-      return;
+      enhancedLogger.info('Dropping existing CPT search index to recreate with JSON configuration');
+      await client.call('FT.DROPINDEX', 'idx:cpt');
     }
     
     // Create index with fields for full-text search and filtering using JSON
@@ -128,11 +128,11 @@ export async function createMarkdownSearchIndex(): Promise<void> {
   try {
     const client = getRedisClient();
     
-    // Check if index exists
+    // Check if index exists and drop it to ensure it's recreated with the correct configuration
     const indices = await client.call('FT._LIST') as string[];
     if (indices.includes('idx:markdown')) {
-      enhancedLogger.debug('Markdown search index already exists');
-      return;
+      enhancedLogger.info('Dropping existing Markdown search index to recreate with JSON configuration');
+      await client.call('FT.DROPINDEX', 'idx:markdown');
     }
     
     // Create index with fields for full-text search and filtering using JSON
