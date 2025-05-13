@@ -81,6 +81,7 @@ This document outlines how **Redis Cloud (hosted on AWS)**, leveraging the **Red
 ## 5. RedisSearch for Context Generation
 
 -   **Indexing:** Create RedisSearch indexes (`FT.CREATE ON JSON...`) on the ICD-10, CPT, and Markdown JSON data stored in the **Redis Cloud database**. Index relevant fields using JSONPaths like `$.description`, `$.keywords`, `$.modality`, `$.body_part`, `$.category`. The mapping index remains `ON HASH`.
+    -   **Index Migration:** When migrating from hash-based to JSON-based storage, existing indices must be dropped and recreated with the correct configuration. The index creation functions now check if indices exist and drop them before recreating them with the `ON JSON` configuration.
 -   **Querying:** The `dbContextGenerator` component within the `ValidationEngine` will primarily use RedisSearch `FT.SEARCH` queries based on *extracted keywords* from the physician's dictation. This replaces reliance on simple key lookups or complex/slow PostgreSQL queries for finding relevant codes.
 -   **Benefit:** Enables near real-time (<10-20ms typical) retrieval of contextually relevant medical codes based on free-text input, significantly speeding up the validation process and improving the quality of context provided to the LLM.
 
@@ -99,11 +100,13 @@ The RedisSearch implementation uses a simple query format without field specifie
 The implemented query format for CPT, ICD-10, and Markdown data now leverages JSONPath field specifiers to target specific fields within the JSON documents:
 
 ```typescript
-// Field-specific query with weights
-const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@clinical_justification:(${searchTerms}) WEIGHT 3.0)`;
+// Field-specific query with weights using JSONPath syntax for JSON documents
+const query = `(@\\$.description:(${searchTerms}) WEIGHT 5.0) | (@\\$.clinical_justification:(${searchTerms}) WEIGHT 3.0)`;
 ```
 
 This approach allows for more precise searching and utilization of field weights defined in the index schema.
+
+**Important Note:** When using RediSearch with JSON documents, the field specifiers in the search query must use the JSONPath syntax with the `$.` prefix, and the `$` character must be escaped with a backslash (`\\$`) in the query string. This is critical for the search to work correctly with indices created `ON JSON`.
 
 ### Example Queries
 
@@ -183,6 +186,7 @@ To ensure Redis is always populated with the necessary data, the server automati
    - Stores CPT, ICD-10, and Markdown data as JSON documents using `JSON.SET`
    - Stores mappings as hashes using `HSET`
    - Uses batch operations for efficiency
+   - **Important**: When migrating from hash-based storage to JSON-based storage, existing keys must be deleted before storing them as JSON documents to avoid "Existing key has wrong Redis type" errors
 
 3. **Key Format Consistency:**
    - Ensures all data is stored with the correct key formats:
@@ -320,6 +324,7 @@ The implementation includes comprehensive testing:
 2. `scripts/redis/implement-weighted-search.js`: Tests weighted search for CPT and ICD-10 codes
 3. `scripts/redis/test-weighted-search-all.js`: Tests weighted search for all data types
 4. `tests/test-validation-with-weighted-search.js`: Tests the validation engine with weighted search
+5. `debug-scripts/redis-optimization/test-redis-json-search.js`: Tests the Redis JSON storage and search functionality
 
 ### Running Tests
 
@@ -327,6 +332,17 @@ The implementation includes comprehensive testing:
 2. Run `scripts/redis/run-create-mapping-markdown-indexes.bat` to create the mapping and markdown indexes
 3. Run `scripts/redis/run-test-weighted-search-all.bat` to test weighted search for all data types
 4. Run `tests/run-validation-with-weighted-search.bat` to test the validation engine with weighted search
+5. Run `debug-scripts/redis-optimization/run-test-redis-json-search.bat` to test JSON storage and search
+
+### JSON Storage and Search Test
+
+The `test-redis-json-search.js` script verifies the following:
+
+1. **Index Creation**: Creates Redis indices with `ON JSON` configuration, dropping existing indices if they exist
+2. **Data Migration**: Deletes existing keys before storing them as JSON documents to avoid type conflicts
+3. **JSON Storage**: Stores CPT, ICD-10, and Markdown data as JSON documents using `JSON.SET`
+4. **JSONPath Search**: Searches for data using JSONPath field specifiers in the query
+5. **Result Verification**: Confirms that search results include the correct fields and relevance scores
 
 ### Code Quality Checks
 

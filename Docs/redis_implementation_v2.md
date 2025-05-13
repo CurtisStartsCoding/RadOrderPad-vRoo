@@ -36,7 +36,8 @@ The server automatically populates Redis with data from PostgreSQL during startu
 1. The `populateRedisFromPostgres()` function in `src/utils/cache/redis-populate.ts` is called during server initialization
 2. It checks if Redis already has data (to avoid unnecessary repopulation)
 3. If empty, it fetches data from PostgreSQL and stores it in Redis using the correct key formats
-4. This ensures Redis is always populated with the necessary data without manual intervention
+4. When migrating from hash-based storage to JSON-based storage, existing keys must be deleted before storing them as JSON documents to avoid "Existing key has wrong Redis type" errors
+5. This ensures Redis is always populated with the necessary data without manual intervention
 
 Benefits:
 - No need to manually run population scripts
@@ -99,8 +100,8 @@ await client.call(
 const terms = query.toLowerCase().split(/\s+/).map(term => `%${term}%`);
 const searchTerms = terms.join(' ');
 
-// Field-specific query with weights
-const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@keywords:(${searchTerms}) WEIGHT 3.0) | (@primary_imaging_rationale:(${searchTerms}) WEIGHT 2.0)`;
+// Field-specific query with weights using JSONPath syntax for JSON documents
+const query = `(@\\$.description:(${searchTerms}) WEIGHT 5.0) | (@\\$.keywords:(${searchTerms}) WEIGHT 3.0) | (@\\$.primary_imaging_rationale:(${searchTerms}) WEIGHT 2.0)`;
 
 const result = await client.call(
   'FT.SEARCH', 'idx:icd10', query,
@@ -109,6 +110,8 @@ const result = await client.call(
   'SORTBY', 'icd10_code'
 );
 ```
+
+**Critical Note:** When using RediSearch with JSON documents, the field specifiers in the search query must use the JSONPath syntax with the `$.` prefix, and the `$` character must be escaped with a backslash (`\\$`) in the query string. Failure to use the correct JSONPath syntax in search queries will result in no matches being found, even if the indices are correctly created `ON JSON` and the data is stored as JSON documents.
 
 ### 2. RedisJSON for Structured Data
 
@@ -209,6 +212,119 @@ try {
 }
 ```
 
+### Index Manager Updates
+
+The index creation functions in `src/utils/cache/redis-search/index-manager.ts` have been updated to drop existing indices before recreating them:
+
+```typescript
+// In src/utils/cache/redis-search/index-manager.ts
+export async function createCPTSearchIndex(): Promise<void> {
+  try {
+    const client = getRedisClient();
+    
+    // Check if index exists and drop it to ensure it's recreated with the correct configuration
+    const indices = await client.call('FT._LIST') as string[];
+    if (indices.includes('idx:cpt')) {
+      enhancedLogger.info('Dropping existing CPT search index to recreate with JSON configuration');
+      await client.call('FT.DROPINDEX', 'idx:cpt');
+    }
+    
+    // Create index with fields for full-text search and filtering using JSON
+    await client.call(
+      'FT.CREATE', 'idx:cpt', 'ON', 'JSON', 'PREFIX', '1', 'cpt:code:',
+      'SCHEMA',
+      '$.cpt_code', 'AS', 'cpt_code', 'TAG', 'SORTABLE',
+      '$.description', 'AS', 'description', 'TEXT', 'WEIGHT', '5.0',
+      '$.body_part', 'AS', 'body_part', 'TEXT', 'WEIGHT', '3.0',
+      '$.modality', 'AS', 'modality', 'TAG',
+      '$.category', 'AS', 'category', 'TAG',
+      '$.clinical_justification', 'AS', 'clinical_justification', 'TEXT', 'WEIGHT', '3.0',
+      '$.key_findings', 'AS', 'key_findings', 'TEXT', 'WEIGHT', '2.0'
+    );
+    
+    enhancedLogger.info('Created CPT search index on JSON');
+  } catch (error) {
+    enhancedLogger.error({
+      message: 'Error creating CPT search index',
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+  }
+}
+
+export async function createICD10SearchIndex(): Promise<void> {
+  try {
+    const client = getRedisClient();
+    
+    // Check if index exists and drop it to ensure it's recreated with the correct configuration
+    const indices = await client.call('FT._LIST') as string[];
+    if (indices.includes('idx:icd10')) {
+      enhancedLogger.info('Dropping existing ICD-10 search index to recreate with JSON configuration');
+      await client.call('FT.DROPINDEX', 'idx:icd10');
+    }
+    
+    // Create index with fields for full-text search and filtering using JSON
+    await client.call(
+      'FT.CREATE', 'idx:icd10', 'ON', 'JSON', 'PREFIX', '1', 'icd10:code:',
+      'SCHEMA',
+      '$.icd10_code', 'AS', 'icd10_code', 'TAG', 'SORTABLE',
+      '$.description', 'AS', 'description', 'TEXT', 'WEIGHT', '5.0',
+      '$.clinical_notes', 'AS', 'clinical_notes', 'TEXT', 'WEIGHT', '1.0',
+      '$.category', 'AS', 'category', 'TAG',
+      '$.specialty', 'AS', 'specialty', 'TAG',
+      '$.keywords', 'AS', 'keywords', 'TEXT', 'WEIGHT', '3.0',
+      '$.primary_imaging_rationale', 'AS', 'primary_imaging_rationale', 'TEXT', 'WEIGHT', '2.0'
+    );
+    
+    enhancedLogger.info('Created ICD-10 search index on JSON');
+  } catch (error) {
+    enhancedLogger.error({
+      message: 'Error creating ICD-10 search index',
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+  }
+}
+
+export async function createMarkdownSearchIndex(): Promise<void> {
+  try {
+    const client = getRedisClient();
+    
+    // Check if index exists and drop it to ensure it's recreated with the correct configuration
+    const indices = await client.call('FT._LIST') as string[];
+    if (indices.includes('idx:markdown')) {
+      enhancedLogger.info('Dropping existing Markdown search index to recreate with JSON configuration');
+      await client.call('FT.DROPINDEX', 'idx:markdown');
+    }
+    
+    // Create index with fields for full-text search and filtering using JSON
+    await client.call(
+      'FT.CREATE', 'idx:markdown', 'ON', 'JSON', 'PREFIX', '1', 'markdown:',
+      'SCHEMA',
+      '$.icd10_code', 'AS', 'icd10_code', 'TAG', 'SORTABLE',
+      '$.icd10_description', 'AS', 'icd10_description', 'TEXT', 'WEIGHT', '2.0',
+      '$.content', 'AS', 'content', 'TEXT', 'WEIGHT', '5.0',
+      '$.content_preview', 'AS', 'content_preview', 'TEXT', 'WEIGHT', '1.0'
+    );
+    
+    enhancedLogger.info('Created Markdown search index on JSON');
+  } catch (error) {
+    enhancedLogger.error({
+      message: 'Error creating Markdown search index',
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+  }
+}
+```
+
+These changes ensure that:
+1. Existing indices are dropped before recreating them
+2. All indices (except mapping) are created with `ON JSON` configuration
+3. JSONPath field specifiers are used in the schema
+4. Proper error handling and logging are included
+```
+
 This ensures that the Redis indices are created when the application starts, making the advanced search features immediately available. The implementation includes proper error handling to ensure the application continues to function even if the Redis indices cannot be created, falling back to PostgreSQL search in that case.
 
 ## Context Generation
@@ -239,6 +355,8 @@ The implementation includes test scripts to verify the functionality and perform
 
 - `test-redis-advanced.js`: Tests RediSearch, RedisJSON, and Vector Search
 - `test-redis-advanced.bat`/`.sh`: Batch/shell scripts to run the tests
+- `test-redis-json-search.js`: Tests the Redis JSON storage and search functionality
+- `run-test-redis-json-search.bat`: Batch script to run the JSON search test
 
 Example usage:
 
@@ -254,7 +372,17 @@ Example usage:
 
 # Run all tests
 ./debug-scripts/redis-optimization/test-redis-advanced.sh all
+
+# Test JSON storage and search
+./debug-scripts/redis-optimization/run-test-redis-json-search.bat
 ```
+
+The `test-redis-json-search.js` script specifically tests:
+1. Creating Redis indices with `ON JSON` configuration
+2. Deleting existing keys before storing them as JSON documents
+3. Storing CPT, ICD-10, and Markdown data as JSON documents
+4. Searching for data using JSONPath field specifiers
+5. Verifying that the search results include the correct fields and scores
 
 ## Performance Considerations
 
@@ -433,6 +561,53 @@ For the implementation to work in production, you need:
    - IP allowlisting may be required in Redis Cloud settings
 
 ## Implementation Details
+
+### Migration from Hash to JSON Storage
+
+When migrating from hash-based storage to JSON-based storage, the `redis-populate.ts` file has been updated to handle the transition:
+
+```typescript
+// In src/utils/cache/redis-populate.ts
+async function cacheBatch(items: any[], keyPrefix: string, isJSON = false): Promise<void> {
+  try {
+    const client = getRedisClient();
+    const pipeline = client.pipeline();
+    
+    for (const item of items) {
+      const key = `${keyPrefix}:${item.code || item.cpt_code || item.icd10_code}`;
+      
+      // For JSON storage, delete existing key first to avoid type conflicts
+      if (isJSON) {
+        pipeline.del(key);
+        pipeline.call('JSON.SET', key, '.', JSON.stringify(item));
+      } else {
+        // For hash storage, use HSET
+        const fields: Record<string, string> = {};
+        Object.entries(item).forEach(([field, value]) => {
+          if (value !== null && value !== undefined) {
+            fields[field] = String(value);
+          }
+        });
+        pipeline.hset(key, fields);
+      }
+    }
+    
+    await pipeline.exec();
+  } catch (error) {
+    enhancedLogger.error({
+      message: `Error caching batch with prefix ${keyPrefix}`,
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
+}
+```
+
+This approach:
+1. Takes an `isJSON` parameter to determine the storage method
+2. For JSON storage, deletes the existing key before storing the JSON document
+3. For hash storage, continues to use HSET
+4. Uses pipeline operations for efficiency
+5. Includes proper error handling
 
 ### Pattern-Based Cache Invalidation
 

@@ -34,7 +34,7 @@ export async function searchMarkdownDocsWithScores(
     const searchTermsStr = searchTerms.join(' | ');
     
     // Construct a query that uses JSONPath field specifiers with weights
-    const query = `(@content:(${searchTermsStr}) WEIGHT 5.0) | (@icd10_description:(${searchTermsStr}) WEIGHT 2.0) | (@content_preview:(${searchTermsStr}) WEIGHT 1.0)`;
+    const query = `(@\\$.content:(${searchTermsStr}) WEIGHT 5.0) | (@\\$.icd10_description:(${searchTermsStr}) WEIGHT 2.0) | (@\\$.content_preview:(${searchTermsStr}) WEIGHT 1.0)`;
     
     // Execute the search with scores
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

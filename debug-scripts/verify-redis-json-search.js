@@ -1,8 +1,8 @@
 /**
- * Redis JSON Search Test Script
+ * Verify Redis JSON Search Implementation
  * 
- * This script tests the Redis JSON storage and search functionality.
- * It creates the indices, populates Redis with sample data, and tests the search functionality.
+ * This script verifies that the Redis JSON search implementation is working correctly.
+ * It deletes existing data, recreates indices, stores sample data, and runs search queries.
  */
 
 // Import required modules
@@ -13,7 +13,7 @@ const redisHost = 'redis-11584.crce197.us-east-2-1.ec2.redns.redis-cloud.com';
 const redisPort = 11584;
 const redisPassword = 'zHUbspGPcewJsoT9G9TSQncuSl0v0MUH';
 
-console.log('Starting Redis JSON Search Test...');
+console.log('Starting Redis JSON Search Verification...');
 console.log(`Connection details: { host: '${redisHost}', port: ${redisPort}, tls: enabled }`);
 
 // Create a Redis client with production settings
@@ -37,6 +37,52 @@ client.on('connect', () => {
 client.on('error', (err) => {
   console.error('Redis Client Error', err);
 });
+
+/**
+ * Delete existing data
+ */
+async function deleteExistingData() {
+  console.log('\n=== DELETING EXISTING DATA ===');
+  
+  try {
+    // Delete CPT codes
+    const cptKeys = await client.keys('cpt:code:*');
+    if (cptKeys.length > 0) {
+      console.log(`Deleting ${cptKeys.length} CPT codes`);
+      const pipeline = client.pipeline();
+      cptKeys.forEach(key => pipeline.del(key));
+      await pipeline.exec();
+    } else {
+      console.log('No CPT codes to delete');
+    }
+    
+    // Delete ICD-10 codes
+    const icd10Keys = await client.keys('icd10:code:*');
+    if (icd10Keys.length > 0) {
+      console.log(`Deleting ${icd10Keys.length} ICD-10 codes`);
+      const pipeline = client.pipeline();
+      icd10Keys.forEach(key => pipeline.del(key));
+      await pipeline.exec();
+    } else {
+      console.log('No ICD-10 codes to delete');
+    }
+    
+    // Delete Markdown documents
+    const markdownKeys = await client.keys('markdown:*');
+    if (markdownKeys.length > 0) {
+      console.log(`Deleting ${markdownKeys.length} Markdown documents`);
+      const pipeline = client.pipeline();
+      markdownKeys.forEach(key => pipeline.del(key));
+      await pipeline.exec();
+    } else {
+      console.log('No Markdown documents to delete');
+    }
+    
+    console.log('Existing data deleted successfully');
+  } catch (error) {
+    console.error('Error deleting existing data:', error);
+  }
+}
 
 /**
  * Create Redis search indices
@@ -113,24 +159,18 @@ async function createIndices() {
     // Check index info
     console.log('\nCPT Index Information:');
     const cptIndexInfo = await client.call('FT.INFO', 'idx:cpt');
-    console.log('Index Type:', cptIndexInfo.indexOf('index_options') >= 0 ? 
-      cptIndexInfo[cptIndexInfo.indexOf('index_options') + 1] : 'Unknown');
-    console.log('Index Definition:', cptIndexInfo.indexOf('index_definition') >= 0 ? 
-      cptIndexInfo[cptIndexInfo.indexOf('index_definition') + 1] : 'Unknown');
+    console.log('Index Type:', cptIndexInfo.indexOf('key_type') >= 0 ? 
+      cptIndexInfo[cptIndexInfo.indexOf('key_type') + 1] : 'Unknown');
     
     console.log('\nICD-10 Index Information:');
     const icd10IndexInfo = await client.call('FT.INFO', 'idx:icd10');
-    console.log('Index Type:', icd10IndexInfo.indexOf('index_options') >= 0 ? 
-      icd10IndexInfo[icd10IndexInfo.indexOf('index_options') + 1] : 'Unknown');
-    console.log('Index Definition:', icd10IndexInfo.indexOf('index_definition') >= 0 ? 
-      icd10IndexInfo[icd10IndexInfo.indexOf('index_definition') + 1] : 'Unknown');
+    console.log('Index Type:', icd10IndexInfo.indexOf('key_type') >= 0 ? 
+      icd10IndexInfo[icd10IndexInfo.indexOf('key_type') + 1] : 'Unknown');
     
     console.log('\nMarkdown Index Information:');
     const markdownIndexInfo = await client.call('FT.INFO', 'idx:markdown');
-    console.log('Index Type:', markdownIndexInfo.indexOf('index_options') >= 0 ? 
-      markdownIndexInfo[markdownIndexInfo.indexOf('index_options') + 1] : 'Unknown');
-    console.log('Index Definition:', markdownIndexInfo.indexOf('index_definition') >= 0 ? 
-      markdownIndexInfo[markdownIndexInfo.indexOf('index_definition') + 1] : 'Unknown');
+    console.log('Index Type:', markdownIndexInfo.indexOf('key_type') >= 0 ? 
+      markdownIndexInfo[markdownIndexInfo.indexOf('key_type') + 1] : 'Unknown');
     
   } catch (error) {
     console.error('Error creating indices:', error);
@@ -174,12 +214,6 @@ async function populateSampleData() {
       content_preview: '# Medical Imaging Recommendation for ICD-10 Code M54.5...'
     };
     
-    // Delete existing keys before storing as JSON
-    console.log('Deleting existing keys');
-    await client.del(`cpt:code:${cptCode.cpt_code}`);
-    await client.del(`icd10:code:${icd10Code.icd10_code}`);
-    // Don't delete markdown key as it's already JSON
-    
     // Store CPT code as JSON
     console.log('Storing CPT code as JSON');
     await client.call('JSON.SET', `cpt:code:${cptCode.cpt_code}`, '.', JSON.stringify(cptCode));
@@ -188,15 +222,9 @@ async function populateSampleData() {
     console.log('Storing ICD-10 code as JSON');
     await client.call('JSON.SET', `icd10:code:${icd10Code.icd10_code}`, '.', JSON.stringify(icd10Code));
     
-    // Store Markdown document as JSON (only if it doesn't exist)
-    console.log('Checking if Markdown document exists');
-    const markdownExists = await client.exists(`markdown:${markdownDoc.icd10_code}`);
-    if (!markdownExists) {
-      console.log('Storing Markdown document as JSON');
-      await client.call('JSON.SET', `markdown:${markdownDoc.icd10_code}`, '.', JSON.stringify(markdownDoc));
-    } else {
-      console.log('Markdown document already exists, skipping');
-    }
+    // Store Markdown document as JSON
+    console.log('Storing Markdown document as JSON');
+    await client.call('JSON.SET', `markdown:${markdownDoc.icd10_code}`, '.', JSON.stringify(markdownDoc));
     
     console.log('Sample data populated successfully');
     
@@ -214,7 +242,7 @@ async function testSearch() {
   try {
     // Test CPT search
     console.log('\nTesting CPT search:');
-    const cptQuery = '@description:(mri) @body_part:(extremity)';
+    const cptQuery = '@\\$.description:(mri) @\\$.body_part:(extremity)';
     const cptResult = await client.call(
       'FT.SEARCH',
       'idx:cpt',
@@ -228,7 +256,7 @@ async function testSearch() {
     
     // Test ICD-10 search
     console.log('\nTesting ICD-10 search:');
-    const icd10Query = '@description:(back pain) | @keywords:(lumbago)';
+    const icd10Query = '@\\$.description:(back pain) | @\\$.keywords:(lumbago)';
     const icd10Result = await client.call(
       'FT.SEARCH',
       'idx:icd10',
@@ -242,7 +270,7 @@ async function testSearch() {
     
     // Test Markdown search
     console.log('\nTesting Markdown search:');
-    const markdownQuery = '@content:(imaging recommendation)';
+    const markdownQuery = '@\\$.content:(imaging recommendation)';
     const markdownResult = await client.call(
       'FT.SEARCH',
       'idx:markdown',
@@ -264,6 +292,7 @@ async function testSearch() {
  */
 async function main() {
   try {
+    await deleteExistingData();
     await createIndices();
     await populateSampleData();
     await testSearch();
@@ -272,7 +301,7 @@ async function main() {
   } finally {
     // Close the Redis connection
     client.quit();
-    console.log('\nTest completed');
+    console.log('\nVerification completed');
   }
 }
 

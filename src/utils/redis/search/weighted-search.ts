@@ -45,7 +45,7 @@ export async function searchCPTCodesWithScores(
     
     // Execute the search with scores
     // Construct a query that uses JSONPath field specifiers with weights
-    const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@body_part:(${searchTerms}) WEIGHT 3.0) | (@clinical_justification:(${searchTerms}) WEIGHT 3.0) | (@key_findings:(${searchTerms}) WEIGHT 2.0)`;
+    const query = `(@\\$.description:(${searchTerms}) WEIGHT 5.0) | (@\\$.body_part:(${searchTerms}) WEIGHT 3.0) | (@\\$.clinical_justification:(${searchTerms}) WEIGHT 3.0) | (@\\$.key_findings:(${searchTerms}) WEIGHT 2.0)`;
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(
@@ -138,7 +138,7 @@ export async function searchICD10CodesWithScores(
     
     // Execute the search with scores
     // Construct a query that uses JSONPath field specifiers with weights
-    const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@clinical_notes:(${searchTerms}) WEIGHT 1.0) | (@keywords:(${searchTerms}) WEIGHT 3.0) | (@primary_imaging_rationale:(${searchTerms}) WEIGHT 2.0)`;
+    const query = `(@\\$.description:(${searchTerms}) WEIGHT 5.0) | (@\\$.clinical_notes:(${searchTerms}) WEIGHT 1.0) | (@\\$.keywords:(${searchTerms}) WEIGHT 3.0) | (@\\$.primary_imaging_rationale:(${searchTerms}) WEIGHT 2.0)`;
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(
