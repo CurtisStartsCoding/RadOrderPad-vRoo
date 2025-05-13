@@ -85,10 +85,16 @@ async function cacheBatch(items: Record<string, unknown>[], keyFn: (item: Record
     for (const item of batch) {
       const key = keyFn(item);
       
-      // Store as a hash
-      for (const [field, value] of Object.entries(item)) {
-        if (value !== null && value !== undefined) {
-          pipeline.hset(key, field, typeof value === 'object' ? JSON.stringify(value) : String(value));
+      // Determine storage method based on key prefix
+      if (key.startsWith('cpt:') || key.startsWith('icd10:') || key.startsWith('markdown:')) {
+        // Store as JSON document for CPT, ICD-10, and Markdown data
+        pipeline.call('JSON.SET', key, '.', JSON.stringify(item));
+      } else {
+        // Store as a hash for other data types (e.g., mappings)
+        for (const [field, value] of Object.entries(item)) {
+          if (value !== null && value !== undefined) {
+            pipeline.hset(key, field, typeof value === 'object' ? JSON.stringify(value) : String(value));
+          }
         }
       }
       

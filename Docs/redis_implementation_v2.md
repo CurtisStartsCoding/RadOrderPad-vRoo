@@ -24,9 +24,10 @@ The primary strategy uses Redis as a cache for:
 
 All Redis keys follow a standardized format:
 
-- CPT codes: `cpt:code:{cpt_code}` (e.g., `cpt:code:73221`)
-- ICD-10 codes: `icd10:code:{icd10_code}` (e.g., `icd10:code:M25.511`)
-- Mappings: `mapping:icd10-to-cpt:{icd10_code}` (e.g., `mapping:icd10-to-cpt:M25.511`)
+- CPT codes: `cpt:code:{cpt_code}` (e.g., `cpt:code:73221`) - stored as JSON documents
+- ICD-10 codes: `icd10:code:{icd10_code}` (e.g., `icd10:code:M25.511`) - stored as JSON documents
+- Mappings: `mapping:icd10-to-cpt:{icd10_code}` (e.g., `mapping:icd10-to-cpt:M25.511`) - stored as hashes
+- Markdown docs: `markdown:{icd10_code}` (e.g., `markdown:M75.101`) - stored as JSON documents
 
 #### Automatic Population on Server Startup
 
@@ -79,13 +80,15 @@ RediSearch provides powerful full-text search capabilities with fuzzy matching, 
 ```typescript
 // Create index for ICD-10 codes
 await client.call(
-  'FT.CREATE', 'idx:icd10', 'ON', 'HASH', 'PREFIX', '1', 'icd10:code:',
+  'FT.CREATE', 'idx:icd10', 'ON', 'JSON', 'PREFIX', '1', 'icd10:code:',
   'SCHEMA',
-  'icd10_code', 'TAG', 'SORTABLE',
-  'description', 'TEXT', 'WEIGHT', '5.0',
-  'clinical_notes', 'TEXT', 'WEIGHT', '1.0',
-  'category', 'TAG',
-  'specialty', 'TAG'
+  '$.icd10_code', 'AS', 'icd10_code', 'TAG', 'SORTABLE',
+  '$.description', 'AS', 'description', 'TEXT', 'WEIGHT', '5.0',
+  '$.clinical_notes', 'AS', 'clinical_notes', 'TEXT', 'WEIGHT', '1.0',
+  '$.category', 'AS', 'category', 'TAG',
+  '$.specialty', 'AS', 'specialty', 'TAG',
+  '$.keywords', 'AS', 'keywords', 'TEXT', 'WEIGHT', '3.0',
+  '$.primary_imaging_rationale', 'AS', 'primary_imaging_rationale', 'TEXT', 'WEIGHT', '2.0'
 );
 ```
 
@@ -94,12 +97,15 @@ await client.call(
 ```typescript
 // Search with fuzzy matching (%term% allows for 1 character edit distance)
 const terms = query.toLowerCase().split(/\s+/).map(term => `%${term}%`);
-const searchQuery = terms.join(' ');
+const searchTerms = terms.join(' ');
+
+// Field-specific query with weights
+const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@keywords:(${searchTerms}) WEIGHT 3.0) | (@primary_imaging_rationale:(${searchTerms}) WEIGHT 2.0)`;
 
 const result = await client.call(
-  'FT.SEARCH', 'idx:icd10', searchQuery,
+  'FT.SEARCH', 'idx:icd10', query,
   'LIMIT', offset.toString(), limit.toString(),
-  'RETURN', '4', 'icd10_code', 'description', 'category', 'specialty',
+  'RETURN', '4', '$.icd10_code', '$.description', '$.category', '$.specialty',
   'SORTBY', 'icd10_code'
 );
 ```
@@ -188,14 +194,14 @@ The application entry point has been updated to initialize Redis indices during 
 import {
   createICD10SearchIndex,
   createCPTSearchIndex,
-  createMappingSearchIndex
+  createMappingSearchIndex,
+  createMarkdownSearchIndex,
+  createRedisSearchIndexes
 } from './utils/cache/redis-search';
 
 // During server startup
 try {
-  await createICD10SearchIndex();
-  await createCPTSearchIndex();
-  await createMappingSearchIndex();
+  await createRedisSearchIndexes(); // This calls all index creation functions
   logger.info('Redis search indices initialized successfully');
 } catch (error) {
   logger.error('Error initializing Redis search indices:', { error });
@@ -210,15 +216,16 @@ This ensures that the Redis indices are created when the application starts, mak
 The enhanced context generator uses these advanced services to provide more accurate and comprehensive context for validation:
 
 ```typescript
-// Search for ICD-10 codes using RediSearch with fuzzy matching
-const icd10Results = await searchICD10CodesFuzzy(diagnosisQuery, {
-  specialty: categorizedKeywords.symptoms.length > 0 ? categorizedKeywords.symptoms[0] : null
-});
+// Search for ICD-10 codes using RediSearch with weighted search
+const icd10Results = await searchICD10CodesWithScores(diagnosisQuery, categorizedKeywords);
 
-// Get mappings between ICD-10 and CPT codes using RedisJSON
-const mappingPromises = icd10Results.slice(0, 5).map(icd10 => 
-  getCptCodesForIcd10Enhanced(icd10.icd10_code)
+// Get mappings between ICD-10 and CPT codes
+const mappingPromises = icd10Results.slice(0, 5).map(icd10 =>
+  getMappingsWithScores(icd10.icd10_code)
 );
+
+// Get markdown documents for ICD-10 codes
+const markdownDocs = await getMarkdownDocsWithScores(icd10Results.slice(0, 3), diagnosisQuery);
 
 // Identify rare diseases if clinical notes are provided
 if (includeRareDiseases && clinicalNotes) {

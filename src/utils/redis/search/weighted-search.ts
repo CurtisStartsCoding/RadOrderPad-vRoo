@@ -5,11 +5,11 @@
  * with weighted results based on relevance scores.
  */
 
-import { getRedisClient } from '../../../config/redis.js';
-import { CPTRow, ICD10Row } from '../../database/types.js';
-import { CategorizedKeywords } from '../../database/types.js';
-import { processSearchTerms, extractKeyFromRedisKey } from './common.js';
-import logger from '../../../utils/logger.js';
+import { getRedisClient } from '../../../config/redis';
+import { CPTRow, ICD10Row } from '../../database/types';
+import { CategorizedKeywords } from '../../database/types';
+import { processSearchTerms, extractKeyFromRedisKey } from './common';
+import logger from '../../../utils/logger';
 
 /**
  * Extended CPT Row interface with score
@@ -44,14 +44,17 @@ export async function searchCPTCodesWithScores(
     const searchTerms = processSearchTerms(keywords);
     
     // Execute the search with scores
+    // Construct a query that uses JSONPath field specifiers with weights
+    const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@body_part:(${searchTerms}) WEIGHT 3.0) | (@clinical_justification:(${searchTerms}) WEIGHT 3.0) | (@key_findings:(${searchTerms}) WEIGHT 2.0)`;
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(
       'FT.SEARCH',
-      'cpt_index',
-      searchTerms,
+      'idx:cpt',
+      query,
       'WITHSCORES',
       'LIMIT', '0', limit.toString(),
-      'RETURN', '4', '$.cpt_code', '$.description', '$.modality', '$.body_part'
+      'RETURN', '6', '$.cpt_code', '$.description', '$.modality', '$.body_part', '$.clinical_justification', '$.key_findings'
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any[];
     
@@ -134,14 +137,17 @@ export async function searchICD10CodesWithScores(
     const searchTerms = processSearchTerms(keywords);
     
     // Execute the search with scores
+    // Construct a query that uses JSONPath field specifiers with weights
+    const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@clinical_notes:(${searchTerms}) WEIGHT 1.0) | (@keywords:(${searchTerms}) WEIGHT 3.0) | (@primary_imaging_rationale:(${searchTerms}) WEIGHT 2.0)`;
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(
       'FT.SEARCH',
-      'icd10_index',
-      searchTerms,
+      'idx:icd10',
+      query,
       'WITHSCORES',
       'LIMIT', '0', limit.toString(),
-      'RETURN', '5', '$.icd10_code', '$.description', '$.clinical_notes', '$.imaging_modalities', '$.primary_imaging'
+      'RETURN', '7', '$.icd10_code', '$.description', '$.clinical_notes', '$.imaging_modalities', '$.primary_imaging', '$.keywords', '$.primary_imaging_rationale'
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any[];
     

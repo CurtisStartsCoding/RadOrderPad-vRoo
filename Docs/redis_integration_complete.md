@@ -55,20 +55,20 @@ This document outlines how **Redis Cloud (hosted on AWS)**, leveraging the **Red
 
 -   **ICD-10 Codes:**
     *   Key: `icd10:code:{icd10_code}` (e.g., `icd10:code:M25.511`)
-    *   Value: Hash representing the `medical_icd10_codes` row (stored using `HSET`).
-    *   TTL: None (persistent). Indexed by RedisSearch on `description`, `keywords`, `category`.
+    *   Value: JSON document representing the `medical_icd10_codes` row (stored using `JSON.SET`).
+    *   TTL: None (persistent). Indexed by RedisSearch ON JSON with a schema targeting JSONPaths like `$.description`, `$.clinical_notes`, `$.keywords`, `$.primary_imaging_rationale`.
 -   **CPT Codes:**
     *   Key: `cpt:code:{cpt_code}` (e.g., `cpt:code:73221`)
-    *   Value: Hash representing the `medical_cpt_codes` row (stored using `HSET`).
-    *   TTL: None (persistent). Indexed by RedisSearch on `description`, `modality`, `body_part`.
+    *   Value: JSON document representing the `medical_cpt_codes` row (stored using `JSON.SET`).
+    *   TTL: None (persistent). Indexed by RedisSearch ON JSON with a schema targeting JSONPaths like `$.description`, `$.body_part`, `$.modality`, `$.clinical_justification`, `$.key_findings`.
 -   **ICD-10 / CPT Mappings:**
     *   Key: `mapping:icd10-to-cpt:{icd10_code}` (e.g., `mapping:icd10-to-cpt:M25.511`)
     *   Value: Hash representing the relevant `medical_cpt_icd10_mappings` rows (stored using `HSET`).
-    *   TTL: None (persistent). Potentially indexed by RedisSearch if needed.
+    *   TTL: None (persistent). Indexed by RedisSearch ON HASH.
 -   **ICD-10 Markdown Docs:**
     *   Key: `markdown:{icd10_code}` (e.g., `markdown:M75.101`)
-    *   Value: String containing the markdown content (stored using `SET`).
-    *   TTL: Medium (e.g., 3 days). Potentially indexed by RedisSearch on content (`FT.CREATE ... ON HASH ...` might be needed if storing differently, or index TEXT field if stored as JSON).
+    *   Value: JSON document containing the markdown content (e.g., `{"content": "markdown_text..."}`) stored using `JSON.SET`.
+    *   TTL: Medium (e.g., 3 days). Indexed by RedisSearch ON JSON with a schema targeting JSONPaths like `$.content`, `$.icd10_description`, `$.content_preview`.
 -   **Validation Context (Optional Cache):**
     *   Key: `context:{hash_of_keywords_or_dictation}`
     *   Value: JSON string containing the aggregated set of relevant ICDs, CPTs, mappings, and markdown needed for a specific validation input (results from RedisSearch queries).
@@ -80,7 +80,7 @@ This document outlines how **Redis Cloud (hosted on AWS)**, leveraging the **Red
 
 ## 5. RedisSearch for Context Generation
 
--   **Indexing:** Create RedisSearch indexes (`FT.CREATE ON HASH...`) on the ICD-10 and CPT code hash data stored in the **Redis Cloud database**. Index relevant fields like `description`, `keywords`, `modality`, `body_part`, `category`.
+-   **Indexing:** Create RedisSearch indexes (`FT.CREATE ON JSON...`) on the ICD-10, CPT, and Markdown JSON data stored in the **Redis Cloud database**. Index relevant fields using JSONPaths like `$.description`, `$.keywords`, `$.modality`, `$.body_part`, `$.category`. The mapping index remains `ON HASH`.
 -   **Querying:** The `dbContextGenerator` component within the `ValidationEngine` will primarily use RedisSearch `FT.SEARCH` queries based on *extracted keywords* from the physician's dictation. This replaces reliance on simple key lookups or complex/slow PostgreSQL queries for finding relevant codes.
 -   **Benefit:** Enables near real-time (<10-20ms typical) retrieval of contextually relevant medical codes based on free-text input, significantly speeding up the validation process and improving the quality of context provided to the LLM.
 
@@ -90,33 +90,38 @@ The RedisSearch implementation uses a simple query format without field specifie
 
 ### Index Structure
 
-- RedisSearch indexes are created with hash field names like `description`, `keywords`, etc.
+- RedisSearch indexes for CPT, ICD-10, and Markdown data are created ON JSON with schemas referencing JSONPaths (e.g., `$.description`, `$.keywords`).
+- The mapping index remains ON HASH.
 - Each field has a weight assigned to it (e.g., description has weight 5.0, keywords has weight 2.0)
 
 ### Query Format
 
-The implemented query format uses simple search terms without field specifiers:
+The implemented query format for CPT, ICD-10, and Markdown data now leverages JSONPath field specifiers to target specific fields within the JSON documents:
 
 ```typescript
-// Simple format (searches across all indexed fields)
-const searchQuery = searchTerms;
+// Field-specific query with weights
+const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@clinical_justification:(${searchTerms}) WEIGHT 3.0)`;
 ```
 
-This approach is more robust as it searches across all indexed fields and leverages the weights defined in the index.
+This approach allows for more precise searching and utilization of field weights defined in the index schema.
 
 ### Example Queries
 
 ```typescript
-// Search for ICD-10 codes
+// Search for ICD-10 codes with JSONPath
 const icd10Results = await redisClient.call(
-  'FT.SEARCH', 'icd10_idx', 'shoulder pain',
-  'LIMIT', '0', '10'
+  'FT.SEARCH', 'idx:icd10',
+  `(@description:(shoulder pain) WEIGHT 5.0) | (@keywords:(shoulder pain) WEIGHT 3.0)`,
+  'LIMIT', '0', '10',
+  'RETURN', '3', '$.icd10_code', '$.description', '$.category'
 );
 
-// Search for CPT codes
+// Search for CPT codes with JSONPath
 const cptResults = await redisClient.call(
-  'FT.SEARCH', 'cpt_idx', 'MRI shoulder',
-  'LIMIT', '0', '10'
+  'FT.SEARCH', 'idx:cpt',
+  `(@description:(MRI shoulder) WEIGHT 5.0) | (@body_part:(shoulder) WEIGHT 3.0)`,
+  'LIMIT', '0', '10',
+  'RETURN', '3', '$.cpt_code', '$.description', '$.modality'
 );
 ```
 
@@ -126,24 +131,30 @@ The system implements weighted search using Redis's built-in weighting capabilit
 
 ### Index Weights
 
-- **CPT Index:**
-  - `description` has weight 5.0
-  - `modality` and `body_part` are TAG fields
+- **CPT Index (ON JSON):**
+  - `$.description` has weight 5.0
+  - `$.body_part` has weight 3.0
+  - `$.clinical_justification` has weight 3.0
+  - `$.key_findings` has weight 2.0
+  - `$.modality` and `$.category` are TAG fields
 
-- **ICD-10 Index:**
-  - `description` has weight 5.0
-  - `keywords` has weight 2.0
+- **ICD-10 Index (ON JSON):**
+  - `$.description` has weight 5.0
+  - `$.keywords` has weight 3.0
+  - `$.primary_imaging_rationale` has weight 2.0
+  - `$.clinical_notes` has weight 1.0
+  - `$.category` and `$.specialty` are TAG fields
 
-- **Mapping Index:**
+- **Mapping Index (ON HASH):**
   - `icd10_description` with weight 3.0
   - `cpt_description` with weight 3.0
   - `refined_justification` with weight 5.0
   - `evidence_source` with weight 2.0
 
-- **Markdown Index:**
-  - `icd10_description` with weight 3.0
-  - `content` with weight 5.0
-  - `content_preview` with weight 2.0
+- **Markdown Index (ON JSON):**
+  - `$.content` with weight 5.0
+  - `$.icd10_description` with weight 2.0
+  - `$.content_preview` with weight 1.0
 
 ### Weighted Search Functions
 
@@ -158,7 +169,7 @@ To ensure Redis is always populated with the necessary data, the server automati
 1. **Initialization Sequence:**
    - Server starts
    - Database connections are established
-   - Redis search indices are created
+   - Redis search indices are created (ON JSON for CPT, ICD-10, and Markdown; ON HASH for mappings)
    - Redis population function is called
 
 2. **Population Function:**
@@ -169,7 +180,8 @@ To ensure Redis is always populated with the necessary data, the server automati
      - `medical_icd10_codes`
      - `medical_cpt_icd10_mappings`
      - `medical_icd10_markdown_docs`
-   - Stores data in Redis using the correct key formats
+   - Stores CPT, ICD-10, and Markdown data as JSON documents using `JSON.SET`
+   - Stores mappings as hashes using `HSET`
    - Uses batch operations for efficiency
 
 3. **Key Format Consistency:**
@@ -263,9 +275,9 @@ This approach ensures that even when Redis is unavailable, the system still bene
 
 -   **Client Library:** Use a robust Redis client library for Node.js (e.g., `ioredis`, `node-redis v4+`) that supports custom commands required by **RedisJSON (`JSON.SET`, `JSON.GET`)** and **RedisSearch (`FT.SEARCH`, `FT.CREATE`)**, and crucially allows **TLS/SSL connection configuration**.
 -   **Connection Handling:** Implement proper connection logic using the specific **Redis Cloud endpoint hostname, port, and password**. **TLS must be enabled** in the client configuration. Use connection pooling provided by the library and implement error handling/reconnection strategies.
--   **Serialization:** Use JSON for storing structured code data via `JSON.SET`/`JSON.GET`.
+-   **Serialization:** CPT, ICD-10, and Markdown data are now primarily stored and retrieved as JSON documents via `JSON.SET`/`JSON.GET`. Mappings continue to use hash storage.
 -   **TTL Management:** Manage TTLs appropriately for cached data. Indexed JSON data might not need a TTL if updates are handled via re-indexing or invalidation.
--   **Index Management:** Implement logic (e.g., a script `create-redis-indexes.ts`) to create (`FT.CREATE`) and update RedisSearch indexes when the underlying reference data in PostgreSQL changes or during initial data load to Redis Cloud.
+-   **Index Management:** FT.CREATE commands for CPT, ICD-10, and Markdown now use ON JSON and JSONPath schemas. The mapping index remains ON HASH.
 -   **VPC/Network Access:** Ensure the application environment (e.g., EC2 instance, Lambda function) has network access to the Redis Cloud endpoint. This typically involves configuring Security Groups and potentially NAT Gateways or VPC Endpoints, and allow-listing the application's egress IP in the Redis Cloud database settings.
 -   **Monitoring:** Monitor **Redis Cloud metrics** (via the Redis Cloud UI/API) for performance, memory usage, latency, and command execution. Monitor application-level metrics (cache hit/miss rates) and relevant AWS infrastructure metrics (EC2/Lambda CPU/Network, NAT Gateway traffic) via CloudWatch.
 

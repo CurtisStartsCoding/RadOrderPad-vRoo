@@ -12,28 +12,35 @@ export type {
   MappingRow,
   MarkdownRow,
   CategorizedKeywords
-} from './common.js';
+} from './common';
 
-// Re-export search functions - using fixed versions
-export { searchICD10Codes, getICD10CodesByIds } from './icd10-search-fix.js';
-export { searchCPTCodes, getCPTCodesByIds } from './cpt-search-fix.js';
-export { getMappings } from './mapping-search.js';
-export { getMarkdownDocs } from './markdown-search.js';
+// Re-export search functions
+export { getMappings } from './mapping-search';
+export { getMarkdownDocs } from './markdown-search';
 
-// Re-export weighted search functions
+// Re-export weighted search functions (now the primary search functions)
 export {
   searchICD10CodesWithScores,
-  searchCPTCodesWithScores
-} from './weighted-search.js';
+  searchCPTCodesWithScores,
+  // Also export these as the standard search functions (replacing the fix versions)
+  searchICD10CodesWithScores as searchICD10Codes,
+  searchCPTCodesWithScores as searchCPTCodes
+} from './weighted-search';
+
+// Export the JSON-based ID lookup functions from the weighted search module
+export {
+  getICD10CodesByIds,
+  getCPTCodesByIds
+} from './json-data-access';
 
 export {
   getMappingsWithScores,
   searchMappingsWithScores,
   MappingRowWithScore
-} from './mapping-search-weighted.js';
+} from './mapping-search-weighted';
 
 export {
   getMarkdownDocsWithScores,
   searchMarkdownDocsWithScores,
   MarkdownRowWithScore
-} from './markdown-search-weighted.js';
+} from './markdown-search-weighted';

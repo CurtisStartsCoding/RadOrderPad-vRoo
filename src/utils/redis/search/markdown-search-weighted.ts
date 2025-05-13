@@ -1,13 +1,13 @@
 /**
  * Weighted search for markdown documents
  */
-import { getRedisClient } from '../../../config/redis.js';
+import { getRedisClient } from '../../../config/redis';
 import {
   ICD10Row,
   MarkdownRow,
   handleRedisSearchError
-} from './common.js';
-import logger from '../../../utils/logger.js';
+} from './common';
+import logger from '../../../utils/logger';
 
 /**
  * Extended markdown row interface with score and content
@@ -31,20 +31,23 @@ export async function searchMarkdownDocsWithScores(
   
   try {
     // Process search terms
-    const query = searchTerms.join(' | ');
+    const searchTermsStr = searchTerms.join(' | ');
+    
+    // Construct a query that uses JSONPath field specifiers with weights
+    const query = `(@content:(${searchTermsStr}) WEIGHT 5.0) | (@icd10_description:(${searchTermsStr}) WEIGHT 2.0) | (@content_preview:(${searchTermsStr}) WEIGHT 1.0)`;
     
     // Execute the search with scores
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(
       'FT.SEARCH',
-      'markdown_index',
+      'idx:markdown',
       query,
       'WITHSCORES',
       'LIMIT', '0', limit.toString(),
-      'RETURN', '4', 
-      '$.icd10_code', 
-      '$.icd10_description', 
-      '$.content', 
+      'RETURN', '4',
+      '$.icd10_code',
+      '$.icd10_description',
+      '$.content',
       '$.content_preview'
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any[];
@@ -140,7 +143,7 @@ export async function getMarkdownDocsWithScores(
         const key = `markdown:${icd10.icd10_code}`;
         // Use the Redis client's command method with proper type assertion
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const data = await (client as any).call('GET', key) as string;
+        const data = await (client as any).call('JSON.GET', key) as string;
         
         if (data) {
           const parsedData = JSON.parse(data);
