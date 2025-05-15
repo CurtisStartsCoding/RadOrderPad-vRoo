@@ -15,9 +15,50 @@ Through extensive research and testing, we've discovered important details about
 3. **Search Queries**: Search queries should use field aliases (defined in the schema) rather than JSONPath field specifiers.
 4. **Return Clauses**: Return clauses should use JSONPath field specifiers.
 5. **Field Aliases**: The `AS` clause in the schema creates an alias for each JSONPath field, and it's this alias that should be used in search queries.
-6. **Weighted Queries**: For weighted search, use the format `(@field:(value) WEIGHT n.n)` with the field alias.
+6. **Weighted Queries**: For weighted search, use the format `@field:(value)=>{$weight:n.0}` with the field alias. The old format `@field:(value) WEIGHT n.n` does not work correctly with JSON documents.
+7. **Phonetic Matching**: For phonetic matching, add `PHONETIC dm:en` to TEXT fields in the index schema and use `$phonetic:true` in queries.
+8. **Search Term Processing**: Filter out very short terms (less than 3 characters) to reduce noise in search results.
 
 ## Correct Implementation
+
+### Index Creation with Phonetic Matching
+
+```typescript
+// Create index with phonetic matching for TEXT fields
+await client.call(
+  'FT.CREATE', 'idx:cpt', 'ON', 'JSON', 'PREFIX', '1', 'cpt:code:',
+  'SCHEMA',
+  '$.cpt_code', 'AS', 'cpt_code', 'TAG', 'SORTABLE',
+  '$.description', 'AS', 'description', 'TEXT', 'WEIGHT', '5.0', 'PHONETIC', 'dm:en',
+  '$.body_part', 'AS', 'body_part', 'TEXT', 'WEIGHT', '3.0', 'PHONETIC', 'dm:en',
+  '$.modality', 'AS', 'modality', 'TAG',
+  '$.category', 'AS', 'category', 'TAG',
+  '$.clinical_justification', 'AS', 'clinical_justification', 'TEXT', 'WEIGHT', '3.0', 'PHONETIC', 'dm:en',
+  '$.key_findings', 'AS', 'key_findings', 'TEXT', 'WEIGHT', '2.0', 'PHONETIC', 'dm:en'
+);
+```
+
+### Weighted Search with Phonetic Matching
+
+```typescript
+// Correct syntax for weighted search with phonetic matching
+const query = `@description:(${searchTerms})=>{$weight:5.0, $phonetic:true} | @body_part:(${searchTerms})=>{$weight:3.0, $phonetic:true}`;
+```
+
+### Search Term Processing
+
+```typescript
+// Filter out very short terms to reduce noise
+function processSearchTerms(keywords) {
+  // Filter out very short terms (less than 3 chars)
+  const filteredKeywords = keywords.filter(kw => kw.length >= 3);
+  
+  // Sanitize and join with OR operator
+  return filteredKeywords
+    .map(kw => kw.replace(/[^a-zA-Z0-9]/g, ' '))
+    .join('|');
+}
+```
 
 ### 1. Creating Indices
 

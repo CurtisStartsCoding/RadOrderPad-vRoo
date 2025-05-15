@@ -10,7 +10,13 @@ import logger from '../../logger.js';
  * @returns Sanitized search terms
  */
 export function processSearchTerms(keywords: string[]): string {
-  return keywords.map(kw => kw.replace(/[^a-zA-Z0-9]/g, ' ')).join('|');
+  // Filter out very short terms (less than 3 chars) to avoid noise
+  const filteredKeywords = keywords.filter(kw => kw.length >= 3);
+  
+  // Sanitize and join with OR operator
+  return filteredKeywords
+    .map(kw => kw.replace(/[^a-zA-Z0-9]/g, ' '))
+    .join('|');
 }
 
 /**

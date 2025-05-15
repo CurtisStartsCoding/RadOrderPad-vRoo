@@ -201,7 +201,8 @@ async function testWeightedSearch() {
     
     // Test 2: Search with explicit field weights
     console.log('\nTest 2: Search with explicit field weights');
-    const query2 = `(@title:(${searchTerm}) WEIGHT 10.0) | (@description:(${searchTerm}) WEIGHT 5.0) | (@content:(${searchTerm}) WEIGHT 1.0)`;
+    // Use a simpler query format without parentheses around the field conditions
+    const query2 = `@title:(${searchTerm}) WEIGHT 10.0 | @description:(${searchTerm}) WEIGHT 5.0 | @content:(${searchTerm}) WEIGHT 1.0`;
     const result2 = await client.call(
       'FT.SEARCH',
       'idx:weighted-test',
@@ -225,7 +226,8 @@ async function testWeightedSearch() {
     
     // Test 3: Search with field aliases (correct syntax)
     console.log('\nTest 3: Search with field aliases (correct syntax)');
-    const query3 = `(@title:(${searchTerm}) WEIGHT 10.0) | (@description:(${searchTerm}) WEIGHT 5.0) | (@content:(${searchTerm}) WEIGHT 1.0)`;
+    // Use a simpler query format without parentheses around the field conditions
+    const query3 = `@title:(${searchTerm}) WEIGHT 10.0 | @description:(${searchTerm}) WEIGHT 5.0 | @content:(${searchTerm}) WEIGHT 1.0`;
     try {
       const result3 = await client.call(
         'FT.SEARCH',

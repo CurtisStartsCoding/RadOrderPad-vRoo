@@ -28,12 +28,12 @@ export async function createICD10SearchIndex(): Promise<void> {
       'FT.CREATE', 'idx:icd10', 'ON', 'JSON', 'PREFIX', '1', 'icd10:code:',
       'SCHEMA',
       '$.icd10_code', 'AS', 'icd10_code', 'TAG', 'SORTABLE',
-      '$.description', 'AS', 'description', 'TEXT', 'WEIGHT', '5.0',
-      '$.clinical_notes', 'AS', 'clinical_notes', 'TEXT', 'WEIGHT', '1.0',
+      '$.description', 'AS', 'description', 'TEXT', 'WEIGHT', '5.0', 'PHONETIC', 'dm:en',
+      '$.clinical_notes', 'AS', 'clinical_notes', 'TEXT', 'WEIGHT', '1.0', 'PHONETIC', 'dm:en',
       '$.category', 'AS', 'category', 'TAG',
       '$.specialty', 'AS', 'specialty', 'TAG',
-      '$.keywords', 'AS', 'keywords', 'TEXT', 'WEIGHT', '3.0',
-      '$.primary_imaging_rationale', 'AS', 'primary_imaging_rationale', 'TEXT', 'WEIGHT', '2.0'
+      '$.keywords', 'AS', 'keywords', 'TEXT', 'WEIGHT', '3.0', 'PHONETIC', 'dm:en',
+      '$.primary_imaging_rationale', 'AS', 'primary_imaging_rationale', 'TEXT', 'WEIGHT', '2.0', 'PHONETIC', 'dm:en'
     );
     
     enhancedLogger.info('Created ICD-10 search index on JSON');
@@ -66,12 +66,12 @@ export async function createCPTSearchIndex(): Promise<void> {
       'FT.CREATE', 'idx:cpt', 'ON', 'JSON', 'PREFIX', '1', 'cpt:code:',
       'SCHEMA',
       '$.cpt_code', 'AS', 'cpt_code', 'TAG', 'SORTABLE',
-      '$.description', 'AS', 'description', 'TEXT', 'WEIGHT', '5.0',
-      '$.body_part', 'AS', 'body_part', 'TEXT', 'WEIGHT', '3.0',
+      '$.description', 'AS', 'description', 'TEXT', 'WEIGHT', '5.0', 'PHONETIC', 'dm:en',
+      '$.body_part', 'AS', 'body_part', 'TEXT', 'WEIGHT', '3.0', 'PHONETIC', 'dm:en',
       '$.modality', 'AS', 'modality', 'TAG',
       '$.category', 'AS', 'category', 'TAG',
-      '$.clinical_justification', 'AS', 'clinical_justification', 'TEXT', 'WEIGHT', '3.0',
-      '$.key_findings', 'AS', 'key_findings', 'TEXT', 'WEIGHT', '2.0'
+      '$.clinical_justification', 'AS', 'clinical_justification', 'TEXT', 'WEIGHT', '3.0', 'PHONETIC', 'dm:en',
+      '$.key_findings', 'AS', 'key_findings', 'TEXT', 'WEIGHT', '2.0', 'PHONETIC', 'dm:en'
     );
     
     enhancedLogger.info('Created CPT search index on JSON');
@@ -140,9 +140,9 @@ export async function createMarkdownSearchIndex(): Promise<void> {
       'FT.CREATE', 'idx:markdown', 'ON', 'JSON', 'PREFIX', '1', 'markdown:',
       'SCHEMA',
       '$.icd10_code', 'AS', 'icd10_code', 'TAG', 'SORTABLE',
-      '$.icd10_description', 'AS', 'icd10_description', 'TEXT', 'WEIGHT', '2.0',
-      '$.content', 'AS', 'content', 'TEXT', 'WEIGHT', '5.0',
-      '$.content_preview', 'AS', 'content_preview', 'TEXT', 'WEIGHT', '1.0'
+      '$.icd10_description', 'AS', 'icd10_description', 'TEXT', 'WEIGHT', '2.0', 'PHONETIC', 'dm:en',
+      '$.content', 'AS', 'content', 'TEXT', 'WEIGHT', '5.0', 'PHONETIC', 'dm:en',
+      '$.content_preview', 'AS', 'content_preview', 'TEXT', 'WEIGHT', '1.0', 'PHONETIC', 'dm:en'
     );
     
     enhancedLogger.info('Created Markdown search index on JSON');
