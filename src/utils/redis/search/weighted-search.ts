@@ -44,8 +44,9 @@ export async function searchCPTCodesWithScores(
     const searchTerms = processSearchTerms(keywords);
     
     // Execute the search with scores
-    // Construct a query that uses JSONPath field specifiers with weights
-    const query = `(@\\$.description:(${searchTerms}) WEIGHT 5.0) | (@\\$.body_part:(${searchTerms}) WEIGHT 3.0) | (@\\$.clinical_justification:(${searchTerms}) WEIGHT 3.0) | (@\\$.key_findings:(${searchTerms}) WEIGHT 2.0)`;
+    // Construct a query that uses field aliases with weights
+    // Note: We use the field aliases defined in the schema, not the JSONPath field specifiers
+    const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@body_part:(${searchTerms}) WEIGHT 3.0) | (@clinical_justification:(${searchTerms}) WEIGHT 3.0) | (@key_findings:(${searchTerms}) WEIGHT 2.0)`;
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(

@@ -242,7 +242,7 @@ async function testSearch() {
   try {
     // Test CPT search
     console.log('\nTesting CPT search:');
-    const cptQuery = '@\\$.description:(mri) @\\$.body_part:(extremity)';
+    const cptQuery = '@description:(mri) @body_part:(extremity)';
     const cptResult = await client.call(
       'FT.SEARCH',
       'idx:cpt',
@@ -256,7 +256,7 @@ async function testSearch() {
     
     // Test ICD-10 search
     console.log('\nTesting ICD-10 search:');
-    const icd10Query = '@\\$.description:(back pain) | @\\$.keywords:(lumbago)';
+    const icd10Query = '@description:(back pain) | @keywords:(lumbago)';
     const icd10Result = await client.call(
       'FT.SEARCH',
       'idx:icd10',
@@ -270,7 +270,7 @@ async function testSearch() {
     
     // Test Markdown search
     console.log('\nTesting Markdown search:');
-    const markdownQuery = '@\\$.content:(imaging recommendation)';
+    const markdownQuery = '@content:(imaging recommendation)';
     const markdownResult = await client.call(
       'FT.SEARCH',
       'idx:markdown',
