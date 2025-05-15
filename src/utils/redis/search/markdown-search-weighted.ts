@@ -35,8 +35,8 @@ export async function searchMarkdownDocsWithScores(
     
     // Construct a query that uses field aliases with weights
     // Note: We use the field aliases defined in the schema, not the JSONPath field specifiers
-    // Format: @field:(value)=>{$weight:n.0, $phonetic:true} with pipe operator for OR
-    const query = `@content:(${searchTermsStr})=>{$weight:5.0, $phonetic:true} | @icd10_description:(${searchTermsStr})=>{$weight:2.0, $phonetic:true} | @content_preview:(${searchTermsStr})=>{$weight:1.0, $phonetic:true}`;
+    // Format: @field:(value)=>{$weight:n.0} with pipe operator for OR
+    const query = `@content:(${searchTermsStr})=>{$weight:5.0} | @icd10_description:(${searchTermsStr})=>{$weight:2.0} | @content_preview:(${searchTermsStr})=>{$weight:1.0}`;
     
     // Execute the search with scores
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,9 +1,17 @@
 # Redis Integration Strategy
 
-**Version:** 2.0 (Complete Implementation)
-**Date:** 2025-05-05
+**Version:** 2.2 (Fuzzy Search Implementation)
+**Date:** 2025-05-15
 
 This document outlines how **Redis Cloud (hosted on AWS)**, leveraging the **RedisSearch and RedisJSON modules**, is used to accelerate performance and enable advanced search capabilities in RadOrderPad.
+
+## Revision History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 2.2 | 2025-05-15 | Added fuzzy matching with %%term%% syntax for improved search relevance |
+| 2.1 | 2025-05-15 | Fixed weighted search syntax, enhanced search term processing |
+| 2.0 | 2025-05-05 | Complete implementation of Redis integration |
 
 ---
 
@@ -155,13 +163,23 @@ The system implements weighted search using Redis's built-in weighting capabilit
   - `evidence_source` with weight 2.0
 
 - **Markdown Index (ON JSON):**
-  - `$.content` with weight 5.0
-  - `$.icd10_description` with weight 2.0
-  - `$.content_preview` with weight 1.0
+  - `$.content` with weight 5.0 and fuzzy matching
+  - `$.icd10_description` with weight 2.0 and fuzzy matching
+  - `$.content_preview` with weight 1.0 and fuzzy matching
 
 ### Weighted Search Functions
 
-The implementation includes functions that return search results with relevance scores:
+The implementation includes functions that return search results with relevance scores. The correct syntax for weighted search with JSON documents is:
+
+```typescript
+// Correct syntax for weighted search with fuzzy matching
+const query = `@description:(%%${searchTerms}%%)=>{$weight:5.0} | @body_part:(%%${searchTerms}%%)=>{$weight:3.0}`;
+```
+
+This syntax ensures that:
+1. Weights are properly applied to each field
+2. Fuzzy matching is applied to find terms with slight misspellings or variations
+3. Fields are combined with the pipe operator for OR logic
 
 ## 10. Automatic Population on Server Startup
 

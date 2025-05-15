@@ -1,13 +1,21 @@
 # Redis Implementation v2: Advanced Features
 
-**Version:** 2.1.0
-**Last Updated:** May 5, 2025 9:24 PM (America/Los_Angeles)
+**Version:** 2.2.0
+**Last Updated:** May 15, 2025 10:43 AM (America/Los_Angeles)
 **Author:** capecoma
 
 This document describes the enhanced Redis implementation for the RadOrderPad API backend, focusing on:
 
 1. **Cache-Aside Pattern**: For medical codes and PostgreSQL search results
 2. **Advanced Redis Features**: RediSearch, RedisJSON, and Vector Search
+
+## Revision History
+
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 2.3.0 | May 15, 2025 | capecoma | Added fuzzy matching with %%term%% syntax for improved search relevance |
+| 2.2.0 | May 15, 2025 | capecoma | Fixed weighted search syntax, enhanced search term processing |
+| 2.1.0 | May 5, 2025 | capecoma | Initial version with advanced Redis features |
 
 ## Overview
 
@@ -100,8 +108,8 @@ await client.call(
 const terms = query.toLowerCase().split(/\s+/).map(term => `%${term}%`);
 const searchTerms = terms.join(' ');
 
-// Field-specific query with weights using JSONPath syntax for JSON documents
-const query = `(@\\$.description:(${searchTerms}) WEIGHT 5.0) | (@\\$.keywords:(${searchTerms}) WEIGHT 3.0) | (@\\$.primary_imaging_rationale:(${searchTerms}) WEIGHT 2.0)`;
+// Field-specific query with weights and fuzzy matching using field aliases and the correct syntax
+const query = `@description:(%%${searchTerms}%%)=>{$weight:5.0} | @keywords:(%%${searchTerms}%%)=>{$weight:3.0} | @primary_imaging_rationale:(%%${searchTerms}%%)=>{$weight:2.0}`;
 
 const result = await client.call(
   'FT.SEARCH', 'idx:icd10', query,
@@ -111,7 +119,12 @@ const result = await client.call(
 );
 ```
 
-**Critical Note:** When using RediSearch with JSON documents, the field specifiers in the search query must use the JSONPath syntax with the `$.` prefix, and the `$` character must be escaped with a backslash (`\\$`) in the query string. Failure to use the correct JSONPath syntax in search queries will result in no matches being found, even if the indices are correctly created `ON JSON` and the data is stored as JSON documents.
+**Critical Notes:**
+1. When using RediSearch with JSON documents, use the field aliases defined in the schema (with the `AS` clause) rather than JSONPath syntax in search queries.
+2. For weighted search, use the syntax `@field:(term)=>{$weight:n.0}` rather than `@field:(term) WEIGHT n.n`.
+3. For fuzzy matching, use the `%%term%%` syntax to match terms with slight misspellings or variations.
+4. Apply fuzzy matching selectively to terms longer than 3 characters to avoid false positives.
+5. Filter out very short terms (less than 3 characters) to reduce noise in search results.
 
 ### 2. RedisJSON for Structured Data
 

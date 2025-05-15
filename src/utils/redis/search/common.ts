@@ -13,9 +13,13 @@ export function processSearchTerms(keywords: string[]): string {
   // Filter out very short terms (less than 3 chars) to avoid noise
   const filteredKeywords = keywords.filter(kw => kw.length >= 3);
   
-  // Sanitize and join with OR operator
+  // Sanitize and apply fuzzy matching to longer terms
   return filteredKeywords
-    .map(kw => kw.replace(/[^a-zA-Z0-9]/g, ' '))
+    .map(kw => {
+      const sanitized = kw.replace(/[^a-zA-Z0-9]/g, ' ');
+      // Apply fuzzy matching to terms longer than 3 characters
+      return sanitized.length > 3 ? `%%${sanitized}%%` : sanitized;
+    })
     .join('|');
 }
 

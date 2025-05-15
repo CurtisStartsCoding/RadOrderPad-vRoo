@@ -1,6 +1,17 @@
 # Redis JSON Search Best Practices
 
+**Version:** 1.1
+**Date:** 2025-05-15
+**Author:** capecoma
+
 This document outlines best practices for using RediSearch with JSON documents in the RadOrderPad API backend.
+
+## Revision History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.1 | 2025-05-15 | Fixed weighted search syntax, added phonetic matching, enhanced search term processing |
+| 1.0 | 2025-05-05 | Initial version with best practices for Redis JSON search |
 
 ## Overview
 
@@ -38,12 +49,37 @@ await client.call(
 );
 ```
 
-### Weighted Search with Phonetic Matching
+### Weighted Search with Fuzzy Matching
 
 ```typescript
-// Correct syntax for weighted search with phonetic matching
-const query = `@description:(${searchTerms})=>{$weight:5.0, $phonetic:true} | @body_part:(${searchTerms})=>{$weight:3.0, $phonetic:true}`;
+// Correct syntax for weighted search with fuzzy matching
+const query = `@description:(%%${searchTerms}%%)=>{$weight:5.0} | @body_part:(%%${searchTerms}%%)=>{$weight:3.0}`;
 ```
+
+This syntax:
+1. Properly applies weights to each field, with higher weights giving more importance to matches in those fields
+2. Uses fuzzy matching with the `%%term%%` syntax to match terms with slight misspellings or variations
+
+### Selective Fuzzy Matching
+
+For optimal performance and relevance, apply fuzzy matching only to terms longer than 3 characters:
+
+```typescript
+function processSearchTerms(keywords: string[]): string {
+  return keywords
+    .filter(kw => kw.length >= 3)
+    .map(kw => {
+      const sanitized = kw.replace(/[^a-zA-Z0-9]/g, ' ');
+      return sanitized.length > 3 ? `%%${sanitized}%%` : sanitized;
+    })
+    .join('|');
+}
+```
+
+This approach:
+1. Filters out very short terms to reduce noise
+2. Applies fuzzy matching only to longer terms where it's most effective
+3. Preserves exact matching for shorter terms to avoid false positives
 
 ### Search Term Processing
 

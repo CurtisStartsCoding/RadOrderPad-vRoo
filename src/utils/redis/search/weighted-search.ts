@@ -46,8 +46,8 @@ export async function searchCPTCodesWithScores(
     // Execute the search with scores
     // Construct a query that uses field aliases with weights
     // Note: We use the field aliases defined in the schema, not the JSONPath field specifiers
-    // Format: @field:(value)=>{$weight:n.0, $phonetic:true} with pipe operator for OR
-    const query = `@description:(${searchTerms})=>{$weight:5.0, $phonetic:true} | @body_part:(${searchTerms})=>{$weight:3.0, $phonetic:true} | @clinical_justification:(${searchTerms})=>{$weight:3.0, $phonetic:true} | @key_findings:(${searchTerms})=>{$weight:2.0, $phonetic:true}`;
+    // Format: @field:(value)=>{$weight:n.0} with pipe operator for OR
+    const query = `@description:(${searchTerms})=>{$weight:5.0} | @body_part:(${searchTerms})=>{$weight:3.0} | @clinical_justification:(${searchTerms})=>{$weight:3.0} | @key_findings:(${searchTerms})=>{$weight:2.0}`;
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(
@@ -141,8 +141,8 @@ export async function searchICD10CodesWithScores(
     // Execute the search with scores
     // Construct a query that uses field aliases with weights
     // Note: We use the field aliases defined in the schema, not the JSONPath field specifiers
-    // Format: @field:(value)=>{$weight:n.0, $phonetic:true} with pipe operator for OR
-    const query = `@description:(${searchTerms})=>{$weight:5.0, $phonetic:true} | @clinical_notes:(${searchTerms})=>{$weight:1.0, $phonetic:true} | @keywords:(${searchTerms})=>{$weight:3.0, $phonetic:true} | @primary_imaging_rationale:(${searchTerms})=>{$weight:2.0, $phonetic:true}`;
+    // Format: @field:(value)=>{$weight:n.0} with pipe operator for OR
+    const query = `@description:(${searchTerms})=>{$weight:5.0} | @clinical_notes:(${searchTerms})=>{$weight:1.0} | @keywords:(${searchTerms})=>{$weight:3.0} | @primary_imaging_rationale:(${searchTerms})=>{$weight:2.0}`;
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(
