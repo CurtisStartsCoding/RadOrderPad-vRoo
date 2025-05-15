@@ -6,14 +6,16 @@ This document outlines best practices for using RediSearch with JSON documents i
 
 Our application uses Redis as a caching layer and RediSearch for full-text search capabilities. We store medical data (CPT codes, ICD-10 codes, and Markdown documents) as JSON documents in Redis and use RediSearch to search this data efficiently.
 
-## Key Findings from Testing
+## Key Findings from Research and Testing
 
-Through extensive testing, we've discovered important details about how RediSearch works with JSON documents:
+Through extensive research and testing, we've discovered important details about how RediSearch works with JSON documents:
 
 1. **Index Creation**: Indices should be created with `ON JSON` configuration and JSONPath field specifiers.
 2. **Data Storage**: Data should be stored as JSON documents using `JSON.SET`.
 3. **Search Queries**: Search queries should use field aliases (defined in the schema) rather than JSONPath field specifiers.
 4. **Return Clauses**: Return clauses should use JSONPath field specifiers.
+5. **Field Aliases**: The `AS` clause in the schema creates an alias for each JSONPath field, and it's this alias that should be used in search queries.
+6. **Weighted Queries**: For weighted search, use the format `(@field:(value) WEIGHT n.n)` with the field alias.
 
 ## Correct Implementation
 
@@ -114,6 +116,63 @@ We've created several test scripts to verify the correct implementation:
 2. `debug-scripts/redis-optimization/test-weighted-search.js`: Tests weighted search functionality with different query formats.
 3. `debug-scripts/verify-redis-json-search.js`: Verifies that the search is working correctly with the current implementation.
 
+## Advanced Features
+
+### Array Handling
+
+When indexing JSON arrays, use the `TAG` type to index each element separately:
+
+```typescript
+await client.call(
+  'FT.CREATE', 'idx:vendors', 'ON', 'JSON', 'PREFIX', '1', 'vendor:',
+  'SCHEMA',
+  '$.cuisines', 'AS', 'cuisine', 'TAG'
+);
+```
+
+This allows you to search for specific array elements:
+
+```typescript
+const query = '@cuisine:{Italian}';
+```
+
+### Numeric Range Queries
+
+For numeric fields, use the `NUMERIC` type to enable range queries:
+
+```typescript
+await client.call(
+  'FT.CREATE', 'idx:products', 'ON', 'JSON', 'PREFIX', '1', 'product:',
+  'SCHEMA',
+  '$.price', 'AS', 'price', 'NUMERIC', 'SORTABLE'
+);
+```
+
+This allows you to search for numeric ranges:
+
+```typescript
+const query = '@price:[10 100]';
+```
+
+### Aggregations
+
+RediSearch supports aggregations on search results:
+
+```typescript
+const result = await client.call(
+  'FT.AGGREGATE',
+  'idx:products',
+  '@category:{Electronics}',
+  'GROUPBY', '1', '@brand',
+  'REDUCE', 'AVG', '1', '@price', 'AS', 'avg_price'
+);
+```
+
 ## Conclusion
 
-By following these best practices, we ensure that our Redis JSON search implementation is working correctly and efficiently. The key insight is that while the index schema uses JSONPath field specifiers, the search queries should use field aliases.
+By following these best practices, we ensure that our Redis JSON search implementation is working correctly and efficiently. The key insights are:
+
+1. The index schema uses JSONPath field specifiers (`$.field`) with aliases (`AS field`).
+2. Search queries should use field aliases (`@field:(value)`) rather than JSONPath field specifiers.
+3. Return clauses should use JSONPath field specifiers (`$.field`).
+4. For weighted search, use the format `(@field:(value) WEIGHT n.n)` with the field alias.

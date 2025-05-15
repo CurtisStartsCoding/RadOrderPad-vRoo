@@ -246,9 +246,9 @@ async function testQueryFormats() {
     console.log(`Results: ${result1[0]}`);
     console.log('First result:', result1.length > 1 ? result1[2] : 'No results');
     
-    // Test 2: JSONPath format without escaping
-    console.log('\nTest 2: JSONPath format without escaping');
-    const query2 = '@$.description:(mri)';
+    // Test 2: Field alias format with multiple fields
+    console.log('\nTest 2: Field alias format with multiple fields');
+    const query2 = '@description:(mri) @modality:{MRI}';
     try {
       const result2 = await client.call(
         'FT.SEARCH',
@@ -267,9 +267,9 @@ async function testQueryFormats() {
       console.log('Error:', error.message);
     }
     
-    // Test 3: JSONPath format with escaping
-    console.log('\nTest 3: JSONPath format with escaping');
-    const query3 = '@\\$.description:(mri)';
+    // Test 3: Field alias format with OR condition
+    console.log('\nTest 3: Field alias format with OR condition');
+    const query3 = '@description:(mri) | @body_part:(extremity)';
     try {
       const result3 = await client.call(
         'FT.SEARCH',
@@ -288,9 +288,9 @@ async function testQueryFormats() {
       console.log('Error:', error.message);
     }
     
-    // Test 4: Multiple field query with standard format
-    console.log('\nTest 4: Multiple field query with standard format');
-    const query4 = '@description:(mri) @modality:{MRI}';
+    // Test 4: Field alias format with negation
+    console.log('\nTest 4: Field alias format with negation');
+    const query4 = '@modality:{MRI} -@description:(brain)';
     const result4 = await client.call(
       'FT.SEARCH',
       'idx:test-cpt',
@@ -304,9 +304,9 @@ async function testQueryFormats() {
     console.log(`Results: ${result4[0]}`);
     console.log('First result:', result4.length > 1 ? result4[2] : 'No results');
     
-    // Test 5: Multiple field query with JSONPath format
-    console.log('\nTest 5: Multiple field query with JSONPath format');
-    const query5 = '@\\$.description:(mri) @\\$.modality:{MRI}';
+    // Test 5: Field alias format with weighted fields
+    console.log('\nTest 5: Field alias format with weighted fields');
+    const query5 = '(@description:(mri) WEIGHT 5.0) | (@body_part:(extremity) WEIGHT 3.0)';
     try {
       const result5 = await client.call(
         'FT.SEARCH',

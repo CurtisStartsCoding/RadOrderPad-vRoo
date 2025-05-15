@@ -46,6 +46,7 @@ export async function searchCPTCodesWithScores(
     // Execute the search with scores
     // Construct a query that uses field aliases with weights
     // Note: We use the field aliases defined in the schema, not the JSONPath field specifiers
+    // Format: @field:(value) WEIGHT n.n
     const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@body_part:(${searchTerms}) WEIGHT 3.0) | (@clinical_justification:(${searchTerms}) WEIGHT 3.0) | (@key_findings:(${searchTerms}) WEIGHT 2.0)`;
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
