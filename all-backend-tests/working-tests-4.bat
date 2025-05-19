@@ -77,4 +77,10 @@ echo Running Trial Password Update Test...
 node ../tests/test-trial-password-update.js
 
 echo.
+echo Running Trial Role Tests...
+cd role-tests
+call run-trial-role-tests.bat
+cd ..
+
+echo.
 echo ===== All Working Tests (Part 4) Complete =====

@@ -1,0 +1,14 @@
+{
+  "name": "role-tests",
+  "version": "1.0.0",
+  "description": "Role-based tests for RadOrderPad API",
+  "main": "index.js",
+  "scripts": {
+    "test:trial": "node trial-role-tests.js",
+    "test:all": "node trial-role-tests.js"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "chalk": "^4.1.2"
+  }
+}
