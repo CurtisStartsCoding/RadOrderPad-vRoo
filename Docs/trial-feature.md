@@ -276,3 +276,27 @@ WHERE email = 'user@example.com';
 - Trial users cannot access the full RadOrderPad workflow
 - Trial users are limited to a fixed number of validations
 - Trial validations do not persist order data or patient information
+
+## Testing
+
+### Password Update Test
+
+To test the trial user password update functionality, use the following script:
+
+```
+node tests/test-trial-password-update.js
+```
+
+This script tests the trial user password update endpoint by:
+1. Creating a test trial user via the API
+2. Updating the password via the API
+3. Verifying the update by logging in with the new password
+4. Confirming that the old password no longer works
+
+The test script is located at `tests/test-trial-password-update.js` and can also be run using the batch file:
+
+```
+tests/batch/run-trial-password-update-test.bat
+```
+
+This test is also included in the comprehensive test suite at `all-backend-tests/working-tests-4.bat`.

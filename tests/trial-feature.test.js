@@ -2,7 +2,7 @@ const axios = require('axios');
 const { expect } = require('chai');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { queryMainDb } = require('../src/config/db-utils');
+const { queryMainDb } = require('../dist/config/db-utils');
 
 // Mock data
 const testTrialUser = {

@@ -73,4 +73,8 @@ call test-admin-insurance-info.bat
 cd ..
 
 echo.
+echo Running Trial Password Update Test...
+node ../tests/test-trial-password-update.js
+
+echo.
 echo ===== All Working Tests (Part 4) Complete =====
