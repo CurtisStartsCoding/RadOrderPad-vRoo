@@ -25,7 +25,8 @@ export interface MarkdownRowWithScore extends MarkdownRow {
  */
 export async function searchMarkdownDocsWithScores(
   searchTerms: string[],
-  limit = 20
+  limit = 20,
+  context: 'diagnosis' | 'procedure' | 'general' = 'general'
 ): Promise<MarkdownRowWithScore[]> {
   const client = getRedisClient();
   
@@ -35,8 +36,22 @@ export async function searchMarkdownDocsWithScores(
     
     // Construct a query that uses field aliases with weights
     // Note: We use the field aliases defined in the schema, not the JSONPath field specifiers
-    // Format: @field:(value)=>{$weight:n.0} with pipe operator for OR
-    const query = `@content:(${searchTermsStr})=>{$weight:5.0} | @icd10_description:(${searchTermsStr})=>{$weight:2.0} | @content_preview:(${searchTermsStr})=>{$weight:1.0}`;
+    // Use a simpler syntax that relies on the weights defined in the schema
+    // Format: @field1:(term) | @field2:(term)
+    
+    // Adjust query based on context
+    let query = '';
+    
+    if (context === 'diagnosis') {
+      // For diagnosis searches, prioritize content and description
+      query = `@content:(${searchTermsStr}) | @icd10_description:(${searchTermsStr}) | @content_preview:(${searchTermsStr})`;
+    } else if (context === 'procedure') {
+      // For procedure searches, prioritize content
+      query = `@content:(${searchTermsStr}) | @content_preview:(${searchTermsStr}) | @icd10_description:(${searchTermsStr})`;
+    } else {
+      // Default query using all fields
+      query = `@content:(${searchTermsStr}) | @icd10_description:(${searchTermsStr}) | @content_preview:(${searchTermsStr})`;
+    }
     
     // Execute the search with scores
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -128,7 +143,8 @@ export async function searchMarkdownDocsWithScores(
  */
 export async function getMarkdownDocsWithScores(
   icd10Codes: ICD10Row[],
-  searchTerms: string[] = []
+  searchTerms: string[] = [],
+  context: 'diagnosis' | 'procedure' | 'general' = 'general'
 ): Promise<MarkdownRowWithScore[]> {
   const client = getRedisClient();
   const markdownDocs: MarkdownRowWithScore[] = [];
@@ -136,7 +152,7 @@ export async function getMarkdownDocsWithScores(
   try {
     // If we have search terms, use weighted search
     if (searchTerms.length > 0) {
-      return await searchMarkdownDocsWithScores(searchTerms);
+      return await searchMarkdownDocsWithScores(searchTerms, 20, context);
     }
     
     // Otherwise, get markdown docs for each ICD-10 code

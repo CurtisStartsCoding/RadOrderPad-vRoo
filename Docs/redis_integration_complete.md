@@ -1,7 +1,11 @@
 # Redis Integration Strategy
 
-**Version:** 2.2 (Fuzzy Search Implementation)
-**Date:** 2025-05-15
+**Version:** 2.3 (Implementation Documentation)
+**Date:** 2025-05-19
+
+**Related Documents:**
+- [Redis JSON Search Best Practices](./redis_json_search_best_practices.md) - Best practices for using RediSearch with JSON documents
+- [Redis JSON Search Implementation](./redis_json_search_implementation.md) - Comprehensive documentation of implementation approaches and final solution
 
 This document outlines how **Redis Cloud (hosted on AWS)**, leveraging the **RedisSearch and RedisJSON modules**, is used to accelerate performance and enable advanced search capabilities in RadOrderPad.
 
@@ -9,6 +13,7 @@ This document outlines how **Redis Cloud (hosted on AWS)**, leveraging the **Red
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.3 | 2025-05-19 | Added implementation documentation, clarified weighted search approach |
 | 2.2 | 2025-05-15 | Added fuzzy matching with %%term%% syntax for improved search relevance |
 | 2.1 | 2025-05-15 | Fixed weighted search syntax, enhanced search term processing |
 | 2.0 | 2025-05-05 | Complete implementation of Redis integration |
@@ -24,12 +29,13 @@ This document outlines how **Redis Cloud (hosted on AWS)**, leveraging the **Red
 5. [RedisSearch for Context Generation](#5-redissearch-for-context-generation)
 6. [Search Query Implementation](#6-search-query-implementation)
 7. [Weighted Search Implementation](#7-weighted-search-implementation)
-8. [Fallback Mechanism](#8-fallback-mechanism)
-9. [Implementation Considerations](#9-implementation-considerations)
-10. [Automatic Population on Server Startup](#10-automatic-population-on-server-startup)
-10. [Integration with Validation Engine](#10-integration-with-validation-engine)
-11. [Testing](#11-testing)
-12. [Implementation Documentation](#12-implementation-documentation)
+8. [Automatic Population on Server Startup](#8-automatic-population-on-server-startup)
+9. [Fallback Mechanism](#9-fallback-mechanism)
+10. [Implementation Considerations](#10-implementation-considerations)
+11. [Integration with Validation Engine](#11-integration-with-validation-engine)
+12. [Testing](#12-testing)
+13. [Implementation Documentation](#13-implementation-documentation)
+14. [Approaches Tested](#14-approaches-tested)
 
 ## 1. Purpose
 
@@ -105,16 +111,19 @@ The RedisSearch implementation uses a simple query format without field specifie
 
 ### Query Format
 
-The implemented query format for CPT, ICD-10, and Markdown data now leverages JSONPath field specifiers to target specific fields within the JSON documents:
+The implemented query format for CPT, ICD-10, and Markdown data uses field aliases defined in the schema to target specific fields within the JSON documents:
 
 ```typescript
-// Field-specific query with weights using JSONPath syntax for JSON documents
-const query = `(@\\$.description:(${searchTerms}) WEIGHT 5.0) | (@\\$.clinical_justification:(${searchTerms}) WEIGHT 3.0)`;
+// Recommended approach: Simple syntax relying on schema-defined weights
+const query = `@description:(${searchTerms}) | @clinical_justification:(${searchTerms})`;
+
+// Alternative approach: Explicit weights in query (more complex but more flexible)
+// const query = `@description:(${searchTerms})=>{$weight:5.0} | @clinical_justification:(${searchTerms})=>{$weight:3.0}`;
 ```
 
 This approach allows for more precise searching and utilization of field weights defined in the index schema.
 
-**Important Note:** When using RediSearch with JSON documents, the field specifiers in the search query must use the JSONPath syntax with the `$.` prefix, and the `$` character must be escaped with a backslash (`\\$`) in the query string. This is critical for the search to work correctly with indices created `ON JSON`.
+**Important Note:** When using RediSearch with JSON documents, you should use the field aliases defined in the schema (e.g., `@description`) rather than the JSONPath field specifiers (e.g., `@$.description`). The field aliases are created during index creation with the `AS` clause and provide a simpler way to reference fields in queries. This approach is more maintainable and performs better than using JSONPath field specifiers directly in queries.
 
 ### Example Queries
 
@@ -122,7 +131,7 @@ This approach allows for more precise searching and utilization of field weights
 // Search for ICD-10 codes with JSONPath
 const icd10Results = await redisClient.call(
   'FT.SEARCH', 'idx:icd10',
-  `(@description:(shoulder pain) WEIGHT 5.0) | (@keywords:(shoulder pain) WEIGHT 3.0)`,
+  `@description:(shoulder pain) | @keywords:(shoulder pain)`,
   'LIMIT', '0', '10',
   'RETURN', '3', '$.icd10_code', '$.description', '$.category'
 );
@@ -130,7 +139,7 @@ const icd10Results = await redisClient.call(
 // Search for CPT codes with JSONPath
 const cptResults = await redisClient.call(
   'FT.SEARCH', 'idx:cpt',
-  `(@description:(MRI shoulder) WEIGHT 5.0) | (@body_part:(shoulder) WEIGHT 3.0)`,
+  `@description:(MRI shoulder) | @body_part:(shoulder)`,
   'LIMIT', '0', '10',
   'RETURN', '3', '$.cpt_code', '$.description', '$.modality'
 );
@@ -172,8 +181,11 @@ The system implements weighted search using Redis's built-in weighting capabilit
 The implementation includes functions that return search results with relevance scores. The correct syntax for weighted search with JSON documents is:
 
 ```typescript
-// Correct syntax for weighted search with fuzzy matching
-const query = `@description:(%%${searchTerms}%%)=>{$weight:5.0} | @body_part:(%%${searchTerms}%%)=>{$weight:3.0}`;
+// Recommended approach: Simple syntax relying on schema-defined weights
+const query = `@description:(%%${searchTerms}%%) | @body_part:(%%${searchTerms}%%)`;
+
+// Alternative approach: Explicit weights in query (more complex but more flexible)
+// const query = `@description:(%%${searchTerms}%%)=>{$weight:5.0} | @body_part:(%%${searchTerms}%%)=>{$weight:3.0}`;
 ```
 
 This syntax ensures that:
@@ -181,7 +193,7 @@ This syntax ensures that:
 2. Fuzzy matching is applied to find terms with slight misspellings or variations
 3. Fields are combined with the pipe operator for OR logic
 
-## 10. Automatic Population on Server Startup
+## 8. Automatic Population on Server Startup
 
 To ensure Redis is always populated with the necessary data, the server automatically populates Redis during startup:
 
@@ -240,7 +252,7 @@ cptResults.sort((a, b) => b.score - a.score);
 const topResults = cptResults.slice(0, 5);
 ```
 
-## 8. Fallback Mechanism
+## 9. Fallback Mechanism
 
 The system implements a robust fallback mechanism to ensure database context is always generated, even when Redis is unavailable or returns insufficient results:
 
@@ -293,7 +305,7 @@ ORDER BY
 
 This approach ensures that even when Redis is unavailable, the system still benefits from weighted search capabilities, maintaining high accuracy in matching clinical indications to the right CPT and ICD-10 codes.
 
-## 9. Implementation Considerations
+## 10. Implementation Considerations
 
 -   **Client Library:** Use a robust Redis client library for Node.js (e.g., `ioredis`, `node-redis v4+`) that supports custom commands required by **RedisJSON (`JSON.SET`, `JSON.GET`)** and **RedisSearch (`FT.SEARCH`, `FT.CREATE`)**, and crucially allows **TLS/SSL connection configuration**.
 -   **Connection Handling:** Implement proper connection logic using the specific **Redis Cloud endpoint hostname, port, and password**. **TLS must be enabled** in the client configuration. Use connection pooling provided by the library and implement error handling/reconnection strategies.
@@ -303,7 +315,7 @@ This approach ensures that even when Redis is unavailable, the system still bene
 -   **VPC/Network Access:** Ensure the application environment (e.g., EC2 instance, Lambda function) has network access to the Redis Cloud endpoint. This typically involves configuring Security Groups and potentially NAT Gateways or VPC Endpoints, and allow-listing the application's egress IP in the Redis Cloud database settings.
 -   **Monitoring:** Monitor **Redis Cloud metrics** (via the Redis Cloud UI/API) for performance, memory usage, latency, and command execution. Monitor application-level metrics (cache hit/miss rates) and relevant AWS infrastructure metrics (EC2/Lambda CPU/Network, NAT Gateway traffic) via CloudWatch.
 
-## 10. Integration with Validation Engine
+## 11. Integration with Validation Engine
 
 The weighted search implementation is fully integrated with the validation engine:
 
@@ -332,7 +344,7 @@ The weighted search implementation is fully integrated with the validation engin
 5. The context is formatted and used in the LLM prompt
 6. The LLM uses this context to validate the medical order
 
-## 11. Testing
+## 12. Testing
 
 The implementation includes comprehensive testing:
 
@@ -383,8 +395,33 @@ The implementation has been thoroughly tested for code quality:
    - Tests confirm that the validation engine is using the weighted search
    - Tests validate the fallback mechanism
 
-## 12. Implementation Documentation
+## 13. Implementation Documentation
 
 For detailed implementation information, including code examples, configuration details, and testing procedures, please refer to the following document:
 
 - [Redis Integration Implementation](./implementation/redis-integration.md) - Comprehensive documentation of the Redis Cloud integration implementation, including Redis client configuration, RedisJSON and RedisSearch integration, data models, search indexes, testing, and security considerations.
+- [Redis JSON Search Implementation](./redis_json_search_implementation.md) - Detailed documentation of the implementation approaches tested and the final solution adopted.
+
+## 14. Approaches Tested
+
+We tested several approaches to implement weighted search in Redis. For a detailed comparison of these approaches, please refer to the [Redis JSON Search Implementation](./redis_json_search_implementation.md) document. Here's a summary:
+
+### Hash-Based Storage with Basic Search
+- Data stored as Redis hashes using `HSET`
+- Limited relevance ranking, no field-specific weighting
+
+### Hash-Based Storage with Weighted Search
+- Data stored as Redis hashes using `HSET`
+- Search using `FT.SEARCH` with explicit field weights
+- Required "fix" files to handle edge cases
+
+### JSON-Based Storage with Explicit Query Weights
+- Data stored as JSON documents using `JSON.SET`
+- Search using `FT.SEARCH` with explicit field weights in query
+- Complex query syntax, redundant weight specification
+
+### JSON-Based Storage with Schema Weights (Final Solution)
+- Data stored as JSON documents using `JSON.SET`
+- Search using `FT.SEARCH` with weights defined in schema
+- Simple query syntax, consistent weights, context-based field prioritization
+- This is the approach we adopted for the final implementation

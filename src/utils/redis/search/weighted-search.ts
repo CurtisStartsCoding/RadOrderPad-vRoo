@@ -33,9 +33,10 @@ export interface ICD10RowWithScore extends ICD10Row {
  * @returns Array of CPT codes with relevance scores
  */
 export async function searchCPTCodesWithScores(
-  keywords: string[], 
-  categorizedKeywords?: CategorizedKeywords, 
-  limit = 20
+  keywords: string[],
+  categorizedKeywords?: CategorizedKeywords,
+  limit = 20,
+  context: 'diagnosis' | 'procedure' | 'general' = 'general'
 ): Promise<CPTRowWithScore[]> {
   try {
     const client = getRedisClient();
@@ -46,8 +47,22 @@ export async function searchCPTCodesWithScores(
     // Execute the search with scores
     // Construct a query that uses field aliases with weights
     // Note: We use the field aliases defined in the schema, not the JSONPath field specifiers
-    // Format: @field:(value)=>{$weight:n.0} with pipe operator for OR
-    const query = `@description:(${searchTerms})=>{$weight:5.0} | @body_part:(${searchTerms})=>{$weight:3.0} | @clinical_justification:(${searchTerms})=>{$weight:3.0} | @key_findings:(${searchTerms})=>{$weight:2.0}`;
+    // Use a simpler syntax that relies on the weights defined in the schema
+    // Format: @field1:(term) | @field2:(term)
+    
+    // Adjust query based on context
+    let query = '';
+    
+    if (context === 'diagnosis') {
+      // For diagnosis searches, prioritize clinical information and description
+      query = `@clinical_justification:(${searchTerms}) | @description:(${searchTerms}) | @body_part:(${searchTerms}) | @key_findings:(${searchTerms})`;
+    } else if (context === 'procedure') {
+      // For procedure searches, prioritize body part and modality
+      query = `@body_part:(${searchTerms}) | @modality:(${searchTerms}) | @description:(${searchTerms}) | @clinical_justification:(${searchTerms})`;
+    } else {
+      // Default query using all fields
+      query = `@description:(${searchTerms}) | @body_part:(${searchTerms}) | @clinical_justification:(${searchTerms}) | @key_findings:(${searchTerms})`;
+    }
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(
@@ -128,9 +143,10 @@ export async function searchCPTCodesWithScores(
  * @returns Array of ICD-10 codes with relevance scores
  */
 export async function searchICD10CodesWithScores(
-  keywords: string[], 
-  categorizedKeywords?: CategorizedKeywords, 
-  limit = 20
+  keywords: string[],
+  categorizedKeywords?: CategorizedKeywords,
+  limit = 20,
+  context: 'diagnosis' | 'procedure' | 'general' = 'diagnosis'
 ): Promise<ICD10RowWithScore[]> {
   try {
     const client = getRedisClient();
@@ -141,8 +157,22 @@ export async function searchICD10CodesWithScores(
     // Execute the search with scores
     // Construct a query that uses field aliases with weights
     // Note: We use the field aliases defined in the schema, not the JSONPath field specifiers
-    // Format: @field:(value)=>{$weight:n.0} with pipe operator for OR
-    const query = `@description:(${searchTerms})=>{$weight:5.0} | @clinical_notes:(${searchTerms})=>{$weight:1.0} | @keywords:(${searchTerms})=>{$weight:3.0} | @primary_imaging_rationale:(${searchTerms})=>{$weight:2.0}`;
+    // Use a simpler syntax that relies on the weights defined in the schema
+    // Format: @field1:(term) | @field2:(term)
+    
+    // Adjust query based on context
+    let query = '';
+    
+    if (context === 'diagnosis') {
+      // For diagnosis searches, prioritize description and keywords
+      query = `@description:(${searchTerms}) | @keywords:(${searchTerms}) | @primary_imaging_rationale:(${searchTerms}) | @clinical_notes:(${searchTerms})`;
+    } else if (context === 'procedure') {
+      // For procedure searches, prioritize imaging rationale
+      query = `@primary_imaging_rationale:(${searchTerms}) | @description:(${searchTerms}) | @keywords:(${searchTerms}) | @clinical_notes:(${searchTerms})`;
+    } else {
+      // Default query using all fields
+      query = `@description:(${searchTerms}) | @keywords:(${searchTerms}) | @primary_imaging_rationale:(${searchTerms}) | @clinical_notes:(${searchTerms})`;
+    }
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await (client as any).call(

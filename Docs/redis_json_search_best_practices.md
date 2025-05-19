@@ -1,8 +1,11 @@
 # Redis JSON Search Best Practices
 
-**Version:** 1.1
-**Date:** 2025-05-15
+**Version:** 1.2
+**Date:** 2025-05-19
 **Author:** capecoma
+
+**Related Documents:**
+- [Redis JSON Search Implementation](./redis_json_search_implementation.md) - Comprehensive documentation of the implementation approaches tested and the final solution adopted.
 
 This document outlines best practices for using RediSearch with JSON documents in the RadOrderPad API backend.
 
@@ -10,6 +13,7 @@ This document outlines best practices for using RediSearch with JSON documents i
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.2 | 2025-05-19 | Added reference to implementation document, clarified weighted search syntax |
 | 1.1 | 2025-05-15 | Fixed weighted search syntax, added phonetic matching, enhanced search term processing |
 | 1.0 | 2025-05-05 | Initial version with best practices for Redis JSON search |
 
@@ -26,7 +30,9 @@ Through extensive research and testing, we've discovered important details about
 3. **Search Queries**: Search queries should use field aliases (defined in the schema) rather than JSONPath field specifiers.
 4. **Return Clauses**: Return clauses should use JSONPath field specifiers.
 5. **Field Aliases**: The `AS` clause in the schema creates an alias for each JSONPath field, and it's this alias that should be used in search queries.
-6. **Weighted Queries**: For weighted search, use the format `@field:(value)=>{$weight:n.0}` with the field alias. The old format `@field:(value) WEIGHT n.n` does not work correctly with JSON documents.
+6. **Weighted Queries**: For weighted search, there are two approaches:
+   - **Schema-defined weights (Recommended)**: Define weights in the schema and use simple queries like `@field1:(value) | @field2:(value)`. This is the approach used in our final implementation.
+   - **Query-defined weights**: Use the format `@field:(value)=>{$weight:n.0}` with the field alias. This approach provides more flexibility but adds complexity.
 7. **Phonetic Matching**: For phonetic matching, add `PHONETIC dm:en` to TEXT fields in the index schema and use `$phonetic:true` in queries.
 8. **Search Term Processing**: Filter out very short terms (less than 3 characters) to reduce noise in search results.
 
@@ -52,8 +58,11 @@ await client.call(
 ### Weighted Search with Fuzzy Matching
 
 ```typescript
-// Correct syntax for weighted search with fuzzy matching
-const query = `@description:(%%${searchTerms}%%)=>{$weight:5.0} | @body_part:(%%${searchTerms}%%)=>{$weight:3.0}`;
+// Recommended approach: Simple syntax relying on schema-defined weights
+const query = `@description:(%%${searchTerms}%%) | @body_part:(%%${searchTerms}%%)`;
+
+// Alternative approach: Explicit weights in query
+// const query = `@description:(%%${searchTerms}%%)=>{$weight:5.0} | @body_part:(%%${searchTerms}%%)=>{$weight:3.0}`;
 ```
 
 This syntax:
@@ -136,11 +145,14 @@ In this example:
 When searching data, use field aliases (defined in the schema) rather than JSONPath field specifiers:
 
 ```typescript
-// CORRECT: Using field aliases
-const query = `(@description:(${searchTerms}) WEIGHT 5.0) | (@body_part:(${searchTerms}) WEIGHT 3.0) | (@clinical_justification:(${searchTerms}) WEIGHT 3.0) | (@key_findings:(${searchTerms}) WEIGHT 2.0)`;
+// RECOMMENDED: Using field aliases with schema-defined weights
+const query = `@description:(${searchTerms}) | @body_part:(${searchTerms}) | @clinical_justification:(${searchTerms}) | @key_findings:(${searchTerms})`;
+
+// ALTERNATIVE: Using field aliases with explicit weights
+// const query = `@description:(${searchTerms})=>{$weight:5.0} | @body_part:(${searchTerms})=>{$weight:3.0} | @clinical_justification:(${searchTerms})=>{$weight:3.0} | @key_findings:(${searchTerms})=>{$weight:2.0}`;
 
 // INCORRECT: Using JSONPath field specifiers
-// const query = `(@\\$.description:(${searchTerms}) WEIGHT 5.0) | (@\\$.body_part:(${searchTerms}) WEIGHT 3.0) | (@\\$.clinical_justification:(${searchTerms}) WEIGHT 3.0) | (@\\$.key_findings:(${searchTerms}) WEIGHT 2.0)`;
+// const query = `@\\$.description:(${searchTerms}) | @\\$.body_part:(${searchTerms}) | @\\$.clinical_justification:(${searchTerms}) | @\\$.key_findings:(${searchTerms})`;
 
 const result = await client.call(
   'FT.SEARCH',
@@ -252,4 +264,4 @@ By following these best practices, we ensure that our Redis JSON search implemen
 1. The index schema uses JSONPath field specifiers (`$.field`) with aliases (`AS field`).
 2. Search queries should use field aliases (`@field:(value)`) rather than JSONPath field specifiers.
 3. Return clauses should use JSONPath field specifiers (`$.field`).
-4. For weighted search, use the format `(@field:(value) WEIGHT n.n)` with the field alias.
+4. For weighted search, we recommend using schema-defined weights with simple queries like `@field1:(term) | @field2:(term)`. See the [Redis JSON Search Implementation](./redis_json_search_implementation.md) document for a detailed comparison of approaches.
