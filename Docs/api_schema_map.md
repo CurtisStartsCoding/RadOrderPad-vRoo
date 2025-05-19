@@ -28,6 +28,10 @@ This document maps core API endpoints to the primary database tables they intera
 -   **`GET /api/auth/trial/me`**
     -   Reads: `trial_users` (Main)
     -   **Note:** Validates JWT token and returns trial user profile and validation usage information.
+-   **`POST /api/auth/trial/update-password`**
+    -   Reads: `trial_users` (Main - to find user by email)
+    -   Writes: `trial_users` (Main - to update `password_hash` and `last_validation_at`)
+    -   **Note:** Simplified password update flow without email token verification, intended for trial accounts only.
 -   **`POST /api/auth/refresh`**
     -   Reads: `refresh_tokens` (Main), `users` (Main)
     -   Writes: `sessions` (Main), `refresh_tokens` (rotate/update)

@@ -101,7 +101,34 @@ CREATE TABLE trial_users (
 - 400 Bad Request: Missing email or password
 - 401 Unauthorized: Invalid email or password
 
-### 3. Trial Validation
+### 3. Trial Password Update
+
+**Endpoint:** `POST /auth/trial/update-password`
+
+**Description:** Updates a trial user's password. This is a simplified flow without email token verification, intended for trial accounts only.
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "newPassword": "newSecurePassword!"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Trial user password updated successfully."
+}
+```
+
+**Error Responses:**
+- 400 Bad Request: Missing email or new password, or password too short
+- 404 Not Found: Trial account with the provided email not found
+- 500 Internal Server Error: An error occurred while updating the password
+
+### 4. Trial Validation
 
 **Endpoint:** `POST /orders/validate/trial`
 
@@ -180,6 +207,14 @@ The JWT token for trial users includes the following payload:
 3. Calculates validationsRemaining
 4. Generates a JWT token with trial user information
 5. Returns the token and trial information
+
+### Trial Password Update
+
+1. Validates the email and new password
+2. Checks if a trial user with the provided email exists
+3. Hashes the new password using bcrypt
+4. Updates the password_hash in the database
+5. Returns a success message
 
 ### Trial Validation
 

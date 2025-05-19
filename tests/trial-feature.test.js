@@ -174,6 +174,95 @@ describe('Physician Trial Sandbox Feature', () => {
     });
   });
   
+  describe('Trial Password Update', () => {
+    it('should update a trial user password with valid credentials', async () => {
+      const newPassword = 'newPassword456';
+      
+      // Update password
+      const response = await axios.post(`${API_URL}/api/auth/trial/update-password`, {
+        email: testTrialUser.email,
+        newPassword: newPassword
+      });
+      
+      expect(response.status).to.equal(200);
+      expect(response.data).to.have.property('success', true);
+      expect(response.data).to.have.property('message', 'Trial user password updated successfully.');
+      
+      // Verify password was updated in database
+      const result = await queryMainDb('SELECT password_hash FROM trial_users WHERE email = $1', [testTrialUser.email]);
+      expect(result.rows.length).to.equal(1);
+      
+      // Verify new password works
+      const isNewPasswordValid = await bcrypt.compare(newPassword, result.rows[0].password_hash);
+      expect(isNewPasswordValid).to.be.true;
+      
+      // Verify old password no longer works
+      const isOldPasswordValid = await bcrypt.compare(testTrialUser.password, result.rows[0].password_hash);
+      expect(isOldPasswordValid).to.be.false;
+      
+      // Update test user object to use new password for subsequent tests
+      testTrialUser.password = newPassword;
+    });
+    
+    it('should reject password update with missing email', async () => {
+      try {
+        await axios.post(`${API_URL}/api/auth/trial/update-password`, {
+          newPassword: 'somePassword789'
+        });
+        // Should not reach here
+        expect.fail('Should have thrown an error for missing email');
+      } catch (error) {
+        expect(error.response.status).to.equal(400);
+        expect(error.response.data).to.have.property('success', false);
+        expect(error.response.data.message).to.include('Email and new password are required');
+      }
+    });
+    
+    it('should reject password update with missing new password', async () => {
+      try {
+        await axios.post(`${API_URL}/api/auth/trial/update-password`, {
+          email: testTrialUser.email
+        });
+        // Should not reach here
+        expect.fail('Should have thrown an error for missing new password');
+      } catch (error) {
+        expect(error.response.status).to.equal(400);
+        expect(error.response.data).to.have.property('success', false);
+        expect(error.response.data.message).to.include('Email and new password are required');
+      }
+    });
+    
+    it('should reject password update with short password', async () => {
+      try {
+        await axios.post(`${API_URL}/api/auth/trial/update-password`, {
+          email: testTrialUser.email,
+          newPassword: '123'
+        });
+        // Should not reach here
+        expect.fail('Should have thrown an error for short password');
+      } catch (error) {
+        expect(error.response.status).to.equal(400);
+        expect(error.response.data).to.have.property('success', false);
+        expect(error.response.data.message).to.include('Password must be at least 8 characters');
+      }
+    });
+    
+    it('should reject password update for non-existent user', async () => {
+      try {
+        await axios.post(`${API_URL}/api/auth/trial/update-password`, {
+          email: 'nonexistent@example.com',
+          newPassword: 'validPassword123'
+        });
+        // Should not reach here
+        expect.fail('Should have thrown an error for non-existent user');
+      } catch (error) {
+        expect(error.response.status).to.equal(404);
+        expect(error.response.data).to.have.property('success', false);
+        expect(error.response.data.message).to.include('Trial account with this email not found');
+      }
+    });
+  });
+  
   describe('Trial Validation', () => {
     let trialToken;
     

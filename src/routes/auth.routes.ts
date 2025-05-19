@@ -4,6 +4,7 @@ import authController from '../controllers/auth.controller.js';
 import trialRegisterController from '../controllers/auth/trial/register.controller';
 import trialLoginController from '../controllers/auth/trial/login.controller';
 import trialMeController from '../controllers/auth/trial/me.controller';
+import trialPasswordController from '../controllers/auth/trial/password.controller';
 import { authenticateJWT } from '../middleware/auth/authenticate-jwt';
 
 const router = Router();
@@ -51,5 +52,12 @@ router.post('/trial/login', trialLoginController.loginTrialUser);
  * @access  Authenticated (Trial User JWT)
  */
 router.get('/trial/me', authenticateJWT, trialMeController.getTrialMe);
+
+/**
+ * @route   POST /api/auth/trial/update-password
+ * @desc    Update a trial user's password (simplified flow without email token verification)
+ * @access  Public
+ */
+router.post('/trial/update-password', trialPasswordController.updateTrialPassword);
 
 export default router;

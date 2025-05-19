@@ -2,7 +2,7 @@ import { User, UserRegistrationDTO, UserLoginDTO, OrganizationRegistrationDTO, L
 import { login } from './user';
 import { registerOrganization } from './organization';
 import { generateToken } from './token';
-import { registerTrialUser, loginTrialUser, getTrialUserProfile } from './trial';
+import { registerTrialUser, loginTrialUser, getTrialUserProfile, updateTrialUserPassword } from './trial';
 import { TrialLoginResult } from './trial/login-trial-user.service';
 import { TrialRegisterResult } from './trial/register-trial-user.service';
 import { TrialUserProfileResult } from './trial/get-trial-user-profile.service';
@@ -53,6 +53,13 @@ export class AuthService {
    */
   async getTrialUserProfile(trialUserId: number): Promise<TrialUserProfileResult | null> {
     return getTrialUserProfile(trialUserId);
+  }
+  
+  /**
+   * Update a trial user's password
+   */
+  async updateTrialUserPassword(email: string, newPassword: string): Promise<boolean> {
+    return updateTrialUserPassword(email, newPassword);
   }
   
   /**

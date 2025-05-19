@@ -35,6 +35,7 @@ API Endpoints Overview (Conceptual)
 -   `POST /auth/trial/register`: Register a new trial user with email, password, name, and specialty. Creates a trial user record and returns a trial JWT token along with validation usage information (`trialInfo` object containing `validationsUsed`, `maxValidations`, and `validationsRemaining`). No organization association. **(Public Access)**
 -   `POST /auth/trial/login`: Trial user login. Authenticates trial user credentials and returns a trial JWT token, user profile information, and validation usage information (`trialInfo` object). **(Public Access)**
 -   `GET /auth/trial/me`: Get the profile and trial status of the currently authenticated trial user. Returns the user profile and validation usage information (`trialInfo` object). **(Authenticated - Trial User JWT)**
+-   `POST /auth/trial/update-password`: Updates the password for a trial user. **Note: This is a simplified flow without email token verification, intended for trial accounts only.** Requires `email` and `newPassword` in the request body. Returns a success message on successful update. **(Public Access)**
 
 ## Organizations (`/organizations`)
 
