@@ -23,10 +23,38 @@ export async function populateRedisFromPostgres(): Promise<void> {
     // Check if Redis already has data
     const cptKeys = await client.keys('cpt:*');
     const icd10Keys = await client.keys('icd10:*');
+    const mappingKeys = await client.keys('mapping:*');
+    const markdownKeys = await client.keys('markdown:*');
     
-    if (cptKeys.length > 0 && icd10Keys.length > 0) {
-      enhancedLogger.info(`Redis already populated with ${cptKeys.length} CPT codes and ${icd10Keys.length} ICD-10 codes`);
+    enhancedLogger.info(`Redis contains ${cptKeys.length} CPT codes, ${icd10Keys.length} ICD-10 codes, ${mappingKeys.length} mappings, and ${markdownKeys.length} markdown files`);
+    
+    // Only skip population if we have all types of data
+    if (cptKeys.length > 0 && icd10Keys.length > 0 && mappingKeys.length > 0 && markdownKeys.length > 0) {
+      enhancedLogger.info('Redis already fully populated, skipping population');
       return;
+    }
+    
+    // Clear existing data to avoid duplicates
+    enhancedLogger.info('Clearing existing Redis data before repopulation...');
+    if (cptKeys.length > 0) {
+      for (const key of cptKeys) {
+        await client.del(key);
+      }
+    }
+    if (icd10Keys.length > 0) {
+      for (const key of icd10Keys) {
+        await client.del(key);
+      }
+    }
+    if (mappingKeys.length > 0) {
+      for (const key of mappingKeys) {
+        await client.del(key);
+      }
+    }
+    if (markdownKeys.length > 0) {
+      for (const key of markdownKeys) {
+        await client.del(key);
+      }
     }
     
     enhancedLogger.info('Redis cache is empty or incomplete. Populating from PostgreSQL...');
@@ -58,7 +86,15 @@ export async function populateRedisFromPostgres(): Promise<void> {
     }
     
     const endTime = Date.now();
+    
+    // Verify population by counting keys
+    const newCptKeys = await client.keys('cpt:*');
+    const newIcd10Keys = await client.keys('icd10:*');
+    const newMappingKeys = await client.keys('mapping:*');
+    const newMarkdownKeys = await client.keys('markdown:*');
+    
     enhancedLogger.info(`Redis population completed in ${(endTime - startTime) / 1000} seconds`);
+    enhancedLogger.info(`Redis now contains ${newCptKeys.length} CPT codes, ${newIcd10Keys.length} ICD-10 codes, ${newMappingKeys.length} mappings, and ${newMarkdownKeys.length} markdown files`);
   } catch (error) {
     enhancedLogger.error({
       message: 'Error populating Redis from PostgreSQL',
