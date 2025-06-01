@@ -1,39 +1,57 @@
-# Role-Based Tests
+# Role-Based API Tests
 
-This directory contains comprehensive test suites organized by user roles in the RadOrderPad system.
+This directory contains tests for different user roles in the RadOrderPad system. Each role has specific permissions and capabilities that are tested to ensure proper functionality.
 
 ## Available Role Tests
 
-### Physician Role Tests
-
-The physician role tests (`physician-role-tests.js`) verify all functionality available to physician users in the RadOrderPad system. These tests use real API calls to ensure accurate validation of the system's functionality.
-
-For detailed information about the physician role tests, see [Physician Role README](./physician-role-README.md).
-
-### Trial Role Tests
-
-The trial role tests (`trial-role-tests.js`) verify all functionality available to trial users in the RadOrderPad system. These tests are designed to be resilient and can run in both real API mode and simulation mode, ensuring that the tests can complete even when facing authentication or API availability issues.
-
-For detailed information about the trial role tests, see [Trial Role README](./trial-role-README.md).
+1. **Admin Staff (Referring Organization)** - `admin-staff-role-tests.js`
+   - Tests functionality available to admin staff users
+   - Includes order queue management, patient/insurance info updates, document uploads, and sending orders to radiology
+   - See [Admin Staff Role Tests README](./admin-staff-role-README.md) for detailed documentation
 
 ## Running the Tests
 
-Each role has its own batch file for running the tests:
+Each role has its own batch file for running tests:
 
 ```
-# To run physician role tests
-cd all-backend-tests/role-tests
-run-physician-role-tests.bat
-
-# To run trial role tests
-cd all-backend-tests/role-tests
-run-trial-role-tests.bat
+run-admin-staff-role-tests.bat
 ```
 
-The tests can be run independently from other test suites.
+## Test Structure
 
-## Test Coverage
+Each role test file follows a similar structure:
 
-The role-based tests provide comprehensive coverage of all user roles and their associated functionality in the RadOrderPad system. Each test suite is designed to verify the specific capabilities and constraints of its respective role.
+1. **Authentication** - Tests login functionality for the role
+2. **Role-Specific API Endpoints** - Tests endpoints accessible to the role
+3. **Permission Boundaries** - Verifies that the role cannot access unauthorized endpoints
 
-For a detailed breakdown of the test coverage for each role, refer to the role-specific README files.
+## Common Issues and Solutions
+
+### Admin Staff Role
+
+- **Listing Connected Radiology Organizations**: Admin staff users do not have direct API access to list connected radiology organizations. In a real implementation, this would be handled by the frontend UI, which would use the admin_referring token to fetch the connections and display them to the admin staff user.
+
+- **Sending Orders to Radiology**: Use the fixed implementation endpoint: `POST /api/admin/orders/{orderId}/send-to-radiology-fixed` which properly handles database connections for PHI and Main databases.
+
+- **Profile Management**: Use PUT (not PATCH) for updating user profiles, and only include allowed fields: firstName, lastName, phoneNumber, specialty, npi.
+
+### Document Upload Tests
+
+Document upload tests require AWS S3 configuration. Set the following environment variables:
+
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
+- AWS_REGION (us-east-2)
+- S3_BUCKET_NAME (one of the following):
+  * radorderpad-uploads-prod-us-east-2
+  * radmiddle-radorderpad-uploads-us-east-2
+  * elasticbeanstalk-us-east-2-3776023290411
+
+## Adding New Role Tests
+
+When adding tests for a new role:
+
+1. Create a new test file (e.g., `new-role-tests.js`)
+2. Create a batch file to run the tests (e.g., `run-new-role-tests.bat`)
+3. Create a README file with detailed documentation (e.g., `new-role-README.md`)
+4. Update this README to include the new role tests

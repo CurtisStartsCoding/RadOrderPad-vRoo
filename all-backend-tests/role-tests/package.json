@@ -1,14 +1,17 @@
 {
-  "name": "role-tests",
+  "name": "admin-staff-role-tests",
   "version": "1.0.0",
-  "description": "Role-based tests for RadOrderPad API",
-  "main": "index.js",
+  "description": "Tests for Admin Staff (Referring Organization) role",
+  "main": "admin-staff-role-tests.js",
   "scripts": {
-    "test:trial": "node trial-role-tests.js",
-    "test:all": "node trial-role-tests.js"
+    "test": "node admin-staff-role-tests.js",
+    "test:s3": "node test-s3-upload.js"
   },
   "dependencies": {
-    "axios": "^1.9.0",
-    "chalk": "^4.1.2"
+    "aws-sdk": "^2.1531.0",
+    "axios": "^1.6.2",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.3.1",
+    "node-fetch": "^3.3.2"
   }
 }

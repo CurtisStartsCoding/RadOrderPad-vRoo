@@ -1,0 +1,21 @@
+{
+  "name": "file-upload-diagnostic-tests",
+  "version": "1.0.0",
+  "description": "Diagnostic tests for file upload functionality",
+  "main": "index.js",
+  "scripts": {
+    "test:api": "node test-api-upload.js",
+    "test:s3": "node test-s3-direct.js",
+    "test:presigned": "node test-presigned-url.js",
+    "test:all": "npm run test:api && npm run test:s3 && npm run test:presigned"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1531.0",
+    "axios": "^1.6.2",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.3.1",
+    "form-data": "^4.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^2.7.0"
+  }
+}

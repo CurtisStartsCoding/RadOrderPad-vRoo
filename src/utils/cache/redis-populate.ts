@@ -21,8 +21,8 @@ export async function populateRedisFromPostgres(): Promise<void> {
     const client = getRedisClient();
     
     // Check if Redis already has data
-    const cptKeys = await client.keys('cpt:code:*');
-    const icd10Keys = await client.keys('icd10:code:*');
+    const cptKeys = await client.keys('cpt:*');
+    const icd10Keys = await client.keys('icd10:*');
     
     if (cptKeys.length > 0 && icd10Keys.length > 0) {
       enhancedLogger.info(`Redis already populated with ${cptKeys.length} CPT codes and ${icd10Keys.length} ICD-10 codes`);
@@ -35,12 +35,12 @@ export async function populateRedisFromPostgres(): Promise<void> {
     // Populate CPT codes
     enhancedLogger.info('Populating CPT codes...');
     const cptResult = await queryMainDb('SELECT * FROM medical_cpt_codes');
-    await cacheBatch(cptResult.rows, row => `cpt:code:${row.cpt_code || row.code}`);
+    await cacheBatch(cptResult.rows, row => `cpt:${row.cpt_code || row.code}`);
     
     // Populate ICD-10 codes
     enhancedLogger.info('Populating ICD-10 codes...');
     const icd10Result = await queryMainDb('SELECT * FROM medical_icd10_codes');
-    await cacheBatch(icd10Result.rows, row => `icd10:code:${row.icd10_code || row.code}`);
+    await cacheBatch(icd10Result.rows, row => `icd10:${row.icd10_code || row.code}`);
     
     // Populate mappings
     enhancedLogger.info('Populating mappings...');
