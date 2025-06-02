@@ -11,7 +11,7 @@ export class OrderValidationController {
    */
   async validateOrder(req: Request, res: Response): Promise<void> {
     try {
-      const { dictationText, patientInfo, orderId, isOverrideValidation, radiologyOrganizationId } = req.body;
+      const { dictationText, isOverrideValidation } = req.body;
       
       // Validate request body
       if (!dictationText) {
@@ -29,14 +29,15 @@ export class OrderValidationController {
       }
       
       // Call the service to handle the validation
+      // For stateless validation, we pass undefined for patientInfo, orderId, and radiologyOrganizationId
       const result = await OrderService.handleValidationRequest(
         dictationText,
-        patientInfo,
+        undefined, // patientInfo is now optional
         userId,
         orgId,
-        orderId,
+        undefined, // orderId is now optional
         isOverrideValidation,
-        radiologyOrganizationId
+        undefined  // radiologyOrganizationId is now optional
       );
       
       res.status(200).json(result);

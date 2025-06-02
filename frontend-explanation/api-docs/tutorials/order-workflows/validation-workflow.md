@@ -68,15 +68,16 @@ const submitDictation = async (dictation, modalityType, token) => {
 |-----------|------|----------|-------------|
 | dictation | string | Yes | The clinical dictation text to validate |
 | modalityType | string | Yes | The type of imaging modality (CT, MRI, XRAY, ULTRASOUND, PET, NUCLEAR) |
-| patientInfo | object | No | Optional patient information (firstName, lastName, dateOfBirth, gender) |
-| orderId | string | No | For subsequent validation attempts, the ID of the existing order |
 | isOverrideValidation | boolean | No | Whether this is an override validation after multiple failed attempts |
+| patientInfo | object | No | Patient information (firstName, lastName, dateOfBirth, gender) - only required for finalization |
+| orderId | string | No | For subsequent validation attempts or finalization, the ID of the existing order |
+| radiologyOrganizationId | number | No | ID of the radiology organization - only required for finalization |
 
 #### Response Structure
 
-The response will include:
+For initial stateless validation calls, the response will include:
 
-- `orderId`: The ID of the created draft order
+- `success`: Boolean indicating success
 - `validationResult`: The validation result with CPT and ICD-10 codes
   - `cptCode`: The assigned CPT code
   - `cptDescription`: Description of the CPT code
@@ -85,25 +86,22 @@ The response will include:
   - `confidence`: Confidence score of the validation
 - `requiresClarification`: Whether additional clarification is needed
 - `clarificationPrompt`: The prompt for clarification if needed
-- `attemptNumber`: The current validation attempt number
+
+Note: During initial stateless validation, no `orderId` is returned and no database records are created except for LLM usage logs.
 
 #### Example Response
 
 ```json
 {
   "success": true,
-  "data": {
-    "orderId": "12345",
-    "validationResult": {
-      "cptCode": "70450",
-      "cptDescription": "CT scan of head/brain without contrast",
-      "icd10Codes": ["R51.9", "S06.0X0A"],
-      "icd10Descriptions": ["Headache, unspecified", "Concussion without loss of consciousness, initial encounter"],
-      "confidence": 0.92
-    },
-    "requiresClarification": false,
-    "attemptNumber": 1
-  }
+  "validationResult": {
+    "cptCode": "70450",
+    "cptDescription": "CT scan of head/brain without contrast",
+    "icd10Codes": ["R51.9", "S06.0X0A"],
+    "icd10Descriptions": ["Headache, unspecified", "Concussion without loss of consciousness, initial encounter"],
+    "confidence": 0.92
+  },
+  "requiresClarification": false
 }
 ```
 

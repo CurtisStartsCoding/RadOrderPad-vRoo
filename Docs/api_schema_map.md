@@ -106,8 +106,9 @@ This document maps core API endpoints to the primary database tables they intera
 ## Orders (`/api/orders`) - Physician/General Access
 
 -   **`POST /api/orders/validate`** (Submit dictation for validation/retry/override)
-    -   Reads: `patients` (PHI), `prompt_templates`(Main), `prompt_assignments`(Main), `medical_*` tables (Main), Redis Cache, `orders` (PHI - Check for existing draft)
-    -   Writes: **`orders` (PHI - Create draft on first call)**, `validation_attempts`(PHI), `llm_validation_logs`(Main), `order_history` (PHI - log validation attempt)
+    -   Reads: `prompt_templates`(Main), `prompt_assignments`(Main), `medical_*` tables (Main), Redis Cache
+    -   Writes: `llm_validation_logs`(Main)
+    -   **Note:** For initial stateless validation, no PHI records are created. When an order is finalized via a separate endpoint, then `orders`, `patients`, and `validation_attempts` records will be created.
 -   **`POST /api/orders/validate/trial`** (Trial user validation)
     -   Reads: `trial_users` (Main), `prompt_templates`(Main), `medical_*` tables (Main), Redis Cache
     -   Writes: `trial_users` (Main - update validation_count), `llm_validation_logs`(Main)

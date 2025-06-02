@@ -26,7 +26,7 @@ import logger from '../../../utils/logger';
  */
 export async function handleValidationRequest(
   dictationText: string,
-  patientInfo: PatientInfo,
+  patientInfo: PatientInfo | undefined,
   userId: number,
   orgId: number,
   orderId?: number,
@@ -34,43 +34,24 @@ export async function handleValidationRequest(
   radiologyOrganizationId?: number
 ): Promise<ValidationRequestResponse> {
   try {
-    let orderIdToUse: number;
-    let attemptNumber = 1;
-    
-    // If no orderId provided, create a draft order
-    if (!orderId) {
-      orderIdToUse = await createDraftOrder(dictationText, userId, patientInfo, radiologyOrganizationId);
-    } else {
-      orderIdToUse = orderId;
-      
-      // Get the current attempt number for this order
-      attemptNumber = await getNextAttemptNumber(orderIdToUse);
-    }
-    
-    // Call the validation engine
+    // Call the validation engine with a stateless context
     const validationContext: ValidationContext = {
-      patientInfo,
+      patientInfo: patientInfo || {},
       userId,
       orgId,
-      orderId: orderIdToUse,
+      orderId: orderId,
       isOverrideValidation
     };
     
     const validationResult: ValidationResult = await ValidationService.runValidation(dictationText, validationContext);
     
-    // Log the validation attempt in the PHI database
-    await logValidationAttempt(
-      orderIdToUse,
-      attemptNumber,
-      dictationText,
-      validationResult,
-      userId
-    );
+    // For stateless validation, we don't log to validation_attempts table
+    // The LLM usage will still be logged by ValidationService.runValidation
     
-    // Return the validation result without credit consumption
+    // Return the validation result without orderId for stateless calls
     return {
       success: true,
-      orderId: orderIdToUse,
+      ...(orderId && { orderId }), // Only include orderId if it was provided
       validationResult
     };
   } catch (error) {

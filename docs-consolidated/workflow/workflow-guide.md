@@ -25,15 +25,7 @@ Content-Type: application/json
 **Request Body:**
 ```json
 {
-  "dictationText": "72-year-old male with persistent lower back pain radiating to the left leg for 3 weeks. History of degenerative disc disease. Clinical concern for lumbar radiculopathy.",
-  "patientInfo": {
-    "id": 1,
-    "firstName": "Robert",
-    "lastName": "Johnson",
-    "dateOfBirth": "1950-05-15",
-    "gender": "male",
-    "pidn": "P12345"
-  }
+  "dictationText": "72-year-old male with persistent lower back pain radiating to the left leg for 3 weeks. History of degenerative disc disease. Clinical concern for lumbar radiculopathy."
 }
 ```
 
@@ -41,7 +33,6 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "orderId": 599,
   "validationResult": {
     "validationStatus": "appropriate",
     "complianceScore": 8,
@@ -68,16 +59,20 @@ Content-Type: application/json
 ```
 
 **Important Fields:**
-- `orderId`: The ID of the created order, needed for subsequent steps
 - `validationStatus`: Can be "appropriate", "inappropriate", or "needs_clarification"
 - `suggestedCPTCodes`: Array of CPT codes with descriptions
 - `suggestedICD10Codes`: Array of ICD-10 codes with descriptions
 
+**Important Notes:**
+- This endpoint is now stateless and does not create any database records except for LLM usage logs
+- No `orderId` is returned as no order is created during validation
+- Patient information is not required for initial validation
+
 ### Step 2: Finalize/Sign Order
 
-After validation, the order needs to be finalized with the physician's signature and the validation results.
+After validation, the order needs to be created and finalized with the physician's signature, patient information, and the validation results.
 
-**Endpoint:** `PUT /api/orders/{orderId}`
+**Endpoint:** `PUT /api/orders/new`
 
 **Request Headers:**
 ```
@@ -88,6 +83,15 @@ Content-Type: application/json
 **Request Body:**
 ```json
 {
+  "patientInfo": {
+    "id": 1,
+    "firstName": "Robert",
+    "lastName": "Johnson",
+    "dateOfBirth": "1950-05-15",
+    "gender": "male",
+    "pidn": "P12345"
+  },
+  "dictationText": "72-year-old male with persistent lower back pain radiating to the left leg for 3 weeks. History of degenerative disc disease. Clinical concern for lumbar radiculopathy.",
   "signature": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
   "status": "pending_admin",
   "finalValidationStatus": "appropriate",
@@ -103,12 +107,15 @@ Content-Type: application/json
 {
   "success": true,
   "orderId": 599,
-  "message": "Order submitted successfully.",
+  "message": "Order created and submitted successfully.",
   "signatureUploadNote": "For security reasons, signature data is not returned in the response."
 }
 ```
 
 **Important Notes:**
+- This is where the order is actually created in the database
+- The `patientInfo` field is required and must include all patient details
+- The `dictationText` field should contain the final dictation text
 - The `referring_organization_name` field is required and must be included in the request
 - The `finalCPTCode` should be the primary CPT code from the validation result
 - The `finalICD10Codes` should be an array of ICD-10 codes from the validation result

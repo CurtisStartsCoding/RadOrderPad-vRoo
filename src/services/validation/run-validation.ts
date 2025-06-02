@@ -122,7 +122,7 @@ export async function runValidation(
         text,
         validationResult,
         llmResponse,
-        context.orderId,
+        context.orderId, // This is now optional
         context.userId || 1 // Default to user ID 1 if not provided
       );
       enhancedLogger.info('Validation attempt logging completed');

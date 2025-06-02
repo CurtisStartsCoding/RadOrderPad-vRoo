@@ -32,13 +32,13 @@ This document describes the end-to-end workflow for a physician using RadOrderPa
 3.  **Text Display:** Dictated/typed text appears in the input area.
 4.  **Submit for Validation:** Physician clicks "Process Order". Button is enabled only if dictation length > 20 characters.
 
-### 3. Validation Loop (Attempts 1-N) & Draft Order Creation
+### 3. Stateless Validation Loop (Attempts 1-N)
 
-1.  **Backend Request (Attempt 1):** Frontend sends the dictation text, patient context (age/gender derived from DOB if available), and physician/org context to the backend validation endpoint (e.g., **`/api/orders/validate`**). No `orderId` is sent initially. `attemptCount` increments to 1.
-2.  **Draft Order Creation (Backend):** The `/validate` endpoint handler detects no `orderId`. It creates a new `orders` record (PHI DB) with `status = 'pending_validation'`, minimal info (`created_by_user_id`, `referring_organization_id`), and gets the new `order_id`.
-3.  **Validation Engine Trigger:** The request (now associated with the new `order_id`) is processed by the Validation Engine (`validation_engine_overview.md`). LLM orchestration occurs (`llm_orchestration.md`).
-4.  **Logging (Attempt 1):** `llm_validation_logs` are updated in Main DB. A `validation_attempts` record is created in PHI DB (storing input text, LLM output, attempt number 1, linked to the new `order_id`). No credit is consumed at this stage.
-5.  **Feedback Delivery (Attempt 1):** Backend returns the validation result (`validationStatus`, `complianceScore`, `feedback`, codes) **and the new `order_id`** to the frontend. Frontend stores the `order_id` in its state. `validationResult` state is updated.
+1.  **Backend Request (Attempt 1):** Frontend sends the dictation text and physician/org context to the backend validation endpoint (e.g., **`/api/orders/validate`**). No `orderId`, `patientInfo`, or `radiologyOrganizationId` is sent initially. `attemptCount` increments to 1.
+2.  **Stateless Validation (Backend):** The `/validate` endpoint handler processes the request without creating any database records in the `orders` or `validation_attempts` tables.
+3.  **Validation Engine Trigger:** The request is processed by the Validation Engine (`validation_engine_overview.md`). LLM orchestration occurs (`llm_orchestration.md`).
+4.  **Logging (Attempt 1):** Only `llm_validation_logs` are updated in Main DB. No PHI records are created at this stage. No credit is consumed.
+5.  **Feedback Delivery (Attempt 1):** Backend returns the validation result (`validationStatus`, `complianceScore`, `feedback`, codes) to the frontend. No `orderId` is returned. Frontend stores the `validationResult` state.
 6.  **UI Display & Decision Point (All Attempts):**
     *   **If `validationStatus` is 'valid' (and not an override validation):**
         a.  `validationFeedback` is cleared.
@@ -50,8 +50,8 @@ This document describes the end-to-end workflow for a physician using RadOrderPa
         c.  Physician sees feedback and "Add Clarification" button.
         d.  Physician clicks "Add Clarification". A separator is added to the text area.
         e.  Physician dictates/types additional information.
-        f.  Physician clicks "Process Order" again. Frontend sends the *combined* original + appended text **and the stored `order_id`** to `/api/orders/validate`. `attemptCount` increments.
-        g.  **Backend Request (Attempts 2, 3):** Backend receives request with `order_id`. Skips draft creation. Proceeds to Validation Engine (Step 3.3). Logs attempt 2 or 3 (Step 3.4). Returns result (Step 3.5). Loop continues at Step 3.6.
+        f.  Physician clicks "Process Order" again. Frontend sends the *combined* original + appended text to `/api/orders/validate`. No `orderId` is sent. `attemptCount` increments.
+        g.  **Backend Request (Attempts 2, 3):** Backend processes the request in a stateless manner. Proceeds to Validation Engine (Step 3.3). Only logs to `llm_validation_logs` (Step 3.4). Returns result (Step 3.5). Loop continues at Step 3.6.
     *   **If `validationStatus` is 'invalid' or 'warning' (and attempts = 3):**
         a.  `ValidationFeedbackBanner` is displayed.
         b.  Primary action becomes "Override Validation".
@@ -64,8 +64,8 @@ This document describes the end-to-end workflow for a physician using RadOrderPa
 3.  **Justification:** `OverrideDialog` appears, requiring the physician to dictate or type a clinical justification (minimum 20 characters).
 4.  **Confirm Override & Final Validation:** Physician submits the justification by clicking "Confirm Override" in the dialog.
     a.  Frontend constructs the final input: (Cumulative Dictation Text + Override Justification Text).
-    b.  Frontend calls **`/api/orders/validate`** one last time, sending the combined text, the stored `order_id`, and potentially a flag `isOverrideValidation=true`. `attemptCount` increments (e.g., to 4).
-    c.  **Backend:** Receives request. Recognizes it's an override validation. Runs Validation Engine, potentially using adjusted prompts considering the justification. Logs attempt #4 to `validation_attempts`. No credit is consumed.
+    b.  Frontend calls **`/api/orders/validate`** one last time, sending the combined text and a flag `isOverrideValidation=true`. No `orderId` is sent. `attemptCount` increments (e.g., to 4).
+    c.  **Backend:** Receives request. Recognizes it's an override validation. Runs Validation Engine, potentially using adjusted prompts considering the justification. Only logs to `llm_validation_logs`. No credit is consumed.
     d.  **Feedback:** Backend returns the *final* validation result (which might now be 'appropriate' or still 'inappropriate', with feedback considering the justification).
 5.  **Local State Update:** Frontend receives the final validation result. It updates the `validationResult` state with this new outcome, but also ensures `overridden = true` and `overrideJustification` (from the dialog) are stored in the state.
 6.  **UI Transition:** `OverrideDialog` closes. `OrderProgressIndicator` moves to Step 2. UI transitions to show `ValidationView`. Proceed to Step 5 (Validation Review).
@@ -89,12 +89,14 @@ This document describes the end-to-end workflow for a physician using RadOrderPa
 3.  **Confirm:** Physician types their full name for confirmation/attestation.
 4.  **Submit Final Order:** Physician clicks "Submit Order" (or variant text).
 5.  **Backend Persistence:**
-     *   Frontend sends the complete order payload (including temporary patient info if applicable, dictation, final validated state, override info, signature details) **and the `orderId`** to the backend endpoint responsible for finalizing/updating the order (e.g., `PUT /api/orders/{orderId}`).
-     *   Backend finds the existing draft order record using the `orderId`.
-     *   **If the order corresponds to a temporary patient record, the backend creates a new patient record in the `patients` table using the provided details and updates the `orders.patient_id` foreign key accordingly.**
-     *   Backend **updates** the `orders` record with all the final details received in the payload (final validation fields, `overridden`, `override_justification`, `signed_by_user_id`, `signature_date`, final `status = 'pending_admin'`).
+     *   Frontend sends the complete order payload (including patient info, dictation, final validated state, override info, signature details) to the backend endpoint responsible for creating and finalizing the order (e.g., `PUT /api/orders/new`).
+     *   **This is the first time an actual order record is created in the database.**
+     *   Backend creates a new order record in the `orders` table.
+     *   **The backend creates a new patient record in the `patients` table using the provided details and sets the `orders.patient_id` foreign key accordingly.**
+     *   Backend populates the `orders` record with all the details received in the payload (final validation fields, `overridden`, `override_justification`, `signed_by_user_id`, `signature_date`, final `status = 'pending_admin'`).
      *   Backend saves the signature image via `file_upload_service.md` (`document_uploads` record).
-     *   Backend logs events ('override' if applicable, 'signed') in `order_history`.
+     *   Backend logs events ('created', 'override' if applicable, 'signed') in `order_history`.
+     *   Backend creates a record in `validation_attempts` to store the final validation result.
 6.  **Confirmation:** UI shows a success `toast` message. `PhysicianInterface` state resets for a new order. User is effectively returned to the starting state.
 
 ---
@@ -103,9 +105,9 @@ This document describes the end-to-end workflow for a physician using RadOrderPa
 
 -   `users` (Main DB)
 -   `organizations` (Main DB)
--   `patients` (PHI DB)
--   `orders` (PHI DB) **(Updated: `overridden` column)**
--   `validation_attempts` (PHI DB)
--   `llm_validation_logs` (Main DB)
--   `order_history` (PHI DB)
--   `document_uploads` (PHI DB) (For signature image)
+-   `patients` (PHI DB) - **Created only during order finalization**
+-   `orders` (PHI DB) - **Created only during order finalization**
+-   `validation_attempts` (PHI DB) - **Created only during order finalization**
+-   `llm_validation_logs` (Main DB) - **Created during stateless validation**
+-   `order_history` (PHI DB) - **Created only during order finalization**
+-   `document_uploads` (PHI DB) - **Created only during order finalization** (For signature image)

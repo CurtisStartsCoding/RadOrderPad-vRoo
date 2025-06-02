@@ -1,6 +1,6 @@
 import { ValidationResult, Order } from '../models';
 import { FinalizeOrderPayload } from './order/finalize/types';
-import { PatientInfo } from './order/validation/types';
+import { PatientInfo, ValidationRequestResponse } from './order/validation/types';
 import { handleValidationRequest } from './order/validation';
 import { handleFinalizeOrder } from './order/finalize';
 import { getOrderById } from './order/get-order';
@@ -14,13 +14,13 @@ export class OrderService {
    */
   static async handleValidationRequest(
     dictationText: string,
-    patientInfo: PatientInfo,
+    patientInfo: PatientInfo | undefined,
     userId: number,
     orgId: number,
     orderId?: number,
     isOverrideValidation: boolean = false,
     radiologyOrganizationId?: number
-  ): Promise<{ success: boolean; orderId: number; validationResult: ValidationResult }> {
+  ): Promise<ValidationRequestResponse> {
     return handleValidationRequest(
       dictationText,
       patientInfo,

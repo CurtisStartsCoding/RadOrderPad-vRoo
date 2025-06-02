@@ -18,22 +18,22 @@ This document outlines the high-level screen sequences and UI state transitions 
 -   **State Update:** `PatientInfoCard` updates with Name/DOB. `activePatient` state updated (still temporary ID=0).
 -   **Action:** Dictate clinical reason -> Click "Process Order" (Attempt 1).
     -   UI shows loading state (`isProcessingValidation = true`). `attemptCount` = 1.
-    -   Frontend calls `POST /api/orders/validate` (without `orderId`).
-    -   Backend creates draft `orders` record, runs validation, returns result + **new `orderId`**.
-    -   Frontend updates `validationResult` state and **stores the received `orderId`**.
+    -   Frontend calls `POST /api/orders/validate` with only `dictationText`.
+    -   Backend performs stateless validation (no database records created except LLM logs).
+    -   Frontend updates `validationResult` state.
     -   **On Success (`appropriate`):** Move to Step 2 (`ValidationView`).
     -   **On Failure (`needs_clarification` / `inappropriate`, Attempts < 3):** Show feedback banner in `DictationForm`. Remain Step 1.
 -   **Action:** Click "Add Clarification" -> Dictate -> Click "Process Order" (Attempt 2/3).
     -   UI shows loading state. `attemptCount` increments.
-    -   Frontend calls `POST /api/orders/validate` **with the stored `orderId`** and cumulative text.
-    -   Backend finds draft order, runs validation, returns result.
+    -   Frontend calls `POST /api/orders/validate` with cumulative text (still stateless, no `orderId`).
+    -   Backend performs stateless validation, returns result.
     -   Frontend updates `validationResult`.
     -   Flow repeats: either success -> **Step 2 (ValidationView)**, or failure -> show feedback + "Add Clarification" / "Override Validation".
 -   **Action:** Click "Override Validation" (After Attempt 3 failure).
     -   `OverrideDialog` opens.
 -   **Action:** Enter justification -> Click "Confirm Override".
     -   `OverrideDialog` closes. UI shows loading state. `attemptCount` increments (e.g., to 4).
-    -   Frontend calls `POST /api/orders/validate` **with the stored `orderId`**, cumulative text + justification, and `isOverrideValidation=true` flag.
+    -   Frontend calls `POST /api/orders/validate` with cumulative text + justification and `isOverrideValidation=true` flag (still stateless).
     -   Backend runs final validation considering justification, returns final result.
     -   Frontend updates `validationResult` with this final outcome, ensures `overridden = true` and `overrideJustification` are set.
     -   `OrderProgressIndicator` moves to Step 2.
@@ -45,10 +45,11 @@ This document outlines the high-level screen sequences and UI state transitions 
     -   `OrderProgressIndicator` moves to Step 3.
     -   UI transitions to show `SignatureForm`.
 -   **Step 3: Signature Step** (`SignatureForm` component)
-    -   Displays final confirmation/attestation. Requires `orderId` to be present.
+    -   Displays final confirmation/attestation.
     -   Physician signs -> Types name -> Clicks "Submit Order".
     -   UI shows loading state (`isSubmitting = true`).
-    -   `handleSubmitOrder` function runs: calls API (**`PUT /api/orders/{orderId}`**), sending the `orderId` and the final payload including validated state and signature info.
+    -   `handleSubmitOrder` function runs: calls API (**`PUT /api/orders/new`**), sending the final payload including patient info, validated state, and signature info.
+    -   **This is where the order is actually created in the database.**
     -   **On Success:** `handleOrderSubmitted` callback triggered. Success `toast`. State resets. Redirect.
     -   **On Failure:** Error `toast`. UI remains on Signature step.
 

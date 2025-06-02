@@ -17,25 +17,31 @@ export async function logValidationAttempt(
   userId: number = 1
 ): Promise<void> {
   try {
+    // Always log LLM usage details regardless of orderId
+    await logLLMUsage(llmResponse);
+    
+    // Skip validation_attempts table insertion if orderId is undefined (stateless validation)
+    if (orderId === undefined) {
+      return;
+    }
+    
     // Get the next attempt number for this order
     let attemptNumber = 1;
     
-    if (orderId) {
-      const attemptResult = await queryPhiDb(
-        `SELECT MAX(attempt_number) as max_attempt FROM validation_attempts WHERE order_id = $1`,
-        [orderId]
-      );
-      
-      if (attemptResult.rows[0].max_attempt) {
-        attemptNumber = attemptResult.rows[0].max_attempt + 1;
-      }
+    const attemptResult = await queryPhiDb(
+      `SELECT MAX(attempt_number) as max_attempt FROM validation_attempts WHERE order_id = $1`,
+      [orderId]
+    );
+    
+    if (attemptResult.rows[0].max_attempt) {
+      attemptNumber = attemptResult.rows[0].max_attempt + 1;
     }
     
     // Format ICD-10 and CPT codes for storage
     const icd10Codes = JSON.stringify(validationResult.suggestedICD10Codes.map(code => code.code));
     const cptCodes = JSON.stringify(validationResult.suggestedCPTCodes.map(code => code.code));
     
-    // Insert validation attempt record
+    // Insert validation attempt record only if we have an orderId
     await queryPhiDb(
       `INSERT INTO validation_attempts (
         order_id,
@@ -50,7 +56,7 @@ export async function logValidationAttempt(
         created_at
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())`,
       [
-        orderId || null,
+        orderId,
         attemptNumber,
         originalText,
         validationResult.validationStatus,
@@ -61,9 +67,6 @@ export async function logValidationAttempt(
         userId
       ]
     );
-    
-    // Log LLM usage details
-    await logLLMUsage(llmResponse);
     
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
