@@ -1,0 +1,153 @@
+Updating trial users from ID 1 to 10 with max validations: 200 
+============================================================= 
+ 
+Processing user ID: 1 
+Connecting to EC2 instance to update trial user with ID: 1 to max validations: 200
+Updating max validations for user ID 1 to 200
+{
+  id: 1,
+  email: 'trial-test@example.com',
+  validation_count: 10,
+  max_validations: 200,
+  remaining_validations: 190
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 2 
+Connecting to EC2 instance to update trial user with ID: 2 to max validations: 200
+Updating max validations for user ID 2 to 200
+{
+  id: 2,
+  email: 'test@test.com',
+  validation_count: 10,
+  max_validations: 200,
+  remaining_validations: 190
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 3 
+Connecting to EC2 instance to update trial user with ID: 3 to max validations: 200
+Updating max validations for user ID 3 to 200
+{
+  id: 3,
+  email: 'john@doc.com',
+  validation_count: 0,
+  max_validations: 200,
+  remaining_validations: 200
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 4 
+Connecting to EC2 instance to update trial user with ID: 4 to max validations: 200
+Updating max validations for user ID 4 to 200
+{
+  id: 4,
+  email: 'curtis@test.com',
+  validation_count: 10,
+  max_validations: 200,
+  remaining_validations: 190
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 5 
+Connecting to EC2 instance to update trial user with ID: 5 to max validations: 200
+Updating max validations for user ID 5 to 200
+{
+  id: 5,
+  email: 'john@test.com',
+  validation_count: 0,
+  max_validations: 200,
+  remaining_validations: 200
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 6 
+Connecting to EC2 instance to update trial user with ID: 6 to max validations: 200
+Updating max validations for user ID 6 to 200
+{
+  id: 6,
+  email: 'johnC@test.com',
+  validation_count: 1,
+  max_validations: 200,
+  remaining_validations: 199
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 7 
+Connecting to EC2 instance to update trial user with ID: 7 to max validations: 200
+Updating max validations for user ID 7 to 200
+{
+  id: 7,
+  email: 'test-user-1746113229299@example.com',
+  validation_count: 1,
+  max_validations: 200,
+  remaining_validations: 199
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 8 
+Connecting to EC2 instance to update trial user with ID: 8 to max validations: 200
+Updating max validations for user ID 8 to 200
+{
+  id: 8,
+  email: 'existing-user@example.com',
+  validation_count: 0,
+  max_validations: 200,
+  remaining_validations: 200
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 9 
+Connecting to EC2 instance to update trial user with ID: 9 to max validations: 200
+Updating max validations for user ID 9 to 200
+{
+  id: 9,
+  email: 'test-user-1746113260271@example.com',
+  validation_count: 1,
+  max_validations: 200,
+  remaining_validations: 199
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
+Processing user ID: 10 
+Connecting to EC2 instance to update trial user with ID: 10 to max validations: 200
+Updating max validations for user ID 10 to 200
+{
+  id: 10,
+  email: 'test-user-1746113260399@example.com',
+  validation_count: 1,
+  max_validations: 200,
+  remaining_validations: 199
+}
+
+Done.
+ 
+-------------------------------------------- 
+ 
