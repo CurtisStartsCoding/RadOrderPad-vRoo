@@ -8,8 +8,9 @@ import {
   ValidationRequestResponse,
   PatientInfo
 } from './types';
-import { createDraftOrder } from './draft-order';
-import { getNextAttemptNumber, logValidationAttempt } from './attempt-tracking';
+// Imports commented out as they're no longer used in stateless validation
+// import { createDraftOrder } from './draft-order';
+// import { getNextAttemptNumber, logValidationAttempt } from './attempt-tracking';
 import logger from '../../../utils/logger';
 
 /**
@@ -31,7 +32,7 @@ export async function handleValidationRequest(
   orgId: number,
   orderId?: number,
   isOverrideValidation: boolean = false,
-  radiologyOrganizationId?: number
+  _radiologyOrganizationId?: number // Prefixed with underscore to indicate it's unused
 ): Promise<ValidationRequestResponse> {
   try {
     // Call the validation engine with a stateless context

@@ -1,4 +1,5 @@
-import { ValidationResult, Order } from '../models';
+import { Order } from '../models';
+// ValidationResult is imported through ValidationRequestResponse
 import { FinalizeOrderPayload } from './order/finalize/types';
 import { PatientInfo, ValidationRequestResponse } from './order/validation/types';
 import { handleValidationRequest } from './order/validation';
