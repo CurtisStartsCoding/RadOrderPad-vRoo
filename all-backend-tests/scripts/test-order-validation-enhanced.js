@@ -147,14 +147,11 @@ async function testOrderValidation(testCase) {
   log(`"${testCase.dictationText.trim()}"`);
   log('');
   
-  // Prepare request data - send minimal required information (no PHI)
+  // Prepare request data - stateless validation only requires dictation text
   const requestData = {
     dictationText: testCase.dictationText,
-    patientInfo: {
-      id: 1  // Only send patient ID, no PHI
-    },
-    radiologyOrganizationId: 1,
     debug: true  // Request debug information if the API supports it
+    // No patientInfo or radiologyOrganizationId in stateless validation
   };
   
   log('REQUEST PAYLOAD:');
@@ -191,6 +188,13 @@ async function testOrderValidation(testCase) {
     log('\nFULL RESPONSE:');
     log(JSON.stringify(response.data, null, 2));
     
+    // Verify no orderId is returned
+    if (response.data.orderId === undefined) {
+      log('\n✅ No orderId returned as expected for stateless validation');
+    } else {
+      log('\n⚠️ Warning: orderId was returned, but should not be for stateless validation');
+    }
+    
     // Extract and log Redis/Postgres details if available
     if (response.data.debug) {
       log('\nDEBUG INFORMATION:');
@@ -207,7 +211,8 @@ async function testOrderValidation(testCase) {
         testCase: testCase.name,
         dictationText: testCase.dictationText,
         validationResult: response.data.validationResult,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        stateless: true // Mark as stateless validation
       };
       
       // Append to results file with comma for JSON array format (except for last entry)

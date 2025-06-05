@@ -39,6 +39,18 @@ router.post(
 );
 
 /**
+ * @route   PUT /api/orders/new
+ * @desc    Create a new order after validation
+ * @access  Private (Physician)
+ */
+router.put(
+  '/new',
+  authenticateJWT,
+  authorizeRole(['physician']),
+  orderManagementController.createOrder
+);
+
+/**
  * @route   PUT /api/orders/:orderId
  * @desc    Finalize an order
  * @access  Private (Physician)

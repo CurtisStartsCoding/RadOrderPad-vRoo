@@ -1,9 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
+// Get directory to process from command line arguments
+const directoryToProcess = process.argv[2] || 'src';
+console.log(`Processing directory: ${directoryToProcess}`);
+
 // Configuration
-const outputFile = 'all-source-code.txt';
+const outputDir = 'codebase-dump';
+const outputFileName = `all-${directoryToProcess.replace(/\//g, '-')}.txt`;
+const outputFile = path.join(outputDir, outputFileName);
 let fileCount = 0;
+
+// Ensure output directory exists
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+  console.log(`Created output directory: ${outputDir}`);
+}
 
 // Clear the output file
 fs.writeFileSync(outputFile, '', 'utf8');
@@ -16,16 +28,18 @@ function getCurrentTimestamp() {
 
 // Function to determine if a file should be included
 function shouldIncludeFile(filePath) {
-  // Include all files from src directory
-  if (filePath.startsWith('src/')) {
+  // Include all files from the specified directory
+  if (filePath.startsWith(`${directoryToProcess}/`)) {
     return true;
   }
   
   // Include specific config files at the root level
+  // Commented out for directory-specific processing
+  /*
   const configFiles = [
-    'package.json', 
-    'tsconfig.json', 
-    '.eslintrc.js', 
+    'package.json',
+    'tsconfig.json',
+    '.eslintrc.js',
     '.env',
     '.env.example'
   ];
@@ -33,6 +47,7 @@ function shouldIncludeFile(filePath) {
   if (configFiles.includes(path.basename(filePath))) {
     return true;
   }
+  */
   
   return false;
 }
@@ -88,7 +103,7 @@ function processDirectory(directoryPath, relativePath = '') {
     
     for (const item of items) {
       const itemPath = path.join(directoryPath, item);
-      const itemRelativePath = path.join(relativePath, item);
+      const itemRelativePath = path.join(relativePath, item).replace(/\\/g, '/'); // Ensure forward slashes for consistency
       const stats = fs.statSync(itemPath);
       
       if (stats.isDirectory()) {

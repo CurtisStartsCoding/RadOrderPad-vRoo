@@ -103,21 +103,19 @@ async function runTest() {
     );
     helpers.storeTestData('physicianToken', physicianToken, SCENARIO);
     
-    // Step 4: Validate Dictation
-    helpers.log('Step 4: Validate Dictation', SCENARIO);
+    // Step 4: Validate Dictation (stateless)
+    helpers.log('Step 4: Validate Dictation (stateless)', SCENARIO);
     const validationResponse = await helpers.validateDictation(
       testData.dictation,
-      testData.patient,
+      null, // No patient info in stateless validation
       physicianToken
     );
     
     // Store validation results
-    const orderId = helpers.storeTestData('orderId', validationResponse.orderId, SCENARIO);
     const validationStatus = helpers.storeTestData('validationStatus', validationResponse.validationStatus, SCENARIO);
     const cptCode = helpers.storeTestData('cptCode', validationResponse.cptCode, SCENARIO);
     const icd10Codes = helpers.storeTestData('icd10Codes', validationResponse.icd10Codes, SCENARIO);
     
-    helpers.log(`Order created with ID: ${orderId}`, SCENARIO);
     helpers.log(`Validation status: ${validationStatus}`, SCENARIO);
     helpers.log(`CPT code: ${cptCode}`, SCENARIO);
     helpers.log(`ICD-10 codes: ${icd10Codes.join(', ')}`, SCENARIO);
@@ -126,6 +124,19 @@ async function runTest() {
     if (validationStatus !== 'validated') {
       throw new Error(`Validation failed with status: ${validationStatus}`);
     }
+    
+    // Step 4b: Create Order
+    helpers.log('Step 4b: Create Order', SCENARIO);
+    const createOrderResponse = await helpers.createOrder(
+      testData.dictation,
+      testData.patient,
+      validationResponse.validationResult,
+      physicianToken
+    );
+    
+    // Store order ID
+    const orderId = helpers.storeTestData('orderId', createOrderResponse.orderId, SCENARIO);
+    helpers.log(`Order created with ID: ${orderId}`, SCENARIO);
     
     // Step 5: Finalize and Sign Order
     helpers.log('Step 5: Finalize and Sign Order', SCENARIO);

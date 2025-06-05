@@ -83,3 +83,7 @@ run_*_test.sh
 Thumbs.db
 .vercel
 all-source-code-2025-05-12.txt
+codebase-dump/all-docs-consolidated.txt
+codebase-dump/all-DOCS.txt
+codebase-dump/all-frontend-explanation.txt
+codebase-dump/all-source-code.txt

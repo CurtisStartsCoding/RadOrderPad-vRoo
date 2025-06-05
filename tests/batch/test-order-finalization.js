@@ -12,6 +12,7 @@ const testConfig = require('../../test-config');
 // Configuration
 const API_BASE_URL = testConfig.api.baseUrl;
 const VALIDATION_ENDPOINT = `${API_BASE_URL}/orders/validate`;
+const ORDER_CREATION_ENDPOINT = `${API_BASE_URL}/orders/new`;
 const FINALIZATION_ENDPOINT = `${API_BASE_URL}/orders`;
 
 // Sample dictation text for validation
@@ -44,23 +45,65 @@ function extractUserIdFromToken(token) {
 }
 
 /**
- * Create a draft order via validation
+ * Validate dictation (stateless)
  */
-async function createDraftOrder() {
+async function validateDictation() {
   try {
     const response = await fetch(VALIDATION_ENDPOINT, {
       method: 'POST',
       headers,
       body: JSON.stringify({
+        dictationText: SAMPLE_DICTATION
+        // No patientInfo in stateless validation
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    
+    // Verify no orderId is returned
+    if (result.orderId !== undefined) {
+      console.warn('Warning: orderId was returned, but should not be for stateless validation');
+    }
+    
+    return result.validationResult;
+  } catch (error) {
+    console.error('Error validating dictation:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new order
+ */
+async function createOrder(validationResult) {
+  try {
+    // In the stateless approach, order creation happens separately from validation
+    // According to the documentation, we use PUT /api/orders/new
+    const response = await fetch(ORDER_CREATION_ENDPOINT, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
         dictationText: SAMPLE_DICTATION,
         patientInfo: {
-          id: 1, // This is the required patient ID
+          id: 1,
           firstName: "Test",
           lastName: "Patient",
           dateOfBirth: "1980-01-01",
           gender: "M",
           mrn: "TEST12345"
-        }
+        },
+        status: 'pending_admin',
+        finalValidationStatus: validationResult.validationStatus || 'appropriate',
+        finalCPTCode: validationResult.suggestedCPTCodes?.[0]?.code || '70551',
+        clinicalIndication: SAMPLE_DICTATION,
+        finalICD10Codes: validationResult.suggestedICD10Codes?.map(code => code.code) || ['R51.9'],
+        referring_organization_name: 'Test Organization',
+        validationResult: validationResult
       })
     });
 
@@ -72,7 +115,7 @@ async function createDraftOrder() {
     const result = await response.json();
     return result.orderId;
   } catch (error) {
-    console.error('Error creating draft order:', error);
+    console.error('Error creating order:', error);
     throw error;
   }
 }
@@ -131,12 +174,17 @@ async function testStandardFinalization() {
   console.log('\nTest Case 1: Finalize Standard Order');
   console.log('------------------------------------');
   
-  // Step 1: Create a draft order via validation
-  console.log('Creating draft order via validation...');
-  const orderId = await createDraftOrder();
-  console.log(`Draft order created with ID: ${orderId}`);
+  // Step 1: Validate dictation (stateless)
+  console.log('Validating dictation (stateless)...');
+  const validationResult = await validateDictation();
+  console.log('Validation successful');
   
-  // Step 2: Finalize the order
+  // Step 2: Create an order
+  console.log('Creating order...');
+  const orderId = await createOrder(validationResult);
+  console.log(`Order created with ID: ${orderId}`);
+  
+  // Step 3: Finalize the order
   console.log('Finalizing order...');
   const finalizationData = {
     finalValidationStatus: 'appropriate',
@@ -173,12 +221,17 @@ async function testTempPatientCreation() {
   console.log('\nTest Case 2: Finalize with Temporary Patient Creation');
   console.log('--------------------------------------------------');
   
-  // Step 1: Create a draft order via validation
-  console.log('Creating draft order via validation...');
-  const orderId = await createDraftOrder();
-  console.log(`Draft order created with ID: ${orderId}`);
+  // Step 1: Validate dictation (stateless)
+  console.log('Validating dictation (stateless)...');
+  const validationResult = await validateDictation();
+  console.log('Validation successful');
   
-  // Step 2: Finalize the order with temporary patient data
+  // Step 2: Create an order
+  console.log('Creating order...');
+  const orderId = await createOrder(validationResult);
+  console.log(`Order created with ID: ${orderId}`);
+  
+  // Step 3: Finalize the order with temporary patient data
   console.log('Finalizing order with temporary patient data...');
   const finalizationData = {
     finalValidationStatus: 'appropriate',

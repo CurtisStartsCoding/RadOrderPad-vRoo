@@ -78,233 +78,53 @@ async function testPhysicianLogin() {
   }
 }
 
-// Test order creation
-async function testOrderCreation(token) {
-  console.log(chalk.blue('Testing order creation...'));
-  
-  // No simulated data - always use real API calls
-  
-  try {
-    // Try the main endpoint first
-    try {
-      // Based on the working test-order-validation.js example
-      const mainEndpoint = `${API_URL}/api/orders/validate`;
-      console.log(chalk.blue(`Making API call to: ${mainEndpoint}`));
-      console.log(chalk.blue('Request payload:'));
-      console.log(JSON.stringify({
-        dictationText: testDictation,
-        patientInfo: testPatient,
-        radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
-      }, null, 2));
-      
-      const response = await axios.post(
-        mainEndpoint,
-        {
-          dictationText: testDictation,
-          patientInfo: testPatient,
-          radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-      
-      // Check for success field as in the working test
-      if (response.status === 200 && response.data.success) {
-        console.log(chalk.green('Order created successfully'));
-        console.log('Response status:', response.status);
-        console.log('Success:', response.data.success);
-        
-        // Log the orderId if it exists
-        if (response.data.orderId) {
-          console.log('Order ID:', response.data.orderId);
-        }
-        
-        // Return orderId if it exists, otherwise return a placeholder
-        return response.data.orderId || 'order-created';
-      } else {
-        console.log(chalk.yellow('Unexpected response:'));
-        console.log('Response status:', response.status);
-        console.log('Response:', JSON.stringify(response.data, null, 2));
-        return null;
-      }
-    } catch (mainError) {
-      // If the main endpoint fails, try the alternative endpoint
-      console.log(chalk.yellow('Primary endpoint failed. Trying alternative endpoint...'));
-      
-      // Based on the working test-order-validation.js example
-      const altEndpoint = `${API_URL}/api/orders/validate`;
-      console.log(chalk.blue(`Making API call to: ${altEndpoint}`));
-      console.log(chalk.blue('Request payload:'));
-      console.log(JSON.stringify({
-        dictationText: testDictation,
-        patientInfo: testPatient,
-        radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
-      }, null, 2));
-      
-      const response = await axios.post(
-        altEndpoint,
-        {
-          dictationText: testDictation,
-          patientInfo: testPatient,
-          radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-    
-      // Check for success field as in the working test
-      if (response.status === 200 && response.data.success) {
-        console.log(chalk.green('Order created successfully via alternative endpoint'));
-        console.log('Response status:', response.status);
-        console.log('Success:', response.data.success);
-        
-        // Log the orderId if it exists
-        if (response.data.orderId) {
-          console.log('Order ID:', response.data.orderId);
-        }
-        
-        // Return orderId if it exists, otherwise return a placeholder
-        return response.data.orderId || 'order-created';
-      } else {
-        console.log(chalk.yellow('Unexpected response from alternative endpoint:'));
-        console.log('Response status:', response.status);
-        console.log('Response:', JSON.stringify(response.data, null, 2));
-        return null;
-      }
-    }
-  } catch (error) {
-    console.log(chalk.red('Error creating order:'));
-    if (error.response) {
-      console.log('Status:', error.response.status);
-      console.log('Data:', error.response.data);
-    } else {
-      console.log('Error:', error.message);
-    }
-    return null;
-  }
-}
-
-// Test dictation validation
+// Test dictation validation (stateless)
 async function testDictationValidation(token) {
-  console.log(chalk.blue('Testing dictation validation...'));
-  
-  // No simulated data - always use real API calls
+  console.log(chalk.blue('Testing stateless dictation validation...'));
   
   try {
-    // Try the main endpoint first
-    try {
-      const validationEndpoint = `${API_URL}/api/orders/validate`;
-      console.log(chalk.blue(`Making API call to: ${validationEndpoint}`));
-      console.log(chalk.blue('Request payload:'));
-      console.log(JSON.stringify({
-        dictationText: testDictation,
-        patientInfo: testPatient,
-        radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
-      }, null, 2));
-      
-      const response = await axios.post(
-        validationEndpoint,
-        {
-          dictationText: testDictation,
-          patientInfo: testPatient,
-          radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
+    const validationEndpoint = `${API_URL}/api/orders/validate`;
+    console.log(chalk.blue(`Making API call to: ${validationEndpoint}`));
+    console.log(chalk.blue('Request payload:'));
+    console.log(JSON.stringify({
+      dictationText: testDictation
+      // No patientInfo or radiologyOrganizationId in stateless validation
+    }, null, 2));
+    
+    const response = await axios.post(
+      validationEndpoint,
+      {
+        dictationText: testDictation
+        // No patientInfo or radiologyOrganizationId in stateless validation
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
-      );
-      
+      }
+    );
+    
+    // Check for success field as in the working test
+    if (response.status === 200 && response.data.success) {
       console.log(chalk.green('Dictation validation successful'));
       console.log('Response status:', response.status);
       console.log('Success:', response.data.success);
       
-      // Check for validation result
-      if (response.data.validationResult) {
-        console.log('Validation Result:');
-        console.log('- Validation Status:', response.data.validationResult.validationStatus);
-        console.log('- Compliance Score:', response.data.validationResult.complianceScore);
-        
-        if (response.data.validationResult.suggestedCodes) {
-          console.log('- Suggested Codes:');
-          response.data.validationResult.suggestedCodes.forEach(code => {
-            console.log(`  - ${code.code}: ${code.description} ${code.isPrimary ? '(Primary)' : ''}`);
-          });
-        }
-        
-        if (response.data.validationResult.missingElements && response.data.validationResult.missingElements.length > 0) {
-          console.log('- Missing Elements:');
-          response.data.validationResult.missingElements.forEach(element => {
-            console.log(`  - ${element}`);
-          });
-        }
+      // Verify no orderId is returned
+      if (response.data.orderId === undefined) {
+        console.log(chalk.green('No orderId returned as expected for stateless validation'));
+      } else {
+        console.log(chalk.yellow('Warning: orderId was returned, but should not be for stateless validation'));
       }
       
+      // Return the validation result for use in order creation
       return response.data.validationResult;
-    } catch (mainError) {
-      // If the main endpoint fails, try the alternative endpoint
-      console.log(chalk.yellow('Primary validation endpoint failed. Trying alternative endpoint...'));
-      
-      const altValidationEndpoint = `${API_URL}/api/orders/validate`;
-      console.log(chalk.blue(`Making API call to: ${altValidationEndpoint}`));
-      console.log(chalk.blue('Request payload:'));
-      console.log(JSON.stringify({
-        dictationText: testDictation,
-        patientInfo: testPatient,
-        radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
-      }, null, 2));
-      
-      const response = await axios.post(
-        altValidationEndpoint,
-        {
-          dictationText: testDictation,
-          patientInfo: testPatient,
-          radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-    
-    console.log(chalk.green('Dictation validation successful'));
-    console.log('Response status:', response.status);
-    console.log('Success:', response.data.success);
-    
-    // Check for validation result
-    if (response.data.validationResult) {
-      console.log('Validation Result:');
-      console.log('- Validation Status:', response.data.validationResult.validationStatus);
-      console.log('- Compliance Score:', response.data.validationResult.complianceScore);
-      
-      if (response.data.validationResult.suggestedCodes) {
-        console.log('- Suggested Codes:');
-        response.data.validationResult.suggestedCodes.forEach(code => {
-          console.log(`  - ${code.code}: ${code.description} ${code.isPrimary ? '(Primary)' : ''}`);
-        });
-      }
-      
-      if (response.data.validationResult.missingElements && response.data.validationResult.missingElements.length > 0) {
-        console.log('- Missing Elements:');
-        response.data.validationResult.missingElements.forEach(element => {
-          console.log(`  - ${element}`);
-        });
-      }
-    }
-    
-    return response.data.validationResult;
+    } else {
+      console.log(chalk.yellow('Unexpected response:'));
+      console.log('Response status:', response.status);
+      console.log('Response:', JSON.stringify(response.data, null, 2));
+      return null;
     }
   } catch (error) {
     console.log(chalk.red('Error validating dictation:'));
@@ -318,16 +138,80 @@ async function testDictationValidation(token) {
   }
 }
 
+// Test order creation (after validation)
+async function testOrderCreation(validationResult, token) {
+  console.log(chalk.blue('Testing order creation...'));
+  
+  try {
+    const orderEndpoint = `${API_URL}/api/orders/new`;
+    console.log(chalk.blue(`Making API call to: ${orderEndpoint}`));
+    console.log(chalk.blue('Request payload:'));
+    console.log(JSON.stringify({
+      dictationText: testDictation,
+      patientInfo: testPatient,
+      validationResult: validationResult,
+      status: 'pending_admin',
+      finalValidationStatus: validationResult.validationStatus || 'appropriate',
+      finalCPTCode: validationResult.suggestedCPTCodes?.[0]?.code || '71045',
+      clinicalIndication: testDictation,
+      finalICD10Codes: validationResult.suggestedICD10Codes?.map(code => code.code) || ['R07.9'],
+      referring_organization_name: 'Test Organization'
+    }, null, 2));
+    
+    const response = await axios.put(
+      orderEndpoint,
+      {
+        dictationText: testDictation,
+        patientInfo: testPatient,
+        validationResult: validationResult,
+        status: 'pending_admin',
+        finalValidationStatus: validationResult.validationStatus || 'appropriate',
+        finalCPTCode: validationResult.suggestedCPTCodes?.[0]?.code || '71045',
+        clinicalIndication: testDictation,
+        finalICD10Codes: validationResult.suggestedICD10Codes?.map(code => code.code) || ['R07.9'],
+        referring_organization_name: 'Test Organization'
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    
+    if (response.status === 200 || response.status === 201) {
+      console.log(chalk.green('Order created successfully'));
+      console.log('Response status:', response.status);
+      console.log('Order ID:', response.data.orderId);
+      
+      return response.data.orderId;
+    } else {
+      console.log(chalk.yellow('Unexpected response:'));
+      console.log('Response status:', response.status);
+      console.log('Response:', JSON.stringify(response.data, null, 2));
+      return null;
+    }
+  } catch (error) {
+    console.log(chalk.red('Error creating order:'));
+    if (error.response) {
+      console.log('Status:', error.response.status);
+      console.log('Data:', error.response.data);
+    } else {
+      console.log('Error:', error.message);
+    }
+    return null;
+  }
+}
+
+// This function is now defined above, replacing the old testOrderCreation function
+
 // Test order finalization
 async function testOrderFinalization(orderId, validationResult, token) {
   console.log(chalk.blue(`Testing order finalization for order ${orderId}...`));
   
-  // No simulated data - always use real API calls
-  
   try {
     // Prepare finalization data with required fields
     const finalizationData = {
-      orderId: orderId,
       signature: testSignature,
       finalValidationStatus: 'appropriate',
       finalCPTCode: '71045',  // Example CPT code for chest X-ray
@@ -372,8 +256,6 @@ async function testOrderFinalization(orderId, validationResult, token) {
 // Test order submission
 async function testOrderSubmission(orderId, token) {
   console.log(chalk.blue(`Testing order submission for order ${orderId}...`));
-  
-  // No simulated data - always use real API calls
   
   try {
     // For order submission, we need to specify a radiology organization
@@ -456,9 +338,6 @@ async function testOrderSubmission(orderId, token) {
 async function testOrderStatusCheck(orderId, token) {
   console.log(chalk.blue(`Testing order status check for order ${orderId}...`));
   
-  // No simulated data - always use real API calls
-    
-  
   try {
     const response = await axios.get(
       `${API_URL}/api/orders/${orderId}`,
@@ -492,8 +371,6 @@ async function testOrderStatusCheck(orderId, token) {
 // Test listing all orders
 async function testOrderListing(token) {
   console.log(chalk.blue('Testing order listing...'));
-  
-  // No simulated data - always use real API calls
   
   try {
     const response = await axios.get(
@@ -541,8 +418,6 @@ async function testOrderListing(token) {
 async function testValidationClarificationLoop(token) {
   console.log(chalk.blue('Testing validation clarification loop...'));
   
-  // No simulated data - always use real API calls
-  
   try {
     // First validation attempt
     console.log(chalk.blue('Making first validation attempt...'));
@@ -554,17 +429,15 @@ async function testValidationClarificationLoop(token) {
     console.log(chalk.blue(`Making API call to: ${validationEndpoint}`));
     console.log(chalk.blue('Request payload:'));
     console.log(JSON.stringify({
-      dictationText: initialDictation,
-      patientInfo: testPatient,
-      radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
+      dictationText: initialDictation
+      // No patientInfo or radiologyOrganizationId in stateless validation
     }, null, 2));
     
     const firstResponse = await axios.post(
       validationEndpoint,
       {
-        dictationText: initialDictation,
-        patientInfo: testPatient,
-        radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
+        dictationText: initialDictation
+        // No patientInfo or radiologyOrganizationId in stateless validation
       },
       {
         headers: {
@@ -606,19 +479,15 @@ async function testValidationClarificationLoop(token) {
       
       console.log(chalk.blue('Request payload:'));
       console.log(JSON.stringify({
-        dictationText: enhancedDictation,
-        patientInfo: testPatient,
-        patientId: 1,
-        orderId: firstResponse.data.orderId // Include the order ID from the first attempt
+        dictationText: enhancedDictation
+        // No patientInfo in stateless validation
       }, null, 2));
       
       const secondResponse = await axios.post(
         validationEndpoint,
         {
-          dictationText: enhancedDictation,
-          patientInfo: testPatient,
-          patientId: 1,
-          orderId: firstResponse.data.orderId // Include the order ID from the first attempt
+          dictationText: enhancedDictation
+          // No patientInfo in stateless validation
         },
         {
           headers: {
@@ -667,8 +536,6 @@ async function testValidationClarificationLoop(token) {
 async function testValidationOverride(token) {
   console.log(chalk.blue('Testing validation override...'));
   
-  // No simulated data - always use real API calls
-  
   try {
     // First validation attempt with insufficient information
     console.log(chalk.blue('Making validation attempt with insufficient information...'));
@@ -680,17 +547,15 @@ async function testValidationOverride(token) {
     console.log(chalk.blue(`Making API call to: ${validationEndpoint}`));
     console.log(chalk.blue('Request payload:'));
     console.log(JSON.stringify({
-      dictationText: vagueDict,
-      patientInfo: testPatient,
-      radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
+      dictationText: vagueDict
+      // No patientInfo or radiologyOrganizationId in stateless validation
     }, null, 2));
     
     const failedResponse = await axios.post(
       validationEndpoint,
       {
-        dictationText: vagueDict,
-        patientInfo: testPatient,
-        radiologyOrganizationId: 1 // Add radiologyOrganizationId as in working tests
+        dictationText: vagueDict
+        // No patientInfo or radiologyOrganizationId in stateless validation
       },
       {
         headers: {
@@ -729,22 +594,18 @@ async function testValidationOverride(token) {
       console.log(chalk.blue('Request payload:'));
       console.log(JSON.stringify({
         dictationText: vagueDict,
-        patientInfo: testPatient,
-        patientId: 1,
-        orderId: failedResponse.data.orderId, // Include the order ID from the failed attempt
         isOverrideValidation: true,
         overrideJustification: overrideJustification
+        // No patientInfo in stateless validation
       }, null, 2));
       
       const overrideResponse = await axios.post(
         validationEndpoint,
         {
           dictationText: vagueDict,
-          patientInfo: testPatient,
-          patientId: 1,
-          orderId: failedResponse.data.orderId, // Include the order ID from the failed attempt
           isOverrideValidation: true,
           overrideJustification: overrideJustification
+          // No patientInfo in stateless validation
         },
         {
           headers: {
@@ -795,8 +656,6 @@ async function testValidationOverride(token) {
 // Test profile management
 async function testProfileManagement(token) {
   console.log(chalk.blue('Testing physician profile management...'));
-  
-  // No simulated data - always use real API calls
   
   try {
     // Get user profile
@@ -1016,20 +875,22 @@ async function runAllTests() {
       console.log(chalk.green('✅ Login successful.'));
     }
     
-    // Step 2: Create an order
-    const orderId = await testOrderCreation(token);
-    if (!orderId) {
-      console.log(chalk.red('❌ Order creation test failed.'));
-    } else {
-      console.log(chalk.green('✅ Order creation test passed.'));
-    }
-    
-    // Step 3: Validate dictation
+    // Step 2: Validate dictation (stateless)
     const validationResult = await testDictationValidation(token);
     if (!validationResult) {
       console.log(chalk.red('❌ Dictation validation test failed.'));
+      return;
     } else {
       console.log(chalk.green('✅ Dictation validation test passed.'));
+    }
+    
+    // Step 3: Create an order
+    const orderId = await testOrderCreation(validationResult, token);
+    if (!orderId) {
+      console.log(chalk.red('❌ Order creation test failed.'));
+      return;
+    } else {
+      console.log(chalk.green('✅ Order creation test passed.'));
     }
     
     // Step 4: Test validation clarification loop

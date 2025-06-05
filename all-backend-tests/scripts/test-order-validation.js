@@ -28,19 +28,10 @@ if (!PHYSICIAN_TOKEN) {
   process.exit(1);
 }
 
-// Test data for order validation
+// Test data for order validation - stateless approach only requires dictation text
 const testOrderData = {
-  dictationText: "55 yo F with right shoulder pain x 3 weeks, worse with overhead activity. Rule out rotator cuff tear. Request MRI right shoulder without contrast.",
-  patientInfo: {
-    id: 1,
-    firstName: 'Test',
-    lastName: 'Patient',
-    dateOfBirth: '1980-01-01',
-    gender: 'male',
-    phoneNumber: '555-123-4567',
-    email: 'test.patient@example.com'
-  },
-  radiologyOrganizationId: 1
+  dictationText: "55 yo F with right shoulder pain x 3 weeks, worse with overhead activity. Rule out rotator cuff tear. Request MRI right shoulder without contrast."
+  // No patientInfo or radiologyOrganizationId in stateless validation
 };
 
 // Test the order validation endpoint
@@ -63,8 +54,16 @@ async function testOrderValidation() {
 
     // Check the response
     if (response.status === 200 && response.data.success) {
-      console.log(chalk.green('Order validation successful!'));
+      console.log(chalk.green('Stateless validation successful!'));
       console.log(`Status: ${response.status}`);
+      
+      // Verify no orderId is returned
+      if (response.data.orderId === undefined) {
+        console.log(chalk.green('No orderId returned as expected for stateless validation'));
+      } else {
+        console.log(chalk.yellow('Warning: orderId was returned, but should not be for stateless validation'));
+      }
+      
       console.log('Response:', JSON.stringify(response.data, null, 2));
       return true;
     } else {

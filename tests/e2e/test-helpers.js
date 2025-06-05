@@ -256,21 +256,29 @@ async function apiRequest(method, endpoint, data = null, token = null) {
       return {
         success: false,
         error: 'Validation failed: Insufficient clinical information',
-        orderId: 'order_' + Math.random().toString(36).substring(2, 10),
-        validationStatus: 'failed',
-        suggestedActions: ['Provide more specific symptoms', 'Include duration of symptoms', 'Specify any relevant medical history']
+        // No orderId in stateless validation
+        validationResult: {
+          validationStatus: 'failed',
+          suggestedActions: ['Provide more specific symptoms', 'Include duration of symptoms', 'Specify any relevant medical history']
+        }
       };
     }
     
     // For all other dictations, return successful validation
     return {
       success: true,
-      orderId: 'order_' + Math.random().toString(36).substring(2, 10),
-      validationStatus: 'validated',
-      cptCode: '72148',
-      cptDescription: 'MRI lumbar spine without contrast',
-      icd10Codes: ['M54.5', 'M51.36'],
-      icd10Descriptions: ['Low back pain', 'Other intervertebral disc degeneration, lumbar region']
+      // No orderId in stateless validation
+      validationResult: {
+        validationStatus: 'validated',
+        complianceScore: 85,
+        suggestedCPTCodes: [
+          { code: '72148', description: 'MRI lumbar spine without contrast' }
+        ],
+        suggestedICD10Codes: [
+          { code: 'M54.5', description: 'Low back pain', isPrimary: true },
+          { code: 'M51.36', description: 'Other intervertebral disc degeneration, lumbar region', isPrimary: false }
+        ]
+      }
     };
   }
   
@@ -646,28 +654,66 @@ async function createUser(firstName, lastName, email, password, role, npi, admin
   return await apiRequest('post', '/users', data, adminToken);
 }
 
-// Helper function to validate dictation
+// Helper function to validate dictation (stateless)
 async function validateDictation(dictation, patientInfo, physicianToken) {
-  log(`Validating dictation: "${dictation.substring(0, 50)}..."`);
+  log(`Validating dictation (stateless): "${dictation.substring(0, 50)}..."`);
   
+  // In stateless validation, we only send dictation text
   const data = {
-    dictation,
-    patientInfo
+    dictation
+    // No patientInfo in stateless validation
   };
   
-  return await apiRequest('post', '/orders/validate', data, physicianToken);
+  const validationResponse = await apiRequest('post', '/orders/validate', data, physicianToken);
+  
+  // For backward compatibility with existing tests, simulate the old response format
+  // but ensure no orderId is included
+  if (validationResponse.validationResult) {
+    return {
+      success: validationResponse.success,
+      validationStatus: validationResponse.validationResult.validationStatus,
+      cptCode: validationResponse.validationResult.suggestedCPTCodes?.[0]?.code,
+      cptDescription: validationResponse.validationResult.suggestedCPTCodes?.[0]?.description,
+      icd10Codes: validationResponse.validationResult.suggestedICD10Codes?.map(code => code.code) || [],
+      icd10Descriptions: validationResponse.validationResult.suggestedICD10Codes?.map(code => code.description) || [],
+      validationResult: validationResponse.validationResult
+    };
+  }
+  
+  return validationResponse;
+}
+
+// Helper function to create an order after validation
+async function createOrder(dictation, patientInfo, validationResult, physicianToken) {
+  log(`Creating order with validated dictation`);
+  
+  const data = {
+    dictationText: dictation,
+    patientInfo,
+    status: 'pending_admin',
+    finalValidationStatus: validationResult.validationStatus || 'appropriate',
+    finalCPTCode: validationResult.suggestedCPTCodes?.[0]?.code || '71045',
+    clinicalIndication: dictation,
+    finalICD10Codes: validationResult.suggestedICD10Codes?.map(code => code.code) || ['R07.9'],
+    referring_organization_name: 'Test Organization',
+    validationResult
+  };
+  
+  const response = await apiRequest('put', '/orders/new', data, physicianToken);
+  return response;
 }
 
 // Helper function to finalize an order
 async function finalizeOrder(orderId, signature, physicianToken) {
   log(`Finalizing order: ${orderId}`);
   
+  // In the new approach, finalization is done via PUT to the order
   const data = {
-    orderId,
-    signature
+    signature,
+    status: 'pending_admin'
   };
   
-  return await apiRequest('post', '/orders/finalize', data, physicianToken);
+  return await apiRequest('put', `/orders/${orderId}`, data, physicianToken);
 }
 
 // Helper function to verify database state (MOCK VERSION)
@@ -709,6 +755,7 @@ module.exports = {
   login,
   createUser,
   validateDictation,
+  createOrder,
   finalizeOrder,
   verifyDatabaseState
 };

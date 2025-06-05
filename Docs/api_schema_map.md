@@ -108,7 +108,7 @@ This document maps core API endpoints to the primary database tables they intera
 -   **`POST /api/orders/validate`** (Submit dictation for validation/retry/override)
     -   Reads: `prompt_templates`(Main), `prompt_assignments`(Main), `medical_*` tables (Main), Redis Cache
     -   Writes: `llm_validation_logs`(Main)
-    -   **Note:** For initial stateless validation, no PHI records are created. When an order is finalized via a separate endpoint, then `orders`, `patients`, and `validation_attempts` records will be created.
+    -   **Note:** This endpoint is completely stateless during the physician's iterative dictation and validation process. It only performs LLM validation on the provided `dictationText` and returns the `validationResult`. It does NOT require `patientInfo`, `orderId`, or `radiologyOrganizationId` in the request, and it does NOT create any `orders` or `validation_attempts` database records. When an order is finalized via a separate endpoint (e.g., `PUT /orders/{orderId}`), then `orders`, `patients`, and `validation_attempts` records will be created.
 -   **`POST /api/orders/validate/trial`** (Trial user validation)
     -   Reads: `trial_users` (Main), `prompt_templates`(Main), `medical_*` tables (Main), Redis Cache
     -   Writes: `trial_users` (Main - update validation_count), `llm_validation_logs`(Main)
@@ -123,9 +123,13 @@ This document maps core API endpoints to the primary database tables they intera
 
 ## Orders - Submission & Finalization (`/api/orders`)
 
--   **`PUT /api/orders/{orderId}`** (Finalize/Update Order Upon Signature)
-    -   Reads: `orders` (PHI - Verify draft), `users` (Main - Verify signer)
-    *   Writes: **`orders` (PHI - Update** with final validation state, override info, signature, status='pending_admin'), **`patients` (PHI - Create if temporary patient info provided)**, `order_history` (PHI - log 'signed'), `document_uploads` (PHI - create signature record)
+-   **`PUT /api/orders/new`** (Create New Order After Validation)
+    -   Reads: `users` (Main - Verify user)
+    *   Writes: **`orders` (PHI - Create** new order with validation state, patient info, status='pending_admin'), **`patients` (PHI - Create if patient info provided)**, `order_history` (PHI - log 'created'), `validation_attempts` (PHI - log validation attempt)
+
+-   **`PUT /api/orders/{orderId}`** (Update Existing Order Upon Signature)
+    -   Reads: `orders` (PHI - Verify order), `users` (Main - Verify signer)
+    *   Writes: **`orders` (PHI - Update** with signature, status='pending_admin'), `order_history` (PHI - log 'signed'), `document_uploads` (PHI - create signature record)
 
 ## Orders - Admin Actions (`/api/admin/orders`)
 
