@@ -2,11 +2,9 @@
  * Handler for creating a new order after validation
  */
 import { Request, Response } from 'express';
-import { queryPhiDb, getPhiDbClient } from '../../../config/db';
+import { getPhiDbClient } from '../../../config/db';
 import { handleControllerError } from '../error-handling';
 import { validateUserAuth } from '../validation';
-import logger from '../../../utils/logger';
-import { ValidationResult } from '../../../models';
 
 /**
  * Create a new order after validation
