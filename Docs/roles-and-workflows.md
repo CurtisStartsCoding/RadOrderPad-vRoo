@@ -331,6 +331,7 @@ Has complete administrative control over the entire RadOrderPad platform, includ
 *   Manage LLM prompt templates and assignments.
 *   Monitor system health, performance, and resource usage.
 *   View comprehensive system logs (validation, credit usage, security, audit).
+*   Export and analyze trial user data for monitoring trial usage and conversion metrics.
 *   Manage system alerts and notifications.
 *   Oversee platform billing and subscription management (potentially).
 
@@ -346,6 +347,7 @@ Has complete administrative control over the entire RadOrderPad platform, includ
     2.  View specific organization details (`GET /api/superadmin/organizations/{orgId}`).
     3.  Update organization status (active, purgatory, terminated) (`PUT /api/superadmin/organizations/{orgId}/status`).
     4.  Adjust organization credits (`POST /api/superadmin/organizations/{orgId}/credits/adjust`).
+    5.  Export trial user data for analysis (`scripts/export-trial-users-with-tunnel.js`).
 *   **User Management:**
     1.  List/Search all users (`GET /api/superadmin/users`).
     2.  View specific user details (`GET /api/superadmin/users/{userId}`).
