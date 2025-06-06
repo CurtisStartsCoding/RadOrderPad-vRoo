@@ -1,9 +1,9 @@
 {
-  "referringOrgId": "org_iw1i4mr9",
-  "referringAdminId": "user_2qzz37c6",
-  "radiologyOrgId": "org_my78bo4b",
-  "radiologyAdminId": "user_veqtxh83",
-  "referringAdminToken": "mock_token_vm8lpvfd6le",
-  "connectionId": "conn_09nucjvi",
-  "radiologyAdminToken": "mock_token_293cfwi3v67"
+  "referringOrgId": "org_nxdujl79",
+  "referringAdminId": "user_0ijc0fkd",
+  "radiologyOrgId": "org_w3ml2o24",
+  "radiologyAdminId": "user_762rek96",
+  "referringAdminToken": "mock_token_m3ccmuiz60a",
+  "connectionId": "conn_ey0akkcv",
+  "radiologyAdminToken": "mock_token_phrwryhzs0s"
 }

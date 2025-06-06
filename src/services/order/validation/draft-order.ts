@@ -39,10 +39,8 @@ export async function createDraftOrder(
     throw new Error('Patient ID is required');
   }
   
-  // Use default radiology organization ID if not provided
-  const radOrgId = radiologyOrganizationId || 1; // Default to 1 if not provided
-  
   // Create a new order in the PHI database
+  // Note: radiology_organization_id is nullable and will be assigned later by admin staff
   const orderResult = await queryPhiDb(
     `INSERT INTO orders
     (order_number, referring_organization_id, radiology_organization_id,
@@ -52,7 +50,7 @@ export async function createDraftOrder(
     [
       `ORD-${Date.now()}`, // Generate a temporary order number
       user.organization_id, // Referring organization
-      radOrgId, // Radiology organization
+      radiologyOrganizationId || null, // Radiology organization (nullable)
       userId, // Created by user
       OrderStatus.PENDING_VALIDATION, // Status
       OrderPriority.ROUTINE, // Priority

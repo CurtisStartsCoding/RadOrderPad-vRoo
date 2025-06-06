@@ -62,9 +62,9 @@ export async function adminUpdate(req: Request, res: Response): Promise<void> {
     
     // Log the admin update action
     await queryMainDb(
-      `INSERT INTO order_history (order_id, action, performed_by, details)
-       VALUES ($1, 'admin_update', $2, $3)`,
-      [orderId, userId, JSON.stringify({ 
+      `INSERT INTO order_history (order_id, event_type, user_id, details)
+       VALUES ($1, 'admin_updated', $2, $3)`,
+      [orderId, userId, JSON.stringify({
         hasAdditionalInfo: !!additionalInformation,
         attachmentCount: attachments ? attachments.length : 0
       })]

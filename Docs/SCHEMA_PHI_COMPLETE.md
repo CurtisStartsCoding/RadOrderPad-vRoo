@@ -57,7 +57,7 @@ This document defines the **authoritative and fully expanded reconciled schema**
 | `order_number`                | `text`                      | `NOT NULL`, `UNIQUE`          | Unique identifier for the order within the platform             |
 | `patient_id`                  | `integer`                   | `NOT NULL`, `FK REFERENCES patients(id)` | Link to the patient                                             |
 | `referring_organization_id`   | `integer`                   | `NOT NULL`                    | Logical FK to `radorder_main.organizations.id`                    |
-| `radiology_organization_id`   | `integer`                   | `NOT NULL`                    | Logical FK to `radorder_main.organizations.id`                    |
+| `radiology_organization_id`   | `integer`                   |                               | Logical FK to `radorder_main.organizations.id` (NULL when physician creates order, assigned later by admin) |
 | `originating_location_id`     | `integer`                   |                               | Logical FK to `radorder_main.locations.id` (Referring Location) |
 | `target_facility_id`          | `integer`                   |                               | Logical FK to `radorder_main.locations.id` (Target Radiology Loc)|
 | `created_by_user_id`          | `integer`                   | `NOT NULL`                    | Logical FK to `radorder_main.users.id` (Physician/MA)           |

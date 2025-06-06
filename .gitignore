@@ -87,3 +87,5 @@ codebase-dump/all-docs-consolidated.txt
 codebase-dump/all-DOCS.txt
 codebase-dump/all-frontend-explanation.txt
 codebase-dump/all-source-code.txt
+migrations/make-radiology-organization-id-nullable.sql
+migrations/radiology-org-nullable-migration.sql

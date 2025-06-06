@@ -125,7 +125,8 @@ This document maps core API endpoints to the primary database tables they intera
 
 -   **`PUT /api/orders/new`** (Create New Order After Validation)
     -   Reads: `users` (Main - Verify user)
-    *   Writes: **`orders` (PHI - Create** new order with validation state, patient info, status='pending_admin'), **`patients` (PHI - Create if patient info provided)**, `order_history` (PHI - log 'created'), `validation_attempts` (PHI - log validation attempt)
+    *   Writes: **`orders` (PHI - Create** new order with validation state, patient info, status='pending_admin', radiology_organization_id=NULL), **`patients` (PHI - Create if patient info provided)**, `order_history` (PHI - log 'created'), `validation_attempts` (PHI - log validation attempt)
+    *   **Note:** `radiology_organization_id` is NULL when physicians create orders. It's assigned later by administrative staff when sending to radiology.
 
 -   **`PUT /api/orders/{orderId}`** (Update Existing Order Upon Signature)
     -   Reads: `orders` (PHI - Verify order), `users` (Main - Verify signer)

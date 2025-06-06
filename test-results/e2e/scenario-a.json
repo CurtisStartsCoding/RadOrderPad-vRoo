@@ -1,17 +1,15 @@
 {
-  "orgId": "org_kak78nid",
-  "adminId": "user_x8uhw47q",
-  "adminToken": "mock_token_moass4yjqys",
-  "physicianId": "user_x6feb36x",
-  "physicianToken": "mock_token_ebtrtpjxcqj",
-  "orderId": "order_bzci1v8q",
+  "orgId": "org_n6rjje8s",
+  "adminId": "user_bb22nc1w",
+  "adminToken": "mock_token_d2jt5c89x4",
+  "physicianId": "user_dr7g74h8",
+  "physicianToken": "mock_token_gy2b2dye5f",
   "validationStatus": "validated",
   "cptCode": "72148",
   "icd10Codes": [
     "M54.5",
     "M51.36"
   ],
-  "finalStatus": "pending_admin",
   "referring": {
     "orgName": "Test Referring Practice A",
     "orgType": "referring",

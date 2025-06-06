@@ -93,7 +93,7 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
       // Log order creation in order_history
       await client.query(
         `INSERT INTO order_history (
-          order_id, action, user_id, timestamp, details
+          order_id, event_type, user_id, created_at, details
         ) VALUES ($1, $2, $3, NOW(), $4)`,
         [
           orderId,
