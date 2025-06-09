@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import orderValidationController from '../controllers/order-validation.controller';
 import orderManagementController from '../controllers/order-management';
+import orderCreationController from '../controllers/order-creation.controller';
 import trialValidateController from '../controllers/order-validation/trial-validate.controller';
 import { authenticateJWT, authorizeRole } from '../middleware/auth';
 import { createRateLimiter, getUserIdentifier } from '../middleware/rate-limit';
@@ -95,6 +96,18 @@ router.post(
   authenticateJWT,
   validateOrderRateLimiter, // Apply rate limiting
   trialValidateController.validateTrialOrder
+);
+
+/**
+ * @route   POST /api/orders
+ * @desc    Create and finalize a new order after validation and signature
+ * @access  Private (Physician)
+ */
+router.post(
+  '/',
+  authenticateJWT,
+  authorizeRole(['physician']),
+  orderCreationController.createFinalizedOrder
 );
 
 export default router;

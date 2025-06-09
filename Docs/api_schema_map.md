@@ -123,14 +123,19 @@ This document maps core API endpoints to the primary database tables they intera
 
 ## Orders - Submission & Finalization (`/api/orders`)
 
--   **`PUT /api/orders/new`** (Create New Order After Validation)
+-   **`POST /api/orders`** (Create and Finalize Order After Validation)
+    -   Reads: `users` (Main - Verify user), `patients` (PHI - If existing patient ID provided)
+    -   Writes: `patients` (PHI - Create if new patient), `orders` (PHI - Create new order), `validation_attempts` (PHI - Log final attempt), `order_history` (PHI - Log 'order_created' and 'order_signed' events), `document_uploads` (PHI - Store signature)
+    -   **Note:** Performs all operations within a PHI database transaction to ensure data consistency. Creates a complete order record with patient information, validation results, and signature data.
+
+-   **`PUT /api/orders/new`** (Legacy Create New Order After Validation)
     -   Reads: `users` (Main - Verify user)
-    *   Writes: **`orders` (PHI - Create** new order with validation state, patient info, status='pending_admin', radiology_organization_id=NULL), **`patients` (PHI - Create if patient info provided)**, `order_history` (PHI - log 'created'), `validation_attempts` (PHI - log validation attempt)
-    *   **Note:** `radiology_organization_id` is NULL when physicians create orders. It's assigned later by administrative staff when sending to radiology.
+    -   Writes: **`orders` (PHI - Create** new order with validation state, patient info, status='pending_admin', radiology_organization_id=NULL), **`patients` (PHI - Create if patient info provided)**, `order_history` (PHI - log 'created'), `validation_attempts` (PHI - log validation attempt)
+    -   **Note:** `radiology_organization_id` is NULL when physicians create orders. It's assigned later by administrative staff when sending to radiology.
 
 -   **`PUT /api/orders/{orderId}`** (Update Existing Order Upon Signature)
     -   Reads: `orders` (PHI - Verify order), `users` (Main - Verify signer)
-    *   Writes: **`orders` (PHI - Update** with signature, status='pending_admin'), `order_history` (PHI - log 'signed'), `document_uploads` (PHI - create signature record)
+    -   Writes: **`orders` (PHI - Update** with signature, status='pending_admin'), `order_history` (PHI - log 'signed'), `document_uploads` (PHI - create signature record)
 
 ## Orders - Admin Actions (`/api/admin/orders`)
 

@@ -88,7 +88,18 @@ API Endpoints Overview (Conceptual)
 
 ## Orders - Submission & Finalization (`/orders`)
 
--   `PUT /api/orders/new`: **(Order Creation Endpoint)** Creates a new order with validation results and patient information. This endpoint is used after successful validation to create the order record. The request body includes `dictationText`, `patientInfo`, `validationResult`, `status`, `finalValidationStatus`, `finalCPTCode`, `clinicalIndication`, `finalICD10Codes`, and `referring_organization_name`. Returns the newly created order with its ID. **Error Handling:** Must handle database write failures robustly (e.g., 500 response, logging). **(Physician Role)**
+-   `POST /api/orders`: **(Order Creation and Finalization Endpoint)** Creates a new order with validation results, patient information, and signature data. This endpoint is called after a physician completes the iterative validation process (using the stateless `POST /api/orders/validate`) and signs the order. It creates the persistent `orders` record, creates/links the `patients` record, logs the final `validation_attempts`, and records `order_history`. The request body includes:
+    - `patientInfo`: Object containing either `id` (for existing patient) or full patient details (`firstName`, `lastName`, `dateOfBirth`, `gender`, etc.)
+    - `dictationText`: The final, cumulative dictation text
+    - `finalValidationResult`: Object containing validation outcomes (`validationStatus`, `complianceScore`, `feedback`, `suggestedICD10Codes`, `suggestedCPTCodes`)
+    - `isOverride`: Boolean indicating if physician overrode the validation
+    - `overrideJustification`: String (required if `isOverride` is true)
+    - `signatureData`: String (base64 data URL or fileKey)
+    - `signerFullName`: String (typed name for attestation)
+    - `radiologyOrganizationId`: Optional ID of selected radiology organization
+    Returns a 201 Created response with `{ success: true, orderId: number, message: string }`. **Error Handling:** Must handle database write failures robustly (e.g., 500 response, logging). **(Physician Role)**
+
+-   `PUT /api/orders/new`: **(Legacy Order Creation Endpoint)** Creates a new order with validation results and patient information. This endpoint is used after successful validation to create the order record. The request body includes `dictationText`, `patientInfo`, `validationResult`, `status`, `finalValidationStatus`, `finalCPTCode`, `clinicalIndication`, `finalICD10Codes`, and `referring_organization_name`. Returns the newly created order with its ID. **Error Handling:** Must handle database write failures robustly (e.g., 500 response, logging). **(Physician Role)**
 
 -   `PUT /api/orders/{orderId}`: **(Order Update Endpoint)** Updates an existing order (identified by `orderId`) with final details upon signature. Saves final validated state (codes, score, status, notes), override info (`overridden`, `overrideJustification`), signature details (`signed_by_user_id`, `signature_date`), and sets status to `pending_admin`. **If the order corresponds to a temporary patient record (e.g., identified by specific flags or payload fields like `patient_name_update`), this endpoint is also responsible for creating the permanent patient record in the `patients` table using provided details and updating the `orders.patient_id` foreign key accordingly.** **Error Handling:** Must handle database write failures robustly (e.g., 500 response, logging). **(Physician Role)**
 

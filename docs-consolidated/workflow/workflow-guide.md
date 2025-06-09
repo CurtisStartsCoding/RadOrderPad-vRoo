@@ -72,7 +72,7 @@ Content-Type: application/json
 
 After validation, the order needs to be created and finalized with the physician's signature, patient information, and the validation results.
 
-**Endpoint:** `PUT /api/orders/new`
+**Endpoint:** `POST /api/orders`
 
 **Request Headers:**
 ```
@@ -84,21 +84,41 @@ Content-Type: application/json
 ```json
 {
   "patientInfo": {
-    "id": 1,
     "firstName": "Robert",
     "lastName": "Johnson",
     "dateOfBirth": "1950-05-15",
     "gender": "male",
-    "pidn": "P12345"
+    "mrn": "MRN12345"
   },
   "dictationText": "72-year-old male with persistent lower back pain radiating to the left leg for 3 weeks. History of degenerative disc disease. Clinical concern for lumbar radiculopathy.",
-  "signature": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-  "status": "pending_admin",
-  "finalValidationStatus": "appropriate",
-  "finalCPTCode": "72148",
-  "clinicalIndication": "MRI lumbar spine without contrast is appropriate for evaluating lower back pain with radicular symptoms, especially with history of degenerative disc disease.",
-  "finalICD10Codes": ["M54.17", "M51.36"],
-  "referring_organization_name": "Test Referring Practice"
+  "finalValidationResult": {
+    "validationStatus": "appropriate",
+    "complianceScore": 8,
+    "feedback": "MRI lumbar spine without contrast is appropriate for evaluating lower back pain with radicular symptoms, especially with history of degenerative disc disease. Clinical presentation suggests lumbar radiculopathy which warrants imaging evaluation.",
+    "suggestedCPTCodes": [
+      {
+        "code": "72148",
+        "description": "Magnetic resonance (eg, proton) imaging, spinal canal and contents, lumbar; without contrast material",
+        "isPrimary": true
+      }
+    ],
+    "suggestedICD10Codes": [
+      {
+        "code": "M54.17",
+        "description": "Radiculopathy, lumbosacral region",
+        "isPrimary": true
+      },
+      {
+        "code": "M51.36",
+        "description": "Other intervertebral disc degeneration, lumbar region",
+        "isPrimary": false
+      }
+    ]
+  },
+  "isOverride": false,
+  "signatureData": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  "signerFullName": "Dr. Jane Doe",
+  "radiologyOrganizationId": 123
 }
 ```
 
@@ -107,18 +127,19 @@ Content-Type: application/json
 {
   "success": true,
   "orderId": 599,
-  "message": "Order created and submitted successfully.",
-  "signatureUploadNote": "For security reasons, signature data is not returned in the response."
+  "message": "Order created and submitted successfully."
 }
 ```
 
 **Important Notes:**
 - This is where the order is actually created in the database
-- The `patientInfo` field is required and must include all patient details
+- The `patientInfo` field can contain either an `id` for an existing patient or full patient details for a new patient
 - The `dictationText` field should contain the final dictation text
-- The `referring_organization_name` field is required and must be included in the request
-- The `finalCPTCode` should be the primary CPT code from the validation result
-- The `finalICD10Codes` should be an array of ICD-10 codes from the validation result
+- The `finalValidationResult` should contain the complete validation result from the last validation call
+- The `isOverride` flag indicates whether the physician overrode the validation
+- The `overrideJustification` field is required when `isOverride` is true
+- The `signatureData` can be a base64 data URL or a fileKey reference to a previously uploaded signature
+- The `radiologyOrganizationId` is optional and can be set later by admin staff
 
 ### Step 3: View Orders Awaiting Admin Finalization
 
@@ -205,12 +226,13 @@ Content-Type: application/json
 
 ```json
 {
-  "id": 1,                      // Required: Patient ID (temporary or permanent)
+  "id": 1,                      // Optional: Patient ID (for existing patients)
   "firstName": "Robert",        // Required: Patient's first name
   "lastName": "Johnson",        // Required: Patient's last name
   "dateOfBirth": "1950-05-15",  // Required: Date of birth in YYYY-MM-DD format
   "gender": "male",             // Required: "male", "female", or "other"
-  "pidn": "P12345"              // Required: Patient Identifier Number
+  "mrn": "MRN12345",            // Optional: Medical Record Number
+  "pidn": "P12345"              // Optional: Patient Identifier Number
 }
 ```
 
@@ -238,13 +260,15 @@ Example:
   "suggestedCPTCodes": [              // Array of suggested CPT codes
     {
       "code": "72148",
-      "description": "Magnetic resonance imaging, lumbar spine without contrast"
+      "description": "Magnetic resonance imaging, lumbar spine without contrast",
+      "isPrimary": true               // Indicates the primary CPT code
     }
   ],
   "suggestedICD10Codes": [            // Array of suggested ICD-10 codes
     {
       "code": "M54.17",
-      "description": "Radiculopathy, lumbosacral region"
+      "description": "Radiculopathy, lumbosacral region",
+      "isPrimary": true               // Indicates the primary ICD-10 code
     }
   ],
   "internalReasoning": "..."          // Internal reasoning (may not be present in all responses)
@@ -268,8 +292,8 @@ Example:
 3. **Finalization Flow**:
    - Implement a signature capture component
    - Create a form for finalizing the order with the validation results
-   - Include the referring_organization_name field
-   - Submit the data to the order update endpoint
+   - Submit the data to the order creation endpoint
+   - Display a success message with the order ID
 
 4. **Admin Queue Flow**:
    - Create a dashboard view for admin staff to see orders awaiting finalization
@@ -307,7 +331,7 @@ async function login(email, password) {
 }
 
 // Step 2: Validate Dictation
-async function validateDictation(token, dictationText, patientInfo) {
+async function validateDictation(token, dictationText) {
   const response = await fetch('https://api.radorderpad.com/api/orders/validate', {
     method: 'POST',
     headers: {
@@ -315,8 +339,29 @@ async function validateDictation(token, dictationText, patientInfo) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
+      dictationText
+    })
+  });
+  
+  return await response.json();
+}
+
+// Step 3: Create and Finalize Order
+async function createAndFinalizeOrder(token, patientInfo, dictationText, finalValidationResult, signatureData, signerFullName, isOverride, overrideJustification) {
+  const response = await fetch('https://api.radorderpad.com/api/orders', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      patientInfo,
       dictationText,
-      patientInfo
+      finalValidationResult,
+      signatureData,
+      signerFullName,
+      isOverride,
+      overrideJustification
     })
   });
   
@@ -331,28 +376,6 @@ async function getOrdersAwaitingFinalization(token, page = 1, limit = 20, sortBy
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     }
-  });
-  
-  return await response.json();
-}
-
-// Step 3: Finalize Order
-async function finalizeOrder(token, orderId, signature, validationResult) {
-  const response = await fetch(`https://api.radorderpad.com/api/orders/${orderId}`, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      signature,
-      status: 'pending_admin',
-      finalValidationStatus: validationResult.validationStatus,
-      finalCPTCode: validationResult.suggestedCPTCodes[0].code,
-      clinicalIndication: validationResult.feedback,
-      finalICD10Codes: validationResult.suggestedICD10Codes.map(code => code.code),
-      referring_organization_name: "Test Referring Practice"
-    })
   });
   
   return await response.json();

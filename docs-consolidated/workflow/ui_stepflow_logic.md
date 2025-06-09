@@ -1,7 +1,7 @@
 # UI Step Flow Logic
 
-**Version:** 1.3 (Final Override/Draft Logic)
-**Date:** 2025-04-11
+**Version:** 1.4 (Updated Order Creation Endpoint)
+**Date:** 2025-06-09
 
 This document outlines the high-level screen sequences and UI state transitions for the primary user workflows in RadOrderPad. It complements the detailed workflow documents (`physician_order_flow.md`, etc.).
 
@@ -48,7 +48,7 @@ This document outlines the high-level screen sequences and UI state transitions 
     -   Displays final confirmation/attestation.
     -   Physician signs -> Types name -> Clicks "Submit Order".
     -   UI shows loading state (`isSubmitting = true`).
-    -   `handleSubmitOrder` function runs: calls API (**`PUT /api/orders/new`**), sending the final payload including patient info, validated state, and signature info.
+    -   `handleSubmitOrder` function runs: calls API (**`POST /api/orders`**), sending the final payload including patient info, validation result, signature data, and override information if applicable.
     -   **This is where the order is actually created in the database.**
     -   **On Success:** `handleOrderSubmitted` callback triggered. Success `toast`. State resets. Redirect.
     -   **On Failure:** Error `toast`. UI remains on Signature step.
