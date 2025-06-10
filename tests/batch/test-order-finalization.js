@@ -12,8 +12,7 @@ const testConfig = require('../../test-config');
 // Configuration
 const API_BASE_URL = testConfig.api.baseUrl;
 const VALIDATION_ENDPOINT = `${API_BASE_URL}/orders/validate`;
-const ORDER_CREATION_ENDPOINT = `${API_BASE_URL}/orders/new`;
-const FINALIZATION_ENDPOINT = `${API_BASE_URL}/orders`;
+const ORDER_ENDPOINT = `${API_BASE_URL}/orders`;
 
 // Sample dictation text for validation
 const SAMPLE_DICTATION = `
@@ -83,9 +82,9 @@ async function validateDictation() {
 async function createOrder(validationResult) {
   try {
     // In the stateless approach, order creation happens separately from validation
-    // According to the documentation, we use PUT /api/orders/new
-    const response = await fetch(ORDER_CREATION_ENDPOINT, {
-      method: 'PUT',
+    // Using the consolidated endpoint POST /api/orders
+    const response = await fetch(ORDER_ENDPOINT, {
+      method: 'POST',
       headers,
       body: JSON.stringify({
         dictationText: SAMPLE_DICTATION,
@@ -97,13 +96,10 @@ async function createOrder(validationResult) {
           gender: "M",
           mrn: "TEST12345"
         },
-        status: 'pending_admin',
-        finalValidationStatus: validationResult.validationStatus || 'appropriate',
-        finalCPTCode: validationResult.suggestedCPTCodes?.[0]?.code || '70551',
-        clinicalIndication: SAMPLE_DICTATION,
-        finalICD10Codes: validationResult.suggestedICD10Codes?.map(code => code.code) || ['R51.9'],
-        referring_organization_name: 'Test Organization',
-        validationResult: validationResult
+        finalValidationResult: validationResult,
+        isOverride: false,
+        signatureData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0',
+        signerFullName: 'Test Physician'
       })
     });
 
@@ -125,7 +121,7 @@ async function createOrder(validationResult) {
  */
 async function finalizeOrder(orderId, finalizationData) {
   try {
-    const response = await fetch(`${FINALIZATION_ENDPOINT}/${orderId}`, {
+    const response = await fetch(`${ORDER_ENDPOINT}/${orderId}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(finalizationData)

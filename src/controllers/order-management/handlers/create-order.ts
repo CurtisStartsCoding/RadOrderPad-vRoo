@@ -1,5 +1,10 @@
 /**
  * Handler for creating a new order after validation
+ *
+ * @deprecated This handler is deprecated and should be removed.
+ * It has been replaced by the consolidated endpoint POST /api/orders
+ * implemented in src/controllers/order-creation.controller.ts.
+ * This file is kept for reference only to ensure all legacy code references are properly removed.
  */
 import { Request, Response } from 'express';
 import { getPhiDbClient } from '../../../config/db';
@@ -8,7 +13,7 @@ import { validateUserAuth } from '../validation';
 
 /**
  * Create a new order after validation
- * @route PUT /api/orders/new
+ * @route PUT /api/orders/new (DEPRECATED - This route is no longer registered in the application)
  */
 export async function createOrder(req: Request, res: Response): Promise<void> {
   try {

@@ -1,8 +1,8 @@
 /**
- * Test script for order creation endpoint (PUT /api/orders/new)
+ * Test script for order creation endpoint (POST /api/orders)
  *
- * This script tests the new order creation endpoint that was implemented
- * as part of the stateless validation approach.
+ * This script tests the order creation endpoint that creates and finalizes
+ * an order in a single step.
  */
 
 const axios = require('axios');
@@ -10,7 +10,7 @@ const chalk = require('chalk');
 
 // Configuration
 const API_URL = process.env.API_URL || 'https://api.radorderpad.com';
-const ORDER_CREATION_ENDPOINT = `${API_URL}/api/orders/new`;
+const ORDER_CREATION_ENDPOINT = `${API_URL}/api/orders`;
 
 // Test physician credentials
 const testPhysician = {
@@ -88,17 +88,14 @@ async function testOrderCreation() {
     }
     console.log(chalk.green('Successfully obtained authentication token'));
     
-    // Prepare request data - following the pattern from physician-role-tests.js
+    // Prepare request data for the consolidated endpoint
     const requestData = {
       dictationText: sampleDictation,
       patientInfo: testPatient, // Use minimal patient data with just ID
-      status: 'pending_admin',
-      finalValidationStatus: sampleValidationResult.validationStatus,
-      finalCPTCode: sampleValidationResult.suggestedCPTCodes[0].code,
-      clinicalIndication: sampleDictation,
-      finalICD10Codes: sampleValidationResult.suggestedICD10Codes.map(code => code.code),
-      referring_organization_name: 'Test Organization',
-      validationResult: sampleValidationResult
+      finalValidationResult: sampleValidationResult,
+      isOverride: false,
+      signatureData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0',
+      signerFullName: 'Test Physician'
     };
     
     console.log('Request payload:');
@@ -106,7 +103,7 @@ async function testOrderCreation() {
     
     // Make the request
     console.log('Sending request to order creation endpoint...');
-    const response = await axios.put(
+    const response = await axios.post(
       ORDER_CREATION_ENDPOINT,
       requestData,
       {

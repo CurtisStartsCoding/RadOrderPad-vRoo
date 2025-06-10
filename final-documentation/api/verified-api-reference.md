@@ -83,11 +83,6 @@ Development: http://localhost:3000
 - **Rate Limit:** 60 requests per minute
 - **Controller:** `trialValidateController.validateTrialOrder` (Line 98)
 
-### Create Order (Legacy)
-**PUT** `/api/orders/new`
-- **Access:** Private (Physician)
-- **Middleware:** `authenticateJWT`, `authorizeRole(['physician'])` (Lines 49-50)
-- **Controller:** `orderManagementController.createOrder` (Line 51)
 
 ### Create Finalized Order (New)
 **POST** `/api/orders`

@@ -690,16 +690,13 @@ async function createOrder(dictation, patientInfo, validationResult, physicianTo
   const data = {
     dictationText: dictation,
     patientInfo,
-    status: 'pending_admin',
-    finalValidationStatus: validationResult.validationStatus || 'appropriate',
-    finalCPTCode: validationResult.suggestedCPTCodes?.[0]?.code || '71045',
-    clinicalIndication: dictation,
-    finalICD10Codes: validationResult.suggestedICD10Codes?.map(code => code.code) || ['R07.9'],
-    referring_organization_name: 'Test Organization',
-    validationResult
+    finalValidationResult: validationResult,
+    isOverride: false,
+    signatureData: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0',
+    signerFullName: 'Test Physician'
   };
   
-  const response = await apiRequest('put', '/orders/new', data, physicianToken);
+  const response = await apiRequest('post', '/orders', data, physicianToken);
   return response;
 }
 

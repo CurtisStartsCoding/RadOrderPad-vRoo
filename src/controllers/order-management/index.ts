@@ -6,7 +6,7 @@
  */
 
 import { Request, Response } from 'express';
-import { finalizeOrder, getOrder, adminUpdate, listOrders, createOrder } from './handlers';
+import { finalizeOrder, getOrder, adminUpdate, listOrders } from './handlers';
 
 // Export types
 export * from './types';
@@ -34,14 +34,6 @@ export class OrderManagementController {
    */
   async listOrders(req: Request, res: Response): Promise<void> {
     return listOrders(req, res);
-  }
-  
-  /**
-   * Create a new order after validation
-   * @route PUT /api/orders/new
-   */
-  async createOrder(req: Request, res: Response): Promise<void> {
-    return createOrder(req, res);
   }
   
   /**

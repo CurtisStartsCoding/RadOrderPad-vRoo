@@ -89,7 +89,7 @@ This document describes the end-to-end workflow for a physician using RadOrderPa
 3.  **Confirm:** Physician types their full name for confirmation/attestation.
 4.  **Submit Final Order:** Physician clicks "Submit Order" (or variant text).
 5.  **Backend Persistence:**
-     *   Frontend sends the complete order payload (including patient info, dictation, final validated state, override info, signature details) to the backend endpoint responsible for creating and finalizing the order (e.g., `PUT /api/orders/new`).
+     *   Frontend sends the complete order payload (including patient info, dictation, final validated state, override info, signature details) to the backend endpoint responsible for creating and finalizing the order (e.g., `POST /api/orders`).
      *   **This is the first time an actual order record is created in the database.**
      *   Backend creates a new order record in the `orders` table.
      *   **The backend creates a new patient record in the `patients` table using the provided details and sets the `orders.patient_id` foreign key accordingly.**
