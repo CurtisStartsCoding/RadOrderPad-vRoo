@@ -88,7 +88,6 @@ export interface Order {
  * Order status enum
  */
 export enum OrderStatus {
-  DRAFT = 'draft',
   PENDING_VALIDATION = 'pending_validation',
   PENDING_ADMIN = 'pending_admin',
   PENDING_RADIOLOGY = 'pending_radiology',

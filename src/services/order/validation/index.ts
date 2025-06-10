@@ -2,14 +2,14 @@
  * Validation request handling module
  * 
  * This module provides functionality for handling validation requests,
- * creating draft orders, and tracking validation attempts.
+ * creating pending orders, and tracking validation attempts.
  */
 
 // Export types
 export * from './types';
 
-// Export draft order functionality
-export { createDraftOrder } from './draft-order';
+// Export pending order functionality
+export { createPendingOrder } from './pending-order';
 
 // Export attempt tracking functionality
 export { 

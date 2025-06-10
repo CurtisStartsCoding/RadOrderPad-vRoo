@@ -63,7 +63,7 @@ This document defines the **authoritative and fully expanded reconciled schema**
 | `created_by_user_id`          | `integer`                   | `NOT NULL`                    | Logical FK to `radorder_main.users.id` (Physician/MA)           |
 | `signed_by_user_id`           | `integer`                   |                               | Logical FK to `radorder_main.users.id` (Physician who signed)   |
 | `updated_by_user_id`          | `integer`                   |                               | Logical FK to `radorder_main.users.id` (Last user to update)    |
-| `status`                      | `text`                      | `NOT NULL`, `DEFAULT 'draft'` | Order status ('draft', 'pending_validation', 'pending_admin', 'pending_radiology', 'override_pending_signature', 'scheduled', 'completed', 'cancelled', 'results_available', 'results_acknowledged') |
+| `status`                      | `text`                      | `NOT NULL`, `DEFAULT 'pending_admin'` | Order status ('pending_validation', 'pending_admin', 'pending_radiology', 'override_pending_signature', 'scheduled', 'completed', 'cancelled', 'results_available', 'results_acknowledged') |
 | `priority`                    | `text`                      | `NOT NULL`, `DEFAULT 'routine'` | Order priority ('routine', 'stat')                              |
 | `original_dictation`          | `text`                      |                               | Initial dictation text from the physician                       |
 | `clinical_indication`         | `text`                      |                               | Final/parsed clinical indication text                           |

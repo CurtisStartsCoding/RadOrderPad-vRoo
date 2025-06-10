@@ -43,7 +43,7 @@ async function testValidation() {
     const payload = {
       dictationText: SAMPLE_DICTATION,
       // For the first validation attempt, we don't send an orderId
-      // The backend will create a draft order and return the orderId
+      // The backend will create a pending order and return the orderId
       patientInfo: {
         id: 1, // This is the patientId
         firstName: 'Jane',

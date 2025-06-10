@@ -24,7 +24,7 @@ The primary clinical user responsible for initiating radiology orders based on p
 1.  **Login:** Authenticate into the RadOrderPad system (`POST /api/auth/login`).
 2.  **Initiate Order:** Start a new order, potentially selecting a patient or initiating an "Unknown Patient" workflow (UI flow, may involve patient search).
 4.  **Dictate Clinical Indication:** Enter the clinical reason for the study into the dictation form, either by typing or using voice input (`DictationForm.tsx`).
-5.  **Submit for Validation:** Click "Process Order" / "Validate Dictation". The frontend sends the dictation and modality to the validation endpoint (`POST /api/orders/validate`). A draft order record is created in the backend.
+5.  **Submit for Validation:** Click "Process Order" / "Validate Dictation". The frontend sends the dictation and modality to the validation endpoint (`POST /api/orders/validate`). A pending order record is created in the backend.
 6.  **Handle Validation Response:**
     *   **If Valid & Compliant:** The system returns suggested CPT/ICD-10 codes, compliance score, and feedback. The UI proceeds to the Validation View (`ValidationView.tsx`).
     *   **If Needs Clarification:** The system returns a prompt requesting more information. The UI displays the prompt, the physician adds clarification to the *existing* dictation text, and resubmits (`POST /api/orders/validate` with the *same* `orderId` and *cumulative* text). This loop can repeat (typically up to 3 attempts).

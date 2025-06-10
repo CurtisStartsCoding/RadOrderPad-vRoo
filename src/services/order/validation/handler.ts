@@ -9,7 +9,7 @@ import {
   PatientInfo
 } from './types';
 // Imports commented out as they're no longer used in stateless validation
-// import { createDraftOrder } from './draft-order';
+// import { createPendingOrder } from './pending-order';
 // import { getNextAttemptNumber, logValidationAttempt } from './attempt-tracking';
 import logger from '../../../utils/logger';
 

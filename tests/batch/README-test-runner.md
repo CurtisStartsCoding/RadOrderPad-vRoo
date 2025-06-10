@@ -6,7 +6,7 @@ This directory contains scripts for running automated tests to verify the functi
 
 1. **Validation Tests** (`run-validation-tests.bat`/`.sh`)
    - Tests the order validation functionality with real LLM integration
-   - Verifies draft creation, clarification, and override validation
+   - Verifies pending order creation, clarification, and override validation
 
 2. **Upload Tests** (`run-upload-tests.bat`/`.sh`)
    - Tests the file upload service

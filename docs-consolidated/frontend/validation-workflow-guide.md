@@ -13,7 +13,7 @@ The RadOrderPad validation engine is a sophisticated system that processes physi
 1. **Input Processing**
    - Receives physician dictation text
    - Extracts patient context (age, gender)
-   - Handles draft order creation on first attempt
+   - Handles pending order creation on first attempt
    - Strips PHI information from the dictation text
 
 2. **Medical Context Extraction**
@@ -40,7 +40,7 @@ The RadOrderPad validation engine is a sophisticated system that processes physi
 1. Physician enters patient information
 2. Physician dictates or types the clinical scenario, reason for the study, relevant history, and symptoms
 3. System sends the dictation to the validation endpoint (`POST /api/orders/validate`)
-4. On first call, a draft order is created with `status = 'pending_validation'`
+4. On first call, a pending order is created with `status = 'pending_validation'`
 
 ### Step 2: Validation Processing
 
@@ -258,7 +258,7 @@ This example includes:
 
 - Each validation pass (initial submission, clarifications, final override validation) is logged as a distinct record in the `validation_attempts` table (PHI DB).
 - This table stores:
-  - `order_id`: Links attempt to the draft/final order.
+  - `order_id`: Links attempt to the pending/final order.
   - `attempt_number`: Sequence (1, 2, 3, 4+).
   - `validation_input_text`: **Full cumulative text** sent for this attempt (including clarifications/justification).
   - `validation_outcome`: Status returned by LLM for this attempt.

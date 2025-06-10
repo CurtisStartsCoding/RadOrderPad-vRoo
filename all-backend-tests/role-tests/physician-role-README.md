@@ -240,7 +240,7 @@ The physician role requires the following key UI components:
          },
          {
            "id": "order_123457",
-           "status": "draft",
+           "status": "pending_admin",
            "patientInfo": {
              "firstName": "Jane",
              "lastName": "Smith"

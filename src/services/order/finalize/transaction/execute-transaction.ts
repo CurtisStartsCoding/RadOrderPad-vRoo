@@ -27,7 +27,7 @@ export async function executeTransaction(
     // Start transaction
     await client.query('BEGIN');
     
-    // Find the draft order
+    // Find the pending order
     const orderResult = await client.query(
       'SELECT * FROM orders WHERE id = $1',
       [orderId]

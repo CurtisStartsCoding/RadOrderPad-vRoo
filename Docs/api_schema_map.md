@@ -3,7 +3,7 @@
 **Version:** 1.7 - Super Admin Logs Implementation
 **Date:** 2025-04-25
 
-This document maps core API endpoints to the primary database tables they interact with in `radorder_main` (Main) and `radorder_phi` (PHI), based on the final reconciled schemas and the implemented override/draft order flow. This is not exhaustive but covers key interactions. Assumes RESTful endpoints.
+This document maps core API endpoints to the primary database tables they interact with in `radorder_main` (Main) and `radorder_phi` (PHI), based on the final reconciled schemas and the implemented override order flow. This is not exhaustive but covers key interactions. Assumes RESTful endpoints.
 
 ---
 

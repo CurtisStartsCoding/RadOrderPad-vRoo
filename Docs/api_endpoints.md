@@ -80,10 +80,10 @@ API Endpoints Overview (Conceptual)
 
 ## Orders - Physician/General Access (`/orders`)
 
--   `POST /orders/start`: (Optional) Initiate patient tagging for a new order draft. **(Physician/Admin Staff Role)**
+-   `POST /orders/start`: (Optional) Initiate patient tagging for a new order. **(Physician/Admin Staff Role)**
 -   `POST /orders/validate`: Submits dictation for validation. For initial iterative validation by the physician, the request body **only requires `dictationText`**. `patientInfo`, `orderId`, and `radiologyOrganizationId` are NOT required. No `orders` or `validation_attempts` records are created in the database during these stateless calls. The response for these calls will be `{ success: true, validationResult: ValidationResult }`. `llm_validation_logs` will still capture LLM interaction details. When the physician is ready to finalize the order, a separate endpoint (e.g., `PUT /orders/{orderId}`) will be used to create the order record. **Error Handling:** Must handle LLM unavailability gracefully (e.g., 503 response). **(Physician Role)**
 -   `POST /orders/validate/trial`: Submits dictation for validation in trial mode. Does not create any PHI records. Checks the trial user's validation count against their maximum allowed validations. Increments the validation count on successful validation. Returns validation result along with updated validation usage information (`trialInfo` object). **Error Handling:** Returns 403 Forbidden when validation limit is reached, including `trialInfo` in the error response. Must handle LLM unavailability gracefully (e.g., 503 response). **(Trial User Role)**
--   `GET /orders`: List orders relevant to the user (e.g., created by them, for their org, including drafts). **(Authenticated)**
+-   `GET /orders`: List orders relevant to the user (e.g., created by them, for their org). **(Authenticated)**
 -   `GET /orders/{orderId}`: Get details of a specific order the user has access to. **(Authenticated)**
 
 ## Orders - Submission & Finalization (`/orders`)

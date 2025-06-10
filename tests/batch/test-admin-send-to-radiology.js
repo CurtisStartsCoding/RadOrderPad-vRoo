@@ -62,13 +62,13 @@ function extractOrgIdFromToken(token) {
 }
 
 /**
- * Create a draft order via validation (mock function for testing)
+ * Create a pending order via validation (mock function for testing)
  *
- * Note: This is a mock function that simulates creating a draft order
+ * Note: This is a mock function that simulates creating a pending order
  * In a real implementation, this would call the validation API
  */
-async function createDraftOrder() {
-  console.log('[MOCK] Creating a draft order...');
+async function createPendingOrder() {
+  console.log('[MOCK] Creating a pending order...');
   
   // In a real implementation, this would make an API call
   // For testing purposes, we'll just return a mock order ID
@@ -214,10 +214,10 @@ async function testSendToRadiologyWithCredits() {
   console.log(`Setting organization ${orgId} credit balance to 10...`);
   await setOrgCreditBalance(orgId, 10);
   
-  // Step 2: Create a draft order via validation
-  console.log('Creating draft order via validation...');
-  const orderId = await createDraftOrder();
-  console.log(`Draft order created with ID: ${orderId}`);
+  // Step 2: Create a pending order via validation
+  console.log('Creating pending order via validation...');
+  const orderId = await createPendingOrder();
+  console.log(`Pending order created with ID: ${orderId}`);
   
   // Step 3: Finalize the order
   console.log('Finalizing order...');
@@ -264,10 +264,10 @@ async function testSendToRadiologyWithoutCredits() {
   console.log(`Setting organization ${orgId} credit balance to 0...`);
   await setOrgCreditBalance(orgId, 0);
   
-  // Step 2: Create a draft order via validation
-  console.log('Creating draft order via validation...');
-  const orderId = await createDraftOrder();
-  console.log(`Draft order created with ID: ${orderId}`);
+  // Step 2: Create a pending order via validation
+  console.log('Creating pending order via validation...');
+  const orderId = await createPendingOrder();
+  console.log(`Pending order created with ID: ${orderId}`);
   
   // Step 3: Finalize the order
   console.log('Finalizing order...');
