@@ -2,21 +2,33 @@
 
 This directory contains comprehensive documentation for the RadOrderPad API backend.
 
-## Documentation Structure
+## System Overview
 
-The documentation is organized into the following sections:
+RadOrderPad is a clinical decision support platform that:
+1. Guides physicians to create appropriate imaging orders using ACR Appropriate Use Criteria
+2. Automatically generates proper CPT/ICD-10 codes from clinical dictation
+3. Routes completed orders to radiology groups for fulfillment
 
-### API
-- [Order Creation Endpoints Reference](api/order-creation-endpoints-reference.md) - Detailed reference for order creation API endpoints
+## Documentation Index
 
-### Order Process
-- [Complete Order Workflow](order-process/complete-order-workflow.md) - Single source of truth for the order creation and finalization process
+### API Documentation
+- [Order Creation Endpoints Reference](api/order-creation-endpoints-reference.md) - POST /api/orders endpoint for finalizing clinically appropriate orders with signatures before routing to radiology
+- [Patient Search API](api/patient-search-api.md) - POST /api/patients/search endpoint for dictation-based patient lookup by name and date of birth
+- [Validation Endpoints Reference](api/validation-endpoints-reference.md) - POST /api/orders/validate clinical decision support endpoint that ensures imaging appropriateness per ACR criteria
+- [Verified API Reference](api/verified-api-reference.md) - Comprehensive API reference for all verified and tested endpoints
 
-### Testing
-- [Order Finalization Testing](testing/order-finalization-testing.md) - Guide to testing the order finalization process
+### Backend Documentation
+- [Validation Engine Architecture](backend/validation-engine-architecture.md) - Technical architecture of the clinical decision support engine powering ACR-based appropriateness checks
 
-### Overview
-- [System Architecture](overview/system-architecture.md) - Overview of the system architecture
+### Frontend Documentation
+- [Validation Engine Integration](frontend/validation-engine-integration.md) - Guide for integrating the validation engine into frontend applications
+- [Validation Workflow Guide](frontend/validation-workflow-guide.md) - Step-by-step workflow showing how physicians refine clinical dictation based on ACR feedback until approved (codes shown only when appropriate)
+
+### Order Process Documentation
+- [Complete Order Workflow](order-process/complete-order-workflow.md) - End-to-end process from physician dictation through clinical decision support to radiology group routing
+
+### Testing Documentation
+- [Order Finalization Testing](testing/order-finalization-testing.md) - Comprehensive testing guide for the order finalization process including test scripts and scenarios
 
 ## Using This Documentation
 

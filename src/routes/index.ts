@@ -12,6 +12,7 @@ import userInviteRoutes from './user-invite.routes.js';
 import userRoutes from './user.routes.js';
 import superadminRoutes from './superadmin.routes.js';
 import billingRoutes from './billing.routes.js';
+import patientRoutes from './patient.routes.js';
 
 const router = Router();
 // Mount routes
@@ -31,5 +32,6 @@ router.use('/user-locations', userLocationRoutes);
 router.use('/user-invites', userInviteRoutes);
 router.use('/superadmin', superadminRoutes);
 router.use('/billing', billingRoutes);
+router.use('/patients', patientRoutes);
 
 export default router;
