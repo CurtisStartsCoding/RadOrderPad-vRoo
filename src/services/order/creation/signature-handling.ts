@@ -25,20 +25,20 @@ export async function handleSignature(
   signatureData: string
 ): Promise<number> {
   try {
-    let fileKey: string;
+    let filePath: string;
     
-    // Check if signatureData is already a fileKey (from a prior presigned URL upload)
+    // Check if signatureData is already a filePath (from a prior presigned URL upload)
     if (signatureData.startsWith('signatures/') || signatureData.startsWith('uploads/')) {
-      fileKey = signatureData;
+      filePath = signatureData;
     } else {
       // For base64 data, we would normally upload to S3 here
       // For simplicity in this implementation, we'll just store a reference
       // In a real implementation, this would call a file upload service
-      fileKey = `signatures/${orderId}_${Date.now()}.png`;
+      filePath = `signatures/${orderId}_${Date.now()}.png`;
       
       // TODO: In a real implementation, upload the base64 data to S3
-      // const uploadResult = await fileUploadService.uploadBase64ToS3(signatureData, fileKey);
-      // fileKey = uploadResult.fileKey;
+      // const uploadResult = await fileUploadService.uploadBase64ToS3(signatureData, filePath);
+      // filePath = uploadResult.filePath;
     }
     
     // Create document upload record
@@ -46,22 +46,23 @@ export async function handleSignature(
       `INSERT INTO document_uploads (
         order_id,
         patient_id,
-        uploaded_by_user_id,
-        file_key,
-        file_name,
-        file_type,
+        user_id,
+        file_path,
+        filename,
+        file_size,
+        mime_type,
         document_type,
-        created_at,
-        updated_at
+        uploaded_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, NOW(), NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, NOW()
       ) RETURNING id`,
       [
         orderId,
         patientId,
         userId,
-        fileKey,
+        filePath,
         'signature.png',
+        1024, // Default file size for signature (1KB)
         'image/png',
         'signature',
       ]

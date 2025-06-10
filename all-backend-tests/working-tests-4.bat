@@ -83,4 +83,8 @@ call run-trial-role-tests.bat
 cd ..
 
 echo.
+echo Running Order Finalization Test...
+node ../tests/test-order-finalization.js
+
+echo.
 echo ===== All Working Tests (Part 4) Complete =====

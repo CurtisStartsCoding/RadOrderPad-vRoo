@@ -89,3 +89,10 @@ codebase-dump/all-frontend-explanation.txt
 codebase-dump/all-source-code.txt
 migrations/make-radiology-organization-id-nullable.sql
 migrations/radiology-org-nullable-migration.sql
+all-backend-tests/tokens/admin_radiology-token.txt
+all-backend-tests/tokens/admin_referring-token.txt
+all-backend-tests/tokens/admin_staff-token.txt
+all-backend-tests/tokens/physician-token.txt
+all-backend-tests/tokens/radiologist-token.txt
+all-backend-tests/tokens/scheduler-token.txt
+all-backend-tests/tokens/super_admin-token.txt

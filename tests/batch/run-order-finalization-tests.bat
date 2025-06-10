@@ -2,17 +2,32 @@
 echo Running Order Finalization Tests
 echo ===============================
 
-REM Generate a JWT token for a physician user
-echo Generating JWT token for physician user...
-for /f "tokens=*" %%a in ('node -e "const jwt = require(\"jsonwebtoken\"); const secret = \"79e90196beeb1beccf61381b2ee3c8038905be3b4058fdf0f611eb78602a5285a7ab7a2a43e38853d5d65f2cfb2d8f955dad73dc67ffb1f0fb6f6e7282a3e112\"; const payload = { userId: 1, orgId: 1, role: \"physician\", email: \"test.physician@example.com\" }; const token = jwt.sign(payload, secret, { expiresIn: \"24h\" }); console.log(token);"') do set JWT_TOKEN=%%a
-echo Token generated: %JWT_TOKEN:~0,20%...
+REM Use the token generation from all-backend-tests
+echo Using token generation from all-backend-tests...
+cd ..\..\all-backend-tests
+call node utilities\generate-all-role-tokens.js
+cd ..\tests\batch
+
+REM Set environment variables for tokens
+echo Setting environment variables for tokens...
+if exist "..\..\all-backend-tests\tokens\physician-token.txt" (
+    set /p PHYSICIAN_TOKEN=<"..\..\all-backend-tests\tokens\physician-token.txt"
+    echo Physician Token loaded successfully.
+) else (
+    echo Error: Physician Token file not found.
+    exit /b 1
+)
+
+REM Set API URL environment variable
+set API_URL=https://api.radorderpad.com
+echo API URL set to: %API_URL%
 
 REM Create test-results directory if it doesn't exist
 if not exist "test-results" mkdir test-results
 
-REM Run the test with a timeout of 60 seconds
+REM Run the test
 echo Running order finalization tests...
-node test-order-finalization.js %JWT_TOKEN% > test-results\order-finalization-tests.log 2>&1
+node test-order-finalization.js > test-results\order-finalization-tests.log 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo [PASS] Order Finalization Tests
 ) else (

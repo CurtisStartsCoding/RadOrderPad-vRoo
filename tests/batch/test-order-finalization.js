@@ -21,10 +21,10 @@ Patient with persistent headache for 3 weeks, worsening with movement.
 History of migraines. Request MRI brain to rule out structural abnormalities.
 `;
 
-// Get JWT token from command line arguments
-const jwtToken = process.argv[2];
+// Get JWT token from environment variable
+const jwtToken = process.env.PHYSICIAN_TOKEN;
 if (!jwtToken) {
-  console.error('Error: JWT token is required. Usage: node test-order-finalization.js <jwt_token>');
+  console.error('Error: PHYSICIAN_TOKEN environment variable is not set. Please run token generation first.');
   process.exit(1);
 }
 
