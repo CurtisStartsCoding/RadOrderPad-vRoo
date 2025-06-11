@@ -76,24 +76,21 @@ interface ValidationResponse {
 ### Order Finalization Endpoint
 
 ```
-PUT /api/orders/new
+POST /api/orders
 ```
 
 #### Request Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| patientInfo | object | Yes | Patient information |
+| patientInfo | object | Yes | Patient information (id for existing or full details for new) |
 | dictationText | string | Yes | The clinical dictation text |
-| signature | string | Yes | Base64-encoded signature image |
-| status | string | Yes | Should be 'pending_admin' |
-| finalValidationStatus | string | Yes | The final validation status |
-| finalCPTCode | string | Yes | The primary CPT code |
-| clinicalIndication | string | Yes | The clinical indication text |
-| finalICD10Codes | string[] | Yes | Array of ICD-10 codes |
-| referring_organization_name | string | Yes | Name of the referring organization |
-| overridden | boolean | No | Whether validation was overridden |
-| overrideJustification | string | No | Justification for override |
+| finalValidationResult | object | Yes | The complete validation result from validation endpoint |
+| isOverride | boolean | Yes | Whether validation was overridden |
+| signatureData | string | Yes | S3 fileKey from signature upload or base64 data |
+| signerFullName | string | Yes | Full name of the signing physician |
+| overrideJustification | string | Conditional | Required if isOverride is true |
+| radiologyOrganizationId | number | No | Optional target radiology organization |
 
 ## State Management
 
@@ -269,8 +266,8 @@ After completing the validation process, you need to finalize the order:
 ```typescript
 const finalizeOrder = async () => {
   try {
-    const response = await fetch('/api/orders/new', {
-      method: 'PUT',
+    const response = await fetch('/api/orders', {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

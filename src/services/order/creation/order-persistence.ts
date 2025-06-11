@@ -48,6 +48,7 @@ export async function persistOrder(
         patient_id,
         referring_organization_id,
         radiology_organization_id,
+        originating_location_id,
         created_by_user_id,
         signed_by_user_id,
         status,
@@ -67,13 +68,14 @@ export async function persistOrder(
         created_at,
         updated_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, NOW(), NOW(), NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW(), NOW(), NOW()
       ) RETURNING id`,
       [
         orderNumber,
         patientId,
         referringOrganizationId,
         payload.radiologyOrganizationId || null,
+        payload.originatingLocationId || null,
         userId,
         userId, // signed_by_user_id is the same as created_by_user_id
         OrderStatus.PENDING_ADMIN,

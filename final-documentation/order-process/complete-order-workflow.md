@@ -112,14 +112,6 @@ POST /api/orders
 }
 ```
 
-### Alternative Order Creation and Finalization (Separate Steps)
-
-For testing and specific scenarios, these endpoints can also be used:
-
-```
-PUT /api/orders/new  // Create order
-PUT /api/orders/:orderId  // Finalize order
-```
 
 ## Database Schema
 

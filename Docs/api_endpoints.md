@@ -97,12 +97,13 @@ API Endpoints Overview (Conceptual)
     - `signatureData`: String (base64 data URL or fileKey)
     - `signerFullName`: String (typed name for attestation)
     - `radiologyOrganizationId`: Optional ID of selected radiology organization
+    - `originatingLocationId`: Optional ID of the location where the order is created (defaults to physician's assigned location)
     Returns a 201 Created response with `{ success: true, orderId: number, message: string }`. **Error Handling:** Must handle database write failures robustly (e.g., 500 response, logging). **(Physician Role)**
 -   `PUT /api/orders/{orderId}`: **(Order Update Endpoint)** Updates an existing order (identified by `orderId`) with final details upon signature. Saves final validated state (codes, score, status, notes), override info (`overridden`, `overrideJustification`), signature details (`signed_by_user_id`, `signature_date`), and sets status to `pending_admin`. **If the order corresponds to a temporary patient record (e.g., identified by specific flags or payload fields like `patient_name_update`), this endpoint is also responsible for creating the permanent patient record in the `patients` table using provided details and updating the `orders.patient_id` foreign key accordingly.** **Error Handling:** Must handle database write failures robustly (e.g., 500 response, logging). **(Physician Role)**
 
 ## Orders - Admin Actions (`/admin/orders`)
 
--   `GET /admin/orders/queue`: List orders awaiting admin finalization (status = 'pending_admin'). Supports pagination, sorting, and filtering. Returns orders with pagination metadata. **(Admin Staff Role)**
+-   `GET /admin/orders/queue`: List orders awaiting admin finalization (status = 'pending_admin'). Supports pagination, sorting, and filtering by patient name, physician name, date range, originating location ID, and target facility ID. Returns orders with pagination metadata including location IDs. **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/paste-summary`: Submit pasted EMR summary for parsing. Updates patient contact information (address, phone, email) and insurance details (insurer, policy number, group number, policy holder). **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/paste-supplemental`: Submit pasted supplemental documents. **(Admin Staff Role)**
 -   `POST /admin/orders/{orderId}/send-to-radiology`: Finalize and send the order to the radiology group (updates status). **This endpoint consumes one credit from the organization's balance and logs the credit usage.** If the organization has insufficient credits, returns a 402 Payment Required error. **(Admin Staff Role)**

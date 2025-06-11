@@ -135,7 +135,7 @@ POST /api/orders/validate
 ### Order Finalization Endpoint
 
 ```
-PUT /api/orders/new
+POST /api/orders
 ```
 
 **Request Body:**
@@ -188,7 +188,7 @@ PUT /api/orders/new
 
 - During the validation process, no validation attempts are stored in the database
 - Only LLM usage is logged to the `llm_validation_logs` table
-- When an order is finalized via `PUT /api/orders/new`, the final validation state is stored in the `orders` table
+- When an order is finalized via `POST /api/orders`, the final validation state is stored in the `orders` table
 - At this point, a record is also created in the `validation_attempts` table to store the final validation result
 
 ## Best Practices for Clinical Dictation

@@ -130,6 +130,14 @@ async function testAdminOrderQueue(token) {
       console.log('- Status:', response.data.orders[0].status);
       console.log('- Created At:', response.data.orders[0].created_at);
       
+      // Display location information if available
+      if (response.data.orders[0].originating_location_id) {
+        console.log(chalk.cyan('- Originating Location ID:', response.data.orders[0].originating_location_id));
+      }
+      if (response.data.orders[0].target_facility_id) {
+        console.log(chalk.cyan('- Target Facility ID:', response.data.orders[0].target_facility_id));
+      }
+      
       // Return the first order ID for subsequent tests
       return response.data.orders[0].id;
     } else {
@@ -171,6 +179,66 @@ async function testAdminOrderQueuePagination(token) {
     return true;
   } catch (error) {
     console.log(chalk.red('Error retrieving admin order queue with pagination:'));
+    if (error.response) {
+      console.log('Status:', error.response.status);
+      console.log('Data:', error.response.data);
+    } else {
+      console.log('Error:', error.message);
+    }
+    return false;
+  }
+}
+
+// Test admin order queue with location filtering
+async function testAdminOrderQueueLocationFilter(token) {
+  console.log(chalk.blue('Testing admin order queue with location filtering...'));
+  
+  try {
+    // Test filtering by originating location
+    console.log(chalk.yellow('Testing filter by originating location ID = 1...'));
+    const locationResponse = await axios.get(
+      `${API_URL}/api/admin/orders/queue?originatingLocationId=1`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    
+    console.log(chalk.green('Location-filtered queue retrieved successfully'));
+    console.log('Number of orders from location 1:', locationResponse.data.orders ? locationResponse.data.orders.length : 0);
+    
+    // Verify all orders have the correct location
+    if (locationResponse.data.orders && locationResponse.data.orders.length > 0) {
+      const invalidOrders = locationResponse.data.orders.filter(order => 
+        order.originating_location_id !== 1
+      );
+      
+      if (invalidOrders.length === 0) {
+        console.log(chalk.green('✓ All orders correctly filtered by location'));
+      } else {
+        console.log(chalk.red(`✗ Found ${invalidOrders.length} orders with incorrect location`));
+      }
+    }
+    
+    // Test filtering by patient name and location
+    console.log(chalk.yellow('\nTesting combined patient name and location filter...'));
+    const combinedResponse = await axios.get(
+      `${API_URL}/api/admin/orders/queue?originatingLocationId=1&patientName=test`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    
+    console.log('Number of orders with combined filters:', combinedResponse.data.orders ? combinedResponse.data.orders.length : 0);
+    
+    return true;
+  } catch (error) {
+    console.log(chalk.red('Error testing location filtering:'));
     if (error.response) {
       console.log('Status:', error.response.status);
       console.log('Data:', error.response.data);
@@ -567,6 +635,9 @@ async function runAllTests() {
     
     // Step 3: Test pagination
     await testAdminOrderQueuePagination(token);
+    
+    // Step 4: Test location filtering
+    await testAdminOrderQueueLocationFilter(token);
     
     // If no orders in queue, try with predefined order ID
     if (!orderId) {

@@ -28,6 +28,8 @@ async function listPendingAdminOrders(req: Request, res: Response): Promise<void
       physicianName: req.query.physicianName as string,
       dateFrom: req.query.dateFrom as string,
       dateTo: req.query.dateTo as string,
+      originatingLocationId: req.query.originatingLocationId ? parseInt(req.query.originatingLocationId as string) : undefined,
+      targetFacilityId: req.query.targetFacilityId ? parseInt(req.query.targetFacilityId as string) : undefined,
     };
 
     // Call service function to get the orders

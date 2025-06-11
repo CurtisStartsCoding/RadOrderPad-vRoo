@@ -124,14 +124,14 @@ This document maps core API endpoints to the primary database tables they intera
 ## Orders - Submission & Finalization (`/api/orders`)
 
 -   **`POST /api/orders`** (Create and Finalize Order After Validation)
-    -   Reads: `users` (Main - Verify user), `patients` (PHI - If existing patient ID provided)
-    -   Writes: `patients` (PHI - Create if new patient), `orders` (PHI - Create new order), `validation_attempts` (PHI - Log final attempt), `order_history` (PHI - Log 'order_created' and 'order_signed' events), `document_uploads` (PHI - Store signature)
-    -   **Note:** Performs all operations within a PHI database transaction to ensure data consistency. Creates a complete order record with patient information, validation results, and signature data.
+    -   Reads: `users` (Main - Verify user), `patients` (PHI - If existing patient ID provided), `locations` (Main - Get user's assigned location)
+    -   Writes: `patients` (PHI - Create if new patient), `orders` (PHI - Create new order with `originating_location_id`), `validation_attempts` (PHI - Log final attempt), `order_history` (PHI - Log 'order_created' and 'order_signed' events), `document_uploads` (PHI - Store signature)
+    -   **Note:** Performs all operations within a PHI database transaction to ensure data consistency. Creates a complete order record with patient information, validation results, and signature data. Automatically sets `originating_location_id` from user's assigned location if not provided.
 
--   **`PUT /api/orders/new`** (Legacy Create New Order After Validation)
-    -   Reads: `users` (Main - Verify user)
-    -   Writes: **`orders` (PHI - Create** new order with validation state, patient info, status='pending_admin', radiology_organization_id=NULL), **`patients` (PHI - Create if patient info provided)**, `order_history` (PHI - log 'created'), `validation_attempts` (PHI - log validation attempt)
-    -   **Note:** `radiology_organization_id` is NULL when physicians create orders. It's assigned later by administrative staff when sending to radiology.
+-   **`PUT /api/orders/new`** (DEPRECATED - Legacy Create New Order After Validation)
+    -   **DEPRECATED:** This endpoint has been replaced by `POST /api/orders` and should not be used. It is no longer registered in the application routes.
+    -   Original functionality: Created new order with validation state, patient info, status='pending_admin'
+    -   **Migration:** Use `POST /api/orders` instead, which provides the same functionality with improved transaction handling and location support.
 
 -   **`PUT /api/orders/{orderId}`** (Update Existing Order Upon Signature)
     -   Reads: `orders` (PHI - Verify order), `users` (Main - Verify signer)
@@ -140,7 +140,8 @@ This document maps core API endpoints to the primary database tables they intera
 ## Orders - Admin Actions (`/api/admin/orders`)
 
 -   **`GET /api/admin/orders/queue`** (Get admin queue)
-    -   Reads: `orders` (PHI)
+    -   Reads: `orders` (PHI), `patients` (PHI), `users` (Main)
+    -   **Note:** Supports filtering by `originatingLocationId` and `targetFacilityId` query parameters for location-based order management
 -   **`POST /api/admin/orders/{orderId}/paste-summary`** (Paste EMR context)
     -   Reads: `orders` (PHI)
     *   Writes: `patient_clinical_records` (PHI), `patients` (PHI), `patient_insurance` (PHI)

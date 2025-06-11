@@ -8,6 +8,7 @@
 import { Request, Response } from 'express';
 import { handleOrderCreation } from '../services/order/creation/handler';
 import { CreateFinalizedOrderPayload } from '../services/order/creation/types';
+import { listUserLocations } from '../services/location/user/list-user-locations';
 import enhancedLogger from '../utils/enhanced-logger';
 
 /**
@@ -113,6 +114,20 @@ export class OrderCreationController {
           message: 'Override justification is required when override is selected' 
         });
         return;
+      }
+
+      // If no originating location is provided, try to get the user's assigned location
+      if (!payload.originatingLocationId) {
+        try {
+          const userLocations = await listUserLocations(userId, referringOrganizationId);
+          if (userLocations.length > 0) {
+            // Use the first assigned location as the originating location
+            payload.originatingLocationId = userLocations[0].id;
+          }
+        } catch (error) {
+          // Log the error but don't fail - location is optional
+          enhancedLogger.warn('Could not fetch user locations:', error);
+        }
       }
 
       // Call service to handle order creation

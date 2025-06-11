@@ -58,6 +58,7 @@ export interface CreateFinalizedOrderPayload {
   signatureData: string; // Base64 data URL or fileKey
   signerFullName: string;
   radiologyOrganizationId?: number;
+  originatingLocationId?: number; // Location where the order was created
 }
 
 /**

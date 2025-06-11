@@ -13,6 +13,8 @@ export interface ListOptions {
   physicianName?: string;
   dateFrom?: string;
   dateTo?: string;
+  originatingLocationId?: number;
+  targetFacilityId?: number;
 }
 
 /**
@@ -45,6 +47,8 @@ export interface OrderData {
   final_cpt_code_description: string;
   final_icd10_codes: string[];
   final_icd10_code_descriptions: string[];
+  originating_location_id: number | null;
+  target_facility_id: number | null;
   created_at: string;
   updated_at: string;
   [key: string]: unknown;
@@ -109,6 +113,18 @@ async function listPendingAdminOrders(
       paramIndex++;
     }
     
+    if (options.originatingLocationId) {
+      whereClause += ` AND originating_location_id = $${paramIndex}`;
+      baseParams.push(options.originatingLocationId);
+      paramIndex++;
+    }
+    
+    if (options.targetFacilityId) {
+      whereClause += ` AND target_facility_id = $${paramIndex}`;
+      baseParams.push(options.targetFacilityId);
+      paramIndex++;
+    }
+    
     // Query to get the orders with pagination
     const query = `
       SELECT
@@ -125,6 +141,8 @@ async function listPendingAdminOrders(
         final_cpt_code_description,
         final_icd10_codes,
         final_icd10_code_descriptions,
+        originating_location_id,
+        target_facility_id,
         created_at,
         updated_at
       FROM orders
