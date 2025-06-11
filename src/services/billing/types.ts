@@ -17,6 +17,7 @@ export interface BurnCreditParams {
  */
 export enum CreditActionType {
   ORDER_SUBMITTED = 'order_submitted',
+  ORDER_RECEIVED = 'order_received',  // For radiology orgs when they receive an order
   MANUAL_ADJUSTMENT = 'manual_adjustment',
   SUBSCRIPTION_RENEWAL = 'subscription_renewal',
   CREDIT_PURCHASE = 'credit_purchase'

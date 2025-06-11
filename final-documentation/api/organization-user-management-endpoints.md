@@ -1,7 +1,7 @@
 # Organization and User Management API Endpoints
 
 **Version:** 1.0  
-**Date:** January 11, 2025  
+**Date:** June 11, 2025  
 **Role:** admin_referring  
 
 This document provides comprehensive documentation for all organization and user management endpoints available to users with the `admin_referring` role.
@@ -63,8 +63,8 @@ Retrieve details of the authenticated user's organization.
       "zip": "90210"
     },
     "isActive": true,
-    "createdAt": "2025-01-01T00:00:00Z",
-    "updatedAt": "2025-01-11T00:00:00Z"
+    "createdAt": "2025-06-01T00:00:00Z",
+    "updatedAt": "2025-06-11T00:00:00Z"
   }
 }
 ```
@@ -175,7 +175,7 @@ Retrieve all locations for the authenticated user's organization.
       },
       "phone": "(555) 123-4567",
       "isActive": true,
-      "createdAt": "2025-01-01T00:00:00Z"
+      "createdAt": "2025-06-01T00:00:00Z"
     }
   ]
 }
@@ -242,8 +242,8 @@ Retrieve details of a specific location.
     },
     "phone": "(555) 123-4567",
     "isActive": true,
-    "createdAt": "2025-01-01T00:00:00Z",
-    "updatedAt": "2025-01-11T00:00:00Z"
+    "createdAt": "2025-06-01T00:00:00Z",
+    "updatedAt": "2025-06-11T00:00:00Z"
   }
 }
 ```
@@ -337,7 +337,7 @@ Retrieve all users belonging to the administrator's organization.
       "npi": "1234567890",
       "phoneNumber": "(555) 123-4567",
       "isActive": true,
-      "createdAt": "2025-01-01T00:00:00Z"
+      "createdAt": "2025-06-01T00:00:00Z"
     }
   ],
   "pagination": {
@@ -374,9 +374,9 @@ Retrieve details of a specific user within the organization.
     "npi": "1234567890",
     "phoneNumber": "(555) 123-4567",
     "isActive": true,
-    "createdAt": "2025-01-01T00:00:00Z",
-    "updatedAt": "2025-01-11T00:00:00Z",
-    "lastLogin": "2025-01-10T15:30:00Z"
+    "createdAt": "2025-06-01T00:00:00Z",
+    "updatedAt": "2025-06-11T00:00:00Z",
+    "lastLogin": "2025-06-10T15:30:00Z"
   }
 }
 ```
@@ -508,7 +508,7 @@ Retrieve all locations assigned to a specific user.
         "state": "CA",
         "zip": "90210"
       },
-      "assignedAt": "2025-01-05T00:00:00Z"
+      "assignedAt": "2025-06-05T00:00:00Z"
     }
   ]
 }

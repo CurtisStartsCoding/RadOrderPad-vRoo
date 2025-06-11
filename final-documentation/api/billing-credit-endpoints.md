@@ -1,8 +1,35 @@
 # Billing and Credit Management API Documentation
 
+**Last Updated:** June 11, 2025  
+**Version:** 2.0 (Dual Credit System)
+
 ## Overview
 
 This document provides comprehensive documentation for RadOrderPad's billing and credit management endpoints. These endpoints handle credit balance management, usage tracking, subscription management, and the credit consumption process when orders are sent to radiology.
+
+## Dual Credit System
+
+RadOrderPad uses a unified pre-paid credit model for all organizations:
+
+### Referring Organizations
+- **Single Credit Type**: Standard credits for submitting orders
+- **Consumption**: 1 credit per order sent to radiology
+- **Balance Field**: `credit_balance`
+
+### Radiology Organizations  
+- **Dual Credit Types**:
+  - **Basic Credits**: For standard imaging (X-ray, Ultrasound, etc.)
+  - **Advanced Credits**: For advanced imaging (MRI, CT, PET, Nuclear)
+- **Consumption**: 1 credit per order received (type determined by imaging modality)
+- **Balance Fields**: `basic_credit_balance` and `advanced_credit_balance`
+
+### Credit Consumption Flow
+1. When admin staff sends an order to radiology:
+   - 1 credit is deducted from the referring organization
+   - 1 credit (basic or advanced) is deducted from the radiology organization
+2. Credit type for radiology is automatically determined based on:
+   - Order modality (MRI, CT, PET, NUCLEAR = advanced)
+   - CPT codes associated with the order
 
 ## Authentication
 
@@ -32,6 +59,7 @@ Authorization: Bearer <JWT_TOKEN>
   "success": true,
   "data": {
     "organizationStatus": "active",
+    "organizationType": "referring",
     "subscriptionTier": "tier_2",
     "currentCreditBalance": 150,
     "stripeSubscriptionStatus": "active",
@@ -43,10 +71,33 @@ Authorization: Bearer <JWT_TOKEN>
 }
 ```
 
+**Response for Radiology Organizations:**
+```json
+{
+  "success": true,
+  "data": {
+    "organizationStatus": "active",
+    "organizationType": "radiology_group",
+    "subscriptionTier": "tier_2",
+    "currentCreditBalance": 0,
+    "basicCreditBalance": 100,
+    "advancedCreditBalance": 50,
+    "stripeSubscriptionStatus": "active",
+    "currentPeriodEnd": "2024-02-15T00:00:00.000Z",
+    "billingInterval": "month",
+    "cancelAtPeriodEnd": false,
+    "stripeCustomerPortalUrl": "https://billing.stripe.com/session/..."
+  }
+}
+```
+
 **Response Fields:**
 - `organizationStatus`: Current status of the organization (active, inactive, suspended)
+- `organizationType`: Type of organization (referring, referring_practice, radiology, radiology_group)
 - `subscriptionTier`: Current subscription tier (tier_1, tier_2, tier_3, or null)
-- `currentCreditBalance`: Number of credits available
+- `currentCreditBalance`: Number of credits available (referring organizations only)
+- `basicCreditBalance`: Number of basic imaging credits (radiology organizations only)
+- `advancedCreditBalance`: Number of advanced imaging credits (radiology organizations only)
 - `stripeSubscriptionStatus`: Status of Stripe subscription (active, canceled, past_due, etc.)
 - `currentPeriodEnd`: ISO date string of when the current billing period ends
 - `billingInterval`: Billing frequency ('month' or 'year')
@@ -73,12 +124,25 @@ Authorization: Bearer <JWT_TOKEN>
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-**Response:**
+**Response for Referring Organizations:**
 ```json
 {
   "success": true,
   "data": {
+    "organizationType": "referring",
     "creditBalance": 150
+  }
+}
+```
+
+**Response for Radiology Organizations:**
+```json
+{
+  "success": true,
+  "data": {
+    "organizationType": "radiology_group",
+    "basicCreditBalance": 100,
+    "advancedCreditBalance": 50
   }
 }
 ```

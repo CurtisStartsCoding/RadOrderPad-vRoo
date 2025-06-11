@@ -1,13 +1,10 @@
 /**
- * Billing usage reporting module
+ * Billing usage module
  * 
- * This module provides functionality for reporting usage data to Stripe
- * for billing purposes, particularly for Radiology Groups that are billed
- * per order received.
+ * This module now only exports the order categorization function
+ * which is used to determine if an order is advanced imaging.
+ * Post-paid billing has been removed in favor of the dual credit system.
  */
 
-export { reportRadiologyOrderUsage } from './reportUsage';
-export { OrderCategory, OrderUsageReport, OrderUsageData } from './types';
-export { isAdvancedImaging, calculateOrderAmounts } from './orderCategorization';
-export { getOrderCountsByRadiologyOrg } from './orderQuery';
-export { createStripeInvoiceItems } from './billingReport';
+export { isAdvancedImaging } from './orderCategorization';
+export { STANDARD_IMAGING_UNIT_PRICE, ADVANCED_IMAGING_UNIT_PRICE } from './constants';

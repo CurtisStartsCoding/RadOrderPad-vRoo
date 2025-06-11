@@ -3,31 +3,21 @@ import stripeService from './stripe/stripe.service';
 import enhancedLogger from '../../utils/enhanced-logger';
 import { BillingOverviewResponse } from './types';
 
-export interface EnhancedBillingOverviewResponse extends BillingOverviewResponse {
-  organizationType?: string;
-  basicCreditBalance?: number;
-  advancedCreditBalance?: number;
-}
-
 /**
- * Get enhanced billing overview for an organization
- * Now includes dual credit balances for radiology organizations
+ * Get billing overview for an organization
  * 
  * @param orgId Organization ID
- * @returns Promise with enhanced billing overview or null if organization not found
+ * @returns Promise with billing overview or null if organization not found
  */
-export async function getBillingOverview(orgId: number): Promise<EnhancedBillingOverviewResponse | null> {
+export async function getBillingOverview(orgId: number): Promise<BillingOverviewResponse | null> {
   try {
-    // Query the organization from the database including dual credit fields
+    // Query the organization from the database
     const query = `
       SELECT 
         id, 
-        name,
-        type,
+        name, 
         billing_id, 
         credit_balance, 
-        basic_credit_balance,
-        advanced_credit_balance,
         subscription_tier, 
         status 
       FROM organizations 
@@ -45,9 +35,8 @@ export async function getBillingOverview(orgId: number): Promise<EnhancedBilling
     const organization = result.rows[0];
     
     // Initialize response with organization data
-    const response: EnhancedBillingOverviewResponse = {
+    const response: BillingOverviewResponse = {
       organizationStatus: organization.status,
-      organizationType: organization.type,
       subscriptionTier: organization.subscription_tier,
       currentCreditBalance: organization.credit_balance,
       stripeSubscriptionStatus: null,
@@ -55,12 +44,6 @@ export async function getBillingOverview(orgId: number): Promise<EnhancedBilling
       billingInterval: null,
       cancelAtPeriodEnd: null
     };
-    
-    // Add dual credit balances for radiology organizations
-    if (organization.type === 'radiology' || organization.type === 'radiology_group') {
-      response.basicCreditBalance = organization.basic_credit_balance;
-      response.advancedCreditBalance = organization.advanced_credit_balance;
-    }
     
     // If the organization has a billing_id, get Stripe subscription details
     if (organization.billing_id) {

@@ -5,55 +5,21 @@
 
 const axios = require('axios');
 const fs = require('fs');
-const jwt = require('jsonwebtoken');
+const path = require('path');
 
 // Configuration
 const API_URL = process.env.API_URL || 'https://api.radorderpad.com';
-const JWT_SECRET = process.env.JWT_SECRET || 'radorderpad-secure-jwt-secret-f8a72c1e9b5d3e7f4a6b2c8d9e0f1a2b3c4d5e6f';
 const TEST_ORDER_ID = process.env.TEST_ORDER_ID || 606; // Use a valid order ID for testing
 
-// Generate tokens for different roles
-function generateToken(role) {
-  const roleConfig = {
-    'scheduler': {
-      userId: 6,
-      orgId: 2,
-      email: 'test.scheduler@example.com'
-    },
-    'admin_radiology': {
-      userId: 5,
-      orgId: 2,
-      email: 'test.admin_radiology@example.com'
-    },
-    'radiologist': {
-      userId: 7,
-      orgId: 2,
-      email: 'test.radiologist@example.com'
-    },
-    'physician': {
-      userId: 3,
-      orgId: 1,
-      email: 'test.physician@example.com'
-    },
-    'admin_referring': {
-      userId: 2,
-      orgId: 1,
-      email: 'test.admin_referring@example.com'
-    }
-  };
-
-  const config = roleConfig[role] || roleConfig['scheduler'];
-  
-  const payload = {
-    userId: config.userId,
-    orgId: config.orgId,
-    role: role,
-    email: config.email,
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
-  };
-  
-  return jwt.sign(payload, JWT_SECRET);
+// Load tokens from files
+function loadToken(role) {
+  const tokenPath = path.join(__dirname, `../tokens/${role}-token.txt`);
+  try {
+    return fs.readFileSync(tokenPath, 'utf8').trim();
+  } catch (error) {
+    console.log(`Warning: Could not load ${role} token from file`);
+    return null;
+  }
 }
 
 // Create API client with authentication
@@ -113,7 +79,11 @@ async function testRequestInfoEndpoint(role, orderId, requestData) {
   try {
     console.log(`\n🔍 Testing /api/radiology/orders/${orderId}/request-info with ${role} role...`);
     
-    const token = generateToken(role);
+    const token = loadToken(role);
+    if (!token) {
+      recordTestResult(`POST /api/radiology/orders/${orderId}/request-info with ${role} role`, false, { message: `Could not load ${role} token` });
+      return null;
+    }
     const client = createAuthClient(token);
     
     const response = await client.post(`/api/radiology/orders/${orderId}/request-info`, requestData);
@@ -129,7 +99,11 @@ async function testRequestInfoWithInvalidData(role, orderId, requestData, testNa
   try {
     console.log(`\n🔍 Testing ${testName}...`);
     
-    const token = generateToken(role);
+    const token = loadToken(role);
+    if (!token) {
+      recordTestResult(`POST /api/radiology/orders/${orderId}/request-info with ${role} role`, false, { message: `Could not load ${role} token` });
+      return null;
+    }
     const client = createAuthClient(token);
     
     const response = await client.post(`/api/radiology/orders/${orderId}/request-info`, requestData);
@@ -147,7 +121,11 @@ async function testRequestInfoWithUnauthorizedRole(role, orderId, requestData) {
   try {
     console.log(`\n🔍 Testing unauthorized role ${role} for /api/radiology/orders/${orderId}/request-info...`);
     
-    const token = generateToken(role);
+    const token = loadToken(role);
+    if (!token) {
+      recordTestResult(`POST /api/radiology/orders/${orderId}/request-info with ${role} role`, false, { message: `Could not load ${role} token` });
+      return null;
+    }
     const client = createAuthClient(token);
     
     const response = await client.post(`/api/radiology/orders/${orderId}/request-info`, requestData);

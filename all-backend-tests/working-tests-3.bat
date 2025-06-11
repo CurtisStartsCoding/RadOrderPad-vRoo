@@ -46,6 +46,14 @@ if exist "%PROJECT_ROOT%tokens\admin_staff-token.txt" (
     exit /b 1
 )
 
+if exist "%PROJECT_ROOT%tokens\scheduler-token.txt" (
+    set /p SCHEDULER_TOKEN=<"%PROJECT_ROOT%tokens\scheduler-token.txt"
+    echo Scheduler Token loaded successfully.
+) else (
+    echo Error: Scheduler Token file not found.
+    exit /b 1
+)
+
 REM Set API URL environment variable
 set API_URL=https://api.radorderpad.com
 
@@ -83,6 +91,18 @@ echo.
 echo Running Radiology Request Info Tests...
 cd scripts
 call run-radiology-request-info-test.bat
+cd ..
+
+echo.
+echo Running Location Filtering Tests...
+cd role-tests
+call run-location-filtering-complete-test.bat
+cd ..
+
+echo.
+echo Running Scheduler Role Tests...
+cd role-tests
+call run-scheduler-role-tests.bat
 cd ..
 
 echo.

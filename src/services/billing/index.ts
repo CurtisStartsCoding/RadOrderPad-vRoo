@@ -15,7 +15,7 @@ import {
   handleSubscriptionUpdated,
   handleSubscriptionDeleted
 } from './stripe/webhooks';
-import { reportRadiologyOrderUsage } from './usage';
+// Post-paid billing has been removed - using dual credit system instead
 
 /**
  * BillingService provides methods for managing billing-related operations
@@ -207,23 +207,7 @@ class BillingService {
     return sessionId;
   }
 
-  /**
-   * Report radiology organization order usage to Stripe for billing
-   *
-   * This function queries the orders table to count orders received by each radiology
-   * organization within the specified date range, categorizes them as standard or advanced
-   * imaging based on modality/CPT code, and creates Stripe invoice items for billing.
-   *
-   * @param startDate Start date for the reporting period
-   * @param endDate End date for the reporting period
-   * @returns Promise with array of usage reports
-   */
-  static async reportRadiologyOrderUsage(
-    startDate: Date,
-    endDate: Date
-  ): Promise<unknown> {
-    return reportRadiologyOrderUsage(startDate, endDate);
-  }
+  // Post-paid billing method removed - now using dual credit system
 }
 
 // Export the BillingService class as the default export
@@ -235,6 +219,5 @@ export {
   BurnCreditParams,
   CreateStripeCustomerParams,
   CreditActionType,
-  Stripe,
-  reportRadiologyOrderUsage
+  Stripe
 };

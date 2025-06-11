@@ -1,7 +1,7 @@
 # Patient Search API Documentation
 
 **Version:** 1.1 - Dictation-Only Implementation  
-**Date:** January 10, 2025  
+**Date:** June 10, 2025  
 **Status:** Implementation Complete
 
 ## Overview
