@@ -1,5 +1,5 @@
 import { burnCredit, hasCredits } from './credit';
-import { getCreditBalance } from './get-credit-balance.service';
+import { getCreditBalance, CreditBalanceResponse } from './get-credit-balance.service';
 import { getCreditUsageHistory } from './get-credit-usage-history.service';
 import { getBillingOverview } from './get-billing-overview.service';
 import { createSubscription } from './stripe';
@@ -47,21 +47,13 @@ class BillingService {
 
   /**
    * Get the credit balance for an organization
+   * Returns different response based on organization type
    *
    * @param orgId Organization ID
-   * @returns Promise with the credit balance or null if organization not found
+   * @returns Promise with the credit balance(s) or null if organization not found
    */
-  static async getCreditBalance(orgId: number): Promise<{ creditBalance: number } | null> {
-    const result = await getCreditBalance(orgId);
-    if (!result) return null;
-    
-    // For backward compatibility, return just creditBalance
-    if ('creditBalance' in result && result.creditBalance !== undefined) {
-      return { creditBalance: result.creditBalance };
-    }
-    
-    // For radiology orgs, return 0 for backward compatibility
-    return { creditBalance: 0 };
+  static async getCreditBalance(orgId: number): Promise<CreditBalanceResponse | null> {
+    return getCreditBalance(orgId);
   }
 
   /**
@@ -228,5 +220,6 @@ export {
   BurnCreditParams,
   CreateStripeCustomerParams,
   CreditActionType,
+  CreditBalanceResponse,
   Stripe
 };

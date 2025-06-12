@@ -49,17 +49,20 @@ export async function getBillingOverview(orgId: number): Promise<EnhancedBilling
       organizationStatus: organization.status,
       organizationType: organization.type,
       subscriptionTier: organization.subscription_tier,
-      currentCreditBalance: organization.credit_balance,
       stripeSubscriptionStatus: null,
       currentPeriodEnd: null,
       billingInterval: null,
       cancelAtPeriodEnd: null
     };
     
-    // Add dual credit balances for radiology organizations
+    // Set appropriate credit balances based on organization type
     if (organization.type === 'radiology' || organization.type === 'radiology_group') {
+      // Radiology organizations only use dual credits
       response.basicCreditBalance = organization.basic_credit_balance;
       response.advancedCreditBalance = organization.advanced_credit_balance;
+    } else {
+      // Referring organizations only use single credit
+      response.currentCreditBalance = organization.credit_balance;
     }
     
     // If the organization has a billing_id, get Stripe subscription details
