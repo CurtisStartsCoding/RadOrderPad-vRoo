@@ -68,6 +68,7 @@ RadOrderPad is a clinical decision support platform that:
 
 ### Backend Documentation
 - [Validation Engine Architecture](backend/validation-engine-architecture.md) - Technical architecture of the clinical decision support engine powering ACR-based appropriateness checks
+- [Dual Credit Billing System](backend/dual-credit-billing-system.md) - Implementation of basic and advanced credit types for radiology organizations
 
 ### Frontend Documentation
 - [Validation Engine Integration](frontend/validation-engine-integration.md) - Guide for integrating the validation engine into frontend applications
@@ -78,6 +79,10 @@ RadOrderPad is a clinical decision support platform that:
 
 ### Testing Documentation
 - [Order Finalization Testing](testing/order-finalization-testing.md) - Comprehensive testing guide for the order finalization process including test scripts and scenarios
+- [Database Tunnel Setup](testing/database-tunnel-setup.md) - Guide for setting up SSH tunnels to access production databases for testing
+- [Common Queries](testing/common-queries.sql) - Comprehensive SQL queries for testing all database tables and relationships
+- [Quick Test Queries](testing/quick-test-queries.sql) - Simple queries for quick database health checks and basic testing
+- [Test Data Setup](testing/test-data-setup.sql) - Queries to verify test data and prepare testing scenarios
 - [Role-Based Test Scripts](../all-backend-tests/role-tests/) - Working test scripts and results for each user role
   - [Physician Tests](../all-backend-tests/role-tests/physician-role-tests.js) - Complete physician workflow tests (login, patient search, order validation with clarification loop, order creation, order finalization, status checking)
   - [Admin Staff Tests](../all-backend-tests/role-tests/admin-staff-role-tests.js) - Admin queue and processing tests (login, queue retrieval with location filtering, patient info update, insurance update, paste EMR summary, paste supplemental, document upload, send to radiology)

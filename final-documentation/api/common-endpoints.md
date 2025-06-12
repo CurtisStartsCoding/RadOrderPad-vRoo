@@ -172,63 +172,13 @@ These endpoints are available to multiple or all user roles. See the [Endpoint A
 
 ## File Management
 
-### Get Presigned Upload URL
-**POST** `/api/uploads/presigned-url`
-- **Description**: Get a presigned URL for direct file upload to S3
-- **Access**: All authenticated users
-- **Headers**: `Authorization: Bearer {token}`
-- **Request Body**:
-  ```json
-  {
-    "fileName": "string",
-    "fileType": "string",
-    "context": "signature|supplemental|report"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "uploadUrl": "string",
-    "fileKey": "string"
-  }
-  ```
-
-### Confirm Upload
-**POST** `/api/uploads/confirm`
-- **Description**: Confirm successful file upload
-- **Access**: All authenticated users
-- **Headers**: `Authorization: Bearer {token}`
-- **Request Body**:
-  ```json
-  {
-    "fileKey": "string",
-    "fileName": "string",
-    "fileSize": "number",
-    "fileType": "string",
-    "orderId": "number (optional)",
-    "documentType": "string"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "success": true,
-    "documentId": "number"
-  }
-  ```
-
-### Get Download URL
-**GET** `/api/uploads/:documentId/download-url`
-- **Description**: Get a presigned URL to download a document
-- **Access**: Users with permission to view the document
-- **Headers**: `Authorization: Bearer {token}`
-- **Response**:
-  ```json
-  {
-    "downloadUrl": "string",
-    "expiresIn": "number"
-  }
-  ```
+See [File Upload API Endpoints](file-upload-endpoints.md) for comprehensive documentation of the file upload system, including:
+- Presigned URL generation for S3 uploads
+- Upload confirmation workflow  
+- Download URL generation
+- Allowed file types and size limits
+- Security considerations
+- S3 configuration details
 
 ## Health Check
 

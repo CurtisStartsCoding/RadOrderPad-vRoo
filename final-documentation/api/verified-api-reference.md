@@ -1,7 +1,7 @@
 # RadOrderPad API Reference - Verified Against Codebase
 
-**Version:** 2.0  
-**Last Updated:** June 9, 2025  
+**Version:** 2.1  
+**Last Updated:** June 12, 2025  
 **Status:** VERIFIED - Every endpoint confirmed against actual route files
 
 ## Methodology
@@ -110,7 +110,20 @@ Development: http://localhost:3000
 
 ---
 
-## 3. Admin Order Endpoints
+## 3. Patient Management Endpoints
+
+**SOURCE:** `src/routes/patient.routes.ts`
+
+### Search Patients
+**POST** `/api/patients/search`
+- **Access:** Private (Physician)
+- **Middleware:** `authenticateJWT`, `authorizeRole(['physician'])` (Line 14)
+- **Controller:** `patientSearchController.searchPatients` (Line 14)
+- **Description:** Search for existing patients by name and date of birth with natural language support for dictation
+
+---
+
+## 4. Admin Order Endpoints
 
 **SOURCE:** `src/routes/admin-orders.routes.ts`
 
@@ -158,7 +171,7 @@ Development: http://localhost:3000
 
 ---
 
-## 4. Organization Management Endpoints
+## 5. Organization Management Endpoints
 
 **SOURCE:** `src/routes/organization.routes.ts`
 
@@ -213,7 +226,7 @@ Development: http://localhost:3000
 
 ---
 
-## 5. User Management Endpoints
+## 6. User Management Endpoints
 
 **SOURCE:** `src/routes/user.routes.ts`
 
@@ -258,7 +271,7 @@ Development: http://localhost:3000
 
 ---
 
-## 6. User Invitation Endpoints
+## 7. User Invitation Endpoints
 
 **SOURCE:** `src/routes/user-invite.routes.ts`
 
@@ -275,7 +288,7 @@ Development: http://localhost:3000
 
 ---
 
-## 7. Connection Management Endpoints
+## 8. Connection Management Endpoints
 
 **SOURCE:** `src/routes/connection.routes.ts`
 
@@ -320,7 +333,7 @@ Development: http://localhost:3000
 
 ---
 
-## 8. Billing Endpoints
+## 9. Billing Endpoints
 
 **SOURCE:** `src/routes/billing.routes.ts`
 
@@ -356,7 +369,7 @@ Development: http://localhost:3000
 
 ---
 
-## 9. File Upload Endpoints
+## 10. File Upload Endpoints
 
 **SOURCE:** `src/routes/uploads.routes.ts`
 
@@ -381,7 +394,7 @@ Development: http://localhost:3000
 
 ---
 
-## 10. Radiology Workflow Endpoints
+## 11. Radiology Workflow Endpoints
 
 **SOURCE:** `src/routes/radiology-orders.routes.ts`
 
@@ -417,7 +430,7 @@ Development: http://localhost:3000
 
 ---
 
-## 11. Super Admin Endpoints
+## 12. Super Admin Endpoints
 
 **SOURCE:** `src/routes/superadmin.routes.ts`
 
@@ -540,7 +553,7 @@ Development: http://localhost:3000
 
 ---
 
-## 12. Webhook Endpoints
+## 13. Webhook Endpoints
 
 **SOURCE:** `src/routes/webhooks.routes.ts`
 
@@ -554,7 +567,7 @@ Development: http://localhost:3000
 
 ## Summary
 
-**Total Verified Endpoints:** 61 endpoints across 12 categories
+**Total Verified Endpoints:** 62 endpoints across 13 categories
 
 **Verification Method:** Every endpoint was confirmed by examining the actual route files in `src/routes/`. Each endpoint listing includes:
 - Exact HTTP method and path

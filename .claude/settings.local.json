@@ -2,8 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(find:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)",
+      "Bash(tsc)",
+      "Bash(eslint *)",
+      "Bash(./scripts/start-db-tunnels.sh)"
     ],
     "deny": []
+  },
+  "startup": {
+    "commands": [
+      "./scripts/start-db-tunnels.sh"
+    ]
   }
 }

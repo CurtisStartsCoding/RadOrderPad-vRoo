@@ -2,6 +2,8 @@
 
 This document provides comprehensive documentation for all physician-specific endpoints in the RadOrderPad API, organized by the physician workflow.
 
+> **Note**: Some endpoints have dedicated documentation for complex features. See linked documentation for full details.
+
 ## Complete Physician Workflow
 
 ### Overview
@@ -57,51 +59,14 @@ See [Common Endpoints - User Profile Management](common-endpoints.md#user-profil
 
 ### Search Patients
 **POST** `/api/patients/search`
-- **Description**: Search for existing patients by name and date of birth from dictation
-- **Access Control**: `authenticateJWT` + `authorizeRole(['physician'])` middleware
-- **Headers**: `Authorization: Bearer <token>`
-- **Request Body**:
-  ```json
-  {
-    "patientName": "string",
-    "dateOfBirth": "YYYY-MM-DD"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "success": true,
-    "data": [
-      {
-        "id": "number",
-        "firstName": "string",
-        "lastName": "string",
-        "dateOfBirth": "YYYY-MM-DD",
-        "mrn": "string",
-        "gender": "string",
-        "phoneNumber": "string"
-      }
-    ],
-    "message": "string (optional - shown when no matches found)"
-  }
-  ```
-- **No Matches Response Example**:
-  ```json
-  {
-    "success": true,
-    "data": [],
-    "message": "No matching patients found. Order will be tagged with patient name and DOB for administrative processing."
-  }
-  ```
-- **Error Responses**:
-  - `400`: Both patient name and date of birth are required
-  - `401`: User organization not found
-  - `403`: Access forbidden for role
-  - `500`: Failed to search patients
-- **Code Location**:
-  - Route: `src/routes/patient.routes.ts` (line 14)
-  - Controller: `src/controllers/patient.controller.ts`
-- **Notes**:
+
+See [Patient Search API Documentation](patient-search-api.md) for comprehensive documentation of the dictation-based patient search endpoint, including:
+- Natural language date parsing from dictation
+- Multiple name format support  
+- Frontend integration examples
+- Testing scenarios
+
+**Notes**:
   - This endpoint searches existing patients in the system
   - Frontend should handle speech-to-text parsing before calling this
   - Results are filtered by the physician's organization
