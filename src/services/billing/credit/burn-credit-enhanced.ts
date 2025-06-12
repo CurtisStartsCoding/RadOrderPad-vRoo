@@ -86,7 +86,7 @@ export async function burnCreditEnhanced(params: BurnCreditEnhancedParams): Prom
       // Radiology organizations use dual credits
       // Determine if this is advanced imaging
       const isAdvanced = orderDetails ? 
-        isAdvancedImaging(orderDetails.modality || '', orderDetails.cptCodes || []) : 
+        isAdvancedImaging(orderDetails.modality || null, orderDetails.cptCodes?.[0] || null) : 
         false;
       
       if (isAdvanced) {

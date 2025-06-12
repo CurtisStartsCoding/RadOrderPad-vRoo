@@ -9,6 +9,7 @@ export interface OrderData {
   status: string;
   patient_id: number;
   referring_organization_id: number;
+  radiology_organization_id?: number;
 }
 
 /**

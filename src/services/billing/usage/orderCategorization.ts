@@ -4,7 +4,9 @@
  * This module handles the logic for categorizing orders as standard or advanced imaging.
  */
 
-import { ADVANCED_ORDER_PRICE_CENTS, STANDARD_ORDER_PRICE_CENTS } from './types';
+// Price constants moved to constants.ts
+const ADVANCED_ORDER_PRICE_CENTS = 700;  // $7.00
+const STANDARD_ORDER_PRICE_CENTS = 200;  // $2.00
 
 // Define modalities that are considered advanced imaging
 const ADVANCED_MODALITIES = ['MRI', 'CT', 'PET', 'NUCLEAR'];

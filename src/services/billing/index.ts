@@ -52,7 +52,16 @@ class BillingService {
    * @returns Promise with the credit balance or null if organization not found
    */
   static async getCreditBalance(orgId: number): Promise<{ creditBalance: number } | null> {
-    return getCreditBalance(orgId);
+    const result = await getCreditBalance(orgId);
+    if (!result) return null;
+    
+    // For backward compatibility, return just creditBalance
+    if ('creditBalance' in result && result.creditBalance !== undefined) {
+      return { creditBalance: result.creditBalance };
+    }
+    
+    // For radiology orgs, return 0 for backward compatibility
+    return { creditBalance: 0 };
   }
 
   /**
