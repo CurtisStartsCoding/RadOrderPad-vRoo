@@ -33,7 +33,8 @@ RadOrderPad is a clinical decision support platform that:
   - [Send to Radiology](#send-radiology) - Route completed orders
 
 ### For Admin Referring
-- **[Organization Management](api/organization-user-management-endpoints.md)** - Manage org and users
+- **[Organization Management](api/organization-management.md)** - Manage organization profile
+- **[Location Management](api/location-management.md)** - Manage physical locations/facilities
 - **[Connection Management](api/connection-management-endpoints.md)** - Partner relationships
 - **[Billing & Credits](api/billing-credit-endpoints.md)** - Purchase and track credits
 
@@ -57,7 +58,8 @@ RadOrderPad is a clinical decision support platform that:
 - [Physician Endpoints](api/physician-endpoints.md) - Patient search, validation, and order creation
 - [Admin Staff Endpoints](api/admin-staff-endpoints.md) - Order queue processing and administrative updates
 - [Scheduler Endpoints](api/scheduler-endpoints.md) - Radiology workflow management and order processing
-- [Organization & User Management](api/organization-user-management-endpoints.md) - Admin-only management endpoints
+- [Organization Management](api/organization-management.md) - Organization profile management endpoints
+- [Location Management](api/location-management.md) - Physical location/facility management endpoints
 - [Connection Management](api/connection-management-endpoints.md) - Partner relationship endpoints
 - [Billing & Credits](api/billing-credit-endpoints.md) - Credit and subscription management
 
@@ -69,6 +71,7 @@ RadOrderPad is a clinical decision support platform that:
 ### Backend Documentation
 - [Validation Engine Architecture](backend/validation-engine-architecture.md) - Technical architecture of the clinical decision support engine powering ACR-based appropriateness checks
 - [Dual Credit Billing System](backend/dual-credit-billing-system.md) - Implementation of basic and advanced credit types for radiology organizations
+- [Database Script Execution](backend/database-script-execution.md) - Guide for creating and running database maintenance scripts with connection examples
 
 ### Frontend Documentation
 - [Validation Engine Integration](frontend/validation-engine-integration.md) - Guide for integrating the validation engine into frontend applications
@@ -88,12 +91,16 @@ RadOrderPad is a clinical decision support platform that:
   - [Admin Staff Tests](../all-backend-tests/role-tests/admin-staff-role-tests.js) - Admin queue and processing tests (login, queue retrieval with location filtering, patient info update, insurance update, paste EMR summary, paste supplemental, document upload, send to radiology)
   - [Admin Staff Complete Tests](../all-backend-tests/role-tests/admin-staff-role-tests-complete.js) - Full admin staff tests including actual S3 file upload
   - [Admin Staff Test Results](../all-backend-tests/role-tests/admin-staff-workflow-summary.md) - Verified endpoint behaviors and known limitations
+  - [Admin Referring Tests](../all-backend-tests/role-tests/admin-referring-role-tests.js) - Practice admin tests (organization management, user management, location management, connections, billing)
+  - [Admin Radiology Tests](../all-backend-tests/role-tests/admin-radiology-role-tests.js) - Radiology admin tests (organization management, radiologist/scheduler management, dual credits, connection approvals)
   - [Scheduler Tests](../all-backend-tests/role-tests/scheduler-role-tests.js) - Radiology workflow tests (login, incoming orders queue, order details, request information, update status, export data)
   - [Scheduler Test Results](../all-backend-tests/role-tests/scheduler-workflow-summary.md) - Verified endpoint behaviors and known limitations
 
 #### Test Execution
 - **Physician Tests**: Run with `node all-backend-tests/role-tests/physician-role-tests.js` or `all-backend-tests/role-tests/run-physician-role-tests.bat`
 - **Admin Staff Tests**: Run with `node all-backend-tests/role-tests/admin-staff-role-tests.js` or `all-backend-tests/role-tests/run-admin-staff-role-tests.bat`
+- **Admin Referring Tests**: Run with `node all-backend-tests/role-tests/admin-referring-role-tests.js` or `all-backend-tests/role-tests/run-admin-referring-role-tests.bat`
+- **Admin Radiology Tests**: Run with `node all-backend-tests/role-tests/admin-radiology-role-tests.js` or `all-backend-tests/role-tests/run-admin-radiology-role-tests.bat`
 - **Scheduler Tests**: Run with `node all-backend-tests/role-tests/scheduler-role-tests.js` or `all-backend-tests/role-tests/run-scheduler-role-tests.bat`
 - **Comprehensive Admin Staff Tests**: Run with `all-backend-tests/admin-staff-role-comprehensive-tests.bat` (includes all admin staff tests + S3 uploads)
 - **Comprehensive Scheduler Tests**: Run with `all-backend-tests/scheduler-role-comprehensive-tests.bat` (includes scheduler tests + radiology request info tests)

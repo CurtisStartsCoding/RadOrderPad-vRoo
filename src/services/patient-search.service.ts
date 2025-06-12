@@ -53,7 +53,7 @@ class PatientSearchService {
       
       // Build query conditions
       const conditions: string[] = ['p.organization_id = $1'];
-      const values: any[] = [organizationId];
+      const values: (string | number)[] = [organizationId];
       let paramIndex = 2;
       
       // Search by date of birth (required)
@@ -210,13 +210,13 @@ class PatientSearchService {
     };
     
     // Clean up common suffixes and normalize
-    let cleaned = trimmed.toLowerCase()
+    const cleaned = trimmed.toLowerCase()
       .replace(/(\d+)(st|nd|rd|th)/g, '$1') // Remove ordinal suffixes
       .replace(/[,]/g, '') // Remove commas
       .replace(/\s+/g, ' '); // Normalize spaces
     
     // Try to parse MM/DD/YYYY or MM-DD-YYYY
-    const slashDashPattern = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/;
+    const slashDashPattern = /^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$/;
     const slashDashMatch = cleaned.match(slashDashPattern);
     if (slashDashMatch) {
       const month = slashDashMatch[1].padStart(2, '0');

@@ -1,54 +1,138 @@
 /**
- * Utility for extracting insurance information from EMR text
+ * Enhanced utility for extracting insurance information from EMR text
+ * Handles more formats, better relationship extraction, and authorization numbers
  */
 import { ParsedInsuranceInfo } from '../types';
 
 /**
- * Field patterns for insurance information
+ * Common insurance company names and their variations
  */
-export const INSURANCE_FIELD_PATTERNS = {
+const INSURANCE_COMPANIES: Record<string, string[]> = {
+  'Aetna': ['aetna', 'aetna ppo', 'aetna hmo'],
+  'Blue Cross Blue Shield': ['blue cross', 'bcbs', 'blue shield', 'anthem', 'empire bcbs'],
+  'Cigna': ['cigna', 'cigna hmo', 'cigna ppo'],
+  'United Healthcare': ['united healthcare', 'uhc', 'united health'],
+  'Humana': ['humana', 'humana ppo', 'humana hmo'],
+  'Kaiser': ['kaiser', 'kaiser permanente'],
+  'Medicare': ['medicare', 'medicare part a', 'medicare part b', 'medicare advantage'],
+  'Medicaid': ['medicaid', 'medi-cal'],
+  'Premera': ['premera', 'premera blue cross'],
+  'Anthem': ['anthem', 'anthem bcbs'],
+  'Horizon': ['horizon', 'horizon bcbs'],
+  'Oxford': ['oxford', 'oxford health'],
+  'Emblem': ['emblem', 'emblem health'],
+  'MetroPlus': ['metroplus', 'metro plus'],
+  'Healthfirst': ['healthfirst', 'health first'],
+  'Oscar': ['oscar', 'oscar health'],
+  'Molina': ['molina', 'molina healthcare']
+};
+
+/**
+ * Normalize insurance company name
+ */
+function normalizeInsuranceName(name: string): string {
+  const lowerName = name.toLowerCase().trim();
+  
+  // Check against known companies
+  for (const [standard, variations] of Object.entries(INSURANCE_COMPANIES)) {
+    for (const variation of variations) {
+      if (lowerName.includes(variation)) {
+        return standard;
+      }
+    }
+  }
+  
+  // Clean up common patterns
+  const cleaned = name
+    .replace(/\s*[-–—]\s*/g, ' - ')
+    .replace(/\s+/g, ' ')
+    .replace(/^\W+|\W+$/g, '')
+    .trim();
+  
+  // Capitalize properly
+  return cleaned.split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
+/**
+ * Enhanced insurance patterns
+ */
+const INSURANCE_PATTERNS = {
   insurerName: [
-    /(?:Insurance|Ins)(?:urance)?(?:\s*Provider|Company|Carrier|Plan)?(?:\s*:|\s*=|\s*>)?\s*([A-Za-z\s&]+)/i,
-    /(?:PRIMARY INSURANCE|COVERAGE|PAYER|Primary)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z\s&]+)/i,
-    /(?:^|\s)Ins(?:urance)?(?:\s*:|\s*=|\s*>)?\s*([A-Za-z\s&]+)/i,
-    /Insurance\s+is\s+([A-Za-z\s&]+)/i
+    // Standard labeled patterns
+    /(?:Primary Insurance|Insurance Provider|Insurance Company|Insurance Carrier|Carrier|Insurance Plan|Plan Name|Insurer)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z][A-Za-z\s&().-]+?)(?=\s*(?:\||Policy|Member|ID|Group|$))/i,
+    
+    // Abbreviated patterns
+    /(?:Ins|Insurance)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z][A-Za-z\s&().-]+?)(?=\s*(?:\||Pol|Policy|ID|$))/i,
+    
+    // Table format patterns
+    /PRIMARY INSURANCE\s*\n\s*Insurance\s*Company:\s*([A-Za-z][A-Za-z\s&().-]+)/i,
+    
+    // Epic format
+    /([A-Za-z][A-Za-z\s&().-]+?)\s*[-–—]\s*[A-Z0-9]+\s*\(Group:/i,
+    
+    // Inline format
+    /Insurance:\s*([A-Za-z][A-Za-z\s&().-]+?)(?:\s*\||$)/i
   ],
+  
   policyNumber: [
-    /(?:Policy|Member|ID|Subscriber|Insurance)(?:\s*(?:Number|#|No|ID))(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9-]+)/i,
-    /(?:Subscriber ID|Member ID|Policy ID)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9-]+)/i,
-    /(?:ID|Number)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9-]+)/i,
-    /ID\s+#:\s*([A-Za-z0-9-]+)/i
+    // Standard patterns
+    /(?:Policy Number|Policy #|Policy No|Member ID|Member #|ID #|Subscriber ID|Insurance ID)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9][\w\s-]*\w)/i,
+    
+    // Abbreviated patterns
+    /(?:Pol|ID)(?:\s*#|No\.?)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9][\w\s-]*\w)/i,
+    
+    // Inline patterns
+    /(?:Policy|Member|ID):\s*([A-Za-z0-9][\w-]+)/i,
+    
+    // Special format from images
+    /ID\s*#:\s*([A-Za-z0-9][\w-]+)/i
   ],
+  
   groupNumber: [
-    /(?:Group|Grp)(?:\s*(?:Number|#|No|ID))?(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9-]+)/i,
-    /(?:GroupNumber|Group ID|Plan Number)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9-]+)/i,
-    /Group\s+#:\s*([A-Za-z0-9-]+)/i
+    // Standard patterns
+    /(?:Group Number|Group #|Group No|Group ID|Grp #|Grp)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9][\w\s-]*\w)/i,
+    
+    // Parenthetical pattern
+    /\(Group:\s*([A-Za-z0-9][\w-]+)\)/i,
+    
+    // Inline patterns
+    /Group:\s*([A-Za-z0-9][\w-]+)/i,
+    
+    // Special format
+    /Grp(?:#|:)\s*([A-Za-z0-9][\w-]+)/i
   ],
-  policyHolderName: [
-    /(?:Policy\s*Holder|Subscriber|Insured|Guarantor)(?:\s*Name)?(?:\s*:|\s*=|\s*>)?\s*([^\n,;]+)/i,
-    /(?:Subscriber Name|Insured Name|Guarantor Name)(?:\s*:|\s*=|\s*>)?\s*([^\n,;]+)/i,
-    /Subscriber:\s*([^\n,;]+)/i
-  ],
-  relationship: [
-    /(?:Relation|Relationship)(?:\s*to\s*(?:Subscriber|Insured|Guarantor|Patient))?(?:\s*:|\s*=|\s*>)?\s*([^\n,;]+)/i,
-    /(?:Rel\.to Subscriber|Rel to Patient)(?:\s*:|\s*=|\s*>)?\s*([^\n,;]+)/i,
-    /Relationship:\s*([^\n,;]+)/i,
-    /Rel(?:ationship)?(?:\s*to\s*Subscriber)?:\s*([^\n,;]+)/i
-  ],
+  
   authorizationNumber: [
-    /(?:Authorization|Auth)(?:\s*(?:Number|#|No))?(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9-]+)/i,
-    /(?:Approval|Referral)(?:\s*(?:Number|#|No))?(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9-]+)/i,
-    /Auth\s+#:\s*([A-Za-z0-9-]+)/i
+    // Standard patterns
+    /(?:Authorization Number|Authorization #|Auth Number|Auth #|Auth No|Pre-Auth|PreAuth)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9][\w\s-]*\w)/i,
+    
+    // Abbreviated patterns
+    /Auth(?:\s*#)?(?:\s*:|\s*=|\s*>)?\s*([A-Za-z0-9][\w-]+)/i,
+    
+    // Special formats
+    /Authorization\s*#:\s*([A-Za-z0-9][\w-]+)/i
   ]
 };
 
 /**
- * Common insurance company names to check for
+ * Relationship patterns
  */
-export const COMMON_INSURERS = [
-  "UNITED HEALTH", "BLUE CROSS", "BLUE SHIELD", "AETNA", "CIGNA", 
-  "HUMANA", "MEDICARE", "MEDICAID", "TRICARE", "ANTHEM", "KAISER", 
-  "UHC", "BCBS"
+const RELATIONSHIP_PATTERNS = [
+  /(?:Relationship to (?:Subscriber|Patient|Insured)|Rel to Subscriber|Relationship)(?:\s*:|\s*=|\s*>)?\s*(\w+)/i,
+  /(?:Subscriber Relationship|Patient Relationship)(?:\s*:|\s*=|\s*>)?\s*(\w+)/i,
+  /(?:Rel|Relationship)(?:\s*:|\s*=|\s*>)?\s*(\w+)/i,
+  /Subscriber:\s*([^,\n]+?)(?:\s*\||$)/i
+];
+
+/**
+ * Policy holder name patterns
+ */
+const POLICY_HOLDER_PATTERNS = [
+  /(?:Policy Holder Name|Subscriber Name|Policy Holder|Subscriber|Insured Name)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z][A-Za-z\s,.-]+?)(?=\s*(?:\||Rel|Relationship|$))/i,
+  /(?:Guarantor|Responsible Party)(?:\s*:|\s*=|\s*>)?\s*([A-Za-z][A-Za-z\s,.-]+?)(?=\s*(?:\||$))/i,
+  /Subscriber:\s*([A-Za-z][A-Za-z\s,.-]+?)(?=\s*(?:\||Rel|$))/i
 ];
 
 /**
@@ -58,140 +142,174 @@ export const COMMON_INSURERS = [
  */
 export function extractInsuranceInfo(lines: string[]): ParsedInsuranceInfo {
   const insuranceInfo: ParsedInsuranceInfo = {};
+  const fullText = lines.join('\n');
   
-  // First check for common insurance names in the text
-  const fullText = lines.join(' ');
-  for (const insurer of COMMON_INSURERS) {
-    if (fullText.includes(insurer)) {
-      insuranceInfo.insurerName = insurer;
+  // Extract insurer name
+  for (const pattern of INSURANCE_PATTERNS.insurerName) {
+    const match = fullText.match(pattern);
+    if (match && match[1]) {
+      const name = match[1].trim();
+      if (name && name.length > 2 && name.length < 100) {
+        insuranceInfo.insurerName = normalizeInsuranceName(name);
+        break;
+      }
+    }
+  }
+  
+  // Extract policy number
+  for (const pattern of INSURANCE_PATTERNS.policyNumber) {
+    const match = fullText.match(pattern);
+    if (match && match[1]) {
+      const policyNum = match[1].trim();
+      if (policyNum && policyNum.length >= 3 && policyNum.length <= 50) {
+        insuranceInfo.policyNumber = policyNum;
+        break;
+      }
+    }
+  }
+  
+  // Extract group number
+  for (const pattern of INSURANCE_PATTERNS.groupNumber) {
+    const match = fullText.match(pattern);
+    if (match && match[1]) {
+      const groupNum = match[1].trim();
+      if (groupNum && groupNum.length >= 2 && groupNum.length <= 50) {
+        insuranceInfo.groupNumber = groupNum;
+        break;
+      }
+    }
+  }
+  
+  // Extract authorization number
+  for (const pattern of INSURANCE_PATTERNS.authorizationNumber) {
+    const match = fullText.match(pattern);
+    if (match && match[1]) {
+      const authNum = match[1].trim();
+      if (authNum && authNum.length >= 3 && authNum.length <= 50) {
+        insuranceInfo.authorizationNumber = authNum;
+        break;
+      }
+    }
+  }
+  
+  // Extract policy holder name
+  for (const pattern of POLICY_HOLDER_PATTERNS) {
+    const match = fullText.match(pattern);
+    if (match && match[1]) {
+      let holderName = match[1].trim();
+      // Clean up name format
+      holderName = holderName
+        .replace(/,\s*/, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      
+      if (holderName && holderName.length >= 3 && holderName.length <= 100) {
+        insuranceInfo.policyHolderName = holderName;
+        break;
+      }
+    }
+  }
+  
+  // Extract relationship
+  for (const pattern of RELATIONSHIP_PATTERNS) {
+    const match = fullText.match(pattern);
+    if (match && match[1]) {
+      const rel = match[1].trim().toLowerCase();
+      // Normalize common relationships
+      const relationshipMap: Record<string, string> = {
+        'self': 'Self',
+        'patient': 'Self',
+        'spouse': 'Spouse',
+        'husband': 'Spouse',
+        'wife': 'Spouse',
+        'child': 'Child',
+        'son': 'Child',
+        'daughter': 'Child',
+        'parent': 'Parent',
+        'mother': 'Parent',
+        'father': 'Parent',
+        'other': 'Other'
+      };
+      
+      const normalized = relationshipMap[rel] || 'Other';
+      insuranceInfo.relationship = normalized;
       break;
     }
   }
   
-  // Special handling for Epic EMR format
-  if (fullText.includes("Insurance Provider:")) {
-    const epicMatch = fullText.match(/Insurance Provider:\s*([A-Za-z\s&]+)(?:\s|,|;|\n|$)/i);
-    if (epicMatch && epicMatch[1]) {
-      // Limit to first few words to avoid capturing "Policy" and other terms
-      const words = epicMatch[1].trim().split(/\s+/);
-      // For Blue Cross Blue Shield, we want to keep all three words
-      if (words.length >= 3 &&
-          words[0].toLowerCase() === "blue" &&
-          words[1].toLowerCase() === "cross" &&
-          words[2].toLowerCase() === "blue") {
-        insuranceInfo.insurerName = "Blue Cross Blue Shield";
-      } else if (words.length >= 3 &&
-                words[0].toLowerCase() === "blue" &&
-                words[1].toLowerCase() === "cross") {
-        insuranceInfo.insurerName = "Blue Cross";
-      } else {
-        // For other insurers, limit to first 2-3 words
-        const limitedWords = words.slice(0, Math.min(3, words.length));
-        insuranceInfo.insurerName = limitedWords.join(' ');
-      }
-    }
-  }
-  
-  // Special handling for eClinicalWorks format
-  if (fullText.includes("Insurance Details") || fullText.includes("Ins:")) {
-    const ecwMatch = fullText.match(/Ins:\s*([A-Za-z\s&]+)(?:\s|,|;|\n|$)/i);
-    if (ecwMatch && ecwMatch[1]) {
-      // Just get the first word (usually the insurer name)
-      const firstWord = ecwMatch[1].trim().split(/\s+/)[0];
-      insuranceInfo.insurerName = firstWord;
-    }
-  }
-  
-  // Special handling for "Insurance is X" format
-  if (fullText.includes("Insurance is")) {
-    const isMatch = fullText.match(/Insurance\s+is\s+([A-Za-z\s&]+)(?:\s|,|;|\n|$)/i);
-    if (isMatch && isMatch[1]) {
-      insuranceInfo.insurerName = isMatch[1].trim();
-    }
-  }
-  
-  // Process each line
-  for (const line of lines) {
-    // Try to extract each field
-    for (const [field, patterns] of Object.entries(INSURANCE_FIELD_PATTERNS)) {
-      // Skip insurer name if we already found it
-      if (field === 'insurerName' && insuranceInfo.insurerName) continue;
-      
-      for (const pattern of patterns) {
-        const match = line.match(pattern);
-        if (match && match[1]) {
-          // For insurer name, limit to first few words
-          if (field === 'insurerName') {
-            const words = match[1].trim().split(/\s+/);
-            // Special case for Blue Cross Blue Shield
-            if (words.length >= 3 &&
-                words[0].toLowerCase() === "blue" &&
-                words[1].toLowerCase() === "cross" &&
-                words[2].toLowerCase() === "blue") {
-              insuranceInfo.insurerName = "Blue Cross Blue Shield";
-            } else {
-              // For other insurers, limit to first 2-3 words
-              const limitedWords = words.slice(0, Math.min(3, words.length));
-              insuranceInfo.insurerName = limitedWords.join(' ');
-            }
-          } else {
-            insuranceInfo[field as keyof ParsedInsuranceInfo] = match[1].trim();
-          }
-          break;
-        }
-      }
-    }
-  }
-  
-  // If relationship not found, look for common relationship terms
-  if (!insuranceInfo.relationship) {
-    if (/\bSelf\b/i.test(fullText)) {
-      insuranceInfo.relationship = 'Self';
-    } else if (/\bSpouse\b|\bHusband\b|\bWife\b/i.test(fullText)) {
-      insuranceInfo.relationship = 'Spouse';
-    } else if (/\bChild\b|\bSon\b|\bDaughter\b|\bDependent\b/i.test(fullText)) {
-      insuranceInfo.relationship = 'Child';
-    }
-  }
-  
-  // Clean up policyHolderName field
-  if (insuranceInfo.policyHolderName) {
-    // Check if it contains "Relationship" or "Rel to" text
-    if (insuranceInfo.policyHolderName.includes('Relationship to')) {
-      insuranceInfo.policyHolderName = insuranceInfo.policyHolderName.split('Relationship to')[0].trim();
-    } else if (insuranceInfo.policyHolderName.includes('Rel to')) {
-      insuranceInfo.policyHolderName = insuranceInfo.policyHolderName.split('Rel to')[0].trim();
-    }
-    
-    // Limit to first 3 words if still too long
-    if (insuranceInfo.policyHolderName.length > 30) {
-      const words = insuranceInfo.policyHolderName.split(/\s+/);
-      insuranceInfo.policyHolderName = words.slice(0, 3).join(' ');
-    }
-  }
-  
-  // Clean up relationship field
-  if (insuranceInfo.relationship) {
-    // Check if it contains "Authorization" or "Auth #" text
-    if (insuranceInfo.relationship.includes('Authorization')) {
-      insuranceInfo.relationship = insuranceInfo.relationship.split('Authorization')[0].trim();
-    } else if (insuranceInfo.relationship.includes('Auth #')) {
-      insuranceInfo.relationship = insuranceInfo.relationship.split('Auth #')[0].trim();
-    }
-    
-    // If relationship is "ship to" or similar, fix it
-    if (insuranceInfo.relationship.toLowerCase().includes('ship to') ||
-        insuranceInfo.relationship.toLowerCase().includes('ship:')) {
-      // Check if we can determine the actual relationship
-      if (insuranceInfo.relationship.toLowerCase().includes('self')) {
-        insuranceInfo.relationship = 'Self';
-      } else if (insuranceInfo.relationship.toLowerCase().includes('spouse')) {
-        insuranceInfo.relationship = 'Spouse';
-      } else if (insuranceInfo.relationship.toLowerCase().includes('child')) {
-        insuranceInfo.relationship = 'Child';
-      }
-    }
-  }
+  // Clean up extracted information
+  cleanupInsuranceInfo(insuranceInfo);
   
   return insuranceInfo;
 }
+
+/**
+ * Clean up extracted insurance information
+ */
+function cleanupInsuranceInfo(info: ParsedInsuranceInfo): void {
+  // Clean up insurer name
+  if (info.insurerName) {
+    // Remove common artifacts
+    info.insurerName = info.insurerName
+      .replace(/\s*\|.*$/, '') // Remove anything after pipe
+      .replace(/\s+ID\s*#?\s*:?\s*$/, '') // Remove trailing ID
+      .replace(/\s+Policy.*$/, '') // Remove trailing Policy
+      .trim();
+    
+    // Truncate if too long
+    if (info.insurerName.length > 50) {
+      info.insurerName = info.insurerName.substring(0, 50).trim();
+    }
+  }
+  
+  // Clean up policy number
+  if (info.policyNumber) {
+    info.policyNumber = info.policyNumber
+      .replace(/\s+/g, '')
+      .replace(/[^\w-]/g, '')
+      .toUpperCase();
+  }
+  
+  // Clean up group number
+  if (info.groupNumber) {
+    info.groupNumber = info.groupNumber
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '')
+      .toUpperCase();
+  }
+  
+  // Clean up authorization number
+  if (info.authorizationNumber) {
+    info.authorizationNumber = info.authorizationNumber
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '')
+      .toUpperCase();
+  }
+  
+  // Clean up policy holder name
+  if (info.policyHolderName) {
+    info.policyHolderName = info.policyHolderName
+      .replace(/\s+/g, ' ')
+      .replace(/[^\w\s.-]/g, '')
+      .trim();
+    
+    // Capitalize properly
+    info.policyHolderName = info.policyHolderName
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+  
+  // Ensure relationship doesn't have extra text
+  if (info.relationship && info.relationship.length > 20) {
+    // Extract just the first word if it's a valid relationship
+    const firstWord = info.relationship.split(/\s+/)[0];
+    if (['Self', 'Spouse', 'Child', 'Parent', 'Other'].includes(firstWord)) {
+      info.relationship = firstWord;
+    } else {
+      info.relationship = 'Other';
+    }
+  }
+}
+
+export default extractInsuranceInfo;

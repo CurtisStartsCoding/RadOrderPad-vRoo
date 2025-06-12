@@ -70,8 +70,8 @@ export async function registerOrganization(
       );
     }
     
-    // Create the admin user
-    const user = await createAdminUser(client, userData, organization.id);
+    // Create the admin user with auto-assigned role based on org type
+    const user = await createAdminUser(client, userData, organization.id, organization.type);
     
     // Generate email verification token
     const verificationToken = await generateVerificationToken(client, user.id);

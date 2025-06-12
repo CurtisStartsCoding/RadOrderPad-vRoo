@@ -16,6 +16,8 @@ export interface Organization {
   logo_url?: string;
   billing_id?: string;
   credit_balance: number;
+  basic_credit_balance?: number;
+  advanced_credit_balance?: number;
   subscription_tier?: string;
   status: OrganizationStatus;
   assigned_account_manager_id?: number;

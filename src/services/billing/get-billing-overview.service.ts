@@ -49,6 +49,7 @@ export async function getBillingOverview(orgId: number): Promise<EnhancedBilling
       organizationStatus: organization.status,
       organizationType: organization.type,
       subscriptionTier: organization.subscription_tier,
+      currentCreditBalance: organization.credit_balance || 0,
       stripeSubscriptionStatus: null,
       currentPeriodEnd: null,
       billingInterval: null,

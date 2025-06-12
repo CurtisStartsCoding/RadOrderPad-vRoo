@@ -7,7 +7,14 @@
       "Bash(npm run build)",
       "Bash(tsc)",
       "Bash(eslint *)",
-      "Bash(./scripts/start-db-tunnels.sh)"
+      "Bash(./scripts/start-db-tunnels.sh)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(claude mcp add:*)",
+      "mcp__github-server__get_file_contents",
+      "Bash(mv:*)",
+      "Bash(./run-admin-referring-role-tests.bat)",
+      "Bash(node:*)"
     ],
     "deny": []
   },

@@ -100,24 +100,19 @@ export async function sendToRadiology(
     await orderStatusManager.updateOrderStatusToRadiology(orderId, userId);
     
     // 5. Burn a credit from the referring organization
-    try {
-      await burnCreditEnhanced({
-        organizationId: referringOrgId,
-        userId,
-        orderId,
-        actionType: CreditActionType.ORDER_SUBMITTED,
-        organizationType: referringOrg.type
-      });
-      
-      logger.info('Credit burned from referring organization', {
-        organizationId: referringOrgId,
-        orderId,
-        actionType: CreditActionType.ORDER_SUBMITTED
-      });
-    } catch (error) {
-      // Rollback status change if credit burn fails
-      throw error;
-    }
+    await burnCreditEnhanced({
+      organizationId: referringOrgId,
+      userId,
+      orderId,
+      actionType: CreditActionType.ORDER_SUBMITTED,
+      organizationType: referringOrg.type
+    });
+    
+    logger.info('Credit burned from referring organization', {
+      organizationId: referringOrgId,
+      orderId,
+      actionType: CreditActionType.ORDER_SUBMITTED
+    });
     
     // 6. Burn a credit from the radiology organization
     try {

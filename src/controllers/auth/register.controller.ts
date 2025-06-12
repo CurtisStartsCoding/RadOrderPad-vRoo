@@ -28,8 +28,14 @@ export class RegisterController {
         return;
       }
       
-      if (!user.email || !user.password || !user.first_name || !user.last_name || !user.role) {
-        res.status(400).json({ message: 'User email, password, first name, last name, and role are required' });
+      // Validate organization type
+      if (organization.type !== 'referring_practice' && organization.type !== 'radiology_group') {
+        res.status(400).json({ message: 'Organization type must be either referring_practice or radiology_group' });
+        return;
+      }
+      
+      if (!user.email || !user.password || !user.first_name || !user.last_name) {
+        res.status(400).json({ message: 'User email, password, first name, and last name are required' });
         return;
       }
 
@@ -83,7 +89,7 @@ export class RegisterController {
         password: user.password,
         first_name: user.first_name,
         last_name: user.last_name,
-        role: user.role,
+        // role is omitted - will be auto-assigned based on organization type
         npi: user.npi,
         specialty: user.specialty,
         phone_number: user.phone_number

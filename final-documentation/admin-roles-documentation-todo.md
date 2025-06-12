@@ -1,0 +1,243 @@
+# Admin Roles Documentation To-Do List
+
+## Overview
+This document tracks the progress of documenting practice manager roles (admin_referring and admin_radiology) for the RadOrderPad system.
+
+## Phase 1: Discovery - Analyze Existing Implementation
+
+### 1.1 Test Analysis
+- [ ] Check E2E tests for admin functionality
+- [ ] Review working-tests-1.bat
+- [ ] Review working-tests-2.bat  
+- [ ] Review working-tests-3.bat
+- [ ] Review working-tests-4.bat
+- [ ] Look for role-specific test files in all-backend-tests/
+- [ ] Extract actual API calls and workflows from tests
+- [ ] Document test coverage gaps
+
+### 1.2 Code Analysis
+- [ ] Review auth middleware to understand role permissions
+- [ ] Check route files for role-based access controls
+  - [ ] organization.routes.ts
+  - [ ] user.routes.ts
+  - [ ] user-invite.routes.ts
+  - [ ] user-location.routes.ts
+  - [ ] connection.routes.ts
+  - [ ] billing.routes.ts
+- [ ] Identify all endpoints accessible by admin_referring
+- [ ] Identify all endpoints accessible by admin_radiology
+- [ ] Note any undocumented endpoints
+
+### 1.3 Documentation Inventory
+- [ ] Review organization-user-management-endpoints.md
+- [ ] Review connection-management-endpoints.md
+- [ ] Review billing-credit-endpoints.md
+- [ ] Check DOCS/ folder for admin documentation
+- [ ] Find any role-specific documentation
+- [ ] List all documentation fragments found
+
+## Phase 2: Organize by Functionality
+
+### 2.1 Common Functions (Both Roles)
+- [ ] User Management
+  - [ ] List users in organization
+  - [ ] Invite new users
+  - [ ] Update user information
+  - [ ] Deactivate users
+  - [ ] Assign users to locations
+- [x] Location Management
+  - [x] Create locations
+  - [x] Update locations
+  - [x] List locations
+  - [x] Assign users to locations (documented separately in user management)
+- [x] Organization Management
+  - [x] View organization profile (GET /api/organizations/mine)
+  - [x] Update organization information (PUT /api/organizations/mine)
+  - [x] Search organizations (GET /api/organizations)
+  - [x] Registration with auto-role assignment
+- [ ] Connection Management
+  - [ ] View connections
+  - [ ] Request connections
+  - [ ] Accept/reject connections
+- [ ] Billing Overview
+  - [ ] View credit balance
+  - [ ] View subscription status
+
+### 2.2 admin_referring Specific Functions
+- [ ] Credit Management
+  - [ ] Purchase credits
+  - [ ] Create Stripe checkout sessions
+  - [ ] View credit usage history
+  - [ ] View billing history
+- [ ] Physician Management
+  - [ ] Manage physician users
+  - [ ] View physician activity
+- [ ] Order Management
+  - [ ] View organization's orders
+  - [ ] Export order data
+
+### 2.3 admin_radiology Specific Functions
+- [ ] Scheduler Management
+  - [ ] Create scheduler accounts
+  - [ ] Manage scheduler permissions
+- [ ] Radiologist Management
+  - [ ] Create radiologist accounts
+  - [ ] Manage radiologist permissions
+- [ ] Connection Management
+  - [ ] View incoming connection requests
+  - [ ] Approve referring organizations
+- [ ] Order Statistics
+  - [ ] View incoming order volume
+  - [ ] View order completion rates
+  - [ ] Export radiology reports
+
+## Phase 3: Documentation Structure
+
+### 3.1 Existing Documentation Review
+Already exists in final-documentation/api/:
+- [x] common-endpoints.md
+- [x] physician-endpoints.md
+- [x] admin-staff-endpoints.md
+- [x] scheduler-endpoints.md
+- [x] billing-credit-endpoints.md
+- [x] connection-management-endpoints.md
+- [x] file-upload-endpoints.md
+- [x] patient-search-api.md
+- [x] organization-user-management-endpoints.md (needs major revision)
+- [x] endpoint-access-matrix.md
+- [x] verified-api-reference.md
+
+Missing documentation for admin roles:
+- [ ] admin-referring-endpoints.md (comprehensive)
+- [ ] admin-radiology-endpoints.md (comprehensive)
+
+### 3.2 Documentation Standards
+- [x] Each endpoint must include:
+  - [x] HTTP method and full path
+  - [x] Authorization requirements
+  - [x] Request headers
+  - [x] Request body schema
+  - [x] Response schema (success and error)
+  - [x] Status codes
+  - [x] Real example from tests
+  - [x] Common error scenarios
+  - [x] Related endpoints
+
+## Phase 4: Validation
+
+### 4.1 Cross-Reference Verification
+- [ ] Verify all endpoints against route files
+- [ ] Verify authorization against middleware
+- [ ] Verify against working test implementations
+- [ ] Ensure no functionality is missed
+- [ ] Check for deprecated endpoints
+
+### 4.2 Test Coverage Summary
+- [ ] Document which tests cover which endpoints
+- [ ] Identify untested endpoints
+- [ ] Create test recommendations
+- [ ] Note any implementation inconsistencies
+
+## Phase 5: Frontend Handoff Preparation
+
+### 5.1 Create Frontend Integration Guide
+- [ ] Common workflows for admin_referring
+- [ ] Common workflows for admin_radiology
+- [ ] Authentication flow
+- [ ] Error handling patterns
+- [ ] State management recommendations
+
+### 5.2 API Client Examples
+- [ ] JavaScript/TypeScript examples
+- [ ] Error handling examples
+- [ ] Authentication examples
+- [ ] Common utility functions
+
+## Issues Found in Existing Documentation
+
+### Organization Management Documentation Status
+- [x] Created clean organization-management.md with accurate documentation
+- [x] Response format matches actual code (flat fields, correct structure)
+- [x] Includes all credit balance fields
+- [x] Uses correct organization types (referring_practice/radiology_group)
+- [x] Includes organization registration documentation
+- [x] Documents auto-role assignment based on organization type
+- [x] Deleted old mixed organization-user-management-endpoints.md
+
+## Progress Tracking
+
+### Discovered Test Files
+- [x] List all relevant test files found
+  - working-tests.bat (Part 1) - Tests connection requests, user invite, uploads, billing
+  - working-tests-2.bat (Part 2) - Tests user management, locations, connections
+  - working-tests-3.bat & working-tests-4.bat - Additional comprehensive tests
+  - test-connection-requests.js - Uses admin_referring token
+  - test-radiology-request-info.js - Uses admin_radiology token
+  - test-location-management.js - Uses admin_referring token
+  - test-get-credit-balance.bat - Uses admin_referring token (403 for other roles)
+  - scenario-e-connection-request.js - E2E test showing both admin roles
+- [x] Note their locations
+  - Working tests: /all-backend-tests/
+  - Individual scripts: /all-backend-tests/scripts/
+  - E2E tests: /tests/e2e/
+- [x] Summarize what they test
+  - Connection management (request, approve, reject, list)
+  - User management (invite, update, deactivate)
+  - Location management (create, update, assign users)
+  - Billing/credits (admin_referring only)
+  - Organization management (update profile, search)
+  - File uploads (presigned URLs, confirmations)
+
+### Discovered Documentation
+- [x] List all documentation files found
+  
+  **Organization Management:**
+  - DOCS/onboarding_organizations.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/organization-management.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/organizations-mine-summary.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/organizations-mine-fix.md
+  - frontend-explanation/api-docs/tutorials/organization-management/organization-profile.md
+  
+  **Location Management:**
+  - DOCS/implementation/location-management-implementation.md
+  - DOCS/implementation/location-filtering-implementation.md
+  - frontend-explanation/api-docs/tutorials/organization-management/location-management.md
+  - frontend-explanation/api-docs/tutorials/user-management/location-assignment.md
+  
+  **User Management:**
+  - DOCS/implementation/user-invitation-implementation.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/README-user-management.md
+  - frontend-explanation/api-docs/tutorials/user-management/user-invitation.md
+  - frontend-explanation/api-docs/tutorials/user-management/user-profiles.md
+  
+  **Connection Management:**
+  - DOCS/implementation/connection-management-implementation.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/connection-approval.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/connection-management-details.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/connection-management.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/connection-rejection.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/connection-testing.md
+  - frontend-explanation/API_IMPLEMENTATION_GUIDE/README-connection-fixes.md
+  - frontend-explanation/api-docs/tutorials/connections/managing-requests.md
+  - frontend-explanation/api-docs/tutorials/connections/requesting-connections.md
+  - frontend-explanation/api-docs/tutorials/connections/terminating-connections.md
+  
+  **Other:**
+  - DOCS/implementation/notification-service-implementation.md
+  - DOCS/implementation/end-to-end-testing.md
+  - frontend-explanation/api-docs/tutorials/getting-started.md
+
+- [ ] Note their completeness
+- [ ] Identify redundancies
+
+### Implementation Notes
+- [ ] Any discovered bugs
+- [ ] Any missing features
+- [ ] Any inconsistencies
+- [ ] Recommendations for improvements
+
+## Next Steps
+1. Start with test file discovery
+2. Analyze authorization middleware
+3. Create endpoint inventory
+4. Begin documentation consolidation

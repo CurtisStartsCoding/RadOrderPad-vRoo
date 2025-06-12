@@ -5,13 +5,14 @@
  * 1. Admin Staff Login
  * 2. Admin Order Queue
  * 3. Order Details Retrieval
- * 4. Patient Information Update
- * 5. Insurance Information Update
- * 6. Supplemental Information Addition
- * 7. Document Upload
- * 8. Connected Radiology Organizations Listing
- * 9. Send Order to Radiology
- * 10. Profile Management
+ * 4. EMR Summary Parsing
+ * 5. Patient Information Update
+ * 6. Insurance Information Update
+ * 7. Supplemental Information Addition
+ * 8. Document Upload
+ * 9. Connected Radiology Organizations Listing
+ * 10. Send Order to Radiology
+ * 11. Profile Management
  * 
  * Usage:
  * ```
@@ -69,6 +70,35 @@ SUPPLEMENTAL INFORMATION
 Prior Imaging: MRI of lumbar spine performed 6 months ago showed mild disc bulging at L4-L5.
 Relevant Lab Results: CBC and CMP within normal limits.
 Additional Clinical Notes: Patient reports worsening pain with physical activity.
+`;
+
+// Sample EMR text with patient and insurance information
+const testEmrSummaryText = `
+PATIENT INFORMATION
+------------------
+Name: John Smith
+DOB: 01/15/1975
+Gender: Male
+Address: 123 Main Street, Apt 4B
+City: Boston
+State: MA
+Zip: 02115
+Phone: (617) 555-1234
+Email: john.smith@example.com
+
+INSURANCE INFORMATION
+-------------------
+Primary Insurance: Blue Cross Blue Shield
+Policy Number: XYZ123456789
+Group Number: BCBS-GROUP-12345
+Policy Holder: John Smith
+Relationship to Patient: Self
+
+MEDICAL HISTORY
+-------------
+Allergies: Penicillin, Sulfa drugs
+Current Medications: Lisinopril 10mg daily, Metformin 500mg twice daily
+Past Medical History: Hypertension (diagnosed 2018), Type 2 Diabetes (diagnosed 2019)
 `;
 
 console.log('Using admin staff email:', testAdminStaff.email);
@@ -272,6 +302,68 @@ async function testGetOrderDetails(token, orderId) {
     return true;
   } catch (error) {
     console.log(chalk.red('Error retrieving order details:'));
+    if (error.response) {
+      console.log('Status:', error.response.status);
+      console.log('Data:', error.response.data);
+    } else {
+      console.log('Error:', error.message);
+    }
+    return false;
+  }
+}
+
+// Test EMR summary parsing
+async function testPasteEmrSummary(token, orderId) {
+  console.log(chalk.blue(`Testing EMR summary parsing for order ${orderId}...`));
+  
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/admin/orders/${orderId}/paste-summary`,
+      {
+        pastedText: testEmrSummaryText
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    
+    console.log(chalk.green('EMR summary parsed successfully'));
+    console.log('Response status:', response.status);
+    console.log('Success:', response.data.success);
+    
+    // Log the parsed data
+    if (response.data.parsedData) {
+      console.log(chalk.cyan('Parsed Patient Information:'));
+      if (response.data.parsedData.patientInfo) {
+        const patientInfo = response.data.parsedData.patientInfo;
+        console.log('  Address:', patientInfo.address || 'Not found');
+        console.log('  City:', patientInfo.city || 'Not found');
+        console.log('  State:', patientInfo.state || 'Not found');
+        console.log('  Zip Code:', patientInfo.zipCode || 'Not found');
+        console.log('  Phone:', patientInfo.phone || 'Not found');
+        console.log('  Email:', patientInfo.email || 'Not found');
+      }
+      
+      console.log(chalk.cyan('Parsed Insurance Information:'));
+      if (response.data.parsedData.insuranceInfo) {
+        const insuranceInfo = response.data.parsedData.insuranceInfo;
+        console.log('  Insurer Name:', insuranceInfo.insurerName || 'Not found');
+        console.log('  Policy Number:', insuranceInfo.policyNumber || 'Not found');
+        console.log('  Group Number:', insuranceInfo.groupNumber || 'Not found');
+        console.log('  Policy Holder Name:', insuranceInfo.policyHolderName || 'Not found');
+        console.log('  Relationship:', insuranceInfo.relationship || 'Not found');
+        console.log('  Authorization Number:', insuranceInfo.authorizationNumber || 'Not found');
+      }
+    } else {
+      console.log(chalk.yellow('No parsed data returned in response'));
+    }
+    
+    return true;
+  } catch (error) {
+    console.log(chalk.red('Error parsing EMR summary:'));
     if (error.response) {
       console.log('Status:', error.response.status);
       console.log('Data:', error.response.data);
@@ -657,16 +749,19 @@ async function runAllTests() {
       return;
     }
     
-    // Step 5: Update patient information
+    // Step 5: Test EMR summary parsing
+    await testPasteEmrSummary(token, orderId);
+    
+    // Step 6: Update patient information
     await testUpdatePatientInfo(token, orderId);
     
-    // Step 6: Update insurance information
+    // Step 7: Update insurance information
     await testUpdateInsuranceInfo(token, orderId);
     
-    // Step 7: Add supplemental information
+    // Step 8: Add supplemental information
     await testPasteSupplemental(token, orderId);
     
-    // Step 8: Upload document (may be skipped if AWS is not configured)
+    // Step 9: Upload document (may be skipped if AWS is not configured)
     console.log(chalk.blue('\nNote: Document upload test requires AWS S3 configuration'));
     console.log('Required environment variables:');
     console.log('- AWS_ACCESS_KEY_ID: Your AWS access key');
@@ -680,17 +775,17 @@ async function runAllTests() {
     
     await testDocumentUpload(token, orderId);
     
-    // Step 9: List connected radiology organizations
+    // Step 10: List connected radiology organizations
     const radiologyOrgId = await testListConnectedRadiologyOrgs(token);
     
-    // Step 10: Send to radiology (if we have a radiology org ID)
+    // Step 11: Send to radiology (if we have a radiology org ID)
     if (radiologyOrgId) {
       await testSendToRadiology(token, orderId, radiologyOrgId);
     } else {
       console.log(chalk.yellow('No connected radiology organizations found. Skipping send to radiology test.'));
     }
     
-    // Step 11: Test profile management
+    // Step 12: Test profile management
     await testProfileManagement(token);
     
     console.log(chalk.bold('\n=== All Admin Staff Role Tests Completed ==='));

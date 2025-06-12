@@ -36,7 +36,7 @@ export interface UserRegistrationDTO {
   password: string;
   first_name: string;
   last_name: string;
-  role: UserRole;
+  role?: UserRole; // Optional when registering organization (auto-assigned)
   organization_id?: number; // Optional if creating a new organization
   npi?: string;
   specialty?: string;
