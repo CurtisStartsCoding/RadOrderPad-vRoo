@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getOrderStatistics } from '../../services/statistics/order-statistics.service';
-import { exportOrdersToCSV } from '../../services/export/order-export.service';
+import { exportOrdersToCSV } from '../../services/export/simple-order-export.service';
 import logger from '../../utils/logger';
 
 /**
