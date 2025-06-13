@@ -1,7 +1,5 @@
 import { queryPhiDb } from '../../config/db';
 import logger from '../../utils/logger';
-// @ts-expect-error json2csv doesn't have type definitions
-import { Parser } from 'json2csv';
 
 export interface ExportOptions {
   orgId: number;
@@ -83,7 +81,7 @@ export async function exportOrdersToCSV(options: ExportOptions): Promise<string>
 
     // If no orders found, return empty CSV with headers
     if (result.rows.length === 0) {
-      const fields = [
+      const headers = [
         'order_number',
         'status',
         'patient_name',
@@ -102,13 +100,27 @@ export async function exportOrdersToCSV(options: ExportOptions): Promise<string>
         'created_at',
         'updated_at'
       ];
-      const parser = new Parser({ fields });
-      return parser.parse([]);
+      return headers.join(',');
     }
 
-    // Convert to CSV
-    const parser = new Parser();
-    const csv = parser.parse(result.rows);
+    // Convert to CSV manually
+    const headers = Object.keys(result.rows[0]);
+    const csvRows = [
+      headers.join(','), // Header row
+      ...result.rows.map(row => 
+        headers.map(header => {
+          const value = row[header];
+          // Escape quotes and wrap in quotes if contains comma or quotes
+          if (value === null || value === undefined) return '';
+          const stringValue = String(value);
+          if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+            return `"${stringValue.replace(/"/g, '""')}"`;
+          }
+          return stringValue;
+        }).join(',')
+      )
+    ];
+    const csv = csvRows.join('\n');
 
     logger.info('Orders exported successfully', {
       orgId: options.orgId,

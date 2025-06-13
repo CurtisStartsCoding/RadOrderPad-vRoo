@@ -3,11 +3,11 @@
 const axios = require('axios');
 require('dotenv').config();
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000/api';
+const API_BASE_URL = process.env.API_BASE_URL || 'https://api.radorderpad.com/api';
 
 // Test tokens
-const ADMIN_REFERRING_TOKEN = process.env.ADMIN_REFERRING_TOKEN || 'your-admin-referring-token';
-const ADMIN_RADIOLOGY_TOKEN = process.env.ADMIN_RADIOLOGY_TOKEN || 'your-admin-radiology-token';
+const ADMIN_REFERRING_TOKEN = process.env.ADMIN_REFERRING_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksIm9yZ0lkIjoxLCJyb2xlIjoiYWRtaW5fcmVmZXJyaW5nIiwiZW1haWwiOiJ0ZXN0LmFkbWluX3JlZmVycmluZ0BleGFtcGxlLmNvbSIsImlhdCI6MTc0OTgyMDEwOSwiZXhwIjoxNzQ5OTA2NTA5fQ.ttmx0GVhiqlrTBXrrsjDhs50SX6WEyRmn0ODriwLflQ';
+const ADMIN_RADIOLOGY_TOKEN = process.env.ADMIN_RADIOLOGY_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsIm9yZ0lkIjoyLCJyb2xlIjoiYWRtaW5fcmFkaW9sb2d5IiwiZW1haWwiOiJ0ZXN0LmFkbWluX3JhZGlvbG9neUBleGFtcGxlLmNvbSIsImlhdCI6MTc0OTgyMDExMCwiZXhwIjoxNzQ5OTA2NTEwfQ.cH8hd3e9vGDeysgMT4orS9f1aZO8yUs2RAHjeDvJZLM';
 
 async function testOrderStatistics() {
   console.log('\n=== Testing Order Statistics Endpoints ===\n');
