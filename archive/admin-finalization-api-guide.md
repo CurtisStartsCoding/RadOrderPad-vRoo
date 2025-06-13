@@ -57,10 +57,10 @@ The issue was introduced during the Credit Consumption Refactoring (April 14, 20
 
 ## The Fixed Implementation
 
-A new endpoint was created to fix these issues:
+The endpoint was fixed to handle these issues:
 
 ```
-POST /api/admin/orders/{orderId}/send-to-radiology-fixed
+POST /api/admin/orders/{orderId}/send-to-radiology
 ```
 
 ### Key Improvements
@@ -93,7 +93,7 @@ The fixed implementation:
 
 ### Send to Radiology (Fixed Implementation)
 
-**Endpoint:** `POST /api/admin/orders/{orderId}/send-to-radiology-fixed`
+**Endpoint:** `POST /api/admin/orders/{orderId}/send-to-radiology`
 
 **Authentication:** JWT token required (admin_staff role)
 
@@ -168,7 +168,7 @@ Before sending an order to radiology, ensure:
 // Function to send order to radiology
 async function sendOrderToRadiology(token, orderId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/send-to-radiology-fixed`, {
+    const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/send-to-radiology`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -362,7 +362,7 @@ async function completeAdminFinalization(token, orderId, patientData, insuranceD
 You can test the fixed implementation using the provided test script:
 
 ```javascript
-// test-send-to-radiology-fixed.js
+// test-send-to-radiology.js
 const fetch = require('node-fetch');
 
 // Configuration
@@ -406,7 +406,7 @@ async function testFixedImplementation() {
   });
   
   // Send to radiology
-  const response = await fetch(`${API_BASE_URL}/admin/orders/${ORDER_ID}/send-to-radiology-fixed`, {
+  const response = await fetch(`${API_BASE_URL}/admin/orders/${ORDER_ID}/send-to-radiology`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,

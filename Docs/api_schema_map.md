@@ -151,10 +151,7 @@ This document maps core API endpoints to the primary database tables they intera
 -   **`POST /api/admin/orders/{orderId}/send-to-radiology`** (Finalize and send)
     -   Reads: `orders` (PHI), `organizations` (Main - Check credit balance)
     *   Writes: `orders` (PHI - update `status`), `order_history` (PHI), `organizations` (Main - decrement credit balance), `credit_usage_logs` (Main)
--   **`POST /api/admin/orders/{orderId}/send-to-radiology-fixed`** (Fixed implementation for finalize and send)
-    -   Reads: `orders` (PHI), `organizations` (Main - Check credit balance)
-    *   Writes: `orders` (PHI - update `status`), `order_history` (PHI), `organizations` (Main - decrement credit balance), `credit_usage_logs` (Main)
-    *   **Note:** Uses separate database connections for PHI and Main databases to fix the connection issue
+    *   **Note:** Uses separate database connections for PHI and Main databases
 -   **`PUT /api/admin/orders/{orderId}/patient-info`** (Manually update patient)
     -   Writes: `patients` (PHI)
 -   **`PUT /api/admin/orders/{orderId}/insurance-info`** (Manually update insurance)

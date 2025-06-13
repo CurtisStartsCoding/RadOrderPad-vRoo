@@ -278,9 +278,7 @@ Submit pasted supplemental documents to be attached to the order.
 ### 6. Send Order to Radiology
 Finalize and send the order to the radiology group.
 
-**Endpoint**: `POST /api/admin/orders/:orderId/send-to-radiology-fixed`
-
-**Note**: The endpoint uses `-fixed` suffix to avoid circular dependencies in the implementation.
+**Endpoint**: `POST /api/admin/orders/:orderId/send-to-radiology`
 
 **Middleware**:
 - `authenticateJWT`
@@ -316,8 +314,8 @@ Finalize and send the order to the radiology group.
 
 **Code Location**:
 - Route: `/src/routes/admin-orders.routes.ts` (lines 60-70)
-- Controller: `/src/controllers/admin-order/send-to-radiology-fixed.controller.ts`
-- Service Handler: `/src/services/order/admin/handlers/send-to-radiology-fixed.ts`
+- Controller: `/src/controllers/admin-order/send-to-radiology.controller.ts`
+- Service Handler: `/src/services/order/admin/handlers/send-to-radiology.ts`
 
 ---
 
@@ -379,7 +377,7 @@ The typical workflow for admin staff processing orders is:
 4. **Review/Update Insurance**: If needed, call `PUT /api/admin/orders/:orderId/insurance-info`
 5. **Add Supplemental Docs**: If available, call `POST /api/admin/orders/:orderId/paste-supplemental`
 6. **Select Radiology Partner**: Frontend must provide list of connected radiology organizations
-7. **Send to Radiology**: Call `POST /api/admin/orders/:orderId/send-to-radiology-fixed` with radiologyOrganizationId
+7. **Send to Radiology**: Call `POST /api/admin/orders/:orderId/send-to-radiology` with radiologyOrganizationId
 
 ## Limitations
 

@@ -583,7 +583,7 @@ async function testSendToRadiology(token, orderId, radiologyOrgId) {
   
   try {
     const response = await axios.post(
-      `${API_URL}/api/admin/orders/${orderId}/send-to-radiology-fixed`,
+      `${API_URL}/api/admin/orders/${orderId}/send-to-radiology`,
       {
         radiologyOrganizationId: radiologyOrgId
       },

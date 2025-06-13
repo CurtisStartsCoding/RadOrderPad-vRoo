@@ -33,8 +33,7 @@
    - Accepts pasted text for supplemental information
 
 7. **Send to Radiology**
-   - `POST /api/admin/orders/{orderId}/send-to-radiology-fixed` - Works correctly
-   - **Important**: Uses `-fixed` suffix, not the documented endpoint
+   - `POST /api/admin/orders/{orderId}/send-to-radiology` - Works correctly
    - **Requires**: `radiologyOrganizationId` in request body
    - Returns success but `remainingCredits` field is undefined
 
@@ -68,7 +67,7 @@
 ## Documentation Updates Needed
 
 1. **Send to Radiology Endpoint**
-   - Correct endpoint: `/send-to-radiology-fixed` (not `/send-to-radiology`)
+   - Endpoint: `/send-to-radiology`
    - Requires `radiologyOrganizationId` in body (not documented)
 
 2. **Field Naming Convention**
@@ -89,7 +88,7 @@
    4. Add supplemental → POST /api/admin/orders/{id}/paste-supplemental
    5. Upload files (if needed) → File upload workflow
    6. Select radiology org → Frontend UI selection
-   7. Send to radiology → POST /api/admin/orders/{id}/send-to-radiology-fixed
+   7. Send to radiology → POST /api/admin/orders/{id}/send-to-radiology
    ```
 
 2. **File Upload from Browser**:

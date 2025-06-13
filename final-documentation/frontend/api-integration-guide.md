@@ -23,7 +23,7 @@ Based on backend tests, these endpoints are working but frontend still uses mock
 - **Admin Order Finalization**: All endpoints working including:
   - EMR parsing (`/api/admin/orders/:id/paste-summary`) - 90%+ accuracy
   - Patient/insurance updates
-  - Send to radiology (`/api/admin/orders/:id/send-to-radiology-fixed`)
+  - Send to radiology (`/api/admin/orders/:id/send-to-radiology`)
 - **User Management**: Full CRUD operations tested
 - **Location Management**: Complete CRUD operations working
 - **Billing/Credits**: Stripe integration and credit system working
@@ -53,7 +53,7 @@ All these endpoints are tested and working in the backend:
    - EMR parsing (`/api/admin/orders/:id/paste-summary`) - 90%+ accuracy
    - Patient updates (`/api/admin/orders/:id/patient-info`)
    - Insurance updates (`/api/admin/orders/:id/insurance-info`)
-   - Send to radiology (`/api/admin/orders/:id/send-to-radiology-fixed`)
+   - Send to radiology (`/api/admin/orders/:id/send-to-radiology`)
 
 3. **Management Features**
    - User CRUD (`/api/users/*`)
@@ -788,7 +788,7 @@ function AdminQueuePage() {
 - `POST /api/uploads/presigned-url` - Document upload URL
 - `POST /api/uploads/confirm` - Confirm upload
 - `POST /api/admin/orders/:orderId/paste-supplemental` - Add notes
-- `POST /api/admin/orders/:orderId/send-to-radiology-fixed` - Send order
+- `POST /api/admin/orders/:orderId/send-to-radiology` - Send order
 
 **Implementation:**
 ```javascript
@@ -899,8 +899,7 @@ function OrderFinalizationPage() {
     }
 
     try {
-      // NOTE: Endpoint uses -fixed suffix to avoid circular dependencies
-      const response = await apiRequest(`/api/admin/orders/${orderId}/send-to-radiology-fixed`, {
+      const response = await apiRequest(`/api/admin/orders/${orderId}/send-to-radiology`, {
         method: 'POST',
         body: JSON.stringify({
           radiologyOrganizationId: selectedRadiologyOrgId

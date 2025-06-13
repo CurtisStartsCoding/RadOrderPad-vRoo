@@ -49,23 +49,11 @@ router.post(
   '/:orderId/send-to-radiology',
   authenticateJWT,
   authorizeRole(['admin_staff']),
-  adminOrderController.sendToRadiology
-);
-
-/**
- * @route   POST /api/admin/orders/:orderId/send-to-radiology-fixed
- * @desc    Finalize and send the order to the radiology group using the fixed implementation
- * @access  Private (Admin Staff)
- */
-router.post(
-  '/:orderId/send-to-radiology-fixed',
-  authenticateJWT,
-  authorizeRole(['admin_staff']),
   (req, res) => {
     // Import the controller dynamically to avoid circular dependencies
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { handleSendToRadiologyFixed } = require('../controllers/admin-order/send-to-radiology-fixed.controller');
-    return handleSendToRadiologyFixed(req, res);
+    const { handleSendToRadiology } = require('../controllers/admin-order/send-to-radiology.controller');
+    return handleSendToRadiology(req, res);
   }
 );
 

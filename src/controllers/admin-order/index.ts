@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import handlePasteSummary from './paste-summary.controller';
 import handlePasteSupplemental from './paste-supplemental.controller';
-import sendToRadiology from './send-to-radiology.controller';
+// Note: sendToRadiology is handled differently due to circular dependencies
 import updatePatientInfo from './update-patient.controller';
 import updateInsuranceInfo from './update-insurance.controller';
 import listPendingAdminOrders from './list-pending-admin.controller';
@@ -30,9 +30,10 @@ export class AdminOrderController implements AdminOrderControllerInterface {
   /**
    * Send order to radiology
    * @route POST /api/admin/orders/:orderId/send-to-radiology
+   * Note: This is handled dynamically in the route to avoid circular dependencies
    */
-  async sendToRadiology(req: Request, res: Response): Promise<void> {
-    return sendToRadiology(req, res);
+  async sendToRadiology(_req: Request, _res: Response): Promise<void> {
+    throw new Error('This method should not be called directly. Use the route handler instead.');
   }
   
   /**
@@ -67,7 +68,7 @@ export default new AdminOrderController();
 export {
   handlePasteSummary,
   handlePasteSupplemental,
-  sendToRadiology,
+  // sendToRadiology is not exported due to circular dependencies
   updatePatientInfo,
   updateInsuranceInfo,
   listPendingAdminOrders

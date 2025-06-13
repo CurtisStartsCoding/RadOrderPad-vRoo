@@ -72,7 +72,7 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 | GET /api/admin/orders/queue | - | ✓ | ✓ | - | - | - | - | - |
 | PUT /api/admin/orders/:orderId/patient-info | - | ✓ | ✓ | - | - | - | - | - |
 | PUT /api/admin/orders/:orderId/insurance-info | - | ✓ | ✓ | - | - | - | - | - |
-| POST /api/admin/orders/:orderId/paste-emr-summary | - | ✓ | ✓ | - | - | - | - | - |
+| POST /api/admin/orders/:orderId/paste-summary | - | ✓ | ✓ | - | - | - | - | - |
 | POST /api/admin/orders/:orderId/paste-supplemental | - | ✓ | ✓ | - | - | - | - | - |
 | POST /api/admin/orders/:orderId/send-to-radiology | - | ✓ | ✓ | - | - | - | - | - |
 | **Scheduler Workflow** |
