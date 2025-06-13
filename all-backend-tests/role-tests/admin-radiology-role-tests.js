@@ -379,6 +379,50 @@ async function testRadiologySpecificFeatures(token) {
   logTest('Cannot access referring practice queue (expected to fail)', !restrictedResult.success && restrictedResult.status === 403);
 }
 
+// Test Suite 7: Statistics and Export
+async function testStatisticsAndExport(token) {
+  console.log('\n=== Testing Statistics and Export ===\n');
+
+  // Test 1: Get order statistics
+  console.log('1. Testing GET /api/admin/statistics/orders');
+  const statsResult = await apiRequest('GET', '/api/admin/statistics/orders', null, token);
+  logTest('Get order statistics', statsResult.success && statsResult.data?.data);
+  
+  if (statsResult.success && statsResult.data?.data) {
+    const stats = statsResult.data.data;
+    console.log(`   Total Orders Assigned: ${stats.total}`);
+    console.log(`   Last 7 Days: ${stats.last7Days}`);
+    console.log(`   Last 30 Days: ${stats.last30Days}`);
+    if (stats.byStatus) {
+      console.log(`   By Status:`, stats.byStatus);
+    }
+  }
+
+  // Test 2: Export orders to CSV
+  console.log('\n2. Testing POST /api/admin/export/orders');
+  const exportResult = await apiRequest('POST', '/api/admin/export/orders', { limit: 5 }, token);
+  logTest('Export orders to CSV', exportResult.success);
+  
+  if (exportResult.success && exportResult.data) {
+    console.log(`   Export successful, received ${typeof exportResult.data === 'string' ? 'CSV data' : 'response'}`);
+    if (typeof exportResult.data === 'string') {
+      const lines = exportResult.data.split('\n');
+      console.log(`   CSV has ${lines.length} lines (including header)`);
+    }
+  }
+
+  // Test 3: Export with date filter
+  console.log('\n3. Testing POST /api/admin/export/orders with date filter');
+  const dateFrom = new Date();
+  dateFrom.setDate(dateFrom.getDate() - 30);
+  const exportFilteredResult = await apiRequest('POST', '/api/admin/export/orders', {
+    dateFrom: dateFrom.toISOString().split('T')[0],
+    dateTo: new Date().toISOString().split('T')[0],
+    limit: 10
+  }, token);
+  logTest('Export orders with date filter', exportFilteredResult.success);
+}
+
 // Main test runner
 async function runTests() {
   console.log('===========================================');
@@ -398,6 +442,7 @@ async function runTests() {
     await testConnectionManagement(token, orgData);
     await testDualCreditSystem(token);
     await testRadiologySpecificFeatures(token);
+    await testStatisticsAndExport(token);
 
     // Summary
     console.log('\n===========================================');

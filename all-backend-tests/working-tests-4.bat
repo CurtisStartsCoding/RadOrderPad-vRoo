@@ -73,6 +73,12 @@ call test-admin-insurance-info.bat
 cd ..
 
 echo.
+echo Running Admin Statistics and Export Tests...
+cd scripts
+call test-admin-statistics.bat
+cd ..
+
+echo.
 echo Running Trial Password Update Test...
 node ../tests/test-trial-password-update.js
 
