@@ -14,7 +14,13 @@
       "mcp__github-server__get_file_contents",
       "Bash(mv:*)",
       "Bash(./run-admin-referring-role-tests.bat)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "mcp__github-server__search_code",
+      "Bash(./test-list-org-users.bat)",
+      "mcp__github-server__search_repositories",
+      "Bash(export API_BASE_URL=https://api.radorderpad.com)",
+      "Bash(export API_URL=https://api.radorderpad.com)",
+      "Bash(export JWT_SECRET=radorderpad-secure-jwt-secret-f8a72c1e9b5d3e7f4a6b2c8d9e0f1a2b3c4d5e6f)"
     ],
     "deny": []
   },

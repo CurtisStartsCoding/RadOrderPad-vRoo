@@ -4,20 +4,20 @@
  */
 
 const fetch = require('node-fetch');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config({ path: './.env.test' });
 
 // Configuration
 const API_URL = process.env.API_URL || 'https://api.radorderpad.com';
-const ADMIN_TOKEN = process.env.ADMIN_REFERRING_TOKEN;
-const NON_ADMIN_TOKEN = process.env.PHYSICIAN_TOKEN;
 
-if (!ADMIN_TOKEN) {
-  console.error('Error: ADMIN_REFERRING_TOKEN not set in .env.test');
-  process.exit(1);
-}
-
-if (!NON_ADMIN_TOKEN) {
-  console.error('Error: PHYSICIAN_TOKEN not set in .env.test');
+// Read tokens from files
+let ADMIN_TOKEN, NON_ADMIN_TOKEN;
+try {
+  ADMIN_TOKEN = fs.readFileSync(path.join(__dirname, '..', 'tokens', 'admin_referring-token.txt'), 'utf8').trim();
+  NON_ADMIN_TOKEN = fs.readFileSync(path.join(__dirname, '..', 'tokens', 'physician-token.txt'), 'utf8').trim();
+} catch (error) {
+  console.error('Error reading token files:', error.message);
   process.exit(1);
 }
 

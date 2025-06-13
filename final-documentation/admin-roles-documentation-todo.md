@@ -39,26 +39,30 @@ This document tracks the progress of documenting practice manager roles (admin_r
 ## Phase 2: Organize by Functionality
 
 ### 2.1 Common Functions (Both Roles)
-- [ ] User Management
-  - [ ] List users in organization
-  - [ ] Invite new users
-  - [ ] Update user information
-  - [ ] Deactivate users
-  - [ ] Assign users to locations
+- [x] User Management (documented in user-management.md)
+  - [x] List users in organization (GET /api/users)
+  - [x] Get user by ID (GET /api/users/:userId)
+  - [x] Invite new users (POST /api/user-invites/invite)
+  - [x] Update user information (PUT /api/users/:userId)
+  - [x] Deactivate users (DELETE /api/users/:userId)
+  - [x] Assign users to locations (documented in user-location-assignment.md)
 - [x] Location Management
   - [x] Create locations
   - [x] Update locations
   - [x] List locations
-  - [x] Assign users to locations (documented separately in user management)
+  - [x] Assign users to locations (documented in user-location-assignment.md)
 - [x] Organization Management
   - [x] View organization profile (GET /api/organizations/mine)
   - [x] Update organization information (PUT /api/organizations/mine)
   - [x] Search organizations (GET /api/organizations)
   - [x] Registration with auto-role assignment
-- [ ] Connection Management
-  - [ ] View connections
-  - [ ] Request connections
-  - [ ] Accept/reject connections
+- [x] Connection Management (documented in connection-management.md)
+  - [x] View connections (GET /api/connections)
+  - [x] Request connections (POST /api/connections)
+  - [x] List incoming requests (GET /api/connections/requests)
+  - [x] Accept connections (POST /api/connections/:id/approve)
+  - [x] Reject connections (POST /api/connections/:id/reject)
+  - [x] Terminate connections (DELETE /api/connections/:id)
 - [ ] Billing Overview
   - [ ] View credit balance
   - [ ] View subscription status
@@ -90,6 +94,35 @@ This document tracks the progress of documenting practice manager roles (admin_r
   - [ ] View incoming order volume
   - [ ] View order completion rates
   - [ ] Export radiology reports
+
+### 2.4 super_admin Functions
+- [ ] Organization Management
+  - [ ] List all organizations (GET /api/superadmin/organizations)
+  - [ ] View organization details (GET /api/superadmin/organizations/:orgId)
+  - [ ] Update organization status (PUT /api/superadmin/organizations/:orgId/status)
+  - [ ] Adjust credits (POST /api/superadmin/organizations/:orgId/credits/adjust)
+- [ ] User Management
+  - [ ] List all users system-wide (GET /api/superadmin/users)
+  - [ ] View user details (GET /api/superadmin/users/:userId)
+  - [ ] Update user status (PUT /api/superadmin/users/:userId/status)
+- [ ] Prompt Management
+  - [ ] Manage LLM prompt templates
+  - [ ] Create prompt assignments
+  - [ ] Version control for prompts
+- [ ] System Monitoring
+  - [ ] View validation logs (GET /api/superadmin/logs/validation)
+  - [ ] View credit usage logs (GET /api/superadmin/logs/credits)
+  - [ ] View purgatory events (GET /api/superadmin/logs/purgatory)
+
+### 2.5 trial User Functions
+- [ ] Limited Authentication
+  - [ ] Trial registration (POST /api/auth/trial/register)
+  - [ ] Trial login (POST /api/auth/trial/login)
+- [ ] Limited Physician Workflow
+  - [ ] Patient search with demo data (POST /api/patients/search)
+  - [ ] Order validation only (POST /api/orders/validate)
+  - [ ] Cannot create persistent orders
+  - [ ] Cannot finalize or send to radiology
 
 ## Phase 3: Documentation Structure
 
@@ -226,6 +259,23 @@ Missing documentation for admin roles:
   - DOCS/implementation/notification-service-implementation.md
   - DOCS/implementation/end-to-end-testing.md
   - frontend-explanation/api-docs/tutorials/getting-started.md
+  
+  **Super Admin Documentation:**
+  - docs-consolidated/superadmin/api-reference.md
+  - docs-consolidated/superadmin/organization-management.md
+  - docs-consolidated/superadmin/overview.md
+  - docs-consolidated/superadmin/prompt-management.md
+  - docs-consolidated/superadmin/README.md
+  - docs-consolidated/superadmin/system-monitoring.md
+  - docs-consolidated/superadmin/user-management.md
+  - DOCS/implementation/superadmin-api-implementation.md
+  - DOCS/implementation/superadmin-api-tests.md
+  - DOCS/implementation/superadmin-api.md
+  
+  **Trial User Documentation:**
+  - frontend-explanation/api-docs/tutorials/trial-features/physician-sandbox.md
+  - DOCS/trial-feature.md
+  - DOCS/role_based_access.md
 
 - [ ] Note their completeness
 - [ ] Identify redundancies

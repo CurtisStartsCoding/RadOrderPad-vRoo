@@ -18,7 +18,7 @@ RadOrderPad is a clinical decision support platform that:
 ## Quick Navigation by Role
 
 ### For Physicians
-- **[Complete API Documentation](api/physician-endpoints.md)** - All physician endpoints with examples
+- **[Complete API Documentation](api/physician.md)** - All physician endpoints with examples
   - [Authentication](#authentication) - Login and session management
   - [Patient Search](#patient-search) - Find existing patients
   - [Order Validation](#validation) - ACR-based clinical validation
@@ -26,7 +26,7 @@ RadOrderPad is a clinical decision support platform that:
   - [Profile Management](#profile) - Update user information
 
 ### For Admin Staff
-- **[Complete API Documentation](api/admin-staff-endpoints.md)** - All administrative endpoints
+- **[Complete API Documentation](api/admin-staff.md)** - All administrative endpoints
   - [Order Queue](#queue) - View pending orders
   - [Patient Updates](#patient-info) - Add demographics
   - [Insurance Updates](#insurance) - Add insurance details
@@ -34,38 +34,67 @@ RadOrderPad is a clinical decision support platform that:
 
 ### For Admin Referring
 - **[Organization Management](api/organization-management.md)** - Manage organization profile
+- **[User Management](api/user-management.md)** - Invite, update, and manage users
 - **[Location Management](api/location-management.md)** - Manage physical locations/facilities
-- **[Connection Management](api/connection-management-endpoints.md)** - Partner relationships
-- **[Billing & Credits](api/billing-credit-endpoints.md)** - Purchase and track credits
+- **[User-Location Assignment](api/user-location-assignment.md)** - Assign users to locations
+- **[Connection Management](api/connection-management.md)** - Partner relationships
+- **[Billing & Credits](api/billing-credit.md)** - Purchase and track credits
+
+### For Admin Radiology
+- **[Organization Management](api/organization-management.md)** - Manage organization profile
+- **[User Management](api/user-management.md)** - Invite schedulers and radiologists
+- **[Location Management](api/location-management.md)** - Manage imaging centers
+- **[User-Location Assignment](api/user-location-assignment.md)** - Assign staff to locations
+- **[Connection Management](api/connection-management.md)** - Approve referring practices
+- **[Billing & Credits](api/billing-credit.md)** - View dual credit balances
 
 ### For Schedulers (Radiology)
-- **[Complete API Documentation](api/scheduler-endpoints.md)** - All scheduler endpoints
+- **[Complete API Documentation](api/scheduler.md)** - All scheduler endpoints
   - [Incoming Orders Queue](#queue) - View orders from referring organizations
   - [Order Details](#details) - Complete order information
   - [Request Information](#request-info) - Ask for missing data
   - [Update Status](#status) - Track order progress
   - [Export Data](#export) - Integration with RIS/PACS
 
+### For Super Admins
+- **[Complete API Documentation](api/super-admin.md)** - System administration endpoints
+  - [Organization Management](#organizations) - Manage all organizations
+  - [User Management](#users) - Manage all users
+  - [System Logs](#logs) - View validation, credit, and purgatory logs
+  - [Prompt Management](#prompts) - Manage LLM prompt templates
+
+### For Trial Users
+- **[Complete API Documentation](api/trial-user.md)** - Limited access endpoints
+  - [Trial Registration](#registration) - Create trial account
+  - [Trial Login](#login) - Authenticate trial user
+  - [Order Validation](#validation) - Limited validations (200 max)
+  - [Limitations](#limitations) - What trial users cannot access
+
 ## Documentation Index
 
 ### API Documentation
 
 #### Core References
-- **[Common Endpoints](api/common-endpoints.md)** - Authentication, profiles, file uploads, and other shared endpoints
+- **[Common Endpoints](api/common.md)** - Authentication, profiles, file uploads, and other shared endpoints
 - **[Endpoint Access Matrix](api/endpoint-access-matrix.md)** - Complete matrix showing which roles can access which endpoints
 
 #### Role-Specific Endpoints
-- [Physician Endpoints](api/physician-endpoints.md) - Patient search, validation, and order creation
-- [Admin Staff Endpoints](api/admin-staff-endpoints.md) - Order queue processing and administrative updates
-- [Scheduler Endpoints](api/scheduler-endpoints.md) - Radiology workflow management and order processing
+- [Physician Endpoints](api/physician.md) - Patient search, validation, and order creation
+- [Admin Staff Endpoints](api/admin-staff.md) - Order queue processing and administrative updates
+- [Scheduler Endpoints](api/scheduler.md) - Radiology workflow management and order processing
+- [Super Admin Endpoints](api/super-admin.md) - System-wide administration and monitoring
+- [Trial User Endpoints](api/trial-user.md) - Limited access for evaluation purposes
 - [Organization Management](api/organization-management.md) - Organization profile management endpoints
+- [User Management](api/user-management.md) - User invitation, updates, and deactivation
 - [Location Management](api/location-management.md) - Physical location/facility management endpoints
-- [Connection Management](api/connection-management-endpoints.md) - Partner relationship endpoints
-- [Billing & Credits](api/billing-credit-endpoints.md) - Credit and subscription management
+- [User-Location Assignment](api/user-location-assignment.md) - Manage user access to locations
+- [Connection Management](api/connection-management.md) - Partner relationship endpoints
+- [Billing & Credits](api/billing-credit.md) - Credit and subscription management
 
 #### Detailed References
 - [Patient Search API](api/patient-search-api.md) - POST /api/patients/search for dictation-based lookup
-- [File Upload](api/file-upload-endpoints.md) - Document upload workflow with S3 integration
+- [File Upload](api/file-upload.md) - Document upload workflow with S3 integration
+- [User-Location Scalability](api/user-location-assignment-scalability.md) - Scalability considerations and future enhancements for bulk operations
 - [Verified API Reference](api/verified-api-reference.md) - Comprehensive reference for all verified endpoints
 
 ### Backend Documentation
@@ -74,6 +103,7 @@ RadOrderPad is a clinical decision support platform that:
 - [Database Script Execution](backend/database-script-execution.md) - Guide for creating and running database maintenance scripts with connection examples
 
 ### Frontend Documentation
+- [API Integration Guide](frontend/api-integration-guide.md) - Comprehensive guide for replacing hardcoded frontend data with API calls
 - [Validation Engine Integration](frontend/validation-engine-integration.md) - Guide for integrating the validation engine into frontend applications
 - [Validation Workflow Guide](frontend/validation-workflow-guide.md) - Step-by-step workflow showing how physicians refine clinical dictation based on ACR feedback until approved (codes shown only when appropriate)
 
@@ -95,6 +125,8 @@ RadOrderPad is a clinical decision support platform that:
   - [Admin Radiology Tests](../all-backend-tests/role-tests/admin-radiology-role-tests.js) - Radiology admin tests (organization management, radiologist/scheduler management, dual credits, connection approvals)
   - [Scheduler Tests](../all-backend-tests/role-tests/scheduler-role-tests.js) - Radiology workflow tests (login, incoming orders queue, order details, request information, update status, export data)
   - [Scheduler Test Results](../all-backend-tests/role-tests/scheduler-workflow-summary.md) - Verified endpoint behaviors and known limitations
+  - [Trial User Tests](../all-backend-tests/role-tests/trial-role-tests.js) - Trial user workflow tests (registration, login, validation with limits, password update)
+  - [Super Admin Tests](../all-backend-tests/scripts/test-superadmin-api.js) - System administration tests (organizations, users, status updates, credit adjustments)
 
 #### Test Execution
 - **Physician Tests**: Run with `node all-backend-tests/role-tests/physician-role-tests.js` or `all-backend-tests/role-tests/run-physician-role-tests.bat`
@@ -102,6 +134,8 @@ RadOrderPad is a clinical decision support platform that:
 - **Admin Referring Tests**: Run with `node all-backend-tests/role-tests/admin-referring-role-tests.js` or `all-backend-tests/role-tests/run-admin-referring-role-tests.bat`
 - **Admin Radiology Tests**: Run with `node all-backend-tests/role-tests/admin-radiology-role-tests.js` or `all-backend-tests/role-tests/run-admin-radiology-role-tests.bat`
 - **Scheduler Tests**: Run with `node all-backend-tests/role-tests/scheduler-role-tests.js` or `all-backend-tests/role-tests/run-scheduler-role-tests.bat`
+- **Trial User Tests**: Run with `node all-backend-tests/role-tests/trial-role-tests.js`
+- **Super Admin Tests**: Run with `node all-backend-tests/scripts/test-superadmin-api.js`
 - **Comprehensive Admin Staff Tests**: Run with `all-backend-tests/admin-staff-role-comprehensive-tests.bat` (includes all admin staff tests + S3 uploads)
 - **Comprehensive Scheduler Tests**: Run with `all-backend-tests/scheduler-role-comprehensive-tests.bat` (includes scheduler tests + radiology request info tests)
 - **All Working Tests**: Run with `all-backend-tests/working-tests.bat`, `working-tests-2.bat`, or `working-tests-3.bat` for different test suites

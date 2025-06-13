@@ -19,27 +19,16 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 | **Authentication** |
 | POST /api/auth/login | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - |
 | POST /api/auth/trial/login | - | - | - | - | - | - | - | ✓ |
+| POST /api/auth/trial/register | - | - | - | - | - | - | - | ✓ |
 | POST /api/auth/update-password | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - |
 | **User Profile** |
 | GET /api/users/me | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | PUT /api/users/me | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - |
-| **Organization** |
+| **Organization Management** |
+| POST /api/auth/register | Public endpoint (creates organization + admin user) |
 | GET /api/organizations/mine | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - |
 | PUT /api/organizations/mine | - | - | ✓ | - | ✓ | - | ✓ | - |
-| GET /api/organizations/search | - | - | ✓ | - | ✓ | - | ✓ | - |
-| **Physician Workflow** |
-| POST /api/patients/search | ✓ | - | - | - | - | - | - | ✓ |
-| POST /api/orders/validate | ✓ | - | - | - | - | - | - | ✓ |
-| POST /api/orders | ✓ | - | - | - | - | - | - | - |
-| **Order Management** |
-| GET /api/orders | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| GET /api/orders/:orderId | ✓¹ | ✓² | ✓² | ✓³ | ✓³ | ✓⁴ | ✓ | - |
-| **Admin Staff Workflow** |
-| GET /api/admin/orders/queue | - | ✓ | ✓ | - | - | - | - | - |
-| PUT /api/admin/orders/:orderId/patient-info | - | ✓ | ✓ | - | - | - | - | - |
-| PUT /api/admin/orders/:orderId/insurance-info | - | ✓ | ✓ | - | - | - | - | - |
-| POST /api/admin/orders/:orderId/paste-supplemental | - | ✓ | ✓ | - | - | - | - | - |
-| POST /api/admin/orders/:orderId/send-to-radiology | - | ✓ | ✓ | - | - | - | - | - |
+| GET /api/organizations | - | - | ✓ | - | ✓ | - | ✓ | - |
 | **User Management** |
 | GET /api/users | - | - | ✓ | - | ✓ | - | ✓ | - |
 | GET /api/users/:userId | - | - | ✓ | - | ✓ | - | ✓ | - |
@@ -47,58 +36,131 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 | DELETE /api/users/:userId | - | - | ✓ | - | ✓ | - | ✓ | - |
 | POST /api/user-invites/invite | - | - | ✓ | - | ✓ | - | - | - |
 | **Location Management** |
-| GET /api/organizations/mine/locations | - | ✓ | ✓ | ✓ | ✓ | - | - | - |
-| POST /api/organizations/mine/locations | - | - | ✓ | - | ✓ | - | - | - |
-| GET /api/organizations/mine/locations/:id | - | ✓ | ✓ | ✓ | ✓ | - | - | - |
-| PUT /api/organizations/mine/locations/:id | - | - | ✓ | - | ✓ | - | - | - |
-| DELETE /api/organizations/mine/locations/:id | - | - | ✓ | - | ✓ | - | - | - |
-| **User Location Assignment** |
-| GET /api/user-locations/:userId/locations | - | - | ✓ | - | ✓ | - | - | - |
-| POST /api/user-locations/:userId/locations/:locationId | - | - | ✓ | - | ✓ | - | - | - |
-| DELETE /api/user-locations/:userId/locations/:locationId | - | - | ✓ | - | ✓ | - | - | - |
+| GET /api/locations | - | ✓ | ✓ | ✓ | ✓ | - | - | - |
+| POST /api/locations | - | - | ✓ | - | ✓ | - | - | - |
+| GET /api/locations/:locationId | - | ✓ | ✓ | ✓ | ✓ | - | - | - |
+| PUT /api/locations/:locationId | - | - | ✓ | - | ✓ | - | - | - |
+| DELETE /api/locations/:locationId | - | - | ✓ | - | ✓ | - | - | - |
+| **User-Location Assignment** |
+| GET /api/users/:userId/locations | - | - | ✓ | - | ✓ | - | - | - |
+| POST /api/users/:userId/locations/:locationId | - | - | ✓ | - | ✓ | - | - | - |
+| DELETE /api/users/:userId/locations/:locationId | - | - | ✓ | - | ✓ | - | - | - |
 | **Connection Management** |
 | GET /api/connections | - | - | ✓ | - | ✓ | - | - | - |
 | POST /api/connections | - | - | ✓ | - | ✓ | - | - | - |
-| DELETE /api/connections/:relationshipId | - | - | ✓ | - | ✓ | - | - | - |
-| GET /api/connections/:relationshipId/requests | - | - | ✓ | - | ✓ | - | - | - |
-| POST /api/connections/:relationshipId/approve | - | - | - | - | ✓ | - | - | - |
-| POST /api/connections/:relationshipId/reject | - | - | - | - | ✓ | - | - | - |
+| GET /api/connections/requests | - | - | ✓ | - | ✓ | - | - | - |
+| POST /api/connections/:id/approve | - | - | ✓ | - | ✓ | - | - | - |
+| POST /api/connections/:id/reject | - | - | ✓ | - | ✓ | - | - | - |
+| DELETE /api/connections/:id | - | - | ✓ | - | ✓ | - | - | - |
 | **Billing & Credits** |
-| GET /api/billing | - | - | ✓ | - | - | - | - | - |
-| GET /api/billing/credit-balance | - | ✓ | ✓ | - | - | - | - | - |
+| GET /api/billing | - | - | ✓ | - | ✓ | - | - | - |
+| GET /api/billing/credit-balance | - | - | ✓ | - | - | - | - | - |
 | GET /api/billing/credit-usage | - | - | ✓ | - | - | - | - | - |
 | POST /api/billing/create-checkout-session | - | - | ✓ | - | - | - | - | - |
-| POST /api/billing/subscriptions | - | - | ✓ | - | - | - | - | - |
-| **File Management** |
-| POST /api/uploads/presigned-url | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
-| POST /api/uploads/confirm | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
-| GET /api/uploads/:documentId/download-url | ✓⁵ | ✓⁵ | ✓⁵ | ✓⁵ | ✓⁵ | ✓⁵ | ✓ | - |
-| **Radiology Workflow** |
-| POST /api/radiology/orders/:orderId/info-request | - | - | - | ✓ | ✓ | - | - | - |
-| POST /api/radiology/orders/:orderId/status | - | - | - | ✓ | ✓ | - | - | - |
-| GET /api/radiology/orders/mine | - | - | - | - | - | ✓ | - | - |
-| POST /api/radiology/reports/:orderId | - | - | - | - | - | ✓ | - | - |
+| **Physician Workflow** |
+| POST /api/patients/search | ✓ | - | - | - | - | - | - | ✓ |
+| POST /api/orders/validate | ✓ | - | - | - | - | - | - | ✓ |
+| POST /api/orders | ✓ | - | - | - | - | - | - | - |
+| PUT /api/orders/:orderId/finalize | ✓ | - | - | - | - | - | - | - |
+| **Order Management** |
+| GET /api/orders | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| GET /api/orders/:orderId | ✓¹ | ✓² | ✓² | ✓³ | ✓³ | ✓⁴ | ✓ | - |
+| **Admin Staff Workflow** |
+| GET /api/admin/orders/queue | - | ✓ | ✓ | - | - | - | - | - |
+| PUT /api/admin/orders/:orderId/patient-info | - | ✓ | ✓ | - | - | - | - | - |
+| PUT /api/admin/orders/:orderId/insurance-info | - | ✓ | ✓ | - | - | - | - | - |
+| POST /api/admin/orders/:orderId/paste-emr-summary | - | ✓ | ✓ | - | - | - | - | - |
+| POST /api/admin/orders/:orderId/paste-supplemental | - | ✓ | ✓ | - | - | - | - | - |
+| POST /api/admin/orders/:orderId/send-to-radiology | - | ✓ | ✓ | - | - | - | - | - |
+| **Scheduler Workflow** |
+| GET /api/radiology/orders/incoming-queue | - | - | - | ✓ | ✓ | - | - | - |
+| GET /api/radiology/orders/:orderId | - | - | - | ✓ | ✓ | ✓ | - | - |
+| POST /api/radiology/orders/:orderId/request-information | - | - | - | ✓ | ✓ | - | - | - |
+| PUT /api/radiology/orders/:orderId/status | - | - | - | ✓ | ✓ | - | - | - |
+| GET /api/radiology/orders/:orderId/export | - | - | - | ✓ | ✓ | - | - | - |
+| **File Upload** |
+| POST /api/uploads/presigned-url | - | ✓ | ✓ | ✓ | ✓ | - | - | - |
+| POST /api/uploads/confirm | - | ✓ | ✓ | ✓ | ✓ | - | - | - |
 | **Super Admin** |
-| GET /api/superadmin/prompts | - | - | - | - | - | - | ✓ | - |
-| POST /api/superadmin/prompts | - | - | - | - | - | - | ✓ | - |
-| GET /api/superadmin/logs | - | - | - | - | - | - | ✓ | - |
 | GET /api/superadmin/organizations | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/organizations/:orgId | - | - | - | - | - | - | ✓ | - |
+| PUT /api/superadmin/organizations/:orgId/status | - | - | - | - | - | - | ✓ | - |
+| POST /api/superadmin/organizations/:orgId/credits/adjust | - | - | - | - | - | - | ✓ | - |
 | GET /api/superadmin/users | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/users/:userId | - | - | - | - | - | - | ✓ | - |
+| PUT /api/superadmin/users/:userId/status | - | - | - | - | - | - | ✓ | - |
+| POST /api/superadmin/prompts/templates | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/prompts/templates | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/prompts/templates/:templateId | - | - | - | - | - | - | ✓ | - |
+| PUT /api/superadmin/prompts/templates/:templateId | - | - | - | - | - | - | ✓ | - |
+| DELETE /api/superadmin/prompts/templates/:templateId | - | - | - | - | - | - | ✓ | - |
+| POST /api/superadmin/prompts/assignments | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/prompts/assignments | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/prompts/assignments/:assignmentId | - | - | - | - | - | - | ✓ | - |
+| PUT /api/superadmin/prompts/assignments/:assignmentId | - | - | - | - | - | - | ✓ | - |
+| DELETE /api/superadmin/prompts/assignments/:assignmentId | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/logs/validation | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/logs/validation/enhanced | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/logs/credits | - | - | - | - | - | - | ✓ | - |
+| GET /api/superadmin/logs/purgatory | - | - | - | - | - | - | ✓ | - |
+| **Stripe Webhooks** |
+| POST /api/webhooks/stripe | Public endpoint (verified by Stripe signature) |
 
 ## Notes
 
-- ✓ = Full access
-- ✓¹ = Can only view orders they created
-- ✓² = Can view organization's orders
-- ✓³ = Can view orders sent to their organization
-- ✓⁴ = Can view assigned orders
-- ✓⁵ = Can only download documents from their organization
-- - = No access
+¹ Physicians can only access their own orders  
+² Admin staff and admin_referring can access all orders in their organization  
+³ Schedulers and admin_radiology can access orders sent to their organization  
+⁴ Radiologists can only access orders assigned to them  
 
-## Additional Access Rules
+## Quick Reference by Role
 
-1. **Organization-Based Access**: Most endpoints filter data based on the user's organization
-2. **Location-Based Access**: Users can only access data from locations they're assigned to
-3. **Order Status Restrictions**: Different roles can only see orders in specific statuses
-4. **Connection-Based Access**: Partner organizations can share certain data through connections
-5. **Trial User Limitations**: Trial users have restricted access and usage limits
+### Physician
+- Patient search and order validation
+- Create and finalize orders
+- View own orders
+- Update own profile
+
+### Admin Staff
+- Process order queue
+- Update patient and insurance info
+- Upload documents
+- Send orders to radiology
+- Access locations
+
+### Admin Referring
+- All admin staff capabilities
+- Manage users and locations
+- Manage connections
+- View billing and purchase credits
+- Update organization profile
+
+### Scheduler
+- View incoming order queue
+- Request additional information
+- Update order status
+- Export order data
+- Access locations
+
+### Admin Radiology
+- All scheduler capabilities (except request info)
+- Manage users and locations
+- Manage connections
+- View billing (no purchasing)
+- Update organization profile
+
+### Radiologist
+- View assigned orders only
+- Update own profile
+
+### Super Admin
+- System-wide organization management
+- System-wide user management
+- Prompt template management
+- View all system logs
+- Adjust organization credits
+
+### Trial User
+- Limited physician capabilities
+- Patient search and validation only
+- Cannot create persistent orders

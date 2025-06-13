@@ -1,0 +1,96 @@
+{
+  "passed": 0,
+  "failed": 15,
+  "tests": [
+    {
+      "name": "GET /superadmin/organizations",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/organizations failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/organizations/:orgId",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/organizations/1 failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "PUT /superadmin/organizations/:orgId/status",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/organizations/1/status failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "POST /superadmin/organizations/:orgId/credits/adjust",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/organizations/1/credits/adjust failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/users",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/users failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/users/:userId",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/users/1 failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "PUT /superadmin/users/:userId/status",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/users/1/status failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "POST /superadmin/prompts/templates",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/prompts/templates failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/prompts/templates",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/prompts/templates failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "POST /superadmin/prompts/assignments",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/prompts/assignments failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/prompts/assignments",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/prompts/assignments failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/logs/validation",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/logs/validation?limit=5 failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/logs/validation/enhanced",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/logs/validation/enhanced?limit=5&date_preset=last_7_days failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/logs/credits",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/logs/credits?limit=5 failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    },
+    {
+      "name": "GET /superadmin/logs/purgatory",
+      "passed": false,
+      "error": "request to http://localhost:3000/api/superadmin/logs/purgatory?limit=5 failed, reason: connect ECONNREFUSED 127.0.0.1:3000",
+      "response": null
+    }
+  ]
+}

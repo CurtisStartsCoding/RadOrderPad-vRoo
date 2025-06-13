@@ -5,6 +5,36 @@
 # - Remove ~/code/ prefix from paths
 # - Use ./RadOrderPad-vRoo instead of ~/code/RadOrderPad-vRoo
 
+BACKUP_DATE=$(date +"%Y%m%d_%H%M%S")
+mkdir -p ~/code/backups
+cp -r ~/code/RadOrderPad-vRoo ~/code/RadOrderPad-vRoo-backup-$BACKUP_DATE
+echo "Backup created at: ~/code/RadOrderPad-vRoo-backup-$BACKUP_DATE"
+cd ~/code/RadOrderPad-vRoo
+git fetch --all
+git pull origin backend-v1.0-release
+npm install
+npm run build
+
+# Only prune AFTER build succeeds
+if [ $? -eq 0 ]; then
+      npm prune --production
+      pm2 stop RadOrderPad
+      pm2 delete RadOrderPad
+      pm2 start dist/index.js --name RadOrderPad --update-env
+      pm2 logs RadOrderPad --lines 50
+  else
+      echo "Build failed, not deploying"
+  fi
+
+
+
+
+
+
+
+
+
+## old way
 # Create backup of current code
 BACKUP_DATE=$(date +"%Y%m%d_%H%M%S")
 mkdir -p ~/code/backups
@@ -22,3 +52,7 @@ pm2 stop RadOrderPad
 pm2 delete RadOrderPad
 pm2 start dist/index.js --name RadOrderPad --update-env
 pm2 logs RadOrderPad --lines 50
+
+
+
+
