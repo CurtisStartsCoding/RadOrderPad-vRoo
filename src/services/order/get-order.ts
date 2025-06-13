@@ -75,6 +75,17 @@ export async function getOrderById(orderId: number, userId: number): Promise<Ord
     
     const order = orderResult.rows[0] as Order;
     
+    // Debug logging to check insurance and supplemental data
+    logger.info('GET ORDER DEBUG - Insurance and supplemental fields:', {
+      orderId,
+      insurance_name: order.insurance_name,
+      insurance_policy_number: order.insurance_policy_number,
+      insurance_group_number: order.insurance_group_number,
+      supplemental_emr_content: order.supplemental_emr_content ? 'HAS_CONTENT' : 'NO_CONTENT',
+      patient_first_name: order.patient_first_name,
+      patient_city: order.patient_city
+    });
+    
     // Check authorization (user belongs to the referring or radiology organization)
     if (user.organization_id !== order.referring_organization_id && 
         user.organization_id !== order.radiology_organization_id) {

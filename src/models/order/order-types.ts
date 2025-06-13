@@ -41,6 +41,42 @@ export interface Order {
   referring_physician_name?: string;
   referring_physician_npi?: string;
   radiology_organization_name?: string;
+  patient_name?: string;
+  patient_dob?: string;
+  patient_gender?: string;
+  patient_mrn?: string;
+  insurance_provider?: string;
+  
+  // Enhanced fields from JOINs (available when fetching individual orders)
+  patient_first_name?: string;
+  patient_last_name?: string;
+  patient_middle_name?: string;
+  patient_date_of_birth?: string;
+  patient_address_line1?: string;
+  patient_address_line2?: string;
+  patient_city?: string;
+  patient_state?: string;
+  patient_zip_code?: string;
+  patient_phone_number?: string;
+  patient_email?: string;
+  
+  // Insurance fields from JOINs
+  insurance_name?: string;
+  insurance_plan_name?: string;
+  insurance_policy_number?: string;
+  insurance_group_number?: string;
+  insurance_policy_holder_name?: string;
+  insurance_policy_holder_relationship?: string;
+  insurance_policy_holder_dob?: string;
+  
+  // Secondary insurance fields
+  secondary_insurance_name?: string;
+  secondary_insurance_plan_name?: string;
+  secondary_insurance_policy_number?: string;
+  secondary_insurance_group_number?: string;
+  
+  // Supplemental EMR content
+  supplemental_emr_content?: string;
   
   // HIPAA compliance fields - Referring Physician details
   referring_physician_phone?: string;
