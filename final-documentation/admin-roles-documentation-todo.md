@@ -63,66 +63,70 @@ This document tracks the progress of documenting practice manager roles (admin_r
   - [x] Accept connections (POST /api/connections/:id/approve)
   - [x] Reject connections (POST /api/connections/:id/reject)
   - [x] Terminate connections (DELETE /api/connections/:id)
-- [ ] Billing Overview
-  - [ ] View credit balance
-  - [ ] View subscription status
+- [x] Billing Overview (documented in billing-credit.md)
+  - [x] View credit balance
+  - [x] View subscription status
 
 ### 2.2 admin_referring Specific Functions
-- [ ] Credit Management
-  - [ ] Purchase credits
-  - [ ] Create Stripe checkout sessions
-  - [ ] View credit usage history
-  - [ ] View billing history
-- [ ] Physician Management
-  - [ ] Manage physician users
-  - [ ] View physician activity
+- [x] Credit Management (documented in billing-credit.md)
+  - [x] Purchase credits
+  - [x] Create Stripe checkout sessions
+  - [x] View credit usage history
+  - [x] View billing history
+- [x] Physician Management (part of user-management.md)
+  - [x] Manage physician users (invite, update, deactivate)
+  - [ ] View physician activity (not implemented)
 - [ ] Order Management
-  - [ ] View organization's orders
-  - [ ] Export order data
+  - [ ] View organization's orders (uses GET /api/orders with org filter)
+  - [ ] Export order data (not implemented)
 
 ### 2.3 admin_radiology Specific Functions
-- [ ] Scheduler Management
-  - [ ] Create scheduler accounts
-  - [ ] Manage scheduler permissions
-- [ ] Radiologist Management
-  - [ ] Create radiologist accounts
-  - [ ] Manage radiologist permissions
-- [ ] Connection Management
-  - [ ] View incoming connection requests
-  - [ ] Approve referring organizations
+- [x] Scheduler Management (part of user-management.md)
+  - [x] Create scheduler accounts (invite with role=scheduler)
+  - [x] Manage scheduler permissions (update/deactivate)
+- [x] Radiologist Management (part of user-management.md)
+  - [x] Create radiologist accounts (invite with role=radiologist)
+  - [x] Manage radiologist permissions (update/deactivate)
+- [x] Connection Management (documented in connection-management.md)
+  - [x] View incoming connection requests
+  - [x] Approve referring organizations
 - [ ] Order Statistics
-  - [ ] View incoming order volume
-  - [ ] View order completion rates
-  - [ ] Export radiology reports
+  - [ ] View incoming order volume (not implemented)
+  - [ ] View order completion rates (not implemented)
+  - [ ] Export radiology reports (not implemented)
 
 ### 2.4 super_admin Functions
-- [ ] Organization Management
-  - [ ] List all organizations (GET /api/superadmin/organizations)
-  - [ ] View organization details (GET /api/superadmin/organizations/:orgId)
-  - [ ] Update organization status (PUT /api/superadmin/organizations/:orgId/status)
-  - [ ] Adjust credits (POST /api/superadmin/organizations/:orgId/credits/adjust)
-- [ ] User Management
-  - [ ] List all users system-wide (GET /api/superadmin/users)
-  - [ ] View user details (GET /api/superadmin/users/:userId)
-  - [ ] Update user status (PUT /api/superadmin/users/:userId/status)
-- [ ] Prompt Management
-  - [ ] Manage LLM prompt templates
-  - [ ] Create prompt assignments
-  - [ ] Version control for prompts
-- [ ] System Monitoring
-  - [ ] View validation logs (GET /api/superadmin/logs/validation)
-  - [ ] View credit usage logs (GET /api/superadmin/logs/credits)
-  - [ ] View purgatory events (GET /api/superadmin/logs/purgatory)
+- [x] Organization Management (documented in super-admin.md)
+  - [x] List all organizations (GET /api/superadmin/organizations)
+  - [x] View organization details (GET /api/superadmin/organizations/:orgId)
+  - [x] Update organization status (PUT /api/superadmin/organizations/:orgId/status)
+  - [x] Adjust credits (POST /api/superadmin/organizations/:orgId/credits/adjust)
+- [x] User Management (documented in super-admin.md)
+  - [x] List all users system-wide (GET /api/superadmin/users)
+  - [x] View user details (GET /api/superadmin/users/:userId)
+  - [x] Update user status (PUT /api/superadmin/users/:userId/status)
+- [x] Prompt Management (partially documented in super-admin.md)
+  - [x] List LLM prompt templates (tested)
+  - [x] List prompt assignments (tested)
+  - [ ] Create/update/delete templates (not tested)
+  - [ ] Create/update/delete assignments (not tested)
+- [x] System Monitoring (documented in super-admin.md)
+  - [x] View validation logs (GET /api/superadmin/logs/validation)
+  - [x] View enhanced validation logs (GET /api/superadmin/logs/validation/enhanced)
+  - [x] View credit usage logs (GET /api/superadmin/logs/credits)
+  - [x] View purgatory events (GET /api/superadmin/logs/purgatory)
 
 ### 2.5 trial User Functions
-- [ ] Limited Authentication
-  - [ ] Trial registration (POST /api/auth/trial/register)
-  - [ ] Trial login (POST /api/auth/trial/login)
-- [ ] Limited Physician Workflow
-  - [ ] Patient search with demo data (POST /api/patients/search)
-  - [ ] Order validation only (POST /api/orders/validate)
-  - [ ] Cannot create persistent orders
-  - [ ] Cannot finalize or send to radiology
+- [x] Limited Authentication (documented in trial-user.md)
+  - [x] Trial registration (POST /api/auth/trial/register)
+  - [x] Trial login (POST /api/auth/trial/login)
+  - [x] Get trial profile (GET /api/auth/trial/me)
+  - [x] Update password (POST /api/auth/trial/update-password)
+- [x] Limited Physician Workflow (documented in trial-user.md)
+  - [x] Patient search with demo data (POST /api/patients/search)
+  - [x] Order validation only (POST /api/orders/validate/trial)
+  - [x] Cannot create persistent orders (tested - returns 403)
+  - [x] Cannot finalize or send to radiology
 
 ## Phase 3: Documentation Structure
 
@@ -141,8 +145,20 @@ Already exists in final-documentation/api/:
 - [x] verified-api-reference.md
 
 Missing documentation for admin roles:
-- [ ] admin-referring-endpoints.md (comprehensive)
-- [ ] admin-radiology-endpoints.md (comprehensive)
+- [x] admin-referring documentation is spread across:
+  - organization-management.md
+  - user-management.md
+  - location-management.md
+  - user-location-assignment.md
+  - connection-management.md
+  - billing-credit.md
+- [x] admin-radiology documentation is spread across:
+  - organization-management.md
+  - user-management.md
+  - location-management.md
+  - user-location-assignment.md
+  - connection-management.md
+  - billing-credit.md (view only, no purchasing)
 
 ### 3.2 Documentation Standards
 - [x] Each endpoint must include:

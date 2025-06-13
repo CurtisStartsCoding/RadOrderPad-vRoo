@@ -57,6 +57,9 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 | GET /api/billing/credit-balance | - | - | ✓ | - | - | - | - | - |
 | GET /api/billing/credit-usage | - | - | ✓ | - | - | - | - | - |
 | POST /api/billing/create-checkout-session | - | - | ✓ | - | - | - | - | - |
+| **Admin Statistics & Export** |
+| GET /api/admin/statistics/orders | - | - | ✓ | - | ✓ | - | - | - |
+| POST /api/admin/orders/export | - | - | ✓ | - | ✓ | - | - | - |
 | **Physician Workflow** |
 | POST /api/patients/search | ✓ | - | - | - | - | - | - | ✓ |
 | POST /api/orders/validate | ✓ | - | - | - | - | - | - | ✓ |
