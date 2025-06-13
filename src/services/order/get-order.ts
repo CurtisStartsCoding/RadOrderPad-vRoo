@@ -19,11 +19,55 @@ export async function getOrderById(orderId: number, userId: number): Promise<Ord
     
     const user = userResult.rows[0];
     
-    // Get order details
-    const orderResult = await queryPhiDb(
-      'SELECT * FROM orders WHERE id = $1',
-      [orderId]
-    );
+    // Get order details with patient, insurance, and supplemental info
+    const orderResult = await queryPhiDb(`
+      SELECT 
+        o.*,
+        -- Patient info from patients table
+        p.first_name as patient_first_name,
+        p.last_name as patient_last_name,
+        p.middle_name as patient_middle_name,
+        p.date_of_birth as patient_date_of_birth,
+        p.gender as patient_gender,
+        p.address_line1 as patient_address_line1,
+        p.address_line2 as patient_address_line2,
+        p.city as patient_city,
+        p.state as patient_state,
+        p.zip_code as patient_zip_code,
+        p.phone_number as patient_phone_number,
+        p.email as patient_email,
+        p.mrn as patient_mrn,
+        
+        -- Primary insurance info
+        pi.insurer_name as insurance_name,
+        pi.plan_type as insurance_plan_name,
+        pi.policy_number as insurance_policy_number,
+        pi.group_number as insurance_group_number,
+        pi.policy_holder_name as insurance_policy_holder_name,
+        pi.policy_holder_relationship as insurance_policy_holder_relationship,
+        pi.policy_holder_date_of_birth as insurance_policy_holder_dob,
+        
+        -- Secondary insurance info
+        si.insurer_name as secondary_insurance_name,
+        si.plan_type as secondary_insurance_plan_name,
+        si.policy_number as secondary_insurance_policy_number,
+        si.group_number as secondary_insurance_group_number,
+        
+        -- Supplemental EMR info (latest record)
+        pcr.content as supplemental_emr_content
+        
+      FROM orders o
+      LEFT JOIN patients p ON o.patient_id = p.id
+      LEFT JOIN patient_insurance pi ON p.id = pi.patient_id AND pi.is_primary = true
+      LEFT JOIN patient_insurance si ON p.id = si.patient_id AND si.is_primary = false
+      LEFT JOIN (
+        SELECT DISTINCT ON (order_id) order_id, content
+        FROM patient_clinical_records 
+        WHERE record_type = 'supplemental_docs_paste'
+        ORDER BY order_id, added_at DESC
+      ) pcr ON o.id = pcr.order_id
+      WHERE o.id = $1
+    `, [orderId]);
     
     if (orderResult.rows.length === 0) {
       throw new Error('Order not found');

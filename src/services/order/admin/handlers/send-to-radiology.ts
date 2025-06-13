@@ -76,12 +76,24 @@ export async function sendToRadiology(
     const creditBalance = creditResult.rows[0].credit_balance;
     
     
-    // 5. Update order status to pending_radiology
+    // 5. Update order status to pending_radiology and snapshot data for audit trail
     const updateOrderQuery = `
       UPDATE orders 
-      SET status = 'pending_radiology', updated_at = NOW() 
-      WHERE id = $1 
-      RETURNING id, status
+      SET 
+        status = 'pending_radiology',
+        updated_at = NOW(),
+        -- Snapshot patient info for audit trail
+        patient_name = COALESCE(p.first_name || COALESCE(' ' || p.last_name, ''), orders.patient_name),
+        patient_dob = COALESCE(p.date_of_birth, orders.patient_dob),
+        patient_gender = COALESCE(p.gender, orders.patient_gender),
+        patient_mrn = COALESCE(p.mrn, orders.patient_mrn),
+        -- Snapshot insurance info for audit trail  
+        insurance_provider = COALESCE(pi.insurer_name, orders.insurance_provider),
+        insurance_policy_number = COALESCE(pi.policy_number, orders.insurance_policy_number)
+      FROM patients p
+      LEFT JOIN patient_insurance pi ON p.id = pi.patient_id AND pi.is_primary = true
+      WHERE orders.id = $1 AND orders.patient_id = p.id
+      RETURNING orders.id, orders.status
     `;
     
     const updateResult = await phiClient.query(updateOrderQuery, [orderId]);

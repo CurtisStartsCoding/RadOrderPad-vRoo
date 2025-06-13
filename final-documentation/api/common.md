@@ -164,11 +164,17 @@ These endpoints are available to multiple or all user roles. See the [Endpoint A
 
 ### Get Order Details
 **GET** `/api/orders/:orderId`
-- **Description**: Get detailed order information
+- **Description**: Get detailed order information including patient, insurance, and supplemental data
 - **Access**: Users with permission to view the order
 - **Headers**: `Authorization: Bearer {token}`
-- **Response**: Complete order object with all details
+- **Response**: Complete order object with all details including:
+  - Base order fields (`id`, `order_number`, `status`, etc.)
+  - Patient information (`patient_first_name`, `patient_last_name`, `patient_city`, `patient_state`, `patient_zip_code`, etc.)
+  - Primary insurance (`insurance_name`, `insurance_policy_number`, `insurance_group_number`, etc.)
+  - Secondary insurance (`secondary_insurance_name`, `secondary_insurance_policy_number`, etc.)
+  - Supplemental EMR content (`supplemental_emr_content`)
 - **Access Control**: Based on user's role and relationship to the order
+- **Note**: Enhanced in January 2025 to include saved patient/insurance data via table JOINs
 
 ## File Management
 

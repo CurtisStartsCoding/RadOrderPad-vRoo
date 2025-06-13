@@ -103,6 +103,7 @@ RadOrderPad is a clinical decision support platform that:
 - [Validation Engine Architecture](backend/validation-engine-architecture.md) - Technical architecture of the clinical decision support engine powering ACR-based appropriateness checks
 - [Dual Credit Billing System](backend/dual-credit-billing-system.md) - Implementation of basic and advanced credit types for radiology organizations
 - [Database Script Execution](backend/database-script-execution.md) - Guide for creating and running database maintenance scripts with connection examples
+- [Admin Order Finalization - Data Retrieval Fix](backend/admin-order-finalization-data-retrieval-fix.md) - Resolution of saved data not appearing when returning to order finalization page
 
 ### Optimization Documentation
 - [Redis Payload Optimization](optimization/redis-payload-optimization.md) - Analysis and solution for reducing excessive Redis data in logs and API payloads
