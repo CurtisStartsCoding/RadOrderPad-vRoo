@@ -20,13 +20,13 @@ router.get(
 );
 
 /**
- * @route   POST /api/admin/orders/export
+ * @route   POST /api/admin/export/orders
  * @desc    Export orders to CSV
  * @access  Private (admin_referring, admin_radiology)
  * @body    { status?, dateFrom?, dateTo?, limit? }
  */
 router.post(
-  '/orders/export',
+  '/export/orders',
   authenticateJWT,
   authorizeRole(['admin_referring', 'admin_radiology']),
   exportOrdersHandler

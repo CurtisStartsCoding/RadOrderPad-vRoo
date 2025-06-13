@@ -39,9 +39,9 @@ async function testOrderStatistics() {
   }
 
   // Test 3: Export orders as admin_referring
-  console.log('\n3. Testing POST /api/admin/orders/export (admin_referring)');
+  console.log('\n3. Testing POST /api/admin/export/orders (admin_referring)');
   try {
-    const response = await axios.post(`${API_BASE_URL}/admin/orders/export`, 
+    const response = await axios.post(`${API_BASE_URL}/admin/export/orders`, 
       {
         status: 'all',
         limit: 10
@@ -60,12 +60,12 @@ async function testOrderStatistics() {
   }
 
   // Test 4: Export with date filter
-  console.log('\n4. Testing POST /api/admin/orders/export with date filter');
+  console.log('\n4. Testing POST /api/admin/export/orders with date filter');
   try {
     const dateFrom = new Date();
     dateFrom.setDate(dateFrom.getDate() - 30); // Last 30 days
     
-    const response = await axios.post(`${API_BASE_URL}/admin/orders/export`, 
+    const response = await axios.post(`${API_BASE_URL}/admin/export/orders`, 
       {
         dateFrom: dateFrom.toISOString().split('T')[0],
         dateTo: new Date().toISOString().split('T')[0],

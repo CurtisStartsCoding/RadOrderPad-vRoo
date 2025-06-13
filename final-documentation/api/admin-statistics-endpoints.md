@@ -72,7 +72,7 @@ Authorization: Bearer <admin_token>
 
 Exports orders to CSV format with optional filtering.
 
-**Endpoint:** `POST /api/admin/orders/export`
+**Endpoint:** `POST /api/admin/export/orders`
 
 **Authorization:** Required - JWT token with role `admin_referring` or `admin_radiology`
 
@@ -83,7 +83,7 @@ Exports orders to CSV format with optional filtering.
 #### Request
 
 ```http
-POST /api/admin/orders/export
+POST /api/admin/export/orders
 Authorization: Bearer <admin_token>
 Content-Type: application/json
 
@@ -178,7 +178,7 @@ async function exportOrders(token: string) {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
-  const response = await fetch('https://api.radorderpad.com/api/admin/orders/export', {
+  const response = await fetch('https://api.radorderpad.com/api/admin/export/orders', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -216,14 +216,14 @@ curl -X GET https://api.radorderpad.com/api/admin/statistics/orders \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN"
 
 # Export all orders
-curl -X POST https://api.radorderpad.com/api/admin/orders/export \
+curl -X POST https://api.radorderpad.com/api/admin/export/orders \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"status": "all", "limit": 500}' \
   -o orders-export.csv
 
 # Export completed orders from last 7 days
-curl -X POST https://api.radorderpad.com/api/admin/orders/export \
+curl -X POST https://api.radorderpad.com/api/admin/export/orders \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
