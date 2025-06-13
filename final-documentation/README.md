@@ -104,6 +104,11 @@ RadOrderPad is a clinical decision support platform that:
 - [Dual Credit Billing System](backend/dual-credit-billing-system.md) - Implementation of basic and advanced credit types for radiology organizations
 - [Database Script Execution](backend/database-script-execution.md) - Guide for creating and running database maintenance scripts with connection examples
 
+### Optimization Documentation
+- [Redis Payload Optimization](optimization/redis-payload-optimization.md) - Analysis and solution for reducing excessive Redis data in logs and API payloads
+- [Redis Implementation Comparison](optimization/redis-implementation-comparison.md) - Side-by-side comparison of Replit (Valkey) vs current (RedisSearch) implementations
+- [RedisSearch Best Practices](optimization/redissearch-best-practices.md) - Guide for leveraging RedisSearch effectively while minimizing data transfer
+
 ### Frontend Documentation
 - [API Integration Guide](frontend/api-integration-guide.md) - Comprehensive guide for replacing hardcoded frontend data with API calls
 - [Validation Engine Integration](frontend/validation-engine-integration.md) - Guide for integrating the validation engine into frontend applications
