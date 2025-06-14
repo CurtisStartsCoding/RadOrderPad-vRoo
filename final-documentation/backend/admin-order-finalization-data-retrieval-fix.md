@@ -1,8 +1,8 @@
 # Admin Order Finalization - Data Retrieval Fix
 
-**Date:** January 2025  
+**Date:** Implementation started - pending deployment and testing  
 **Issue:** Saved patient and insurance data not showing when returning to order finalization page  
-**Status:** ✅ RESOLVED  
+**Status:** 🔧 FIX IMPLEMENTED - AWAITING TESTING  
 
 ## Problem Description
 
@@ -10,7 +10,10 @@ Admin staff reported that after saving patient information, insurance details, a
 
 ### Root Cause Analysis
 
-The issue was in the backend `GET /api/orders/:orderId` endpoint implementation:
+The issue had two components:
+
+#### Issue 1: Missing Data Retrieval JOINs
+The `GET /api/orders/:orderId` endpoint was missing JOINs for related tables:
 
 1. **Original Query** (in `/src/services/order/get-order.ts`):
    ```sql
@@ -22,7 +25,15 @@ The issue was in the backend `GET /api/orders/:orderId` endpoint implementation:
    - Insurance info: `patient_insurance` table  
    - Supplemental EMR: `patient_clinical_records` table
 
-3. **Result**: Frontend received order data without the saved patient/insurance/supplemental information, causing fields to appear blank.
+#### Issue 2: Incomplete Insurance Data Persistence
+The insurance save function was only storing 5 of 8 insurance fields:
+
+1. **Missing Fields** in `/src/services/order/admin/insurance/update-info.ts`:
+   - `plan_type` (from frontend `planType`)
+   - `policy_holder_date_of_birth` (from frontend `policyHolderDateOfBirth`)
+   - `verification_status` (from frontend `verificationStatus`)
+
+2. **Result**: Even with correct JOINs, these fields returned empty because they were never saved.
 
 ## Solution Implemented
 
@@ -106,6 +117,41 @@ WHERE orders.id = $1 AND orders.patient_id = p.id
 RETURNING orders.id, orders.status
 ```
 
+### Phase 3: Complete Insurance Data Persistence
+
+**File Modified:** `/src/services/order/admin/insurance/update-info.ts`
+
+**Problem**: Insurance save function was missing 3 critical fields, causing them to appear empty even after the JOINs were fixed.
+
+**Fix Applied**: Updated both UPDATE and INSERT queries to include all insurance fields:
+
+```sql
+-- For UPDATE (existing insurance):
+UPDATE patient_insurance SET
+  insurer_name = $1,
+  policy_number = $2,
+  group_number = $3,
+  plan_type = $4,                           -- ✅ ADDED
+  policy_holder_name = $5,
+  policy_holder_relationship = $6,
+  policy_holder_date_of_birth = $7,         -- ✅ ADDED
+  verification_status = $8,                 -- ✅ ADDED
+  updated_at = NOW()
+WHERE id = $9
+
+-- For INSERT (new insurance):
+INSERT INTO patient_insurance
+  (patient_id, insurer_name, policy_number, group_number, plan_type,
+   policy_holder_name, policy_holder_relationship, policy_holder_date_of_birth,
+   verification_status, is_primary, created_at, updated_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, true, NOW(), NOW())
+```
+
+**Frontend Field Mapping**:
+- `insuranceData.planType` → `plan_type`
+- `insuranceData.policyHolderDateOfBirth` → `policy_holder_date_of_birth`  
+- `insuranceData.verificationStatus` → `verification_status`
+
 ## Benefits of This Solution
 
 ### 1. **Immediate Fix** 
@@ -146,9 +192,12 @@ The enhanced endpoint now returns fields in this format:
   
   // Insurance information
   "insurance_name": "Blue Cross",
+  "insurance_plan_name": "PPO",
   "insurance_policy_number": "POL123456",
   "insurance_group_number": "GRP789",
   "insurance_policy_holder_name": "John Doe",
+  "insurance_policy_holder_relationship": "Self",
+  "insurance_policy_holder_dob": "1990-01-01",
   
   // Secondary insurance (if exists)
   "secondary_insurance_name": "Aetna",

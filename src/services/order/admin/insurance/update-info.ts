@@ -29,16 +29,22 @@ export async function updateInsuranceInfo(
        insurer_name = $1,
        policy_number = $2,
        group_number = $3,
-       policy_holder_name = $4,
-       policy_holder_relationship = $5,
+       plan_type = $4,
+       policy_holder_name = $5,
+       policy_holder_relationship = $6,
+       policy_holder_date_of_birth = $7,
+       verification_status = $8,
        updated_at = NOW()
-       WHERE id = $6`,
+       WHERE id = $9`,
       [
         insuranceData.insurerName,
         insuranceData.policyNumber,
         insuranceData.groupNumber,
+        insuranceData.planType,
         insuranceData.policyHolderName,
         insuranceData.policyHolderRelationship,
+        insuranceData.policyHolderDateOfBirth,
+        insuranceData.verificationStatus,
         insuranceId
       ]
     );
@@ -46,17 +52,21 @@ export async function updateInsuranceInfo(
     // Create new insurance
     const newInsuranceResult = await queryPhiDb(
       `INSERT INTO patient_insurance
-       (patient_id, insurer_name, policy_number, group_number, 
-        policy_holder_name, policy_holder_relationship, is_primary, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, true, NOW(), NOW())
+       (patient_id, insurer_name, policy_number, group_number, plan_type,
+        policy_holder_name, policy_holder_relationship, policy_holder_date_of_birth,
+        verification_status, is_primary, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, true, NOW(), NOW())
        RETURNING id`,
       [
         patientId,
         insuranceData.insurerName,
         insuranceData.policyNumber,
         insuranceData.groupNumber,
+        insuranceData.planType,
         insuranceData.policyHolderName,
-        insuranceData.policyHolderRelationship
+        insuranceData.policyHolderRelationship,
+        insuranceData.policyHolderDateOfBirth,
+        insuranceData.verificationStatus
       ]
     );
     

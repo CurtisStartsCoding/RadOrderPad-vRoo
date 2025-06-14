@@ -170,11 +170,11 @@ These endpoints are available to multiple or all user roles. See the [Endpoint A
 - **Response**: Complete order object with all details including:
   - Base order fields (`id`, `order_number`, `status`, etc.)
   - Patient information (`patient_first_name`, `patient_last_name`, `patient_city`, `patient_state`, `patient_zip_code`, etc.)
-  - Primary insurance (`insurance_name`, `insurance_policy_number`, `insurance_group_number`, etc.)
-  - Secondary insurance (`secondary_insurance_name`, `secondary_insurance_policy_number`, etc.)
+  - Primary insurance (`insurance_name`, `insurance_plan_name`, `insurance_policy_number`, `insurance_group_number`, `insurance_policy_holder_name`, `insurance_policy_holder_relationship`, `insurance_policy_holder_dob`)
+  - Secondary insurance (`secondary_insurance_name`, `secondary_insurance_plan_name`, `secondary_insurance_policy_number`, `secondary_insurance_group_number`)
   - Supplemental EMR content (`supplemental_emr_content`)
 - **Access Control**: Based on user's role and relationship to the order
-- **Note**: Enhanced in January 2025 to include saved patient/insurance data via table JOINs
+- **Note**: Enhanced to include complete saved patient/insurance data via table JOINs and fixed insurance save function to store all fields (pending testing)
 
 ## File Management
 

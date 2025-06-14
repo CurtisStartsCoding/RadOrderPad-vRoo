@@ -78,6 +78,7 @@ This document tracks the progress of documenting practice manager roles (admin_r
   - [ ] View physician activity (not implemented)
 - [ ] Order Management
   - [ ] View organization's orders (uses GET /api/orders with org filter)
+  - [ ] Admin order finalization with complete patient/insurance data retrieval (fix implemented, pending testing)
   - [ ] Export order data (not implemented)
 
 ### 2.3 admin_radiology Specific Functions

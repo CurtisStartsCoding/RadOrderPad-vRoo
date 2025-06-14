@@ -2,8 +2,21 @@
  * Debug script to test order data retrieval
  * This will help identify why insurance and supplemental data isn't persisting
  */
+require('dotenv').config();
+const { Pool } = require('pg');
 
-const { queryPhiDb } = require('../src/config/db');
+// PHI Database connection
+const phiPool = new Pool({
+  host: process.env.PG_PHI_HOST || 'localhost',
+  port: process.env.PG_PHI_PORT || '5433',
+  database: process.env.PG_PHI_DATABASE || 'radorder_phi',
+  user: process.env.PG_PHI_USER || 'postgres',
+  password: process.env.PG_PHI_PASSWORD || 'password',
+});
+
+async function queryPhiDb(query, values) {
+  return await phiPool.query(query, values);
+}
 
 async function testOrderDataRetrieval() {
   const orderId = 974; // Test order ID from user's testing
@@ -119,6 +132,8 @@ async function testOrderDataRetrieval() {
     
   } catch (error) {
     console.error('❌ Error during testing:', error);
+  } finally {
+    await phiPool.end();
   }
   
   process.exit(0);
