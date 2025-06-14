@@ -144,31 +144,31 @@
     <div class="auth-section">
         <h3>Authentication</h3>
         <input type="text" id="authToken" placeholder="Enter your JWT token (Bearer token)" />
-        <button onclick="saveToken()">Save Token</button>
-        <button onclick="clearToken()">Clear Token</button>
+        <button id="saveTokenBtn">Save Token</button>
+        <button id="clearTokenBtn">Clear Token</button>
         <div id="authStatus"></div>
     </div>
 
     <div class="section">
         <h2>Quick Lookups</h2>
         <div class="button-group">
-            <button onclick="fetchData('organizations')">List All Organizations</button>
-            <button onclick="fetchData('users')">List All Users</button>
-            <button onclick="fetchData('orders')">Recent Orders (50)</button>
-            <button onclick="fetchData('connections')">Organization Connections</button>
-            <button onclick="fetchData('trial-users/stats')" style="background: #28a745;">Trial User Statistics</button>
+            <button id="fetchOrganizationsBtn">List All Organizations</button>
+            <button id="fetchUsersBtn">List All Users</button>
+            <button id="fetchOrdersBtn">Recent Orders (50)</button>
+            <button id="fetchConnectionsBtn">Organization Connections</button>
+            <button id="fetchTrialStatsBtn" style="background: #28a745;">Trial User Statistics</button>
         </div>
 
         <div class="section">
             <h3>Order Lookups</h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                 <input type="text" id="orderId" placeholder="Order ID" style="width: 150px;" />
-                <button onclick="fetchOrderDetails()">Get Clinical Records</button>
-                <button onclick="fetchCompleteOrderDetails()" style="background: #17a2b8;">Get Complete Details</button>
-                <button onclick="fetchOrderUpdateHistory()">Update History</button>
+                <button id="fetchOrderDetailsBtn">Get Clinical Records</button>
+                <button id="fetchCompleteOrderDetailsBtn" style="background: #17a2b8;">Get Complete Details</button>
+                <button id="fetchOrderUpdateHistoryBtn">Update History</button>
                 
                 <input type="text" id="orderNumber" placeholder="Order Number (ORD-xxx)" style="width: 250px;" />
-                <button onclick="fetchOrderByNumber()">Find Order</button>
+                <button id="fetchOrderByNumberBtn">Find Order</button>
             </div>
         </div>
 
@@ -176,27 +176,27 @@
             <h3>Physician Lookups</h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                 <input type="text" id="physicianId" placeholder="Physician User ID" style="width: 150px;" />
-                <button onclick="fetchPhysicianOrders()">Get Physician Orders</button>
-                <button onclick="fetchOrdersByPhysician()">Search Orders by Physician</button>
+                <button id="fetchPhysicianOrdersBtn">Get Physician Orders</button>
+                <button id="fetchOrdersByPhysicianBtn">Search Orders by Physician</button>
             </div>
         </div>
 
         <div class="section">
             <h3>Patient Details</h3>
             <input type="text" id="patientId" placeholder="Enter Patient ID" style="width: 200px; margin-right: 10px;" />
-            <button onclick="fetchPatientInsurance()">Get Insurance Records</button>
+            <button id="fetchPatientInsuranceBtn">Get Insurance Records</button>
         </div>
 
         <div class="section">
             <h3>Trial User Details</h3>
             <input type="text" id="trialUserId" placeholder="Enter Trial User ID" style="width: 200px; margin-right: 10px;" />
-            <button onclick="fetchTrialUserActivity()">Get Activity Details</button>
+            <button id="fetchTrialUserActivityBtn">Get Activity Details</button>
         </div>
 
         <div class="section">
             <h3>Organization Connections</h3>
             <input type="text" id="orgConnectionId" placeholder="Enter Organization ID" style="width: 200px; margin-right: 10px;" />
-            <button onclick="fetchOrganizationConnections()">Get Connections & Locations</button>
+            <button id="fetchOrgConnectionsBtn">Get Connections & Locations</button>
         </div>
     </div>
 
@@ -208,7 +208,7 @@
             <option value="phi">PHI Database</option>
         </select>
         <textarea id="customQuery" rows="4" placeholder="SELECT * FROM organizations WHERE type = 'radiology_group'"></textarea>
-        <button onclick="executeQuery()">Execute Query</button>
+        <button id="executeQueryBtn">Execute Query</button>
     </div>
 
     <div class="section">
@@ -221,13 +221,32 @@
     <script>
         const API_BASE = window.location.origin + '/api/debug';
         
-        // Load token from localStorage on page load
+        // Load token from localStorage on page load and set up event listeners
         window.onload = function() {
             const savedToken = localStorage.getItem('debugToken');
             if (savedToken) {
                 document.getElementById('authToken').value = savedToken;
                 document.getElementById('authStatus').innerHTML = '<span class="success">Token loaded from storage</span>';
             }
+            
+            // Set up event listeners
+            document.getElementById('saveTokenBtn').addEventListener('click', saveToken);
+            document.getElementById('clearTokenBtn').addEventListener('click', clearToken);
+            document.getElementById('fetchOrganizationsBtn').addEventListener('click', () => fetchData('organizations'));
+            document.getElementById('fetchUsersBtn').addEventListener('click', () => fetchData('users'));
+            document.getElementById('fetchOrdersBtn').addEventListener('click', () => fetchData('orders'));
+            document.getElementById('fetchConnectionsBtn').addEventListener('click', () => fetchData('connections'));
+            document.getElementById('fetchTrialStatsBtn').addEventListener('click', () => fetchData('trial-users/stats'));
+            document.getElementById('fetchOrderDetailsBtn').addEventListener('click', fetchOrderDetails);
+            document.getElementById('fetchCompleteOrderDetailsBtn').addEventListener('click', fetchCompleteOrderDetails);
+            document.getElementById('fetchOrderUpdateHistoryBtn').addEventListener('click', fetchOrderUpdateHistory);
+            document.getElementById('fetchOrderByNumberBtn').addEventListener('click', fetchOrderByNumber);
+            document.getElementById('fetchPhysicianOrdersBtn').addEventListener('click', fetchPhysicianOrders);
+            document.getElementById('fetchOrdersByPhysicianBtn').addEventListener('click', fetchOrdersByPhysician);
+            document.getElementById('fetchPatientInsuranceBtn').addEventListener('click', fetchPatientInsurance);
+            document.getElementById('fetchTrialUserActivityBtn').addEventListener('click', fetchTrialUserActivity);
+            document.getElementById('fetchOrgConnectionsBtn').addEventListener('click', fetchOrganizationConnections);
+            document.getElementById('executeQueryBtn').addEventListener('click', executeQuery);
         };
 
         function saveToken() {
