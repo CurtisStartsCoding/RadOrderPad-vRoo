@@ -1,5 +1,8 @@
 # Admin Order Finalization - Frontend Implementation Guide
 
+**Date:** June 14, 2025
+**Version:** 1.0
+
 ## Overview
 
 The Admin Order Finalization page is a multi-tab interface that allows admin staff to complete physician-created orders by adding required patient demographics, insurance information, and supplemental clinical data before sending orders to radiology organizations.

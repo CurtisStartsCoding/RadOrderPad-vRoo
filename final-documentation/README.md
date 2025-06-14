@@ -1,5 +1,7 @@
 # RadOrderPad API Documentation
 
+**Last Updated:** June 14, 2025
+
 This directory contains comprehensive documentation for the RadOrderPad API backend.
 
 ## System Overview
@@ -114,6 +116,7 @@ RadOrderPad is a clinical decision support platform that:
 - [API Integration Guide](frontend/api-integration-guide.md) - Comprehensive guide for replacing hardcoded frontend data with API calls
 - [Validation Engine Integration](frontend/validation-engine-integration.md) - Guide for integrating the validation engine into frontend applications
 - [Validation Workflow Guide](frontend/validation-workflow-guide.md) - Step-by-step workflow showing how physicians refine clinical dictation based on ACR feedback until approved (codes shown only when appropriate)
+- [Admin Order Finalization](frontend/admin-order-finalization.md) - Implementation guide for the multi-tab interface used by admin staff to complete physician orders
 
 ### Order Process Documentation
 - [Complete Order Workflow](order-process/complete-order-workflow.md) - End-to-end process from physician dictation through clinical decision support to radiology group routing

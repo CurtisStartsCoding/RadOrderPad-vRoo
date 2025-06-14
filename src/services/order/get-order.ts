@@ -60,12 +60,14 @@ export async function getOrderById(orderId: number, userId: number): Promise<Ord
       LEFT JOIN patients p ON o.patient_id = p.id
       LEFT JOIN patient_insurance pi ON p.id = pi.patient_id AND pi.is_primary = true
       LEFT JOIN patient_insurance si ON p.id = si.patient_id AND si.is_primary = false
-      LEFT JOIN (
-        SELECT DISTINCT ON (order_id) order_id, content
+      LEFT JOIN LATERAL (
+        SELECT content
         FROM patient_clinical_records 
-        WHERE record_type = 'supplemental_docs_paste'
-        ORDER BY order_id, added_at DESC
-      ) pcr ON o.id = pcr.order_id
+        WHERE order_id = o.id 
+          AND record_type = 'supplemental_docs_paste'
+        ORDER BY added_at DESC
+        LIMIT 1
+      ) pcr ON true
       WHERE o.id = $1
     `, [orderId]);
     
@@ -82,9 +84,15 @@ export async function getOrderById(orderId: number, userId: number): Promise<Ord
       insurance_policy_number: order.insurance_policy_number,
       insurance_group_number: order.insurance_group_number,
       supplemental_emr_content: order.supplemental_emr_content ? 'HAS_CONTENT' : 'NO_CONTENT',
+      supplemental_emr_content_length: order.supplemental_emr_content?.length || 0,
       patient_first_name: order.patient_first_name,
       patient_city: order.patient_city
     });
+    
+    // Add supplemental_text alias for frontend compatibility
+    if (order.supplemental_emr_content) {
+      (order as Order & { supplemental_text?: string }).supplemental_text = order.supplemental_emr_content;
+    }
     
     // Check authorization (user belongs to the referring or radiology organization)
     if (user.organization_id !== order.referring_organization_id && 
