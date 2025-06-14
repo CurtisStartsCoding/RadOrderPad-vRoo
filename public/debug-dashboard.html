@@ -156,18 +156,47 @@
             <button onclick="fetchData('users')">List All Users</button>
             <button onclick="fetchData('orders')">Recent Orders (50)</button>
             <button onclick="fetchData('connections')">Organization Connections</button>
+            <button onclick="fetchData('trial-users/stats')" style="background: #28a745;">Trial User Statistics</button>
         </div>
 
         <div class="section">
-            <h3>Order Details</h3>
-            <input type="text" id="orderId" placeholder="Enter Order ID" style="width: 200px; margin-right: 10px;" />
-            <button onclick="fetchOrderDetails()">Get Clinical Records</button>
+            <h3>Order Lookups</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="orderId" placeholder="Order ID" style="width: 150px;" />
+                <button onclick="fetchOrderDetails()">Get Clinical Records</button>
+                <button onclick="fetchCompleteOrderDetails()" style="background: #17a2b8;">Get Complete Details</button>
+                <button onclick="fetchOrderUpdateHistory()">Update History</button>
+                
+                <input type="text" id="orderNumber" placeholder="Order Number (ORD-xxx)" style="width: 250px;" />
+                <button onclick="fetchOrderByNumber()">Find Order</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Physician Lookups</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="physicianId" placeholder="Physician User ID" style="width: 150px;" />
+                <button onclick="fetchPhysicianOrders()">Get Physician Orders</button>
+                <button onclick="fetchOrdersByPhysician()">Search Orders by Physician</button>
+            </div>
         </div>
 
         <div class="section">
             <h3>Patient Details</h3>
             <input type="text" id="patientId" placeholder="Enter Patient ID" style="width: 200px; margin-right: 10px;" />
             <button onclick="fetchPatientInsurance()">Get Insurance Records</button>
+        </div>
+
+        <div class="section">
+            <h3>Trial User Details</h3>
+            <input type="text" id="trialUserId" placeholder="Enter Trial User ID" style="width: 200px; margin-right: 10px;" />
+            <button onclick="fetchTrialUserActivity()">Get Activity Details</button>
+        </div>
+
+        <div class="section">
+            <h3>Organization Connections</h3>
+            <input type="text" id="orgConnectionId" placeholder="Enter Organization ID" style="width: 200px; margin-right: 10px;" />
+            <button onclick="fetchOrganizationConnections()">Get Connections & Locations</button>
         </div>
     </div>
 
@@ -257,6 +286,33 @@
             fetchData(`orders/${orderId}/clinical-records`);
         }
 
+        async function fetchOrderByNumber() {
+            const orderNumber = document.getElementById('orderNumber').value.trim();
+            if (!orderNumber) {
+                alert('Please enter an Order Number');
+                return;
+            }
+            fetchData(`orders?orderNumber=${encodeURIComponent(orderNumber)}`);
+        }
+
+        async function fetchPhysicianOrders() {
+            const physicianId = document.getElementById('physicianId').value.trim();
+            if (!physicianId) {
+                alert('Please enter a Physician ID');
+                return;
+            }
+            fetchData(`physicians/${physicianId}/orders`);
+        }
+
+        async function fetchOrdersByPhysician() {
+            const physicianId = document.getElementById('physicianId').value.trim();
+            if (!physicianId) {
+                alert('Please enter a Physician ID');
+                return;
+            }
+            fetchData(`orders?physicianId=${physicianId}`);
+        }
+
         async function fetchPatientInsurance() {
             const patientId = document.getElementById('patientId').value.trim();
             if (!patientId) {
@@ -264,6 +320,42 @@
                 return;
             }
             fetchData(`patients/${patientId}/insurance`);
+        }
+
+        async function fetchTrialUserActivity() {
+            const trialUserId = document.getElementById('trialUserId').value.trim();
+            if (!trialUserId) {
+                alert('Please enter a Trial User ID');
+                return;
+            }
+            fetchData(`trial-users/${trialUserId}/activity`);
+        }
+
+        async function fetchCompleteOrderDetails() {
+            const orderId = document.getElementById('orderId').value.trim();
+            if (!orderId) {
+                alert('Please enter an Order ID');
+                return;
+            }
+            fetchData(`orders/${orderId}/complete`);
+        }
+
+        async function fetchOrderUpdateHistory() {
+            const orderId = document.getElementById('orderId').value.trim();
+            if (!orderId) {
+                alert('Please enter an Order ID');
+                return;
+            }
+            fetchData(`orders/${orderId}/update-history`);
+        }
+
+        async function fetchOrganizationConnections() {
+            const orgId = document.getElementById('orgConnectionId').value.trim();
+            if (!orgId) {
+                alert('Please enter an Organization ID');
+                return;
+            }
+            fetchData(`organizations/${orgId}/connections`);
         }
 
         async function executeQuery() {
@@ -305,6 +397,42 @@
                 return;
             }
             
+            // Special handling for trial user statistics
+            if (title === 'trial-users/stats') {
+                displayTrialUserStats(data);
+                return;
+            }
+            
+            // Special handling for physician orders
+            if (data.physician && data.statistics) {
+                displayPhysicianStats(data);
+                return;
+            }
+            
+            // Special handling for trial user activity
+            if (data.user && data.recentValidations) {
+                displayTrialUserActivity(data);
+                return;
+            }
+            
+            // Special handling for complete order details
+            if (data.order && data.patient !== undefined) {
+                displayCompleteOrderDetails(data);
+                return;
+            }
+            
+            // Special handling for organization connections
+            if (data.connections && data.organizationId) {
+                displayOrganizationConnections(data);
+                return;
+            }
+            
+            // Special handling for update history
+            if (data.updateHistory) {
+                displayUpdateHistory(data);
+                return;
+            }
+            
             if (!data.data || data.data.length === 0) {
                 resultsDiv.innerHTML = `<div class="info">No results found for ${title}</div>`;
                 return;
@@ -313,7 +441,7 @@
             // Build table
             const headers = Object.keys(data.data[0]);
             let html = `
-                <h3>${title} (${data.count} results)</h3>
+                <h3>${title} (${data.count || data.data.length} results)</h3>
                 <table>
                     <thead>
                         <tr>
@@ -338,6 +466,249 @@
             });
             
             html += '</tbody></table>';
+            resultsDiv.innerHTML = html;
+        }
+
+        function displayTrialUserStats(data) {
+            const resultsDiv = document.getElementById('results');
+            let html = '<h3>Trial User Statistics</h3>';
+            
+            // Summary section
+            html += '<div class="info">';
+            html += '<h4>Summary</h4>';
+            const summary = data.summary;
+            html += `<p>Total Trial Users: <strong>${summary.total_trial_users}</strong></p>`;
+            html += `<p>Active Users (have validated): <strong>${summary.active_users}</strong></p>`;
+            html += `<p>Users at Max Limit: <strong>${summary.maxed_out_users}</strong></p>`;
+            html += `<p>Total Validations: <strong>${summary.total_validations}</strong></p>`;
+            html += `<p>Average Validations per User: <strong>${parseFloat(summary.avg_validations_per_user).toFixed(1)}</strong></p>`;
+            html += `<p>Most Active User Validations: <strong>${summary.max_validations_by_user}</strong></p>`;
+            html += '</div>';
+            
+            // Top users table
+            if (data.topUsers && data.topUsers.length > 0) {
+                html += '<h4>Top 20 Most Active Trial Users</h4>';
+                html += '<table><thead><tr>';
+                html += '<th>ID</th><th>Email</th><th>Name</th><th>Specialty</th>';
+                html += '<th>Validations</th><th>Max Allowed</th><th>% Used</th>';
+                html += '<th>Created</th><th>Last Activity</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.topUsers.forEach(user => {
+                    const percentUsed = ((user.validation_count / user.max_validations) * 100).toFixed(1);
+                    html += '<tr>';
+                    html += `<td>${user.id}</td>`;
+                    html += `<td>${user.email}</td>`;
+                    html += `<td>${user.first_name || ''} ${user.last_name || ''}</td>`;
+                    html += `<td>${user.specialty || 'N/A'}</td>`;
+                    html += `<td><strong>${user.validation_count}</strong></td>`;
+                    html += `<td>${user.max_validations}</td>`;
+                    html += `<td>${percentUsed}%</td>`;
+                    html += `<td>${new Date(user.created_at).toLocaleDateString()}</td>`;
+                    html += `<td>${user.last_validation_at ? new Date(user.last_validation_at).toLocaleDateString() : 'Never'}</td>`;
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function displayPhysicianStats(data) {
+            const resultsDiv = document.getElementById('results');
+            let html = '<h3>Physician Order Statistics</h3>';
+            
+            // Physician info
+            html += '<div class="info">';
+            html += '<h4>Physician Information</h4>';
+            const physician = data.physician;
+            html += `<p>Name: <strong>${physician.first_name} ${physician.last_name}</strong></p>`;
+            html += `<p>Email: <strong>${physician.email}</strong></p>`;
+            html += `<p>Role: <strong>${physician.role}</strong></p>`;
+            html += `<p>Organization ID: <strong>${physician.organization_id}</strong></p>`;
+            html += '</div>';
+            
+            // Statistics
+            html += '<div class="info">';
+            html += '<h4>Order Statistics</h4>';
+            const stats = data.statistics;
+            html += `<p>Total Orders: <strong>${stats.total_orders}</strong></p>`;
+            html += `<p>Completed Orders: <strong>${stats.completed_orders}</strong></p>`;
+            html += `<p>Overridden Orders: <strong>${stats.overridden_orders}</strong></p>`;
+            html += `<p>Appropriate Orders: <strong>${stats.appropriate_orders}</strong></p>`;
+            html += `<p>Inappropriate Orders: <strong>${stats.inappropriate_orders}</strong></p>`;
+            html += `<p>Average Compliance Score: <strong>${stats.avg_compliance_score ? parseFloat(stats.avg_compliance_score).toFixed(1) : 'N/A'}</strong></p>`;
+            html += '</div>';
+            
+            // Recent orders
+            if (data.recentOrders && data.recentOrders.length > 0) {
+                html += '<h4>Recent Orders</h4>';
+                html += '<table><thead><tr>';
+                html += '<th>ID</th><th>Order Number</th><th>Status</th><th>Patient</th>';
+                html += '<th>Modality</th><th>Body Part</th><th>Validation</th><th>Score</th>';
+                html += '<th>Overridden</th><th>Created</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.recentOrders.forEach(order => {
+                    html += '<tr>';
+                    html += `<td>${order.id}</td>`;
+                    html += `<td>${order.order_number}</td>`;
+                    html += `<td>${order.status}</td>`;
+                    html += `<td>${order.patient_name || 'N/A'}</td>`;
+                    html += `<td>${order.modality || 'N/A'}</td>`;
+                    html += `<td>${order.body_part || 'N/A'}</td>`;
+                    html += `<td>${order.final_validation_status || 'N/A'}</td>`;
+                    html += `<td>${order.final_compliance_score || 'N/A'}</td>`;
+                    html += `<td>${order.overridden ? 'Yes' : 'No'}</td>`;
+                    html += `<td>${new Date(order.created_at).toLocaleDateString()}</td>`;
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function displayTrialUserActivity(data) {
+            const resultsDiv = document.getElementById('results');
+            let html = '<h3>Trial User Activity Details</h3>';
+            
+            // User info
+            html += '<div class="info">';
+            html += '<h4>User Information</h4>';
+            const user = data.user;
+            html += `<p>Email: <strong>${user.email}</strong></p>`;
+            html += `<p>Name: <strong>${user.first_name || ''} ${user.last_name || ''}</strong></p>`;
+            html += `<p>Validations Used: <strong>${user.validation_count} / ${user.max_validations}</strong></p>`;
+            html += `<p>Created: <strong>${new Date(user.created_at).toLocaleDateString()}</strong></p>`;
+            html += '</div>';
+            
+            // Daily activity
+            if (data.dailyActivity && data.dailyActivity.length > 0) {
+                html += '<h4>Daily Activity</h4>';
+                html += '<table><thead><tr>';
+                html += '<th>Date</th><th>Validations</th><th>Avg Latency (ms)</th><th>Tokens Used</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.dailyActivity.forEach(day => {
+                    html += '<tr>';
+                    html += `<td>${day.date}</td>`;
+                    html += `<td>${day.validations}</td>`;
+                    html += `<td>${parseFloat(day.avg_latency).toFixed(0)}</td>`;
+                    html += `<td>${day.tokens_used}</td>`;
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function displayCompleteOrderDetails(data) {
+            const resultsDiv = document.getElementById('results');
+            let html = '<h3>Complete Order Details</h3>';
+            
+            // Order info
+            html += '<div class="info">';
+            html += '<h4>Order Information</h4>';
+            html += `<pre>${JSON.stringify(data.order, null, 2)}</pre>`;
+            html += '</div>';
+            
+            // Patient info
+            if (data.patient) {
+                html += '<div class="info">';
+                html += '<h4>Patient Information</h4>';
+                html += `<pre>${JSON.stringify(data.patient, null, 2)}</pre>`;
+                html += '</div>';
+            }
+            
+            // Insurance info
+            if (data.insurance && data.insurance.length > 0) {
+                html += '<div class="info">';
+                html += '<h4>Insurance Information</h4>';
+                data.insurance.forEach((ins, index) => {
+                    html += `<h5>${ins.is_primary ? 'Primary' : 'Secondary'} Insurance</h5>`;
+                    html += `<pre>${JSON.stringify(ins, null, 2)}</pre>`;
+                });
+                html += '</div>';
+            }
+            
+            // Clinical records
+            if (data.clinicalRecords && data.clinicalRecords.length > 0) {
+                html += '<h4>Clinical Records</h4>';
+                html += '<table><thead><tr>';
+                html += '<th>ID</th><th>Type</th><th>Content (Preview)</th><th>Added By</th><th>Added At</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.clinicalRecords.forEach(record => {
+                    html += '<tr>';
+                    html += `<td>${record.id}</td>`;
+                    html += `<td>${record.record_type}</td>`;
+                    html += `<td>${(record.content || '').substring(0, 100)}...</td>`;
+                    html += `<td>${record.added_by_user_id}</td>`;
+                    html += `<td>${new Date(record.added_at).toLocaleString()}</td>`;
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function displayOrganizationConnections(data) {
+            const resultsDiv = document.getElementById('results');
+            let html = '<h3>Organization Connections</h3>';
+            html += `<p>Organization ID: <strong>${data.organizationId}</strong></p>`;
+            
+            if (data.connections && data.connections.length > 0) {
+                html += '<h4>Connected Radiology Organizations</h4>';
+                
+                data.connections.forEach(conn => {
+                    html += '<div class="info">';
+                    html += `<h5>${conn.organizationName} (${conn.organizationType})</h5>`;
+                    html += `<p>Organization ID: ${conn.organizationId}</p>`;
+                    
+                    if (conn.locations && conn.locations.length > 0) {
+                        html += '<p><strong>Locations:</strong></p>';
+                        html += '<ul>';
+                        conn.locations.forEach(loc => {
+                            html += `<li>ID: ${loc.locationId} - ${loc.locationName}</li>`;
+                        });
+                        html += '</ul>';
+                    } else {
+                        html += '<p><em>No locations configured</em></p>';
+                    }
+                    html += '</div>';
+                });
+            } else {
+                html += '<div class="info">No active connections found for this organization</div>';
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function displayUpdateHistory(data) {
+            const resultsDiv = document.getElementById('results');
+            let html = '<h3>Order Update History</h3>';
+            html += `<p>Order ID: <strong>${data.orderId}</strong></p>`;
+            
+            if (data.updateHistory && data.updateHistory.length > 0) {
+                html += '<table><thead><tr>';
+                html += '<th>Table</th><th>Action</th><th>Timestamp</th>';
+                html += '</tr></thead><tbody>';
+                
+                data.updateHistory.forEach(update => {
+                    html += '<tr>';
+                    html += `<td>${update.table_name}</td>`;
+                    html += `<td>${update.action}</td>`;
+                    html += `<td>${new Date(update.timestamp).toLocaleString()}</td>`;
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+            } else {
+                html += '<div class="info">No update history found</div>';
+            }
+            
             resultsDiv.innerHTML = html;
         }
     </script>

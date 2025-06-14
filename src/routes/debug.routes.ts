@@ -34,6 +34,24 @@ router.get('/connections', requireSuperAdmin, debugController.getConnections);
 // Execute custom SELECT query
 router.post('/query', requireSuperAdmin, debugController.executeQuery);
 
+// Trial user statistics
+router.get('/trial-users/stats', requireSuperAdmin, debugController.getTrialUserStats);
+
+// Trial user activity details
+router.get('/trial-users/:userId/activity', requireSuperAdmin, debugController.getTrialUserActivity);
+
+// Physician orders and statistics
+router.get('/physicians/:physicianId/orders', requireSuperAdmin, debugController.getPhysicianOrders);
+
+// Complete order details with all related data
+router.get('/orders/:orderId/complete', requireSuperAdmin, debugController.getCompleteOrderDetails);
+
+// Organization connections for dropdowns
+router.get('/organizations/:orgId/connections', requireSuperAdmin, debugController.getOrganizationConnections);
+
+// Order update history
+router.get('/orders/:orderId/update-history', requireSuperAdmin, debugController.getOrderUpdateHistory);
+
 // Serve the debug dashboard HTML (no auth required for the page itself)
 router.get('/dashboard', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'debug-dashboard.html'));
