@@ -81,4 +81,33 @@ router.put(
   adminOrderController.updateInsuranceInfo
 );
 
+/**
+ * @route   PUT /api/admin/orders/:orderId/order-details
+ * @desc    Update order details (priority, facility, instructions)
+ * @access  Private (Admin Staff)
+ */
+router.put(
+  '/:orderId/order-details',
+  authenticateJWT,
+  authorizeRole(['admin_staff']),
+  // Import directly to avoid modifying the controller interface for now
+  (req, res) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { updateOrderDetails } = require('../controllers/admin-order/update-order-details.controller');
+    return updateOrderDetails(req, res);
+  }
+);
+
+/**
+ * @route   PUT /api/admin/orders/:orderId
+ * @desc    Unified endpoint to update any order fields (patient, insurance, details, supplemental)
+ * @access  Private (Admin Staff)
+ */
+router.put(
+  '/:orderId',
+  authenticateJWT,
+  authorizeRole(['admin_staff']),
+  adminOrderController.updateOrder
+);
+
 export default router;

@@ -280,3 +280,25 @@ node debug-scripts/redis-optimization/check-index-schema.js
 - Validate all user inputs
 - Enforce role-based access control
 - Audit all data access
+
+### Git Commit Standards
+Use conventional commit format for all commits:
+- `feat:` for new features
+- `fix:` for bug fixes  
+- `docs:` for documentation changes
+- `style:` for formatting changes
+- `refactor:` for code refactoring
+- `test:` for test additions/changes
+- `chore:` for maintenance tasks
+
+Example:
+```
+feat: add unified order update endpoint for admin staff
+
+- Create PUT /api/admin/orders/:orderId endpoint
+- Support partial updates for patient, insurance, and order details
+- Add PUT /api/admin/orders/:orderId/order-details for immediate compatibility
+- Fix TypeScript warnings about any types
+
+Generated with Claude Code
+```

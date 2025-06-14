@@ -5,6 +5,7 @@ import handlePasteSupplemental from './paste-supplemental.controller';
 import updatePatientInfo from './update-patient.controller';
 import updateInsuranceInfo from './update-insurance.controller';
 import listPendingAdminOrders from './list-pending-admin.controller';
+import updateOrder from './update-order.controller';
 import { AdminOrderControllerInterface } from './types';
 
 /**
@@ -59,6 +60,14 @@ export class AdminOrderController implements AdminOrderControllerInterface {
   async listPendingAdminOrders(req: Request, res: Response): Promise<void> {
     return listPendingAdminOrders(req, res);
   }
+  
+  /**
+   * Unified update endpoint for all order fields
+   * @route PUT /api/admin/orders/:orderId
+   */
+  async updateOrder(req: Request, res: Response): Promise<void> {
+    return updateOrder(req, res);
+  }
 }
 
 // Export a singleton instance
@@ -71,5 +80,6 @@ export {
   // sendToRadiology is not exported due to circular dependencies
   updatePatientInfo,
   updateInsuranceInfo,
-  listPendingAdminOrders
+  listPendingAdminOrders,
+  updateOrder
 };
