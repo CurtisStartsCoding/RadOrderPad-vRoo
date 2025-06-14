@@ -14,6 +14,7 @@ import superadminRoutes from './superadmin.routes.js';
 import billingRoutes from './billing.routes.js';
 import patientRoutes from './patient.routes.js';
 import adminStatisticsRoutes from './admin-statistics.routes.js';
+import debugRoutes from './debug.routes.js';
 
 const router = Router();
 // Mount routes
@@ -35,5 +36,6 @@ router.use('/superadmin', superadminRoutes);
 router.use('/billing', billingRoutes);
 router.use('/patients', patientRoutes);
 router.use('/admin', adminStatisticsRoutes);
+router.use('/debug', debugRoutes);
 
 export default router;

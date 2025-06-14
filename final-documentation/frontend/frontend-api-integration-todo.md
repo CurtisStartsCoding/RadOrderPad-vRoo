@@ -20,14 +20,14 @@
   - [ ] Show warning if balance < 10 credits
   - [ ] Display credit cost (1 credit per order)
   
-- [ ] **Implement Send to Radiology API**
-  - [ ] Replace mock handler with real API call
-  - [ ] Use endpoint: `POST /api/admin/orders/:orderId/send-to-radiology`
-  - [ ] Pass `radiologyOrganizationId` in request body
-  - [ ] Handle success response with remaining credits
-  - [ ] Handle insufficient credits error (code: 'INSUFFICIENT_CREDITS')
-  - [ ] Navigate to `/admin-queue` on success
-  - [ ] Show success toast with radiology org name
+- [x] **Implement Send to Radiology API** ✅ COMPLETED
+  - [x] Replace mock handler with real API call
+  - [x] Use endpoint: `POST /api/admin/orders/:orderId/send-to-radiology`
+  - [x] Pass `radiologyOrganizationId` in request body
+  - [x] Handle success response with remaining credits
+  - [x] Handle insufficient credits error (code: 'INSUFFICIENT_CREDITS')
+  - [x] Navigate to `/admin-queue` on success
+  - [x] Show success toast with radiology org name
 
 ### 1.2 AdminOrderFinalization - Save Patient/Insurance Info [PRIORITY: HIGH] ✅ BACKEND FIXED
 
@@ -59,15 +59,30 @@
   - [x] Added supplemental EMR content: `supplemental_emr_content`
   - [x] **Result**: Saved data now shows when returning to order finalization page
 
-### 1.3 AdminOrderFinalization - EMR Parsing [PRIORITY: MEDIUM]
+- [x] **UNIFIED ENDPOINT IMPLEMENTATION** ✅ COMPLETED (June 2025)
+  - [x] Backend created unified `PUT /api/admin/orders/:orderId` endpoint
+  - [x] Frontend updated to use unified endpoint for all saves:
+    - [x] Patient info save uses unified endpoint with `patient: {}` wrapper
+    - [x] Insurance save uses unified endpoint with `insurance: {}` wrapper
+    - [x] Order details save uses unified endpoint with `orderDetails: {}` and `supplementalText`
+  - [x] All data now saves with camelCase field names
+  - [x] Fixed date of birth persistence by checking both `patient_date_of_birth` and `patient_dob`
+  - [x] **Result**: All tabs now save correctly with the unified endpoint
 
-- [ ] **Replace mock EMR parsing**
-  - [ ] Use endpoint: `POST /api/admin/orders/:orderId/paste-summary`
-  - [ ] Send `pastedText` in request body
-  - [ ] Update patient form with `parsedData.patientInfo`
-  - [ ] Update insurance form with `parsedData.insuranceInfo`
-  - [ ] Show parsing progress indicator
-  - [ ] Handle parsing errors gracefully
+### 1.3 AdminOrderFinalization - EMR Parsing [PRIORITY: MEDIUM] 🔴 ISSUES FOUND
+
+- [x] **Replace mock EMR parsing** 
+  - [x] Use endpoint: `POST /api/admin/orders/:orderId/paste-summary`
+  - [x] Send `pastedText` in request body
+  - [ ] Update patient form with `parsedData.patientInfo` ⚠️ **ISSUE: Not overwriting names**
+  - [x] Update insurance form with `parsedData.insuranceInfo`
+  - [x] Show parsing progress indicator
+  - [x] Handle parsing errors gracefully
+
+**Known Issues:**
+- EMR parsing doesn't overwrite patient first/last names
+- Only some fields are being updated when parsing
+- Need to investigate why certain fields are skipped
 
 ### 1.4 AdminOrderFinalization - Supplemental Documents [PRIORITY: MEDIUM] ✅ BACKEND FIXED
 
@@ -329,11 +344,17 @@ Backend uses snake_case, frontend uses camelCase:
 5. Test with different user roles
 
 ### Important Backend Quirks
-1. **Send to Radiology**: Currently working endpoint uses `-fixed` suffix
-2. **Field Names**: Patient/insurance updates use snake_case
+1. **Send to Radiology**: Endpoint is `POST /api/admin/orders/:orderId/send-to-radiology` (no longer uses -fixed suffix)
+2. **Field Names**: Unified endpoint uses camelCase, old endpoints use snake_case
 3. **Credit System**: Each order sent consumes 1 credit
 4. **Order Status**: Orders must be "pending_admin" to appear in queue
 5. **Radiology Orgs**: Admin staff cannot fetch list via API - must be provided by frontend
+6. **Date of Birth**: Backend may return as either `patient_date_of_birth` or `patient_dob`
+7. **Unified Endpoint**: `PUT /api/admin/orders/:orderId` accepts nested objects (patient, insurance, orderDetails, supplementalText)
+8. **Order Details Limitations**: 
+   - Radiology group selection not saved (no backend field)
+   - Facility location needs ID mapping (currently hardcoded to 1)
+   - Scheduling timeframe field doesn't exist in database yet
 
 ## Success Metrics
 - ✅ Orders can be created by physicians

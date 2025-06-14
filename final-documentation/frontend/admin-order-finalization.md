@@ -1,7 +1,8 @@
 # Admin Order Finalization - Frontend Implementation Guide
 
 **Date:** June 14, 2025
-**Version:** 1.0
+**Version:** 2.0
+**Last Updated:** June 14, 2025
 
 ## Overview
 
@@ -37,28 +38,65 @@ The page uses a 6-tab interface for completing order information:
 - **Purpose:** Load existing order data when page opens
 - **Cache Strategy:** `staleTime: 0` (always fetch fresh data)
 
-### Save Operations
-Each tab has independent save functionality:
+### Save Operations (Unified Endpoint)
+As of June 2025, all save operations use the unified endpoint:
+
+#### Unified Save Endpoint
+- **Endpoint:** `PUT /api/admin/orders/:orderId`
+- **Accepts nested objects:** patient, insurance, orderDetails, supplementalText
 
 #### Patient Information Save
-- **Endpoint:** `PUT /api/admin/orders/:orderId/patient-info`
 - **Button:** "Save Patient Info" (gray outline button)
-- **Fields:** All patient demographics using snake_case API format
+- **Payload Structure:**
+```json
+{
+  "patient": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "dateOfBirth": "1990-01-01",
+    // ... all fields in camelCase
+  }
+}
+```
 
 #### Insurance Information Save
-- **Endpoint:** `PUT /api/admin/orders/:orderId/insurance-info`
 - **Button:** "Save Insurance Info" (gray outline button)  
-- **Fields:** Primary insurance details
+- **Payload Structure:**
+```json
+{
+  "insurance": {
+    "insurerName": "Blue Cross",
+    "policyNumber": "123456",
+    "isPrimary": true,
+    // ... all fields in camelCase
+  }
+}
+```
 
-#### Supplemental Information Save
-- **Endpoint:** `POST /api/admin/orders/:orderId/paste-supplemental`
-- **Button:** "Save Supplemental Info" (gray outline button)
-- **Content:** Free-text clinical information
+#### Order Details & Supplemental Save
+- **Button:** "Save Order Details" (gray outline button)
+- **Payload Structure:**
+```json
+{
+  "orderDetails": {
+    "priority": "routine",
+    "targetFacilityId": 1,
+    "specialInstructions": "...",
+    "schedulingTimeframe": "Within 7 days"
+  },
+  "supplementalText": "Additional clinical information..."
+}
+```
+
+#### EMR Parsing (Still Separate)
+- **Endpoint:** `POST /api/admin/orders/:orderId/paste-summary`
+- **Purpose:** Parse EMR text to extract patient/insurance data
 
 ### Send to Radiology
 - **Endpoint:** `POST /api/admin/orders/:orderId/send-to-radiology`
-- **Auto-saves:** Patient info + Insurance info + then sends to radiology
+- **Auto-saves:** Uses unified endpoint to save patient + insurance data before sending
 - **Single-click workflow:** No need to manually save before sending
+- **Payload:** `{ radiologyOrganizationId: 2 }` (currently hardcoded)
 
 ## Features Implemented
 
@@ -130,31 +168,39 @@ Each tab has independent save functionality:
 
 ## Field Mappings
 
-### Patient Info (Frontend → API)
+### Unified Endpoint (All fields use camelCase)
 ```typescript
+// Patient fields
 {
-  firstName → first_name,
-  lastName → last_name,
-  dateOfBirth → date_of_birth,
-  phoneNumber → phone_number,
-  addressLine1 → address_line1,
-  addressLine2 → address_line2,
-  zipCode → zip_code
+  firstName, lastName, middleName,
+  dateOfBirth, gender,
+  addressLine1, addressLine2,
+  city, state, zipCode,
+  phoneNumber, email, mrn
+}
+
+// Insurance fields  
+{
+  insurerName, planType,
+  policyNumber, groupNumber,
+  policyHolderName,
+  policyHolderRelationship,
+  policyHolderDateOfBirth,
+  isPrimary: true
+}
+
+// Order Details fields
+{
+  priority: 'routine' | 'urgent' | 'stat',
+  targetFacilityId: number,
+  specialInstructions: string,
+  schedulingTimeframe: string
 }
 ```
 
-### Insurance Info (Frontend → API)
-```typescript
-{
-  insurerName → insurerName,
-  planName → planType,
-  policyNumber → policyNumber,
-  groupNumber → groupNumber,
-  policyHolderName → policyHolderName,
-  policyHolderRelationship → policyHolderRelationship,
-  policyHolderDateOfBirth → policyHolderDateOfBirth
-}
-```
+### Date of Birth Handling
+- Frontend checks both `patient_date_of_birth` and `patient_dob` when loading
+- Saves as `dateOfBirth` in camelCase format
 
 ## Success Flow
 1. Admin opens order from queue
@@ -181,10 +227,17 @@ Each tab has independent save functionality:
 - **Auto-save before final submission**
 
 ## Known Limitations
-1. **Radiology organization selection** - Currently hardcoded to ID 2
+1. **Radiology organization selection** - Currently hardcoded to ID 2, needs dynamic loading from connections
 2. **Credit balance display** - Only available for admin_referring role
 3. **Document upload** - Uses mock data, real implementation pending
-4. **EMR parsing accuracy** - Dependent on backend parser capabilities
+4. **EMR parsing issues:**
+   - Does not overwrite patient first/last names
+   - Only partially updates patient information
+   - Backend parser capabilities need improvement
+5. **Order Details Fields:**
+   - **Radiology Group** - Not saved (no backend field)
+   - **Facility Location** - Hardcoded to ID 1 (needs location name → ID mapping)
+   - **Scheduling Timeframe** - Backend doesn't have database column yet
 
 ## Future Enhancements
 1. **Dynamic radiology organization list** from connections
@@ -215,3 +268,18 @@ Each tab has independent save functionality:
 - **Cache invalidation** on data changes (removed to prevent form clearing)
 
 This implementation provides a complete, production-ready admin order finalization workflow with comprehensive error handling and user-friendly interface design.
+
+## Changelog
+
+### Version 2.0 (June 14, 2025)
+- **Unified Endpoint Implementation**: All save operations now use `PUT /api/admin/orders/:orderId`
+- **Field Format Update**: Changed from snake_case to camelCase for all unified endpoint calls
+- **Date of Birth Fix**: Frontend now checks both `patient_date_of_birth` and `patient_dob` fields
+- **Combined Saves**: Order details save now includes supplemental text in single API call
+- **Documentation Update**: Reflected current implementation state and known limitations
+
+### Version 1.0 (June 14, 2025)
+- Initial implementation with separate endpoints for each save operation
+- Full tab-based workflow for admin order finalization
+- EMR parsing integration
+- Send to radiology with auto-save functionality
