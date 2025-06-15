@@ -6,6 +6,7 @@ import {
   getLocation,
   updateLocation,
   deactivateLocation,
+  listConnectedOrgLocations,
   listUserLocations,
   assignUserToLocation,
   unassignUserFromLocation
@@ -30,6 +31,7 @@ export {
   getLocation,
   updateLocation,
   deactivateLocation,
+  listConnectedOrgLocations,
   listUserLocations,
   assignUserToLocation,
   unassignUserFromLocation
@@ -43,6 +45,7 @@ export default {
   getLocation,
   updateLocation,
   deactivateLocation,
+  listConnectedOrgLocations,
   
   // User location manager functions
   listUserLocations,

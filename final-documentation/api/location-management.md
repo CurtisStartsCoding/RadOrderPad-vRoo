@@ -1,7 +1,11 @@
 # Location Management API
 
 ## Overview
-This document describes the location management endpoints that allow organization administrators to manage physical locations/facilities within their organization. These endpoints are accessible to users with `admin_referring` or `admin_radiology` roles.
+This document describes the location management endpoints that allow organization administrators to:
+1. Manage physical locations/facilities within their own organization
+2. View locations of connected organizations (for order routing)
+
+These endpoints are accessible to users with `admin_referring` or `admin_radiology` roles.
 
 ## Endpoints
 
@@ -265,6 +269,76 @@ Authorization: Bearer <jwt_token>
 
 ---
 
+### 6. List Connected Organization Locations
+Get locations for an organization you have an active connection with. This is used in the order finalization workflow to select a specific radiology facility.
+
+**Endpoint:** `GET /api/organizations/:orgId/locations`
+
+**Authentication:** Required (JWT)
+
+**Authorization:** `admin_referring`, `admin_radiology`
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**URL Parameters:**
+- `orgId` - The ID of the connected organization
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 123,
+      "organization_id": 456,
+      "name": "Main Campus",
+      "address": "123 Medical Center Dr",
+      "city": "Chicago",
+      "state": "IL",
+      "zip": "60601",
+      "phone": "312-555-0100",
+      "fax": "312-555-0101",
+      "email": "maincampus@radiology.com",
+      "active": true,
+      "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    },
+    {
+      "id": 124,
+      "organization_id": 456,
+      "name": "North Branch",
+      "address": "456 Healthcare Ave",
+      "city": "Evanston",
+      "state": "IL",
+      "zip": "60201",
+      "phone": "847-555-0200",
+      "fax": "847-555-0201",
+      "email": "northbranch@radiology.com",
+      "active": true,
+      "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    }
+  ]
+}
+```
+
+**Status Codes:**
+- `200 OK` - Success
+- `400 Bad Request` - Invalid organization ID
+- `401 Unauthorized` - No authentication token
+- `403 Forbidden` - No active connection exists between organizations
+- `500 Internal Server Error` - Server error
+
+**Notes:**
+- Requires an active connection between your organization and the target organization
+- Only returns active locations
+- Used primarily in the order finalization workflow for selecting radiology facilities
+
+---
+
 ## Error Responses
 
 All endpoints follow a standard error response format:
@@ -287,9 +361,10 @@ Common error scenarios:
 ## Business Rules
 
 1. **Organization Isolation**: Users can only manage locations within their own organization
-2. **Soft Deletes**: Locations are never permanently deleted, only deactivated
-3. **Active Filter**: List endpoints only return active locations (`is_active = true`)
-4. **Role Restrictions**: Only admin roles (`admin_referring`, `admin_radiology`) can manage locations
+2. **Connected Organization Access**: Users can view (but not modify) locations of organizations they have active connections with
+3. **Soft Deletes**: Locations are never permanently deleted, only deactivated
+4. **Active Filter**: List endpoints only return active locations (`is_active = true`)
+5. **Role Restrictions**: Only admin roles (`admin_referring`, `admin_radiology`) can manage locations
 
 ---
 
@@ -297,6 +372,7 @@ Common error scenarios:
 
 - **User Location Assignment**: See [User Management API](user-management.md) for endpoints to assign users to locations
 - **Organization Management**: See [Organization Management API](organization-management.md) for organization-level operations
+- **Connection Management**: See [Connection Management API](connection-management.md) for establishing connections between organizations
 
 ---
 

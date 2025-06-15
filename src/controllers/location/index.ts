@@ -78,6 +78,15 @@ class LocationController {
   async unassignUserFromLocation(req: Request, res: Response): Promise<void> {
     return userControllers.unassignUserFromLocation(req as AuthenticatedRequest, res);
   }
+  
+  /**
+   * List locations for a connected organization
+   * @param req Express request object
+   * @param res Express response object
+   */
+  async listConnectedOrgLocations(req: Request, res: Response): Promise<void> {
+    return organizationControllers.listConnectedOrgLocations(req as AuthenticatedRequest, res);
+  }
 }
 
 export default new LocationController();

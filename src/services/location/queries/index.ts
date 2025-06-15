@@ -8,6 +8,7 @@ import {
   assignUserToLocation,
   unassignUserFromLocation
 } from './user';
+import { hasActiveConnection } from './connection';
 
 export {
   listLocations,
@@ -17,5 +18,6 @@ export {
   deactivateLocation,
   listUserLocations,
   assignUserToLocation,
-  unassignUserFromLocation
+  unassignUserFromLocation,
+  hasActiveConnection
 };
