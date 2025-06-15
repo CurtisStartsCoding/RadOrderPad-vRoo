@@ -57,8 +57,8 @@ API Endpoints Overview (Conceptual)
 -   `GET /users/me`: Get the authenticated user's profile information including role, organization, and personal details. **(Authenticated - Any Role)** [Implemented]
 -   `PUT /users/me`: Update the authenticated user's own profile (limited fields: firstName, lastName, phoneNumber, specialty, npi). **(Authenticated - Any Role)** [Implemented]
 -   `GET /users`: List users within the admin's organization with pagination, sorting, and filtering options. Supports filtering by role, status, and name search. Returns users with pagination metadata. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
--   `POST /users/invite`: Invite new users to the admin's organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented - See `implementation/user-invitation-implementation.md`]
--   `POST /users/accept-invitation`: Endpoint for invited users to set password and activate account. Creates a new user account based on the invitation details. **(Public Endpoint - Requires Valid Invitation Token)** [Implemented]
+-   `POST /user-invites/invite`: Invite new users to the admin's organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented - See `implementation/user-invitation-implementation.md`]
+-   `POST /user-invites/accept-invitation`: Endpoint for invited users to set password and activate account. Creates a new user account based on the invitation details. **(Public Endpoint - Requires Valid Invitation Token)** [Implemented]
 -   `GET /users/{userId}`: Get details of a specific user within the admin's org. Returns user profile only if the user belongs to the admin's organization. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 -   `PUT /users/{userId}`: Update details of a specific user within the admin's org (including name, role, specialty, active status). Enforces organization boundaries and role assignment restrictions. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 -   `DELETE /users/{userId}`: Deactivate a user within the admin's org. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
@@ -133,6 +133,15 @@ API Endpoints Overview (Conceptual)
 -   `GET /billing/credit-balance`: Get the current credit balance for the organization. **(Admin Referring Role)** [Implemented]
 -   `GET /billing/credit-usage`: Get credit usage history for the organization. **(Admin Referring Role)** [Implemented]
 
+## Admin Statistics & Export (`/admin`)
+
+-   `GET /admin/statistics/orders`: Get aggregated order statistics for the admin's organization. Includes total counts, status breakdown, and time-based metrics. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+-   `POST /admin/export/orders`: Export orders to CSV format with optional filtering by status, date range, and limit. Returns CSV file with comprehensive order details including patient info, codes, and timestamps. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
+
+## Patient Search (`/patients`)
+
+-   `POST /patients/search`: Search for existing patients using dictated name and date of birth. Handles natural language date formats and various name formats. Returns matching patients or empty array if no matches found. **(Physician Role)** [Implemented]
+
 ## Super Admin (`/superadmin`)
 
 ### Organizations (`/superadmin/organizations`)
@@ -170,3 +179,24 @@ API Endpoints Overview (Conceptual)
 - `GET /superadmin/logs/validation/enhanced`: List LLM validation logs with advanced filtering capabilities including multiple status selection, text search, date presets, and sorting options. **(Super Admin Role)**
 - `GET /superadmin/logs/credits`: List credit usage logs with optional filtering (organization_id, user_id, date range, action_type). **(Super Admin Role)**
 - `GET /superadmin/logs/purgatory`: List purgatory events with optional filtering (organization_id, date range, status, reason). **(Super Admin Role)**
+
+## Utilities (`/utilities`)
+
+### External API Proxies
+- `GET /utilities/npi-lookup?number={npiNumber}`: Lookup physician information from the CMS NPI Registry. Returns formatted physician data including name, credentials, specialties, and practice addresses. Bypasses CORS restrictions by proxying the request through the backend. **(Authenticated)** [Implemented]
+
+## Debug (`/debug`) - *Super Admin Only*
+
+-   `GET /debug/organizations`: List all organizations with type and status. **(Super Admin Role)**
+-   `GET /debug/users`: List all users with organization associations. **(Super Admin Role)**
+-   `GET /debug/orders`: Get recent orders with filtering by limit, order number, or physician ID. **(Super Admin Role)**
+-   `GET /debug/orders/{orderId}/clinical-records`: Get all clinical records associated with an order. **(Super Admin Role)**
+-   `GET /debug/orders/{orderId}/complete`: Get comprehensive order information including patient, insurance, clinical records, and validation logs. **(Super Admin Role)**
+-   `GET /debug/orders/{orderId}/update-history`: Track when order components were last updated. **(Super Admin Role)**
+-   `GET /debug/patients/{patientId}/insurance`: Get all insurance records for a patient. **(Super Admin Role)**
+-   `GET /debug/connections`: Get all active organization relationships. **(Super Admin Role)**
+-   `GET /debug/organizations/{orgId}/connections`: Get connected organizations and their locations for a specific organization. **(Super Admin Role)**
+-   `GET /debug/trial-users/stats`: Get comprehensive statistics about trial users including usage metrics and top users. **(Super Admin Role)**
+-   `GET /debug/trial-users/{userId}/activity`: Get detailed activity for a specific trial user including validation history and daily metrics. **(Super Admin Role)**
+-   `GET /debug/physicians/{physicianId}/orders`: Get order history and statistics for a specific physician. **(Super Admin Role)**
+-   `POST /debug/query`: Execute SELECT queries on either database (main or phi) with safety restrictions. Only SELECT queries allowed. **(Super Admin Role)**

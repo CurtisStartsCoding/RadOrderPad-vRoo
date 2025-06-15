@@ -36,7 +36,7 @@ RadOrderPad is a clinical decision support platform that:
 
 ### For Admin Referring
 - **[Organization Management](api/organization-management.md)** - Manage organization profile
-- **[User Management](api/user-management.md)** - Invite, update, and manage users
+- **[User Management](api/user-management.md)** - Invite, update, and manage users ✅ **Frontend Integrated**
 - **[Location Management](api/location-management.md)** - Manage physical locations/facilities ✅ **Frontend Integrated**
 - **[User-Location Assignment](api/user-location-assignment.md)** - Assign users to locations
 - **[Connection Management](api/connection-management.md)** - Partner relationships
@@ -45,7 +45,7 @@ RadOrderPad is a clinical decision support platform that:
 
 ### For Admin Radiology
 - **[Organization Management](api/organization-management.md)** - Manage organization profile
-- **[User Management](api/user-management.md)** - Invite schedulers and radiologists
+- **[User Management](api/user-management.md)** - Invite schedulers and radiologists ✅ **Frontend Integrated**
 - **[Location Management](api/location-management.md)** - Manage imaging centers ✅ **Frontend Integrated**
 - **[User-Location Assignment](api/user-location-assignment.md)** - Assign staff to locations
 
@@ -109,12 +109,17 @@ RadOrderPad is a clinical decision support platform that:
 - [Utilities](api/utilities-endpoints.md) - External API proxies (NPI lookup for physician data)
 - [User-Location Scalability](api/user-location-assignment-scalability.md) - Scalability considerations and future enhancements for bulk operations
 - [Verified API Reference](api/verified-api-reference.md) - Comprehensive reference for all verified endpoints
+- [Implemented Endpoints Summary](api/implemented-endpoints-summary.md) - Complete list of all implemented API endpoints by category
 
 ### Backend Documentation
 - [Validation Engine Architecture](backend/validation-engine-architecture.md) - Technical architecture of the clinical decision support engine powering ACR-based appropriateness checks
 - [Dual Credit Billing System](backend/dual-credit-billing-system.md) - Implementation of basic and advanced credit types for radiology organizations
 - [Database Script Execution](backend/database-script-execution.md) - Guide for creating and running database maintenance scripts with connection examples
 - [Admin Order Finalization - Data Retrieval Fix](backend/admin-order-finalization-data-retrieval-fix.md) - Resolution of saved data not appearing when returning to order finalization page
+
+### Strategy Documentation
+- [Radiology Export Strategy](radiology-export-strategy.md) - Strategy for exporting order data to radiology systems (CSV, JSON, PDF formats)
+- [Order Tracking Strategy](order-tracking-strategy.md) - Strategy for tracking order status and progress through the workflow
 
 ### Optimization Documentation
 - [Redis Payload Optimization](optimization/redis-payload-optimization.md) - Analysis and solution for reducing excessive Redis data in logs and API payloads
@@ -132,6 +137,8 @@ RadOrderPad is a clinical decision support platform that:
 
 ### Order Process Documentation
 - [Complete Order Workflow](order-process/complete-order-workflow.md) - End-to-end process from physician dictation through clinical decision support to radiology group routing
+- [Radiology Export Strategy](radiology-export-strategy.md) - Phased approach for exporting orders to radiology RIS systems (pilot to enterprise scale)
+- [Order Tracking Strategy](order-tracking-strategy.md) - Lightweight solutions for tracking order status after export to radiology systems
 
 ### Testing Documentation
 - [Order Finalization Testing](testing/order-finalization-testing.md) - Comprehensive testing guide for the order finalization process including test scripts and scenarios
@@ -188,6 +195,10 @@ This documentation is designed to be a comprehensive reference for developers wo
 ## Maintaining Documentation
 
 When making changes to the codebase, please ensure that the relevant documentation is updated to reflect those changes. This helps maintain the documentation as a reliable source of truth for the system.
+
+### Internal Documentation References
+- [Feature Documentation Status](feature-documentation-status.md) - Tracks implementation status of features and their documentation coverage
+- [Admin Roles Documentation Todo](admin-roles-documentation-todo.md) - Checklist for documenting practice manager roles (admin_referring and admin_radiology)
 
 ## Related Resources
 

@@ -191,24 +191,26 @@
 ## 🏢 Phase 3: Organization Management (Week 2)
 **Goal: Enable organizations to manage users and locations**
 
-### 3.1 User Management Pages ⭐⭐
+### 3.1 User Management Pages ⭐⭐ ✅ COMPLETED (June 2025)
 
-- [ ] **Update Users.tsx page**
-  - [ ] Replace mock data with API call: `GET /api/users`
-  - [ ] Add pagination support
-  - [ ] Implement filters (role, status, name)
+- [x] **Update Users.tsx page** ✅ COMPLETED
+  - [x] Replace mock data with API call: `GET /api/users`
+  - [x] Add pagination support (20 users per page)
+  - [x] Implement search filter (name, email, role)
+  - [x] Separate tabs for active users and pending invitations
   
-- [ ] **Implement user invitation**
-  - [ ] Add invite form with email and role selection
-  - [ ] Use endpoint: `POST /api/user-invites/invite`
-  - [ ] Show invitation link if sendEmail=false
-  - [ ] Add success message with email status
+- [x] **Implement user invitation** ✅ COMPLETED
+  - [x] Add invite dialog with email and role selection
+  - [x] Use endpoint: `POST /api/user-invites/invite`
+  - [x] Role-based restrictions (admin type determines available roles)
+  - [x] Success toast notifications
   
-- [ ] **Enable user updates**
-  - [ ] Add edit mode for user rows
-  - [ ] Use endpoint: `PUT /api/users/:userId`
-  - [ ] Support activation/deactivation
-  - [ ] Update user details (name, phone, etc.)
+- [x] **Enable user updates** ✅ COMPLETED
+  - [x] Comprehensive edit dialog (not inline editing)
+  - [x] Use endpoint: `PUT /api/users/:userId`
+  - [x] Support activation/deactivation (soft delete)
+  - [x] Update all user details (name, phone, specialty, NPI, role)
+  - [x] NPI validation with auto-population from CMS registry
 
 ### 3.2 Location Management ⭐⭐ ✅ COMPLETED (June 2025)
 
