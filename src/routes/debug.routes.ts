@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import path from 'path';
 import { authenticateJWT, authorizeRole } from '../middleware/auth';
 import debugController from '../controllers/debug/debug-dashboard.controller';
 
@@ -51,10 +50,5 @@ router.get('/organizations/:orgId/connections', requireSuperAdmin, debugControll
 
 // Order update history
 router.get('/orders/:orderId/update-history', requireSuperAdmin, debugController.getOrderUpdateHistory);
-
-// Serve the debug dashboard HTML (no auth required for the page itself)
-router.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'public', 'debug-dashboard.html'));
-});
 
 export default router;

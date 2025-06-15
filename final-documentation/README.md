@@ -48,6 +48,14 @@ RadOrderPad is a clinical decision support platform that:
 - **[User Management](api/user-management.md)** - Invite schedulers and radiologists
 - **[Location Management](api/location-management.md)** - Manage imaging centers
 - **[User-Location Assignment](api/user-location-assignment.md)** - Assign staff to locations
+
+### For Super Admins
+- **[Debug Endpoints](api/debug-endpoints.md)** - Troubleshooting and data inspection tools
+  - Organization and user listings
+  - Order inspection and history
+  - Trial user statistics
+  - Custom database queries
+  - Complete order details with all related data
 - **[Connection Management](api/connection-management.md)** - Approve referring practices
 - **[Billing & Credits](api/billing-credit.md)** - View dual credit balances
 - **[Statistics & Export](api/admin-statistics-endpoints.md)** - Order statistics and CSV export
