@@ -1,7 +1,7 @@
 API Endpoints Overview (Conceptual)
 
-**Version:** 1.9 (Trial Feature Implementation)
-**Date:** 2025-04-25
+**Version:** 1.10 (Connected Organization Locations)
+**Date:** 2025-06-15
 
 **Note:** This document provides a conceptual list of API endpoints based on the defined workflows and schema map. A formal OpenAPI/Swagger specification is recommended for definitive contract details.
 
@@ -50,7 +50,7 @@ API Endpoints Overview (Conceptual)
 -   `GET /organizations/mine/locations/{locationId}`: Get details of a specific location within the user's org. **(Admin Role)** [Implemented]
 -   `PUT /organizations/mine/locations/{locationId}`: Update details of a specific location within the user's org. **(Admin Role)** [Implemented]
 -   `DELETE /organizations/mine/locations/{locationId}`: Deactivate a location within the user's org (sets `is_active=false`). **(Admin Role)** [Implemented]
-    *(Note: Consider if GET /organizations/{orgId}/locations is needed for SuperAdmin or specific partner visibility)*
+-   `GET /organizations/{orgId}/locations`: List locations for a connected organization. Requires active connection between organizations. **(Admin Role - admin_referring, admin_radiology)** [Implemented]
 
 ## Users (`/users`)
 

@@ -1,7 +1,7 @@
 # API Endpoint to Schema Map
 
-**Version:** 1.7 - Super Admin Logs Implementation
-**Date:** 2025-04-25
+**Version:** 1.8 - Connected Organization Locations
+**Date:** 2025-06-15
 
 This document maps core API endpoints to the primary database tables they interact with in `radorder_main` (Main) and `radorder_phi` (PHI), based on the final reconciled schemas and the implemented override/draft order flow. This is not exhaustive but covers key interactions. Assumes RESTful endpoints.
 
@@ -54,8 +54,9 @@ This document maps core API endpoints to the primary database tables they intera
 -   **`PUT /api/organizations/mine`** (Update own org profile)
     -   Reads: `organizations` (Main)
     -   Writes: `organizations` (Main)
--   **`GET /api/organizations/{orgId}/locations`** (List locations)
-    -   Reads: `locations` (Main)
+-   **`GET /api/organizations/{orgId}/locations`** (List connected organization locations)
+    -   Reads: `organization_relationships` (Main - to verify active connection), `locations` (Main)
+    -   **Constraint:** Requires active connection between requesting and target organizations
 -   **`POST /api/organizations/mine/locations`** (Admin adds location)
     -   Writes: `locations` (Main)
 -   **`PUT /api/organizations/mine/locations/{locationId}`** (Admin updates location)
