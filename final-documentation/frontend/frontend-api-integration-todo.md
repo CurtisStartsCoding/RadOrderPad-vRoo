@@ -1,18 +1,31 @@
 # Frontend API Integration Todo List
 
 **Created:** January 2025  
+**Last Updated:** June 2025  
 **Purpose:** Master checklist for implementing API integration in RadOrderPad frontend  
 **Priority:** Focus on core workflow first (Phase 1) to get orders flowing to radiology
+
+## Major Accomplishments (June 2025)
+- ⚠️ Admin Order Finalization: Save functionality works but EMR parser has issues
+- ✅ Send to Radiology: Working with real radiology organizations from connections
+- ✅ Connections Management: Complete implementation with request/approve/reject flow
+- ✅ Location Management: Full CRUD operations with filtering and formatting
+- ✅ Navigation: Fixed menu access for Connections page
+- ✅ API Integration: Unified endpoint for order updates
+
+## Critical Issues
+- 🔴 EMR Parser not updating patient names (first/last name fields)
+- 🔴 Only partial field updates when parsing EMR data
 
 ## CRITICAL PATH - Phase 1: Core Order Workflow (Week 1)
 **Goal: Get orders flowing from physicians → admin staff → radiology**
 
-### 1.1 Fix AdminOrderFinalization - Send to Radiology [PRIORITY: HIGH]
+### 1.1 Fix AdminOrderFinalization - Send to Radiology [PRIORITY: HIGH] ⚠️ MOSTLY COMPLETE
 
-- [ ] **Load radiology organizations from connections data**
-  - [ ] Fetch active connections with type='radiology' from localStorage or parent component
-  - [ ] Store in component state for dropdown population
-  - [ ] Update radiology dropdown to use real organizations (not mock)
+- [x] **Load radiology organizations from connections data** ✅ COMPLETED (June 2025)
+  - [x] Fetch active connections with type='radiology' from API
+  - [x] Store in component state for dropdown population
+  - [x] Update radiology dropdown to use real organizations (not mock)
   
 - [ ] **Implement credit balance check**
   - [ ] Add API call: `GET /api/billing/credit-balance`
@@ -69,20 +82,27 @@
   - [x] Fixed date of birth persistence by checking both `patient_date_of_birth` and `patient_dob`
   - [x] **Result**: All tabs now save correctly with the unified endpoint
 
-### 1.3 AdminOrderFinalization - EMR Parsing [PRIORITY: MEDIUM] 🔴 ISSUES FOUND
+### 1.3 AdminOrderFinalization - EMR Parsing [PRIORITY: HIGH] 🔴 CRITICAL ISSUES
 
-- [x] **Replace mock EMR parsing** 
+- [x] **Replace mock EMR parsing** ✅ API integrated
   - [x] Use endpoint: `POST /api/admin/orders/:orderId/paste-summary`
   - [x] Send `pastedText` in request body
-  - [ ] Update patient form with `parsedData.patientInfo` ⚠️ **ISSUE: Not overwriting names**
-  - [x] Update insurance form with `parsedData.insuranceInfo`
+  - [ ] **Update patient form with `parsedData.patientInfo`** ❌ **BROKEN: Not updating names**
+  - [x] Update insurance form with `parsedData.insuranceInfo` ⚠️ Partial updates only
   - [x] Show parsing progress indicator
   - [x] Handle parsing errors gracefully
 
-**Known Issues:**
-- EMR parsing doesn't overwrite patient first/last names
-- Only some fields are being updated when parsing
-- Need to investigate why certain fields are skipped
+**🔴 CRITICAL ISSUES - Must Fix:**
+1. **Patient Names Not Updating**: EMR parser returns first/last names but they don't populate in form
+2. **Inconsistent Field Updates**: Some fields update, others don't (seems random)
+3. **No Error Feedback**: When parsing fails partially, user has no indication
+4. **Form State Issue**: Possible React Hook Form state management problem
+
+**Investigation Needed:**
+- Check if parser returns correct field names (firstName vs first_name)
+- Verify form field registration matches parser output
+- Test with console.log to see what data actually comes back
+- Check if form reset/setValue is being called correctly
 
 ### 1.4 AdminOrderFinalization - Supplemental Documents [PRIORITY: MEDIUM] ✅ BACKEND FIXED
 
@@ -107,6 +127,14 @@
   - [ ] Ensure status filter shows "pending_admin" orders
   - [ ] Test navigation to finalization page
   - [ ] Verify order ID is stored in sessionStorage
+
+### 1.6 Create Location ID Mapping [PRIORITY: MEDIUM] ✅ COMPLETED (June 2025)
+
+- [x] **Create location ID mapping for facility selection** ✅ COMPLETED
+  - [x] Fetch organization locations from API
+  - [x] Map facility names to location IDs  
+  - [x] Full location management implemented
+  - [ ] Update AdminOrderFinalization to use real location IDs (still hardcoded to locationId: 1)
 
 ## Phase 2: Complete Order Creation (Week 1-2)
 **Goal: Enable physicians to create orders end-to-end**
@@ -182,17 +210,23 @@
   - [ ] Support activation/deactivation
   - [ ] Update user details (name, phone, etc.)
 
-### 3.2 Location Management ⭐⭐
+### 3.2 Location Management ⭐⭐ ✅ COMPLETED (June 2025)
 
-- [ ] **Update Locations.tsx page**
-  - [ ] Fetch locations: `GET /api/organizations/mine/locations`
-  - [ ] Show active/inactive status
+- [x] **Update Locations.tsx page** ✅ COMPLETED
+  - [x] Fetch locations: `GET /api/organizations/mine/locations`
+  - [x] Show active/inactive status with filter (Active/Inactive/All)
+  - [x] Added debug information panel with statistics
+  - [x] US date formatting (MM/DD/YYYY)
+  - [x] Phone number formatting (XXX) XXX-XXXX
   
-- [ ] **Implement location CRUD**
-  - [ ] Create: `POST /api/organizations/mine/locations`
-  - [ ] Update: `PUT /api/organizations/mine/locations/:id`
-  - [ ] Deactivate: `DELETE /api/organizations/mine/locations/:id`
-  - [ ] Add form validation for required fields
+- [x] **Implement location CRUD** ✅ COMPLETED
+  - [x] Create: `POST /api/organizations/mine/locations` with dialog form
+  - [x] Update: `PUT /api/organizations/mine/locations/:id` with edit dialog
+  - [x] Deactivate: `DELETE /api/organizations/mine/locations/:id` (soft delete)
+  - [x] Add form validation for required fields
+  - [x] Auto-format phone numbers and ZIP codes as user types
+  - [x] Success/error toast notifications
+  - [x] Improved card layout with inline deactivate button
 
 ### 3.3 User-Location Assignment ⭐
 
@@ -255,32 +289,36 @@
   - [ ] Add plan selection UI
   - [ ] Handle Stripe integration
 
-## 🤝 Phase 5: Connection Management (Week 3)
+## 🤝 Phase 5: Connection Management (Week 3) ✅ COMPLETED
 **Goal: Enable partner relationships**
 
-### 5.1 Connections Page ⭐
+### 5.1 Connections Page ⭐ ✅ COMPLETED (June 2025)
 
-- [ ] **List current connections**
-  - [ ] Use endpoint: `GET /api/connections`
-  - [ ] Separate active and pending
-  - [ ] Show connection details
+- [x] **List current connections** ✅ COMPLETED
+  - [x] Use endpoint: `GET /api/connections`
+  - [x] Separate active and pending (using tabs)
+  - [x] Show connection details (ID, Org Name, Type, Direction)
+  - [x] Added debugging info (connection IDs, org IDs)
   
-- [ ] **Search organizations**
-  - [ ] Use endpoint: `GET /api/organizations/search`
-  - [ ] Add search filters
-  - [ ] Display results with action buttons
+- [x] **Search organizations** ✅ COMPLETED
+  - [x] Use endpoint: `GET /api/organizations?type=radiology_group`
+  - [x] Add search filters (search box for connections)
+  - [x] Display results with organization IDs
 
-### 5.2 Connection Actions ⭐
+### 5.2 Connection Actions ⭐ ✅ COMPLETED (June 2025)
 
-- [ ] **Send connection requests**
-  - [ ] Use endpoint: `POST /api/connections`
-  - [ ] Add optional message field
-  - [ ] Show success confirmation
+- [x] **Send connection requests** ✅ COMPLETED
+  - [x] Use endpoint: `POST /api/connections` (with targetOrgId)
+  - [x] Add dialog with organization selection dropdown
+  - [x] Show success confirmation
+  - [x] Auto-refresh connections list after request
   
-- [ ] **Manage connections**
-  - [ ] Approve: `POST /api/connections/:id/approve`
-  - [ ] Reject: `POST /api/connections/:id/reject`
-  - [ ] Terminate: `DELETE /api/connections/:id`
+- [x] **Manage connections** ✅ COMPLETED
+  - [x] Approve: `POST /api/connections/:id/approve`
+  - [x] Reject: `POST /api/connections/:id/reject`
+  - [x] Terminate: `DELETE /api/connections/:id`
+  - [x] Show appropriate buttons based on connection direction
+  - [x] Handle errors (duplicate requests, etc.)
 
 ## ✨ Phase 6: Nice-to-Have Features (Week 4+)
 **Goal: Polish and enhance user experience**
@@ -348,13 +386,21 @@ Backend uses snake_case, frontend uses camelCase:
 2. **Field Names**: Unified endpoint uses camelCase, old endpoints use snake_case
 3. **Credit System**: Each order sent consumes 1 credit
 4. **Order Status**: Orders must be "pending_admin" to appear in queue
-5. **Radiology Orgs**: Admin staff cannot fetch list via API - must be provided by frontend
+5. **Radiology Orgs**: Admin staff CAN fetch via connections API - use active connections with radiology type
 6. **Date of Birth**: Backend may return as either `patient_date_of_birth` or `patient_dob`
 7. **Unified Endpoint**: `PUT /api/admin/orders/:orderId` accepts nested objects (patient, insurance, orderDetails, supplementalText)
 8. **Order Details Limitations**: 
    - Radiology group selection not saved (no backend field)
    - Facility location needs ID mapping (currently hardcoded to 1)
    - Scheduling timeframe field doesn't exist in database yet
+9. **Connections API**: 
+   - Returns wrapped response: `{ connections: [...] }`
+   - Uses `isInitiator` boolean to determine request direction
+   - Connection IDs are different from organization IDs
+   - Can only approve requests TO your organization (not FROM)
+10. **Navigation Fixes**:
+    - Connections menu item added to AppHeader.tsx for admin roles
+    - Menu shows in hamburger menu on all screen sizes
 
 ## Success Metrics
 - ✅ Orders can be created by physicians

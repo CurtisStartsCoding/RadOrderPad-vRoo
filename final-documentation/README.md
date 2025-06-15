@@ -1,6 +1,6 @@
 # RadOrderPad API Documentation
 
-**Last Updated:** June 14, 2025
+**Last Updated:** June 15, 2025
 
 This directory contains comprehensive documentation for the RadOrderPad API backend.
 
@@ -37,7 +37,7 @@ RadOrderPad is a clinical decision support platform that:
 ### For Admin Referring
 - **[Organization Management](api/organization-management.md)** - Manage organization profile
 - **[User Management](api/user-management.md)** - Invite, update, and manage users
-- **[Location Management](api/location-management.md)** - Manage physical locations/facilities
+- **[Location Management](api/location-management.md)** - Manage physical locations/facilities ✅ **Frontend Integrated**
 - **[User-Location Assignment](api/user-location-assignment.md)** - Assign users to locations
 - **[Connection Management](api/connection-management.md)** - Partner relationships
 - **[Billing & Credits](api/billing-credit.md)** - Purchase and track credits
@@ -46,7 +46,7 @@ RadOrderPad is a clinical decision support platform that:
 ### For Admin Radiology
 - **[Organization Management](api/organization-management.md)** - Manage organization profile
 - **[User Management](api/user-management.md)** - Invite schedulers and radiologists
-- **[Location Management](api/location-management.md)** - Manage imaging centers
+- **[Location Management](api/location-management.md)** - Manage imaging centers ✅ **Frontend Integrated**
 - **[User-Location Assignment](api/user-location-assignment.md)** - Assign staff to locations
 
 ### For Super Admins
@@ -98,7 +98,7 @@ RadOrderPad is a clinical decision support platform that:
 - [Trial User Endpoints](api/trial-user.md) - Limited access for evaluation purposes
 - [Organization Management](api/organization-management.md) - Organization profile management endpoints
 - [User Management](api/user-management.md) - User invitation, updates, and deactivation
-- [Location Management](api/location-management.md) - Physical location/facility management endpoints
+- [Location Management](api/location-management.md) - Physical location/facility management endpoints ✅ **Frontend Integrated**
 - [User-Location Assignment](api/user-location-assignment.md) - Manage user access to locations
 - [Connection Management](api/connection-management.md) - Partner relationship endpoints
 - [Billing & Credits](api/billing-credit.md) - Credit and subscription management
@@ -106,6 +106,7 @@ RadOrderPad is a clinical decision support platform that:
 #### Detailed References
 - [Patient Search API](api/patient-search-api.md) - POST /api/patients/search for dictation-based lookup
 - [File Upload](api/file-upload.md) - Document upload workflow with S3 integration
+- [Utilities](api/utilities-endpoints.md) - External API proxies (NPI lookup for physician data)
 - [User-Location Scalability](api/user-location-assignment-scalability.md) - Scalability considerations and future enhancements for bulk operations
 - [Verified API Reference](api/verified-api-reference.md) - Comprehensive reference for all verified endpoints
 
@@ -125,6 +126,9 @@ RadOrderPad is a clinical decision support platform that:
 - [Validation Engine Integration](frontend/validation-engine-integration.md) - Guide for integrating the validation engine into frontend applications
 - [Validation Workflow Guide](frontend/validation-workflow-guide.md) - Step-by-step workflow showing how physicians refine clinical dictation based on ACR feedback until approved (codes shown only when appropriate)
 - [Admin Order Finalization](frontend/admin-order-finalization.md) - Implementation guide for the multi-tab interface used by admin staff to complete physician orders
+- [Connections Feature](frontend/connections-feature.md) - Implementation documentation for partner organization connection management ✅ **Completed**
+- [Location Management Feature](frontend/location-management-feature.md) - Implementation documentation for location/facility management ✅ **Completed**
+- [Frontend API Integration Todo](frontend/frontend-api-integration-todo.md) - Master checklist for implementing API integration in RadOrderPad frontend
 
 ### Order Process Documentation
 - [Complete Order Workflow](order-process/complete-order-workflow.md) - End-to-end process from physician dictation through clinical decision support to radiology group routing
