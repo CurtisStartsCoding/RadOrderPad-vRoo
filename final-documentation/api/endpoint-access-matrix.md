@@ -46,7 +46,7 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 | POST /api/users/:userId/locations/:locationId | - | - | ✓ | - | ✓ | - | - | - |
 | DELETE /api/users/:userId/locations/:locationId | - | - | ✓ | - | ✓ | - | - | - |
 | **Connection Management** |
-| GET /api/connections | - | - | ✓ | - | ✓ | - | - | - |
+| GET /api/connections | - | ✓ | ✓ | - | ✓ | - | - | - |
 | POST /api/connections | - | - | ✓ | - | ✓ | - | - | - |
 | GET /api/connections/requests | - | - | ✓ | - | ✓ | - | - | - |
 | POST /api/connections/:id/approve | - | - | ✓ | - | ✓ | - | - | - |
@@ -76,14 +76,14 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 | POST /api/admin/orders/:orderId/paste-supplemental | - | ✓ | ✓ | - | - | - | - | - |
 | POST /api/admin/orders/:orderId/send-to-radiology | - | ✓ | ✓ | - | - | - | - | - |
 | **Scheduler Workflow** |
-| GET /api/radiology/orders/incoming-queue | - | - | - | ✓ | ✓ | - | - | - |
+| GET /api/radiology/orders/incoming-queue | - | - | - | ✓ | ✓ | ✓ | - | - |
 | GET /api/radiology/orders/:orderId | - | - | - | ✓ | ✓ | ✓ | - | - |
-| POST /api/radiology/orders/:orderId/request-information | - | - | - | ✓ | ✓ | - | - | - |
-| PUT /api/radiology/orders/:orderId/status | - | - | - | ✓ | ✓ | - | - | - |
-| GET /api/radiology/orders/:orderId/export | - | - | - | ✓ | ✓ | - | - | - |
+| POST /api/radiology/orders/:orderId/request-information | - | - | - | ✓ | ✓ | ✓ | - | - |
+| PUT /api/radiology/orders/:orderId/status | - | - | - | ✓ | ✓ | ✓ | - | - |
+| GET /api/radiology/orders/:orderId/export | - | - | - | ✓ | ✓ | ✓ | - | - |
 | **File Upload** |
-| POST /api/uploads/presigned-url | - | ✓ | ✓ | ✓ | ✓ | - | - | - |
-| POST /api/uploads/confirm | - | ✓ | ✓ | ✓ | ✓ | - | - | - |
+| POST /api/uploads/presigned-url | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| POST /api/uploads/confirm | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
 | **Super Admin** |
 | GET /api/superadmin/organizations | - | - | - | - | - | - | ✓ | - |
 | GET /api/superadmin/organizations/:orgId | - | - | - | - | - | - | ✓ | - |
@@ -130,6 +130,7 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 - Upload documents
 - Send orders to radiology
 - Access locations
+- View connections (to select radiology organizations)
 
 ### Admin Referring
 - All admin staff capabilities
@@ -146,7 +147,8 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 - Access locations
 
 ### Admin Radiology
-- All scheduler capabilities (except request info)
+- All scheduler capabilities
+- All radiologist capabilities
 - Manage users and locations
 - Manage connections
 - View billing (no purchasing)

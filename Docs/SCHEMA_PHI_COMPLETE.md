@@ -30,7 +30,7 @@ This document defines the **authoritative and fully expanded reconciled schema**
 | `created_at`    | `timestamp without time zone` | `DEFAULT CURRENT_TIMESTAMP`   | Timestamp when patient record was created        |
 | `updated_at`    | `timestamp without time zone` | `DEFAULT CURRENT_TIMESTAMP`   | Timestamp when patient record was last updated   |
 
-**Table: `patient_insurance`**
+**Table: `patient_insurance`** *(Optional - patients may be uninsured or cash pay)*
 
 | Column                       | Type                        | Constraints                   | Description                                        |
 | ---------------------------- | --------------------------- | ----------------------------- | -------------------------------------------------- |

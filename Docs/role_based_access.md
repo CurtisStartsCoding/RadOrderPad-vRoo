@@ -21,6 +21,7 @@ This document defines user roles and their associated permissions within the Rad
     *   Initiates and approves/rejects connection requests with Radiology Groups.
     *   Views organization's credit balance and usage logs.
     *   Can view all orders originating from their organization.
+    *   **Includes all permissions of `admin_staff` role** (can perform order finalization tasks).
 *   **`physician`:**
     *   **CANNOT** register directly. Must be invited by their org `admin_referring`.
     *   Creates new orders (dictation, patient tagging).

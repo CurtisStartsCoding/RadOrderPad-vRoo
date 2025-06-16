@@ -7,11 +7,13 @@ This document describes the API endpoints used by admin staff for processing ord
 
 Admin staff are responsible for finalizing physician-created orders by:
 1. **Adding Demographics**: Completing patient information (address, phone, email)
-2. **Adding Insurance**: Entering insurance details for billing
+2. **Adding Insurance**: Entering insurance details for billing (optional - patients may be uninsured/cash pay)
 3. **Adding Supplemental Information**: Attaching EMR notes or other clinical documents
 4. **Routing Orders**: Sending finalized orders to connected radiology organizations
 
 Orders appear in the admin queue with status `pending_admin` after physicians create them. Admin staff process these orders and send them to radiology, changing the status to `sent_to_radiology`.
+
+**Note**: The `admin_referring` role includes all permissions of the `admin_staff` role and can perform all admin staff functions.
 
 ## Base URL
 All endpoints are prefixed with `/api/admin/orders`
@@ -19,7 +21,7 @@ All endpoints are prefixed with `/api/admin/orders`
 ## Authentication
 - **Method**: JWT Bearer Token
 - **Header**: `Authorization: Bearer <token>`
-- **Required Role**: `admin_staff`
+- **Required Role**: `admin_staff` or `admin_referring`
 
 ## Endpoints
 
@@ -30,7 +32,7 @@ Retrieves a paginated list of orders awaiting admin finalization.
 
 **Middleware**:
 - `authenticateJWT`
-- `authorizeRole(['admin_staff'])`
+- `authorizeRole(['admin_staff', 'admin_referring'])`
 
 **Query Parameters**:
 | Parameter | Type | Default | Description |
@@ -93,7 +95,7 @@ Manually update parsed patient information for an order.
 
 **Middleware**:
 - `authenticateJWT`
-- `authorizeRole(['admin_staff'])`
+- `authorizeRole(['admin_staff', 'admin_referring'])`
 
 **URL Parameters**:
 | Parameter | Type | Required | Description |
@@ -137,13 +139,13 @@ Manually update parsed patient information for an order.
 ---
 
 ### 3. Update Insurance Information
-Manually update parsed insurance information for an order.
+Manually update parsed insurance information for an order. Insurance information is optional - patients may be uninsured or cash pay.
 
 **Endpoint**: `PUT /api/admin/orders/:orderId/insurance-info`
 
 **Middleware**:
 - `authenticateJWT`
-- `authorizeRole(['admin_staff'])`
+- `authorizeRole(['admin_staff', 'admin_referring'])`
 
 **URL Parameters**:
 | Parameter | Type | Required | Description |
@@ -189,7 +191,7 @@ Submit pasted EMR summary for automatic parsing of patient and insurance informa
 
 **Middleware**:
 - `authenticateJWT`
-- `authorizeRole(['admin_staff'])`
+- `authorizeRole(['admin_staff', 'admin_referring'])`
 
 **URL Parameters**:
 | Parameter | Type | Required | Description |
@@ -245,7 +247,7 @@ Submit pasted supplemental documents to be attached to the order.
 
 **Middleware**:
 - `authenticateJWT`
-- `authorizeRole(['admin_staff'])`
+- `authorizeRole(['admin_staff', 'admin_referring'])`
 
 **URL Parameters**:
 | Parameter | Type | Required | Description |
@@ -282,7 +284,7 @@ Finalize and send the order to the radiology group.
 
 **Middleware**:
 - `authenticateJWT`
-- `authorizeRole(['admin_staff'])`
+- `authorizeRole(['admin_staff', 'admin_referring'])`
 
 **URL Parameters**:
 | Parameter | Type | Required | Description |

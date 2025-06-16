@@ -26,7 +26,7 @@ The page uses a 6-tab interface for completing order information:
 
 1. **EMR Paste** - Parse patient/insurance data from EMR text
 2. **Patient Info** - Complete patient demographics
-3. **Insurance** - Add insurance details
+3. **Insurance** - Add insurance details (optional - patients may be uninsured/cash pay)
 4. **Order Details** - Supplemental information and special instructions
 5. **Documents** - Upload supporting documents (future implementation)
 6. **Review & Send** - Final review and send to radiology
