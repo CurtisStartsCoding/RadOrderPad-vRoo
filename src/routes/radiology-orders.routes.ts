@@ -12,7 +12,7 @@ const router = Router();
 router.get(
   '/',
   authenticateJWT,
-  authorizeRole(['scheduler', 'admin_radiology']),
+  authorizeRole(['scheduler', 'radiologist', 'admin_radiology']),
   radiologyOrderController.getIncomingOrders
 );
 
@@ -24,7 +24,7 @@ router.get(
 router.get(
   '/:orderId',
   authenticateJWT,
-  authorizeRole(['scheduler', 'admin_radiology']),
+  authorizeRole(['scheduler', 'radiologist', 'admin_radiology']),
   radiologyOrderController.getOrderDetails
 );
 
@@ -36,7 +36,7 @@ router.get(
 router.get(
   '/:orderId/export/:format',
   authenticateJWT,
-  authorizeRole(['scheduler', 'admin_radiology']),
+  authorizeRole(['scheduler', 'radiologist', 'admin_radiology']),
   radiologyOrderController.exportOrder
 );
 
@@ -48,7 +48,7 @@ router.get(
 router.post(
   '/:orderId/update-status',
   authenticateJWT,
-  authorizeRole(['scheduler', 'admin_radiology']),
+  authorizeRole(['scheduler', 'radiologist', 'admin_radiology']),
   radiologyOrderController.updateOrderStatus
 );
 
@@ -60,7 +60,7 @@ router.post(
 router.post(
   '/:orderId/request-info',
   authenticateJWT,
-  authorizeRole(['scheduler', 'admin_radiology']),
+  authorizeRole(['scheduler', 'radiologist', 'admin_radiology']),
   radiologyOrderController.requestInformation
 );
 

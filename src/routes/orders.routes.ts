@@ -70,7 +70,7 @@ router.get(
 router.post(
   '/:orderId/admin-update',
   authenticateJWT,
-  authorizeRole(['admin']),
+  authorizeRole(['admin_referring', 'admin_radiology', 'admin_staff']),
   orderManagementController.adminUpdate
 );
 

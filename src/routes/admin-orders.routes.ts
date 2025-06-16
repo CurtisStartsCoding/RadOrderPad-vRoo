@@ -12,7 +12,7 @@ const router = Router();
 router.get(
   '/queue',
   authenticateJWT,
-  authorizeRole(['admin_staff']),
+  authorizeRole(['admin_staff', 'admin_referring']),
   adminOrderController.listPendingAdminOrders
 );
 
@@ -24,7 +24,7 @@ router.get(
 router.post(
   '/:orderId/paste-summary',
   authenticateJWT,
-  authorizeRole(['admin_staff']),
+  authorizeRole(['admin_staff', 'admin_referring']),
   adminOrderController.handlePasteSummary
 );
 
@@ -36,7 +36,7 @@ router.post(
 router.post(
   '/:orderId/paste-supplemental',
   authenticateJWT,
-  authorizeRole(['admin_staff']),
+  authorizeRole(['admin_staff', 'admin_referring']),
   adminOrderController.handlePasteSupplemental
 );
 
@@ -48,7 +48,7 @@ router.post(
 router.post(
   '/:orderId/send-to-radiology',
   authenticateJWT,
-  authorizeRole(['admin_staff']),
+  authorizeRole(['admin_staff', 'admin_referring']),
   (req, res) => {
     // Import the controller dynamically to avoid circular dependencies
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -65,7 +65,7 @@ router.post(
 router.put(
   '/:orderId/patient-info',
   authenticateJWT,
-  authorizeRole(['admin_staff']),
+  authorizeRole(['admin_staff', 'admin_referring']),
   adminOrderController.updatePatientInfo
 );
 
@@ -77,7 +77,7 @@ router.put(
 router.put(
   '/:orderId/insurance-info',
   authenticateJWT,
-  authorizeRole(['admin_staff']),
+  authorizeRole(['admin_staff', 'admin_referring']),
   adminOrderController.updateInsuranceInfo
 );
 
@@ -89,7 +89,7 @@ router.put(
 router.put(
   '/:orderId/order-details',
   authenticateJWT,
-  authorizeRole(['admin_staff']),
+  authorizeRole(['admin_staff', 'admin_referring']),
   // Import directly to avoid modifying the controller interface for now
   (req, res) => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -106,7 +106,7 @@ router.put(
 router.put(
   '/:orderId',
   authenticateJWT,
-  authorizeRole(['admin_staff']),
+  authorizeRole(['admin_staff', 'admin_referring']),
   adminOrderController.updateOrder
 );
 

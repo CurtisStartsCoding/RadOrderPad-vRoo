@@ -10,14 +10,14 @@ router.use(authenticateJWT);
 // Route to get a presigned URL for uploading a file
 router.post(
   '/presigned-url',
-  authorizeRole(['physician', 'admin_referring', 'admin_radiology', 'radiologist', 'admin_staff']),
+  authorizeRole(['physician', 'admin_referring', 'admin_radiology', 'radiologist', 'admin_staff', 'scheduler']),
   UploadsController.getPresignedUrl
 );
 
 // Route to confirm a file upload
 router.post(
   '/confirm',
-  authorizeRole(['physician', 'admin_referring', 'admin_radiology', 'radiologist', 'admin_staff']),
+  authorizeRole(['physician', 'admin_referring', 'admin_radiology', 'radiologist', 'admin_staff', 'scheduler']),
   UploadsController.confirmUpload
 );
 
