@@ -38,6 +38,7 @@ export interface ConfirmUploadRequestBody {
   fileSize: number;
   contentType: string;
   processingStatus?: string;
+  fileHash?: string; // Optional SHA-256 hash for HIPAA integrity verification
 }
 
 /**

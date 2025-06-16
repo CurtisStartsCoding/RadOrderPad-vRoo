@@ -3,13 +3,17 @@
 ## Overview
 This document describes the API endpoints used by admin staff for processing orders in the RadOrderPad system. All endpoints require authentication and the `admin_staff` role.
 
+**Update (2025-06-16)**: Admin staff now have access to the connections API endpoints to support dynamic radiology organization selection. See [Connection Management API](./connection-management.md) for details.
+
 ## Admin Staff Role and Workflow
 
 Admin staff are responsible for finalizing physician-created orders by:
 1. **Adding Demographics**: Completing patient information (address, phone, email)
 2. **Adding Insurance**: Entering insurance details for billing (optional - patients may be uninsured/cash pay)
 3. **Adding Supplemental Information**: Attaching EMR notes or other clinical documents
-4. **Routing Orders**: Sending finalized orders to connected radiology organizations
+4. **Selecting Target Organization**: Choosing from organizations with active connections
+5. **Selecting Target Facility**: Choosing a specific location within the selected organization
+6. **Routing Orders**: Sending finalized orders to the selected radiology facility
 
 Orders appear in the admin queue with status `pending_admin` after physicians create them. Admin staff process these orders and send them to radiology, changing the status to `sent_to_radiology`.
 

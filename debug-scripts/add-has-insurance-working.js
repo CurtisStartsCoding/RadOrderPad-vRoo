@@ -1,0 +1,122 @@
+// Script to add has_insurance column to orders table
+const { Pool } = require('pg');
+const path = require('path');
+
+// Load environment variables from .env file
+require('dotenv').config();
+
+// Get the PHI database URL from environment
+const phiDbUrl = process.env.PHI_DATABASE_URL;
+
+if (!phiDbUrl) {
+  console.error('❌ PHI_DATABASE_URL not found in environment variables');
+  process.exit(1);
+}
+
+console.log('✅ Found PHI database connection');
+
+// Parse the connection string and add SSL settings
+const connectionConfig = {
+  connectionString: phiDbUrl,
+  ssl: {
+    rejectUnauthorized: false,
+    ca: false,
+    cert: false,
+    key: false
+  }
+};
+
+// Create connection pool
+const phiDbPool = new Pool(connectionConfig);
+
+async function addHasInsuranceColumn() {
+  const client = await phiDbPool.connect();
+  
+  try {
+    console.log('🔧 Adding has_insurance column to orders table...\n');
+    
+    // Check if column already exists
+    const columnCheck = await client.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'orders' 
+      AND column_name = 'has_insurance'
+    `);
+    
+    if (columnCheck.rows.length > 0) {
+      console.log('✅ Column has_insurance already exists');
+      return;
+    }
+    
+    // Add the column
+    await client.query(`
+      ALTER TABLE orders 
+      ADD COLUMN has_insurance boolean NOT NULL DEFAULT false
+    `);
+    
+    console.log('✅ Column has_insurance added successfully');
+    
+    // Add comment
+    await client.query(`
+      COMMENT ON COLUMN orders.has_insurance IS 
+      'Indicates whether patient has insurance for this order. False = uninsured/cash-pay, True = has insurance'
+    `);
+    
+    console.log('✅ Column comment added');
+    
+    // Update existing orders that have insurance
+    const updateResult = await client.query(`
+      UPDATE orders o
+      SET has_insurance = true
+      WHERE EXISTS (
+        SELECT 1 
+        FROM patient_insurance pi 
+        WHERE pi.patient_id = o.patient_id
+        AND pi.insurer_name IS NOT NULL
+        AND pi.policy_number IS NOT NULL
+      )
+    `);
+    
+    console.log(`✅ Updated ${updateResult.rowCount} existing orders to has_insurance = true`);
+    
+    // Show some stats
+    const stats = await client.query(`
+      SELECT 
+        COUNT(*) as total_orders,
+        SUM(CASE WHEN has_insurance = true THEN 1 ELSE 0 END) as with_insurance,
+        SUM(CASE WHEN has_insurance = false THEN 1 ELSE 0 END) as without_insurance
+      FROM orders
+    `);
+    
+    const { total_orders, with_insurance, without_insurance } = stats.rows[0];
+    console.log(`\n📈 Order Insurance Stats:`);
+    console.log(`   Total orders: ${total_orders}`);
+    console.log(`   With insurance: ${with_insurance}`);
+    console.log(`   Without insurance: ${without_insurance}`);
+    
+    console.log('\n✅ Database is now ready for has_insurance field!');
+    console.log('\n📝 How it works:');
+    console.log('   - Frontend sends hasInsurance: true/false');
+    console.log('   - Backend updates orders.has_insurance field');
+    console.log('   - Insurance data only processed when hasInsurance = true');
+    console.log('   - Existing insurance deleted when hasInsurance = false');
+    
+  } catch (error) {
+    console.error('❌ Error adding column:', error.message);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+// Run the migration
+addHasInsuranceColumn()
+  .then(() => {
+    console.log('\n✅ Migration completed successfully');
+    phiDbPool.end();
+  })
+  .catch((error) => {
+    console.error('\n❌ Migration failed:', error);
+    phiDbPool.end();
+    process.exit(1);
+  });

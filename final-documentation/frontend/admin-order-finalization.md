@@ -118,14 +118,16 @@ As of June 2025, all save operations use the unified endpoint:
 - **Navigation:** Back to EMR Paste, Continue to Insurance
 
 ### Insurance Management (Tab 3)
-- **Primary insurance information**
+- **Insurance toggle checkbox** - "Patient has insurance" to indicate insured vs uninsured/cash-pay
+- **Conditional UI** - Shows insurance fields only when checkbox is checked
+- **Primary insurance information** - All fields optional when insurance is indicated
 - **Secondary insurance (expandable section)**
 - **Policy holder relationship dropdown**
-- **Independent save functionality**
+- **Independent save functionality** - Sends hasInsurance field with request
 - **Navigation:** Back to Patient Info, Continue to Order Details
 
 ### Order Details & Supplemental Info (Tab 4)
-- **Radiology organization selection** (currently hardcoded to ID 2)
+- **Radiology organization selection** (dropdown with hardcoded list)
 - **Facility location dropdown**
 - **Priority and scheduling timeframe selection**
 - **Supplemental EMR information textarea**
@@ -227,7 +229,7 @@ As of June 2025, all save operations use the unified endpoint:
 - **Auto-save before final submission**
 
 ## Known Limitations
-1. **Radiology organization selection** - Currently hardcoded to ID 2, needs dynamic loading from connections
+1. **Radiology organization selection** - Currently using hardcoded list (City Imaging Center, Regional Radiology Group, Advanced Imaging Solutions) as admin_staff cannot access connections API
 2. **Credit balance display** - Only available for admin_referring role
 3. **Document upload** - Uses mock data, real implementation pending
 4. **EMR parsing issues:**
@@ -235,8 +237,8 @@ As of June 2025, all save operations use the unified endpoint:
    - Only partially updates patient information
    - Backend parser capabilities need improvement
 5. **Order Details Fields:**
-   - **Radiology Group** - Not saved (no backend field)
-   - **Facility Location** - Hardcoded to ID 1 (needs location name → ID mapping)
+   - **Radiology Group** - Selection works but list is hardcoded (see #1)
+   - **Facility Location** - Uses targetFacilityId from selected radiology org
    - **Scheduling Timeframe** - Backend doesn't have database column yet
 
 ## Future Enhancements
@@ -270,6 +272,14 @@ As of June 2025, all save operations use the unified endpoint:
 This implementation provides a complete, production-ready admin order finalization workflow with comprehensive error handling and user-friendly interface design.
 
 ## Changelog
+
+### Version 2.1 (June 16, 2025)
+- **Insurance Toggle Feature**: Added checkbox to indicate if patient has insurance
+- **hasInsurance Field**: Added support for backend's new hasInsurance requirement
+- **Conditional Insurance UI**: Shows insurance fields only when patient has insurance
+- **Radiology Organization Selection**: Added validation to require selection before sending
+- **TypeScript Fixes**: Fixed type errors with proper annotations
+- **JSX Structure Fix**: Fixed conditional rendering syntax errors
 
 ### Version 2.0 (June 14, 2025)
 - **Unified Endpoint Implementation**: All save operations now use `PUT /api/admin/orders/:orderId`

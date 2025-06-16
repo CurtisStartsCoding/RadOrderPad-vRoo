@@ -49,6 +49,7 @@ export class FileUploadService {
    * @param contentType The content type of the file
    * @param userId The user ID of the uploader
    * @param processingStatus The processing status of the document
+   * @param fileHash Optional SHA-256 hash of the file for integrity verification
    * @returns The ID of the created document record
    */
   static async confirmUpload(
@@ -60,9 +61,10 @@ export class FileUploadService {
     fileSize: number,
     contentType: string,
     userId: number = 1,
-    processingStatus: string = 'uploaded'
+    processingStatus: string = 'uploaded',
+    fileHash?: string
   ): Promise<UploadConfirmationResponse> {
-    return confirmUpload(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId, processingStatus);
+    return confirmUpload(fileKey, orderId, patientId, documentType, fileName, fileSize, contentType, userId, processingStatus, fileHash);
   }
 
   /**

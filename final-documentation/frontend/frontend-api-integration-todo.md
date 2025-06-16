@@ -8,10 +8,12 @@
 ## Major Accomplishments (June 2025)
 - ⚠️ Admin Order Finalization: Save functionality works but EMR parser has issues
 - ✅ Send to Radiology: Working with real radiology organizations from connections
+- ✅ Dynamic Facility Selection: Loads real locations based on selected radiology org
 - ✅ Connections Management: Complete implementation with request/approve/reject flow
 - ✅ Location Management: Full CRUD operations with filtering and formatting
 - ✅ Navigation: Fixed menu access for Connections page
 - ✅ API Integration: Unified endpoint for order updates
+- ✅ Fixed targetFacilityId: Now uses correct facility ID instead of organization ID
 
 ## Critical Issues
 - 🔴 EMR Parser not updating patient names (first/last name fields)
@@ -20,12 +22,19 @@
 ## CRITICAL PATH - Phase 1: Core Order Workflow (Week 1)
 **Goal: Get orders flowing from physicians → admin staff → radiology**
 
-### 1.1 Fix AdminOrderFinalization - Send to Radiology [PRIORITY: HIGH] ⚠️ MOSTLY COMPLETE
+### 1.1 Fix AdminOrderFinalization - Send to Radiology [PRIORITY: HIGH] ✅ COMPLETED (June 2025)
 
 - [x] **Load radiology organizations from connections data** ✅ COMPLETED (June 2025)
   - [x] Fetch active connections with type='radiology' from API
   - [x] Store in component state for dropdown population
   - [x] Update radiology dropdown to use real organizations (not mock)
+  - [x] Handle different API response formats (connections vs data property)
+  
+- [x] **Dynamic Facility Location Selection** ✅ COMPLETED (June 2025)
+  - [x] Fetch locations via GET /api/organizations/:orgId/locations
+  - [x] Show facilities when radiology org is selected
+  - [x] Fix targetFacilityId to use actual facility ID (not org ID)
+  - [x] Handle loading and empty states
   
 - [ ] **Implement credit balance check**
   - [ ] Add API call: `GET /api/billing/credit-balance`
@@ -134,7 +143,7 @@
   - [x] Fetch organization locations from API
   - [x] Map facility names to location IDs  
   - [x] Full location management implemented
-  - [ ] Update AdminOrderFinalization to use real location IDs (still hardcoded to locationId: 1)
+  - [x] Update AdminOrderFinalization to use real location IDs ✅ COMPLETED
 
 ## Phase 2: Complete Order Creation (Week 1-2)
 **Goal: Enable physicians to create orders end-to-end**
@@ -393,7 +402,7 @@ Backend uses snake_case, frontend uses camelCase:
 7. **Unified Endpoint**: `PUT /api/admin/orders/:orderId` accepts nested objects (patient, insurance, orderDetails, supplementalText)
 8. **Order Details Limitations**: 
    - Radiology group selection not saved (no backend field)
-   - Facility location needs ID mapping (currently hardcoded to 1)
+   - ~~Facility location needs ID mapping (currently hardcoded to 1)~~ ✅ FIXED - Now uses real facility IDs
    - Scheduling timeframe field doesn't exist in database yet
 9. **Connections API**: 
    - Returns wrapped response: `{ connections: [...] }`
@@ -403,6 +412,11 @@ Backend uses snake_case, frontend uses camelCase:
 10. **Navigation Fixes**:
     - Connections menu item added to AppHeader.tsx for admin roles
     - Menu shows in hamburger menu on all screen sizes
+11. **API Response Inconsistency**:
+    - Connections API: `{ connections: [...] }`
+    - Locations API: `{ success: true, data: [...] }`
+    - Orders API: `{ orders: [...], pagination: {...} }`
+    - See technical debt document for standardization plan
 
 ## Success Metrics
 - ✅ Orders can be created by physicians

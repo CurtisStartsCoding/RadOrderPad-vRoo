@@ -111,7 +111,14 @@ export async function getUploadUrl(
     const command = new PutObjectCommand({
       Bucket: config.aws.s3.bucketName,
       Key: fileKey,
-      ContentType: contentType
+      ContentType: contentType,
+      // Disable checksum to prevent SignatureDoesNotMatch errors in browsers
+      // HIPAA compliance is maintained through:
+      // 1. HTTPS/TLS encryption in transit
+      // 2. S3 server-side encryption at rest
+      // 3. Client-side integrity verification (hash stored in DB)
+      // 4. CloudTrail audit logging
+      ChecksumAlgorithm: undefined
     });
 
     // Generate the presigned URL

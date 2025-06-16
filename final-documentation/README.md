@@ -1,6 +1,6 @@
 # RadOrderPad API Documentation
 
-**Last Updated:** June 15, 2025
+**Last Updated:** June 16, 2025
 
 This directory contains comprehensive documentation for the RadOrderPad API backend.
 
@@ -10,6 +10,10 @@ RadOrderPad is a clinical decision support platform that:
 1. Guides physicians to create appropriate imaging orders using ACR Appropriate Use Criteria
 2. Automatically generates proper CPT/ICD-10 codes from clinical dictation
 3. Routes completed orders to radiology groups for fulfillment
+
+## 🔧 Database Modifications
+
+**[Database Modifications Guide](backend/database-modifications-guide.md)** - How to make database schema changes (includes has_insurance column implementation)
 
 ## ⚠️ Critical Implementation Gap
 
@@ -116,6 +120,8 @@ RadOrderPad is a clinical decision support platform that:
 - [Dual Credit Billing System](backend/dual-credit-billing-system.md) - Implementation of basic and advanced credit types for radiology organizations
 - [Database Script Execution](backend/database-script-execution.md) - Guide for creating and running database maintenance scripts with connection examples
 - [Admin Order Finalization - Data Retrieval Fix](backend/admin-order-finalization-data-retrieval-fix.md) - Resolution of saved data not appearing when returning to order finalization page
+- [S3 Upload HIPAA Fix](backend/s3-upload-hipaa-fix.md) - Resolution for browser-based S3 upload failures while maintaining HIPAA compliance
+- [Technical Debt Tracker](backend/technical-debt.md) - Tracking technical debt items for future refactoring efforts
 
 ### Strategy Documentation
 - [Radiology Export Strategy](radiology-export-strategy.md) - Strategy for exporting order data to radiology systems (CSV, JSON, PDF formats)

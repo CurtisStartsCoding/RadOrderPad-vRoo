@@ -16,6 +16,7 @@ import logger from '../../utils/logger';
  * @param contentType The content type of the file
  * @param userId The user ID of the uploader
  * @param processingStatus The processing status of the document
+ * @param fileHash Optional SHA-256 hash of the file for integrity verification
  * @returns The ID of the created document record
  */
 export async function confirmUpload(
@@ -27,7 +28,8 @@ export async function confirmUpload(
   fileSize: number,
   contentType: string,
   userId: number = 1, // Default to 1 if not provided
-  processingStatus: string = 'uploaded' // Default to 'uploaded' if not provided
+  processingStatus: string = 'uploaded', // Default to 'uploaded' if not provided
+  fileHash?: string // Optional file hash for HIPAA integrity compliance
 ): Promise<UploadConfirmationResponse> {
   try {
     // Validate inputs
@@ -75,12 +77,23 @@ export async function confirmUpload(
       }
       
       // File exists in S3, now create the database record
+      const columns = ['user_id', 'order_id', 'patient_id', 'document_type', 'filename', 'file_size', 'mime_type', 'file_path', 'processing_status', 'uploaded_at'];
+      const values = [userId, orderId, patientId, documentType, fileName, fileSize, contentType, fileKey, processingStatus];
+      const placeholders = ['$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8', '$9', 'NOW()'];
+      
+      // Include file hash if provided
+      if (fileHash) {
+        columns.push('file_hash');
+        values.push(fileHash);
+        placeholders.push(`$${values.length}`);
+      }
+      
       const result = await queryPhiDb(
         `INSERT INTO document_uploads
-        (user_id, order_id, patient_id, document_type, filename, file_size, mime_type, file_path, processing_status, uploaded_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+        (${columns.join(', ')})
+        VALUES (${placeholders.join(', ')})
         RETURNING id`,
-        [userId, orderId, patientId, documentType, fileName, fileSize, contentType, fileKey, processingStatus]
+        values
       );
       documentId = result.rows[0].id;
     }

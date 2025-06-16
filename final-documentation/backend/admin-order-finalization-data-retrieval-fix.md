@@ -1,8 +1,9 @@
-# Admin Order Finalization - Data Retrieval Fix
+# Admin Order Finalization - Data Retrieval Fix & Dynamic Locations
 
 **Date:** Implementation started - pending deployment and testing  
+**Updated:** 2025-06-16 - Added dynamic location selection  
 **Issue:** Saved patient and insurance data not showing when returning to order finalization page  
-**Status:** 🔧 FIX IMPLEMENTED - AWAITING TESTING  
+**Status:** ✅ DATA RETRIEVAL FIXED | ✅ DYNAMIC LOCATIONS IMPLEMENTED  
 
 ## Problem Description
 
@@ -246,10 +247,76 @@ While this fix resolves the immediate issue, future enhancements could include:
 3. **Secondary Insurance**: Full secondary insurance details in cached format
 4. **EMR Summary**: Structured summary of supplemental content
 
+## Dynamic Location Selection (Added 2025-06-16)
+
+### Problem
+The AdminOrderFinalization component had hardcoded radiology organizations and facility locations. Additionally, `targetFacilityId` was incorrectly using the organization ID instead of the actual facility ID.
+
+### Solution Implemented
+
+#### 1. Dynamic Radiology Organization Selection
+- Fetches from active connections via `GET /api/connections`
+- Only shows organizations with `status: 'active'`
+- Displays organization name with ID for clarity
+
+#### 2. Dynamic Facility Location Loading
+- **Endpoint:** `GET /api/organizations/:orgId/locations`
+- **Triggered:** When a radiology organization is selected
+- **Response Format:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "organization_id": 2,
+      "name": "Main Imaging Center",
+      "address_line1": "123 Medical Blvd",
+      "city": "Anytown",
+      "state": "CA",
+      "zip_code": "12345",
+      "is_active": true
+    }
+  ]
+}
+```
+
+#### 3. Fixed targetFacilityId Usage
+**Previous (WRONG):**
+```javascript
+targetFacilityId: selectedRadiologyOrgId || null
+```
+
+**Fixed (CORRECT):**
+```javascript
+targetFacilityId: selectedFacilityId || null
+```
+
+### Frontend Changes
+- **File:** `/client/src/pages/AdminOrderFinalization.tsx`
+- Added connections query with proper response format handling
+- Added locations query triggered by organization selection
+- Fixed state management for facility selection
+- Added comprehensive debugging for troubleshooting
+
+### API Response Handling
+The implementation handles multiple response formats:
+- **Connections:** Direct array `[...]` or wrapped `{connections: [...]}`
+- **Locations:** Standard `{success: true, data: [...]}` format
+
+### Permissions Update
+- `admin_staff` role was granted access to `GET /api/connections`
+- Already had access to `GET /api/organizations/:id/locations`
+
 ## Related Files
 
+**Backend Files:**
 - `/src/services/order/get-order.ts` - Enhanced data retrieval query
 - `/src/services/order/admin/handlers/send-to-radiology.ts` - Audit trail snapshot
 - `/src/controllers/admin-order/update-patient.controller.ts` - Patient save endpoint  
 - `/src/controllers/admin-order/update-insurance.controller.ts` - Insurance save endpoint
 - `/src/controllers/admin-order/paste-supplemental.controller.ts` - Supplemental save endpoint
+
+**Frontend Files:**
+- `/client/src/pages/AdminOrderFinalization.tsx` - Dynamic location selection implementation
+- `/client/src/lib/auth.ts` - User data storage in localStorage

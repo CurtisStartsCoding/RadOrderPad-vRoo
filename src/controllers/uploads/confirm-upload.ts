@@ -20,7 +20,8 @@ export async function confirmUpload(req: AuthenticatedRequest, res: Response): P
       fileName,
       fileSize,
       contentType,
-      processingStatus = 'uploaded' // Default to 'uploaded' if not provided
+      processingStatus = 'uploaded', // Default to 'uploaded' if not provided
+      fileHash
     } = req.body as ConfirmUploadRequestBody;
 
     // Validate the request
@@ -40,7 +41,8 @@ export async function confirmUpload(req: AuthenticatedRequest, res: Response): P
       fileSize,
       contentType,
       userId,
-      processingStatus
+      processingStatus,
+      fileHash
     );
 
     res.status(200).json({

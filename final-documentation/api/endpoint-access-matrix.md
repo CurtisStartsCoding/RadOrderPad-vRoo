@@ -130,7 +130,8 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 - Upload documents
 - Send orders to radiology
 - Access locations
-- View connections (to select radiology organizations)
+- View connections (GET /api/connections - to select radiology organizations)
+- View organization locations (GET /api/organizations/:id/locations)
 
 ### Admin Referring
 - All admin staff capabilities
