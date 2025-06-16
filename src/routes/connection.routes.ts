@@ -8,7 +8,7 @@ const router = express.Router();
 router.use(authenticateJWT);
 
 // Only admin roles can manage connections
-const adminRoles = ['admin_referring', 'admin_radiology'];
+const adminRoles = ['admin_referring', 'admin_radiology', 'admin_staff'];
 
 // List connections for the user's organization
 router.get('/', authorizeRole(adminRoles), connectionController.listConnections);
