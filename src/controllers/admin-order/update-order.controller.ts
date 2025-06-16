@@ -20,7 +20,10 @@ interface UpdateOrderRequest {
     mrn?: string;
   };
   
-  // Insurance info fields
+  // Insurance status
+  hasInsurance?: boolean;
+  
+  // Insurance info fields (only relevant if hasInsurance is true)
   insurance?: {
     insurerName?: string;
     planType?: string;
@@ -134,8 +137,16 @@ export async function updateOrder(req: Request, res: Response): Promise<void> {
       }
     }
     
-    // Update insurance info if provided
-    if (updateData.insurance) {
+    // Update has_insurance status if provided
+    if (updateData.hasInsurance !== undefined) {
+      await client.query(
+        'UPDATE orders SET has_insurance = $1, updated_at = NOW() WHERE id = $2',
+        [updateData.hasInsurance, orderId]
+      );
+    }
+    
+    // Update insurance info only if patient has insurance
+    if (updateData.hasInsurance === true && updateData.insurance) {
       const { isPrimary = true, ...insuranceData } = updateData.insurance;
       
       // Check if insurance record exists
@@ -178,7 +189,8 @@ export async function updateOrder(req: Request, res: Response): Promise<void> {
           );
         }
       } else {
-        // Insert new insurance record
+        // Insert new insurance record (only called if hasInsurance is true)
+        // Use empty strings for required fields if not provided
         await client.query(
           `INSERT INTO patient_insurance 
            (patient_id, insurer_name, plan_type, policy_number, group_number,
@@ -187,9 +199,9 @@ export async function updateOrder(req: Request, res: Response): Promise<void> {
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())`,
           [
             order.patient_id,
-            insuranceData.insurerName || null,
+            insuranceData.insurerName || '',
             insuranceData.planType || null,
-            insuranceData.policyNumber || null,
+            insuranceData.policyNumber || '',
             insuranceData.groupNumber || null,
             insuranceData.policyHolderName || null,
             insuranceData.policyHolderRelationship || null,
@@ -199,6 +211,12 @@ export async function updateOrder(req: Request, res: Response): Promise<void> {
           ]
         );
       }
+    } else if (updateData.hasInsurance === false) {
+      // Patient is uninsured - remove any existing insurance records
+      await client.query(
+        'DELETE FROM patient_insurance WHERE patient_id = $1',
+        [order.patient_id]
+      );
     }
     
     // Update order details if provided
