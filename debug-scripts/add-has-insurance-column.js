@@ -1,15 +1,21 @@
 const { Pool } = require('pg');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+require('dotenv').config({ path: '../.env.production' });
 
-// PHI Database connection
+// Get the PHI database URL from environment
+const phiDbUrl = process.env.PHI_DATABASE_URL;
+
+if (!phiDbUrl) {
+  console.error('❌ PHI_DATABASE_URL not found in environment variables');
+  process.exit(1);
+}
+
+// Create connection with SSL disabled for RDS
 const phiDbPool = new Pool({
-  host: process.env.PG_PHI_HOST,
-  port: process.env.PG_PHI_PORT,
-  database: process.env.PG_PHI_DATABASE,
-  user: process.env.PG_PHI_USER,
-  password: process.env.PG_PHI_PASSWORD,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  connectionString: phiDbUrl,
+  ssl: {
+    rejectUnauthorized: false // Required for AWS RDS
+  }
 });
 
 async function addHasInsuranceColumn() {
