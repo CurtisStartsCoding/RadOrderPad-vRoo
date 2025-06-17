@@ -41,11 +41,7 @@ export const s3ClientSingleton: S3ClientSingleton = {
           credentials: {
             accessKeyId: config.aws.accessKeyId as string,
             secretAccessKey: config.aws.secretAccessKey as string
-          },
-          // Disable automatic checksum generation to prevent browser upload failures
-          // AWS SDK v3.729.0+ defaults to CRC32 checksums which cause SignatureDoesNotMatch
-          requestChecksumCalculation: 'WHEN_REQUIRED',
-          responseChecksumValidation: 'WHEN_REQUIRED'
+          }
         });
         
         logger.info('S3 client initialized successfully');

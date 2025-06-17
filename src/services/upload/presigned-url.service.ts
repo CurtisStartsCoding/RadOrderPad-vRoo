@@ -123,32 +123,9 @@ export async function getUploadUrl(
 
     // Generate the presigned URL
     const s3Client = s3ClientSingleton.getClient();
-    let presignedUrl = await getSignedUrl(s3Client, command, { 
+    const presignedUrl = await getSignedUrl(s3Client, command, { 
       expiresIn: 3600 // URL expires in 1 hour
     });
-
-    // AWS SDK v3.729.0+ automatically adds CRC32 checksums which break browser uploads
-    // We need to remove these parameters from the presigned URL
-    const url = new URL(presignedUrl);
-    
-    // Remove checksum-related query parameters
-    url.searchParams.delete('x-amz-checksum-crc32');
-    url.searchParams.delete('x-amz-checksum-crc32c');
-    url.searchParams.delete('x-amz-checksum-sha1');
-    url.searchParams.delete('x-amz-checksum-sha256');
-    url.searchParams.delete('x-amz-sdk-checksum-algorithm');
-    
-    // Remove checksum headers from signed headers
-    const signedHeaders = url.searchParams.get('X-Amz-SignedHeaders');
-    if (signedHeaders) {
-      const headers = signedHeaders.split(';').filter(h => 
-        !h.startsWith('x-amz-checksum') && 
-        h !== 'x-amz-sdk-checksum-algorithm'
-      );
-      url.searchParams.set('X-Amz-SignedHeaders', headers.join(';'));
-    }
-    
-    presignedUrl = url.toString();
 
     logger.info(`Generated presigned URL for ${fileKey}`, {
       fileKey,
