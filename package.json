@@ -22,9 +22,9 @@
     "vercel-setup": "node vercel-setup.js"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.787.0",
-    "@aws-sdk/client-ses": "^3.787.0",
-    "@aws-sdk/s3-request-presigner": "^3.787.0",
+    "@aws-sdk/client-s3": "3.726.0",
+    "@aws-sdk/client-ses": "3.726.0",
+    "@aws-sdk/s3-request-presigner": "3.726.0",
     "@types/connect-redis": "^0.0.23",
     "@types/express-session": "^1.18.1",
     "@types/papaparse": "^5.3.15",
