@@ -124,16 +124,7 @@ export async function getUploadUrl(
     // Generate the presigned URL
     const s3Client = s3ClientSingleton.getClient();
     const presignedUrl = await getSignedUrl(s3Client, command, { 
-      expiresIn: 3600, // URL expires in 1 hour
-      // Explicitly exclude checksum headers from the presigned URL
-      // This prevents SignatureDoesNotMatch errors in browser uploads
-      unhoistableHeaders: new Set([
-        'x-amz-checksum-crc32',
-        'x-amz-checksum-crc32c', 
-        'x-amz-checksum-sha1',
-        'x-amz-checksum-sha256',
-        'x-amz-sdk-checksum-algorithm'
-      ])
+      expiresIn: 3600 // URL expires in 1 hour
     });
 
     logger.info(`Generated presigned URL for ${fileKey}`, {
