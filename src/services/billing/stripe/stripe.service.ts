@@ -11,7 +11,7 @@ class StripeService {
 
   constructor() {
     this.stripe = new Stripe(config.stripe.secretKey || '', {
-      apiVersion: '2025-05-28.basil', // Use the compatible API version
+      apiVersion: '2025-03-31.basil' as any, // Use the compatible API version
     });
   }
 
