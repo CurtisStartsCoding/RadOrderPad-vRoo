@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3ClientSingleton } from './s3-client.service';
-import { config } from '../../config';
-import { logger } from '../../utils/logger';
-import { JwtPayloadInterface } from '../../interfaces/jwt-payload.interface';
+import config from '../../config/config';
+import logger from '../../utils/logger';
+import { AuthTokenPayload } from '../../models';
 import { randomString } from '../../utils/random-string';
 
 interface PresignedUrlRequest {
@@ -34,15 +34,15 @@ const ALLOWED_CONTENT_TYPES = [
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ];
 
-// Size limits by file type
-const SIZE_LIMITS: { [key: string]: number } = {
+// Size limits by file type (kept for future use)
+const _SIZE_LIMITS: { [key: string]: number } = {
   'application/pdf': 20 * 1024 * 1024, // 20MB for PDFs
   'default': 5 * 1024 * 1024 // 5MB for other files
 };
 
 export async function generatePresignedUrl(
   body: PresignedUrlRequest,
-  user: JwtPayloadInterface
+  user: AuthTokenPayload
 ): Promise<PresignedUrlResponse> {
   const { fileName, contentType, context } = body;
   
@@ -97,7 +97,7 @@ export async function generatePresignedUrl(
   try {
     // Generate the presigned URL
     const s3Client = s3ClientSingleton.getClient();
-    let presignedUrl = await getSignedUrl(s3Client, command, { 
+    const presignedUrl = await getSignedUrl(s3Client, command, { 
       expiresIn: 3600, // URL expires in 1 hour
       signableHeaders: new Set(['host', 'content-type']) // Explicitly sign content-type header
     });
@@ -129,7 +129,7 @@ export async function handleGetPresignedUrl(
   res: Response
 ): Promise<void> {
   try {
-    const user = req.user as JwtPayloadInterface;
+    const user = req.user as AuthTokenPayload;
     const result = await generatePresignedUrl(req.body, user);
     
     res.json({
@@ -139,7 +139,7 @@ export async function handleGetPresignedUrl(
   } catch (error) {
     logger.error('Error in handleGetPresignedUrl', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      userId: (req.user as JwtPayloadInterface)?.userId
+      userId: (req.user as AuthTokenPayload)?.userId
     });
     
     res.status(400).json({
@@ -148,3 +148,24 @@ export async function handleGetPresignedUrl(
     });
   }
 }
+
+// Default export - This is a legacy function that doesn't have user context
+// It should be replaced with generatePresignedUrl in all calling code
+async function getUploadUrl(
+  fileType: string,
+  fileName: string,
+  contentType: string,
+  orderId?: number,
+  patientId?: number,
+  _documentType: string = 'signature',
+  _fileSize?: number
+): Promise<{ success: boolean; presignedUrl: string; filePath: string }> {
+  // This is a design flaw - service functions should have user context
+  // For backward compatibility, we'll throw an error to force migration
+  throw new Error(
+    'getUploadUrl is deprecated. Use generatePresignedUrl with proper user context. ' +
+    'The controller should pass user information from req.user.'
+  );
+}
+
+export default getUploadUrl;

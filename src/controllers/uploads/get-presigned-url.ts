@@ -2,7 +2,7 @@
  * Handler for presigned URL generation
  */
 import { Response } from 'express';
-import FileUploadService from '../../services/upload';
+import { generatePresignedUrl } from '../../services/upload/presigned-url.service';
 import { AuthenticatedRequest, PresignedUrlRequestBody } from './types';
 import { validatePresignedUrlRequest } from './validate-presigned-url-request';
 import logger from '../../utils/logger';
@@ -53,25 +53,30 @@ export async function getPresignedUrl(req: AuthenticatedRequest, res: Response):
     }
 
     // Generate presigned URL
-    const result = await FileUploadService.getUploadUrl(
+    const result = await generatePresignedUrl({
       fileType,
       fileName,
-      contentType,
-      orderId,
-      patientId,
-      documentType || 'document',
-      fileSize
-    );
+      contentType: contentType || fileType,
+      context: orderId ? {
+        type: 'orders',
+        id: orderId
+      } : patientId ? {
+        type: 'patients',
+        id: patientId
+      } : {
+        type: 'general'
+      }
+    }, req.user);
 
     logger.info('Presigned URL generated successfully', {
       userId: req.user.userId,
-      fileKey: result.filePath
+      fileKey: result.fileKey
     });
     
     res.status(200).json({
-      success: result.success,
-      uploadUrl: result.presignedUrl,
-      fileKey: result.filePath
+      success: true,
+      uploadUrl: result.uploadUrl,
+      fileKey: result.fileKey
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Failed to generate upload URL';
