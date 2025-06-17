@@ -109,7 +109,7 @@ RadOrderPad is a clinical decision support platform that:
 
 #### Detailed References
 - [Patient Search API](api/patient-search-api.md) - POST /api/patients/search for dictation-based lookup
-- [File Upload](api/file-upload.md) - Document upload workflow with S3 integration
+- [File Upload](api/file-upload.md) - Complete S3 upload documentation including technical requirements and troubleshooting
 - [Utilities](api/utilities-endpoints.md) - External API proxies (NPI lookup for physician data)
 - [User-Location Scalability](api/user-location-assignment-scalability.md) - Scalability considerations and future enhancements for bulk operations
 - [Verified API Reference](api/verified-api-reference.md) - Comprehensive reference for all verified endpoints
@@ -120,7 +120,6 @@ RadOrderPad is a clinical decision support platform that:
 - [Dual Credit Billing System](backend/dual-credit-billing-system.md) - Implementation of basic and advanced credit types for radiology organizations
 - [Database Script Execution](backend/database-script-execution.md) - Guide for creating and running database maintenance scripts with connection examples
 - [Admin Order Finalization - Data Retrieval Fix](backend/admin-order-finalization-data-retrieval-fix.md) - Resolution of saved data not appearing when returning to order finalization page
-- [S3 Upload HIPAA Fix](backend/s3-upload-hipaa-fix.md) - Resolution for browser-based S3 upload failures while maintaining HIPAA compliance
 - [Technical Debt Tracker](backend/technical-debt.md) - Tracking technical debt items for future refactoring efforts
 
 ### Strategy Documentation

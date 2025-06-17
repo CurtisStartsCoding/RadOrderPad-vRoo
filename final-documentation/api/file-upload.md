@@ -210,19 +210,30 @@ const { uploadUrl, fileKey } = await response.json();
 ```
 
 ### Step 2: Upload File to S3
+
+**Important**: When uploading to S3, you must send ONLY the Content-Type header. Do not include Authorization, Origin, or any other headers.
+
 ```javascript
 const uploadResponse = await fetch(uploadUrl, {
   method: 'PUT',
   headers: {
-    'Content-Type': file.type
+    'Content-Type': file.type  // ONLY include Content-Type - must match what was sent to presigned-url endpoint
   },
   body: file
 });
 
 if (!uploadResponse.ok) {
+  const errorText = await uploadResponse.text();
+  console.error('S3 upload failed:', errorText);
   throw new Error('S3 upload failed');
 }
 ```
+
+**Common Issues to Avoid:**
+- Do NOT include Authorization header (auth is in the presigned URL)
+- Do NOT add custom headers or x-amz-* headers
+- Do NOT use axios interceptors that add headers
+- Ensure Content-Type exactly matches what was used to generate the presigned URL
 
 ### Step 3: Confirm Upload
 ```javascript
@@ -303,14 +314,45 @@ The system includes a test mode for development and testing:
 - Returns mock document ID (999) for test uploads
 - Activated when `NODE_ENV=test` or when using specific test order IDs
 
+## Technical Implementation Details
+
+### AWS SDK Version
+The system uses AWS SDK v3.200.0 for S3 operations. This specific version is required to avoid automatic checksum parameters that cause browser upload failures.
+
+### Presigned URL Configuration
+Presigned URLs are generated with the following parameters:
+- **Signed Headers**: None specified - S3 handles headers naturally for browser compatibility
+- **Expiration**: 1 hour for uploads, 5 minutes for downloads
+- **Content-SHA256**: Set to `UNSIGNED-PAYLOAD` for browser compatibility
+
+### S3 Upload Requirements
+When uploading files to S3 using the presigned URL:
+1. **Use fetch API** instead of axios (to avoid interceptors)
+2. **Include Content-Type header** that matches what was sent to generate the presigned URL
+3. **Browser will automatically add other headers** (Origin, User-Agent, etc.) - this is normal
+4. **Do not manually add**: Authorization, x-amz-*, or custom headers
+
 ## AWS S3 Configuration
 
 Required S3 bucket settings:
 - **Encryption**: Server-Side Encryption (SSE-S3 or SSE-KMS)
 - **Versioning**: Recommended for recovery
-- **CORS**: Allow PUT requests from frontend domains
+- **CORS**: Allow PUT requests from frontend domains with Content-Type header
 - **Lifecycle**: Optional rules for archiving old documents
 - **Access**: Private bucket, access only via IAM roles and presigned URLs
+
+### CORS Configuration Example
+```json
+[
+  {
+    "AllowedHeaders": ["content-type"],
+    "AllowedMethods": ["PUT", "POST", "GET", "HEAD", "DELETE"],
+    "AllowedOrigins": ["http://localhost:3000", "https://app.radorderpad.com"],
+    "ExposeHeaders": ["ETag", "x-amz-server-side-encryption", "x-amz-request-id", "x-amz-id-2"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
 
 ## Error Handling
 
