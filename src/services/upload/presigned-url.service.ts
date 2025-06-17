@@ -124,7 +124,8 @@ export async function getUploadUrl(
     // Generate the presigned URL
     const s3Client = s3ClientSingleton.getClient();
     const presignedUrl = await getSignedUrl(s3Client, command, { 
-      expiresIn: 3600 // URL expires in 1 hour
+      expiresIn: 3600, // URL expires in 1 hour
+      signableHeaders: new Set(['host', 'content-type']) // Include Content-Type in signature
     });
 
     logger.info(`Generated presigned URL for ${fileKey}`, {
