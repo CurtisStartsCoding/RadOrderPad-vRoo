@@ -1,17 +1,28 @@
 # Admin Order Finalization - Frontend Implementation Guide
 
 **Date:** June 14, 2025
-**Version:** 2.0
-**Last Updated:** June 14, 2025
+**Version:** 3.0
+**Last Updated:** June 18, 2025
 
 ## Overview
 
 The Admin Order Finalization page is a multi-tab interface that allows admin staff to complete physician-created orders by adding required patient demographics, insurance information, and supplemental clinical data before sending orders to radiology organizations.
 
-## Page Location
-- **File:** `client/src/pages/AdminOrderFinalization.tsx`
+## Page Structure (Refactored June 2025)
+
+### Main Component
+- **File:** `client/src/pages/AdminOrderFinalization.tsx` (796 lines, reduced from 1600)
 - **Route:** Accessed from Admin Queue by clicking "Complete Order"
 - **User Role:** `admin_staff`
+
+### Child Components
+- **`client/src/components/order/OrderReviewSummary.tsx`** - Review and send functionality
+- **`client/src/components/order/EmrPasteTab.tsx`** - EMR text parsing interface
+- **`client/src/components/order/PatientInfoTab.tsx`** - Patient demographics form
+- **`client/src/components/order/InsuranceInfoTab.tsx`** - Insurance information management
+- **`client/src/components/order/OrderDetailsTab.tsx`** - Order details and facility selection
+- **`client/src/components/order/DocumentsTab.tsx`** - Document upload wrapper
+- **`client/src/components/debug/OrderDebugInfo.tsx`** - Centralized debug information
 
 ## Workflow
 
@@ -148,6 +159,12 @@ As of June 2025, all save operations use the unified endpoint:
 
 ## Technical Implementation
 
+### Component Architecture (Refactored June 2025)
+- **Modular design** with single-responsibility components
+- **Props-based communication** between parent and child components
+- **Centralized state** in main component, passed down as props
+- **Event handlers** passed as callbacks to child components
+
 ### State Management
 - **React state** for form data in each tab
 - **React Query** for API data fetching and caching
@@ -167,6 +184,12 @@ As of June 2025, all save operations use the unified endpoint:
 - **Tab-based navigation** with programmatic control
 - **Breadcrumb navigation** with back/continue buttons
 - **Auto-advance** to next tab after successful operations
+
+### Debug Information
+- **Centralized debug component** (`OrderDebugInfo`)
+- **Conditional rendering** based on environment (development only)
+- **Collapsible UI** to minimize screen space usage
+- **Console logging** moved to debug component for cleaner production code
 
 ## Field Mappings
 
@@ -272,6 +295,22 @@ As of June 2025, all save operations use the unified endpoint:
 This implementation provides a complete, production-ready admin order finalization workflow with comprehensive error handling and user-friendly interface design.
 
 ## Changelog
+
+### Version 3.0 (June 18, 2025) 
+- **Major Refactoring**: Modularized AdminOrderFinalization into 7 separate components
+- **Component Extraction**: Created dedicated components for each tab and debug info
+- **Code Reduction**: Reduced main component from 1600 to 796 lines (50% reduction)
+- **Debug Centralization**: Moved all console.log statements to OrderDebugInfo component
+- **Production Ready**: Removed development-only logging from production code
+- **Improved Maintainability**: Each component now has single responsibility
+- **Component List**:
+  - OrderReviewSummary: Review and send functionality
+  - EmrPasteTab: EMR text parsing
+  - PatientInfoTab: Patient demographics
+  - InsuranceInfoTab: Insurance information
+  - OrderDetailsTab: Order details and facility selection
+  - DocumentsTab: Document management wrapper
+  - OrderDebugInfo: Centralized debug information
 
 ### Version 2.1 (June 16, 2025)
 - **Insurance Toggle Feature**: Added checkbox to indicate if patient has insurance

@@ -1,7 +1,7 @@
 # Frontend API Integration Todo List
 
 **Created:** January 2025  
-**Last Updated:** June 2025  
+**Last Updated:** June 18, 2025  
 **Purpose:** Master checklist for implementing API integration in RadOrderPad frontend  
 **Priority:** Focus on core workflow first (Phase 1) to get orders flowing to radiology
 
@@ -14,10 +14,13 @@
 - ✅ Navigation: Fixed menu access for Connections page
 - ✅ API Integration: Unified endpoint for order updates
 - ✅ Fixed targetFacilityId: Now uses correct facility ID instead of organization ID
+- ✅ Component Refactoring: Admin Order Finalization modularized (50% code reduction)
 
 ## Critical Issues
 - 🔴 EMR Parser not updating patient names (first/last name fields)
 - 🔴 Only partial field updates when parsing EMR data
+- 🔴 Referring physician data not populated in orders (shows "Not available")
+- 🔴 Study/modality field not populated in orders (shows "Not specified")
 
 ## CRITICAL PATH - Phase 1: Core Order Workflow (Week 1)
 **Goal: Get orders flowing from physicians → admin staff → radiology**
@@ -417,6 +420,26 @@ Backend uses snake_case, frontend uses camelCase:
     - Locations API: `{ success: true, data: [...] }`
     - Orders API: `{ orders: [...], pagination: {...} }`
     - See technical debt document for standardization plan
+12. **Missing Order Data (NEW - January 2025)**:
+    - **Referring Physician**: `GET /api/orders/:orderId` returns null/empty for `referring_physician_name` and `referring_physician_npi`
+      - Backend needs to populate these fields from the physician who created/signed the order
+      - Frontend shows "Not available" with visual warning when data is missing
+    - **Study/Modality**: `modality` field often empty in order response
+      - Should be populated from validation results when order is created
+      - Frontend shows "Not specified" with inline warning when missing
+
+## Code Organization (June 18, 2025)
+- ✅ Admin Order Finalization refactored into modular components:
+  - `OrderReviewSummary.tsx` - Review and send functionality (~380 lines)
+  - `EmrPasteTab.tsx` - EMR text parsing (~170 lines)
+  - `PatientInfoTab.tsx` - Patient demographics (~230 lines)
+  - `InsuranceInfoTab.tsx` - Insurance information (~280 lines)
+  - `OrderDetailsTab.tsx` - Order details and facility selection (~290 lines)
+  - `DocumentsTab.tsx` - Document management wrapper (~40 lines)
+  - `OrderDebugInfo.tsx` - Centralized debug information (~290 lines)
+- ✅ Main component reduced from 1600 to 796 lines (50% reduction)
+- ✅ All console.log statements moved to debug component
+- ✅ Production-ready code without development logging
 
 ## Success Metrics
 - ✅ Orders can be created by physicians
@@ -424,5 +447,6 @@ Backend uses snake_case, frontend uses camelCase:
 - ✅ Credits are tracked and consumed properly
 - ✅ Organizations can manage users and locations
 - ✅ Billing/payment flow works end-to-end
+- ✅ Code maintainability improved with modular architecture
 
 This comprehensive todo list focuses on getting the core workflow operational first (Phase 1), then building out the supporting features needed for a complete system. Each item is specific and actionable, making it easy to track progress.
