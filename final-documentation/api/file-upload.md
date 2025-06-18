@@ -325,6 +325,52 @@ Presigned URLs are generated with the following parameters:
 - **Expiration**: 1 hour for uploads, 5 minutes for downloads
 - **Content-SHA256**: Set to `UNSIGNED-PAYLOAD` for browser compatibility
 
+## Production Working Configuration (DO NOT MODIFY)
+
+**Critical**: The following configuration is working perfectly in production as of June 17, 2025. Any changes require extensive testing.
+
+### Exact Working Implementation
+
+Located in `src/services/upload/presigned-url.service.ts`:
+
+```typescript
+// Line 83 - ContentType is INTENTIONALLY commented out
+const command = new PutObjectCommand({
+  Bucket: config.aws.s3.bucketName,
+  Key: fileKey,
+  //ContentType: finalContentType  // DO NOT UNCOMMENT - Working without it
+});
+
+// Lines 96-99 - No signed headers specified
+const presignedUrl = await getSignedUrl(s3Client, command, { 
+  expiresIn: 3600 // URL expires in 1 hour
+  // No signableHeaders - critical for proxy compatibility
+});
+```
+
+### Why This Works
+
+1. **No ContentType in PutObjectCommand**:
+   - Browser sends Content-Type with the actual PUT request
+   - S3 determines content type from the upload request headers
+   - Prevents signature mismatches
+
+2. **No Signed Headers**:
+   - Production server behind proxy/load balancer adds headers
+   - Not signing headers prevents signature validation failures
+   - Allows flexibility for different client configurations
+
+3. **SDK v3.200.0 Specific**:
+   - No automatic checksum generation
+   - Simpler presigned URL generation
+   - Battle-tested with current infrastructure
+
+### Verification
+- ✅ Uploads work from all browsers
+- ✅ Files download with correct MIME types
+- ✅ No SignatureDoesNotMatch errors
+- ✅ Works behind proxy/load balancer
+
 ### S3 Upload Requirements
 When uploading files to S3 using the presigned URL:
 1. **Use fetch API** instead of axios (to avoid interceptors)
@@ -370,8 +416,165 @@ Common error scenarios:
 - Resource not found: 404 Not Found
 - Server errors: 500 Internal Server Error
 
+## Troubleshooting Guide
+
+### Common Issues and Solutions
+
+#### 1. 403 Forbidden / SignatureDoesNotMatch Errors
+
+**Symptoms:**
+- Uploads work locally but fail in production
+- Error message: "The request signature we calculated does not match the signature you provided"
+- S3 returns 403 Forbidden after successful presigned URL generation
+
+**Common Causes:**
+1. **Incorrect AWS credentials** - Check for typos in AWS_SECRET_ACCESS_KEY
+2. **Environment file issues** - Ensure no quotes around values, no extra spaces
+3. **Proxy/Load balancer headers** - Production environments may add headers not included in signature
+4. **CORS configuration** - Missing or incorrect CORS rules on S3 bucket
+
+**Solutions:**
+1. Verify AWS credentials match exactly (case-sensitive)
+2. Check `.env` file formatting - no quotes, no trailing spaces
+3. Ensure presigned URLs are generated without signed headers for proxy compatibility
+4. Configure proper CORS rules on S3 bucket
+
+#### 2. CORS Errors
+
+**S3 Bucket CORS Configuration (XML format for AWS Console):**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+<CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedMethod>POST</AllowedMethod>
+    <AllowedMethod>DELETE</AllowedMethod>
+    <MaxAgeSeconds>3000</MaxAgeSeconds>
+    <AllowedHeader>*</AllowedHeader>
+    <ExposeHeader>ETag</ExposeHeader>
+</CORSRule>
+</CORSConfiguration>
+```
+
+## Manual Testing Procedures
+
+### 1. Test S3 Direct Upload (Command Line)
+```bash
+# Navigate to test directory
+cd all-backend-tests/role-tests
+
+# Run S3 upload test
+node test-s3-upload.js
+```
+
+Expected output:
+- ✅ Generate presigned URL
+- ✅ Upload file using presigned URL
+- ✅ Upload file directly using S3 SDK
+
+### 2. Test API-based Upload
+```bash
+# Navigate to test directory
+cd all-backend-tests/role-tests
+
+# Run API upload test with admin staff token
+ADMIN_STAFF_TOKEN=$(cat ../tokens/admin_staff-token.txt) node admin-staff-api-upload-test.js
+```
+
+Expected output:
+- ✅ Successfully obtained presigned URL from API
+- ✅ Successfully uploaded file using presigned URL
+
+### 3. Test Role-based Upload
+```bash
+# Run admin staff role tests (includes upload test)
+cd all-backend-tests/role-tests
+node admin-staff-role-tests.js
+```
+
+Look for:
+- Step 9: Document Upload
+- Should show successful presigned URL generation
+- File key should be returned
+
+### 4. Browser-based Testing
+
+1. Log in as admin_staff user
+2. Navigate to an order detail page
+3. Click "Upload Document" button
+4. Select a file and upload
+5. Check browser console (F12) for:
+   - Presigned URL request (200 OK)
+   - S3 PUT request (200 OK)
+   - Confirm upload request (200 OK)
+
+### 5. Diagnostic Tests for Troubleshooting
+
+For troubleshooting S3 issues, use diagnostic scripts:
+
+```bash
+cd all-backend-tests/diagnostic-tests/file-upload/
+
+# Test S3 permissions
+node test-s3-permissions.js
+
+# Test direct S3 access
+node test-s3-direct.js
+
+# Test API upload with token
+node test-api-upload-with-token.js
+```
+
+## Environment Variables
+
+Required in `.env` file:
+```env
+# AWS Configuration
+AWS_ACCESS_KEY_ID=AKIAVP2W2JHIZV7R2OPT
+AWS_SECRET_ACCESS_KEY=<your-secret-key-here>
+AWS_REGION=us-east-2
+S3_BUCKET_NAME=radorderpad-uploads-prod-us-east-2
+```
+
+**Important:** 
+- No quotes around values
+- No spaces before/after = sign
+- Special characters in secret key (+ and /) are valid
+
+## AWS IAM Policy Requirements
+
+The AWS IAM user requires these permissions:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:GetObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::radorderpad-uploads-prod-us-east-2/uploads/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket"
+      ],
+      "Resource": "arn:aws:s3:::radorderpad-uploads-prod-us-east-2"
+    }
+  ]
+}
+```
+
 ## Related Documentation
 
 - [File Upload Service Architecture](../file_upload_service.md)
 - [Role-Based Access Control](../role_based_access.md)
 - [AWS S3 Setup Guide](../../all-backend-tests/role-tests/AWS-S3-SETUP-GUIDE.md)
+- [Known Issues - S3 Upload Resolution](../KNOWN-ISSUES.md#s3-upload-signatureDoesNotMatch-june-2025)

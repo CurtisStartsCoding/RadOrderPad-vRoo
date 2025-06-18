@@ -281,6 +281,38 @@ node debug-scripts/redis-optimization/check-index-schema.js
 - Enforce role-based access control
 - Audit all data access
 
+## Current Known Issues
+
+### S3 Upload - SignatureDoesNotMatch (As of June 17, 2025)
+
+**Status**: Partially resolved, still experiencing 403 errors in browser uploads
+
+**Issue**: Browser uploads to S3 using presigned URLs are failing with 403 Forbidden errors. The presigned URLs are being generated with `X-Amz-SignedHeaders=content-type;host` but browsers are sending additional headers that aren't included in the signature.
+
+**Progress Made**:
+1. Fixed TypeScript compilation errors in `src/services/upload/presigned-url.service.ts`
+2. Added `signableHeaders: new Set(['host', 'content-type'])` to presigned URL generation
+3. Created `src/utils/random-string.ts` utility for generating unique file identifiers
+4. Updated controller to properly pass user context to the service
+
+**Current Behavior**:
+- CORS preflight (OPTIONS) succeeds with 200 OK
+- Actual PUT request fails with 403 Forbidden
+- The URL includes `X-Amz-SignedHeaders=content-type%3Bhost` (both headers are being signed)
+- Browser is sending additional headers: `origin`, `referer`, `sec-*` headers, `user-agent`, etc.
+
+**Test Results**:
+- Command-line uploads (curl/wget) still fail with SignatureDoesNotMatch
+- Browser uploads fail with 403 Forbidden after successful CORS preflight
+
+**Root Cause**: AWS SDK v3.200.0 has limitations with presigned URL generation where additional browser headers cause signature validation to fail.
+
+**Next Steps**:
+1. Consider upgrading AWS SDK to a newer version
+2. Implement presigned POST instead of PUT (more complex but more reliable)
+3. Investigate S3 bucket CORS configuration
+4. Consider using a proxy endpoint that adds only the required headers
+
 ### Git Commit Standards
 Use conventional commit format for all commits:
 - `feat:` for new features
@@ -291,6 +323,12 @@ Use conventional commit format for all commits:
 - `test:` for test additions/changes
 - `chore:` for maintenance tasks
 
+**IMPORTANT COMMIT RULES:**
+- NO footers in commits (no "Generated with", no "Co-Authored-By")
+- NO emojis in commits
+- NO links in commits
+- Keep commit messages concise and professional
+
 Example:
 ```
 feat: add unified order update endpoint for admin staff
@@ -299,6 +337,27 @@ feat: add unified order update endpoint for admin staff
 - Support partial updates for patient, insurance, and order details
 - Add PUT /api/admin/orders/:orderId/order-details for immediate compatibility
 - Fix TypeScript warnings about any types
-
-Generated with Claude Code
 ```
+
+### Package Management Guidelines
+
+**CRITICAL: Production Server Deployment**
+- The production deployment uses `npm prune --production` after building
+- This removes ALL devDependencies including TypeScript types
+- DO NOT modify package.json dependencies unless absolutely necessary
+- If you must change package.json, warn the user that it will affect production builds
+
+**Deployment Process:**
+```bash
+git fetch --all
+git pull --ff-only origin backend-v1.0-release
+npm install          # In production, only installs dependencies, NOT devDependencies
+npm run build        # Needs devDependencies to work
+npm prune --production  # Removes devDependencies
+pm2 restart RadOrderPad
+```
+
+**If package.json changes are needed:**
+1. Warn the user about production build implications
+2. Suggest alternatives first (type assertions, workarounds)
+3. If unavoidable, remind user to run `npm install --include=dev` on production

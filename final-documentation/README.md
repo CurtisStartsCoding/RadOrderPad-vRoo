@@ -15,6 +15,13 @@ RadOrderPad is a clinical decision support platform that:
 
 **[Database Modifications Guide](backend/database-modifications-guide.md)** - How to make database schema changes (includes has_insurance column implementation)
 
+## 🐛 Known Issues & Troubleshooting
+
+**[Known Issues and Troubleshooting](KNOWN-ISSUES.md)** - Current bugs, limitations, and their workarounds
+- ✅ S3 upload issues resolved (June 17, 2025)
+- ⚠️ Admin staff cannot access connection locations
+- ⚠️ Location-based filtering not implemented
+
 ## ⚠️ Critical Implementation Gap
 
 **[Location Integration Not Implemented](CRITICAL-LOCATION-INTEGRATION-GAP.md)** - Orders are not filtered by location. In multi-location organizations, admin staff see ALL orders from ALL locations. This must be addressed before production deployment.

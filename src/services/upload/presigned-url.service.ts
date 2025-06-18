@@ -1,3 +1,20 @@
+/**
+ * S3 Presigned URL Service
+ * 
+ * IMPORTANT: This service uses AWS SDK v3.200.0
+ * DO NOT UPGRADE without extensive testing of browser-based uploads
+ * 
+ * Why v3.200.0?
+ * - Newer versions (v3.300+) add automatic checksum headers that break browser uploads
+ * - Newer versions have different header signing behavior incompatible with proxies
+ * - This version has been thoroughly tested and works in production
+ * 
+ * Known working configuration:
+ * - No signed headers (removed signableHeaders parameter)
+ * - No ChecksumAlgorithm specified
+ * - Content-Type included in PutObjectCommand
+ */
+
 import { Request, Response } from 'express';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';

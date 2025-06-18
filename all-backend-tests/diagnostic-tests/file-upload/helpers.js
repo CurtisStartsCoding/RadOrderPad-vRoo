@@ -151,8 +151,7 @@ async function uploadWithPresignedUrl(presignedUrl, filePath, contentType) {
     // Set up additional headers that might be needed
     const headers = {
       'Content-Type': contentType,
-      'Content-Length': fileContent.length.toString(),
-      'x-amz-acl': 'private'
+      'Host': url.hostname  // Include host header since it's signed
     };
     
     // Add any x-amz headers from the presigned URL query parameters
@@ -170,13 +169,12 @@ async function uploadWithPresignedUrl(presignedUrl, filePath, contentType) {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     
     try {
-      console.log(chalk.blue('Sending request...'));
-      const response = await fetch(presignedUrl, {
-        method: 'PUT',
+      console.log(chalk.blue('Sending request with axios...'));
+      const response = await axios.put(presignedUrl, fileContent, {
         headers: headers,
-        body: fileContent,
-        signal: controller.signal,
-        timeout: timeout
+        timeout: timeout,
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
       });
       
       clearTimeout(timeoutId);
