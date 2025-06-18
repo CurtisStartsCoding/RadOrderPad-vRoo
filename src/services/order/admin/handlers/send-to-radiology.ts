@@ -1,6 +1,7 @@
 import { getPhiDbClient, getMainDbClient } from '../../../../config/db';
 import { InsufficientCreditsError } from '../../../../services/billing';
 import { SendToRadiologyResult } from '../types';
+import logger from '../../../../utils/logger';
 
 /**
  * Sends an order to radiology, updating its status and consuming a credit
@@ -54,9 +55,14 @@ export async function sendToRadiology(
     }
     
     // 3. Verify required patient information
-    if (!order.city || !order.state || !order.zip_code) {
-      throw new Error('Patient information is incomplete. City, state, and zip code are required.');
-    }
+    // Note: City, state, and zip are optional - many patients may not have complete addresses
+    // especially in emergency or walk-in situations
+    logger.info('Patient address info', {
+      orderId,
+      hasCity: !!order.city,
+      hasState: !!order.state,
+      hasZip: !!order.zip_code
+    });
     
     // 4. Get the organization's credit balance
     const orgId = order.referring_organization_id;
