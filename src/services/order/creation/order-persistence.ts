@@ -7,6 +7,8 @@
 import { PoolClient } from 'pg';
 import { OrderStatus } from '../../../models';
 import { CreateFinalizedOrderPayload } from './types';
+import { extractKeywordsByCategory } from '../../../utils/text-processing/keyword-extractor/extract-keywords-by-category';
+import { MedicalKeywordCategory } from '../../../utils/text-processing/types';
 import enhancedLogger from '../../../utils/enhanced-logger';
 
 /**
@@ -38,6 +40,10 @@ export async function persistOrder(
     const icd10Codes = payload.finalValidationResult.suggestedICD10Codes.map(code => code.code);
     const icd10Descriptions = payload.finalValidationResult.suggestedICD10Codes.map(code => code.description);
     
+    // Extract modality from dictation text
+    const modalityKeywords = extractKeywordsByCategory(payload.dictationText, MedicalKeywordCategory.MODALITY);
+    const primaryModality = modalityKeywords.length > 0 ? modalityKeywords[0] : null;
+    
     // Generate order number
     const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     
@@ -55,6 +61,7 @@ export async function persistOrder(
         priority,
         original_dictation,
         clinical_indication,
+        modality,
         final_cpt_code,
         final_cpt_code_description,
         final_icd10_codes,
@@ -68,7 +75,7 @@ export async function persistOrder(
         created_at,
         updated_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW(), NOW(), NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW(), NOW(), NOW()
       ) RETURNING id`,
       [
         orderNumber,
@@ -82,6 +89,7 @@ export async function persistOrder(
         'routine', // Default priority
         payload.dictationText,
         payload.dictationText, // Use dictation as clinical indication initially
+        primaryModality,
         primaryCptCode,
         primaryCptDescription,
         JSON.stringify(icd10Codes),
