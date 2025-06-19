@@ -124,6 +124,44 @@ These scripts are related to frontend testing, debugging, and validation:
 | `implement-captcha-test-mode.bat/sh` | Modifies server code to support CAPTCHA testing |
 | `move-test-results.bat/sh` | Moves test results files to the API_IMPLEMENTATION_GUIDE directory |
 
+## Debug and Database Utility Scripts
+
+### Location: `debug-scripts/`
+
+Database and system debugging utilities:
+
+| Script | Description |
+|--------|-------------|
+| `count-users.js` | Counts users in the database by role and organization with recent user details |
+| `test-both-databases.js` | Tests connections to both PHI and main databases |
+| `check-database-connection.js` | Checks database connection status |
+| `list-all-database-tables.js` | Lists all tables in the database |
+| `test-validation-endpoint.js` | Tests the order validation endpoint |
+| `debug-validation-response.js` | Debugs validation responses |
+| `check-redis-population.js` | Checks Redis cache population status |
+| `force-redis-population.js` | Forces repopulation of Redis cache |
+
+### Location: `debug-scripts/redis-optimization/`
+
+Redis-specific debugging and optimization tools:
+
+| Script | Description |
+|--------|-------------|
+| `test-redis-connection-simple.js` | Simple Redis connection test |
+| `test-redis-json-search.js` | Tests Redis JSON search functionality |
+| `check-index-schema.js` | Checks Redis search index schema |
+| `count-redis-keys.js` | Counts keys in Redis cache |
+
+### Location: `debug-scripts/vercel-tests/`
+
+Vercel deployment and API testing utilities:
+
+| Script | Description |
+|--------|-------------|
+| `test-login-all-roles.js` | Tests login for all user roles |
+| `test-critical-endpoints.js` | Tests critical API endpoints |
+| `test-comprehensive-api-with-roles.js` | Comprehensive API testing with role-based access |
+
 ## Utility Scripts
 
 ### Location: `scripts/utilities/`

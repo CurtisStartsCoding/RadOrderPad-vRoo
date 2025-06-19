@@ -24,7 +24,7 @@ const adminRoles = ['admin_referring', 'admin_radiology'];
 router.get('/mine/locations', authorizeRole(adminRoles), locationController.listLocations);
 
 // Get locations for a connected organization
-router.get('/:orgId/locations', authorizeRole(['admin_referring', 'admin_radiology']), locationController.listConnectedOrgLocations);
+router.get('/:orgId/locations', authorizeRole(['admin_referring', 'admin_radiology', 'admin_staff']), locationController.listConnectedOrgLocations);
 
 // Create a new location
 router.post('/mine/locations', authorizeRole(adminRoles), locationController.createLocation);
