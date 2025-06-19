@@ -37,6 +37,7 @@ Once the dictation is validated, the order is created and finalized in a single 
 
 - Patient information is associated with the order
 - The dictation text is stored
+- The system automatically extracts the imaging modality (CT, MRI, X-ray, ultrasound, etc.) from the dictation text
 - The system automatically uses the suggested ICD-10 and CPT codes from validation
 - The physician provides a signature
 - The order is created with "pending_admin" status

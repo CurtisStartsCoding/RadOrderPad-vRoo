@@ -88,7 +88,7 @@ API Endpoints Overview (Conceptual)
 
 ## Orders - Submission & Finalization (`/orders`)
 
--   `POST /api/orders`: **(Order Creation and Finalization Endpoint)** Creates a new order with validation results, patient information, and signature data. This endpoint is called after a physician completes the iterative validation process (using the stateless `POST /api/orders/validate`) and signs the order. It creates the persistent `orders` record, creates/links the `patients` record, logs the final `validation_attempts`, and records `order_history`. The request body includes:
+-   `POST /api/orders`: **(Order Creation and Finalization Endpoint)** Creates a new order with validation results, patient information, and signature data. This endpoint is called after a physician completes the iterative validation process (using the stateless `POST /api/orders/validate`) and signs the order. It creates the persistent `orders` record, creates/links the `patients` record, logs the final `validation_attempts`, and records `order_history`. Automatically extracts imaging modality (CT, MRI, X-ray, ultrasound, etc.) from the dictation text. The request body includes:
     - `patientInfo`: Object containing either `id` (for existing patient) or full patient details (`firstName`, `lastName`, `dateOfBirth`, `gender`, etc.)
     - `dictationText`: The final, cumulative dictation text
     - `finalValidationResult`: Object containing validation outcomes (`validationStatus`, `complianceScore`, `feedback`, `suggestedICD10Codes`, `suggestedCPTCodes`)

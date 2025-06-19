@@ -32,6 +32,7 @@ Based on `physician-role-tests.js`:
   
 - `POST /api/orders` - **TESTED & WORKING**
   - Creates finalized orders with physician signature
+  - Automatically extracts imaging modality from dictation text
   
 - `PUT /api/orders/:orderId` - **TESTED & WORKING**
   - Finalizes orders with signature and status updates

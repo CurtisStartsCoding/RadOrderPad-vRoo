@@ -126,8 +126,8 @@ This document maps core API endpoints to the primary database tables they intera
 
 -   **`POST /api/orders`** (Create and Finalize Order After Validation)
     -   Reads: `users` (Main - Verify user), `patients` (PHI - If existing patient ID provided), `locations` (Main - Get user's assigned location)
-    -   Writes: `patients` (PHI - Create if new patient), `orders` (PHI - Create new order with `originating_location_id`), `validation_attempts` (PHI - Log final attempt), `order_history` (PHI - Log 'order_created' and 'order_signed' events), `document_uploads` (PHI - Store signature)
-    -   **Note:** Performs all operations within a PHI database transaction to ensure data consistency. Creates a complete order record with patient information, validation results, and signature data. Automatically sets `originating_location_id` from user's assigned location if not provided.
+    -   Writes: `patients` (PHI - Create if new patient), `orders` (PHI - Create new order with `originating_location_id`, `modality`), `validation_attempts` (PHI - Log final attempt), `order_history` (PHI - Log 'order_created' and 'order_signed' events), `document_uploads` (PHI - Store signature)
+    -   **Note:** Performs all operations within a PHI database transaction to ensure data consistency. Creates a complete order record with patient information, validation results, and signature data. Automatically extracts imaging modality from dictation text and sets `originating_location_id` from user's assigned location if not provided.
 
 -   **`PUT /api/orders/new`** (DEPRECATED - Legacy Create New Order After Validation)
     -   **DEPRECATED:** This endpoint has been replaced by `POST /api/orders` and should not be used. It is no longer registered in the application routes.

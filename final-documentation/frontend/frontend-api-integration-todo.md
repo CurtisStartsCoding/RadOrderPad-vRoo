@@ -450,3 +450,51 @@ Backend uses snake_case, frontend uses camelCase:
 - ✅ Code maintainability improved with modular architecture
 
 This comprehensive todo list focuses on getting the core workflow operational first (Phase 1), then building out the supporting features needed for a complete system. Each item is specific and actionable, making it easy to track progress.
+
+## Mock Data Cleanup (Added June 18, 2025)
+
+### Current Mock Data Usage
+
+**Files still using mock-data.ts:**
+
+1. **`/client/src/pages/AdminOrderFinalization.tsx`**
+   - Imports: `import { allOrders } from "@/lib/mock-data";`
+   - Usage: Line 103 - Uses `allOrders[0]` as fallback when orderData is not available
+   - Contains hardcoded mock values:
+     - Patient address: `"123 FAKE Street"`, `"MOCK Suite 456"`
+     - Insurance: `"MOCK-Insurance Company (TEST)"`, `"FAKE-Care PPO SAMPLE"`
+     - ICD10 codes: `"M25.561-MOCK"`, `"FAKE Pain in right knee (TEST)"`
+     - Referring physician: `"Dr. TEST_Sarah MOCK_Johnson"`, `"(555) FAKE-TEST"`
+
+2. **`/client/src/components/order/EmrPasteTab.tsx`**
+   - Contains example EMR text with mock data in `loadExampleText()` function
+   - Mock patient: `"TEST_Thompson, MOCK_Margaret"`
+   - Mock providers: `"Dr. TEST_James MOCK_Wilson"`, `"Dr. TEST_Sarah MOCK_Johnson"`
+   - This is example text for demonstrating EMR parsing functionality
+
+3. **`/client/src/lib/mock-data.ts`**
+   - The main mock data file still exists with mock organizations, connections, orders, users, locations
+
+### Cleanup Tasks
+
+- [ ] **Replace mock data in AdminOrderFinalization**
+  - [ ] Remove `allOrders` import
+  - [ ] Handle missing orderData properly (fetch from API or show error)
+  - [ ] Replace all hardcoded mock values with empty strings or API data
+  
+- [ ] **Update EmrPasteTab example text**
+  - [ ] Consider if example text is needed for production
+  - [ ] Replace with realistic but anonymized examples
+  - [ ] Or remove example functionality entirely
+  
+- [ ] **Delete mock-data.ts file**
+  - [ ] Ensure no other files depend on it
+  - [ ] Move any type definitions to proper types.ts files
+  - [ ] Remove the file completely
+
+### Completed Mock Data Removals
+
+- ✅ **Physician workflow (NewOrder and components)**
+  - Removed `temporaryPatient` usage
+  - Patient type now imported from `@/lib/types`
+  - No mock data dependencies in physician workflow

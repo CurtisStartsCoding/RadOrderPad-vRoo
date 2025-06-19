@@ -67,7 +67,7 @@ This document defines the **authoritative and fully expanded reconciled schema**
 | `priority`                    | `text`                      | `NOT NULL`, `DEFAULT 'routine'` | Order priority ('routine', 'stat')                              |
 | `original_dictation`          | `text`                      |                               | Initial dictation text from the physician                       |
 | `clinical_indication`         | `text`                      |                               | Final/parsed clinical indication text                           |
-| `modality`                    | `text`                      |                               | Requested imaging modality (e.g., MRI, CT)                    |
+| `modality`                    | `text`                      |                               | Imaging modality automatically extracted from dictation (e.g., "mri", "ct", "x-ray", "ultrasound") |
 | `body_part`                   | `text`                      |                               | Target body part                                                |
 | `laterality`                  | `text`                      |                               | 'Left', 'Right', 'Bilateral', 'None'                            |
 | `final_cpt_code`              | `text`                      |                               | Final suggested/validated CPT code stored on the order          |

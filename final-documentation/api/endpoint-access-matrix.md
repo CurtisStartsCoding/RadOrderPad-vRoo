@@ -63,7 +63,7 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 | **Physician Workflow** |
 | POST /api/patients/search | ✓ | - | - | - | - | - | - | ✓ |
 | POST /api/orders/validate | ✓ | - | - | - | - | - | - | ✓ |
-| POST /api/orders | ✓ | - | - | - | - | - | - | - |
+| POST /api/orders⁵ | ✓ | - | - | - | - | - | - | - |
 | PUT /api/orders/:orderId/finalize | ✓ | - | - | - | - | - | - | - |
 | **Order Management** |
 | GET /api/orders | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -115,6 +115,7 @@ This matrix shows which user roles can access which endpoints in the RadOrderPad
 ² Admin staff and admin_referring can access all orders in their organization  
 ³ Schedulers and admin_radiology can access orders sent to their organization  
 ⁴ Radiologists can only access orders assigned to them  
+⁵ Automatically extracts imaging modality (CT, MRI, X-ray, ultrasound, etc.) from dictation text  
 
 ## Quick Reference by Role
 

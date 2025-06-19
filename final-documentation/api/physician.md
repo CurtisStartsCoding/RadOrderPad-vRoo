@@ -163,7 +163,7 @@ See [Common Endpoints - File Management](common-endpoints.md#file-management) fo
 
 ### Create and Finalize Order
 **POST** `/api/orders`
-- **Description**: Create and finalize a new order after validation and signature
+- **Description**: Create and finalize a new order after validation and signature. Automatically extracts imaging modality (CT, MRI, X-ray, etc.) from dictation text.
 - **Access Control**: `authenticateJWT` + `authorizeRole(['physician'])` middleware
 - **Headers**: `Authorization: Bearer <token>`
 - **Request Body**:
@@ -196,6 +196,7 @@ See [Common Endpoints - File Management](common-endpoints.md#file-management) fo
     "originatingLocationId": "number (optional - defaults to physician's assigned location)"
   }
   ```
+- **Automatic Processing**: The system automatically extracts the imaging modality from the dictation text and stores it with the order. Recognized modalities include: CT, MRI, X-ray, ultrasound, mammography, nuclear medicine, PET, and others.
 - **Response**:
   ```json
   {

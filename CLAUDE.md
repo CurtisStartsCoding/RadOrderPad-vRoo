@@ -121,7 +121,7 @@ Feedback/Codes → Iterative Refinement → Final Approval
 ### 2. Order Creation Process
 1. **Stateless Validation**: `POST /api/orders/validate` (dictation only)
 2. **Multiple iterations** allowed without persisting
-3. **Final submission**: `POST /api/orders` (creates persistent record)
+3. **Final submission**: `POST /api/orders` (creates persistent record with automatic modality extraction)
 
 ### 3. File Upload Pattern
 1. Get presigned URL: `POST /api/uploads/presigned-url`
