@@ -39,7 +39,7 @@ See [Common Endpoints](common.md) for:
 
 Retrieves all orders sent to the scheduler's radiology organization.
 
-**Endpoint:** `GET /api/radiology/orders`
+**Endpoint:** `GET /api/orders`
 
 **Authorization:** Requires `scheduler` or `admin_radiology` role
 
