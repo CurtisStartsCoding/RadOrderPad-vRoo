@@ -11,6 +11,7 @@ export async function getIncomingOrders(req: Request, res: Response): Promise<vo
   try {
     // Get user information from the JWT token
     const orgId = req.user?.orgId;
+    const userRole = req.user?.role;
     
     if (!orgId) {
       res.status(401).json({ message: 'User authentication required' });
@@ -19,6 +20,11 @@ export async function getIncomingOrders(req: Request, res: Response): Promise<vo
     
     // Extract filter parameters from query
     const filters: OrderFilters = {};
+    
+    // Add user role to filters
+    if (userRole) {
+      filters.userRole = userRole;
+    }
     
     // Referring organization filter
     if (req.query.referringOrgId) {
@@ -77,7 +83,8 @@ export async function getIncomingOrders(req: Request, res: Response): Promise<vo
   } catch (error) {
     logger.error('Error in getIncomingOrders controller:', {
       error,
-      orgId: req.user?.orgId
+      orgId: req.user?.orgId,
+      userRole: req.user?.role
     });
     
     if (error instanceof Error) {

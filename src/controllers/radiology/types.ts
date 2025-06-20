@@ -15,6 +15,7 @@ export interface OrderFilters {
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
+  userRole?: string;
 }
 
 /**

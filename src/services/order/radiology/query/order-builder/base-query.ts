@@ -9,7 +9,7 @@ export function createBaseQuery(orgId: number): {
   paramIndex: number
 } {
   const query = `
-    SELECT o.id, o.order_number, o.status, o.priority, o.modality, o.body_part, 
+    SELECT o.id, o.order_number, o.status, o.priority, o.modality, o.body_part,
            o.final_cpt_code, o.final_cpt_code_description, o.final_validation_status,
            o.created_at, o.updated_at, o.patient_name, o.patient_dob, o.patient_gender,
            o.referring_physician_name, o.referring_organization_id
@@ -17,10 +17,45 @@ export function createBaseQuery(orgId: number): {
     WHERE o.radiology_organization_id = $1
   `;
   
-  return { 
-    query, 
-    params: [orgId], 
-    paramIndex: 2 
+  return {
+    query,
+    params: [orgId],
+    paramIndex: 2
+  };
+}
+
+/**
+ * Create the base query for scheduler users, including orders from connected organizations
+ * @param orgId Radiology organization ID
+ * @returns Object containing the query string, parameters, and next parameter index
+ */
+export function createSchedulerBaseQuery(orgId: number): {
+  query: string;
+  params: (string | number | Date)[];
+  paramIndex: number
+} {
+  const query = `
+    SELECT o.id, o.order_number, o.status, o.priority, o.modality, o.body_part,
+           o.final_cpt_code, o.final_cpt_code_description, o.final_validation_status,
+           o.created_at, o.updated_at, o.patient_name, o.patient_dob, o.patient_gender,
+           o.referring_physician_name, o.referring_organization_id
+    FROM orders o
+    WHERE o.radiology_organization_id = $1
+    OR o.referring_organization_id IN (
+      SELECT CASE
+        WHEN organization_id = $1 THEN related_organization_id
+        WHEN related_organization_id = $1 THEN organization_id
+      END
+      FROM organization_relationships
+      WHERE (organization_id = $1 OR related_organization_id = $1)
+      AND status = 'active'
+    )
+  `;
+  
+  return {
+    query,
+    params: [orgId],
+    paramIndex: 2
   };
 }
 

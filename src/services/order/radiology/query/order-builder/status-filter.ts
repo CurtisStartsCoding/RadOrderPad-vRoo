@@ -14,13 +14,9 @@ export function applyStatusFilter(
   paramIndex: number,
   status?: string
 ): { query: string; params: (string | number | Date)[]; paramIndex: number } {
-  if (status) {
+  if (status && status !== 'all') {
     query += ` AND o.status = $${paramIndex}`;
     params.push(status);
-    paramIndex++;
-  } else {
-    query += ` AND o.status = $${paramIndex}`;
-    params.push(OrderStatus.PENDING_RADIOLOGY);
     paramIndex++;
   }
   
