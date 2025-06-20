@@ -14,6 +14,17 @@ The physician workflow follows these key steps:
 4. **Order Creation** - Combine all elements into finalized order
 5. **Order Management** - View and track orders
 
+### 🔒 Critical: Coding Immutability Principle
+
+**RadOrderPad's core value proposition is clinical decision support at the point of order creation:**
+
+- **ACR Validation First** - All clinical dictation is validated against ACR Appropriate Use Criteria before order creation
+- **Coding is FINAL after physician signature** - CPT/ICD-10 codes cannot be modified once the physician signs the order
+- **No downstream coding changes** - Admin staff, schedulers, and radiologists never modify clinical coding
+- **Validate once, sign once, final forever** - This prevents coding errors and ensures ACR compliance throughout the workflow
+
+This immutability ensures that referring physicians, admin staff, and radiology groups always see the same validated coding that was approved by the ordering physician.
+
 ### Detailed Workflow
 
 #### 1. Patient Identification (Frontend-Driven)
@@ -43,7 +54,8 @@ The physician workflow follows these key steps:
 - **Frontend**: Combine all elements (patient ID, validation results, signature)
 - **Backend**: Create finalized order with status `pending_admin`
 - **Backend**: Link signature to order in database
-- **Result**: Order queued for administrative processing
+- **🔒 CRITICAL**: Coding data is permanently committed to the orders table - no further modifications allowed
+- **Result**: Order queued for administrative processing (demographics/insurance only)
 
 ## Authentication & Session Management
 
@@ -163,7 +175,7 @@ See [Common Endpoints - File Management](common-endpoints.md#file-management) fo
 
 ### Create and Finalize Order
 **POST** `/api/orders`
-- **Description**: Create and finalize a new order after validation and signature. Automatically extracts imaging modality (CT, MRI, X-ray, etc.) from dictation text.
+- **Description**: Create and finalize a new order after validation and signature. Automatically extracts imaging modality (CT, MRI, X-ray, etc.) from dictation text. **🔒 COMMITS CODING DATA PERMANENTLY** - no modifications allowed after this point.
 - **Access Control**: `authenticateJWT` + `authorizeRole(['physician'])` middleware
 - **Headers**: `Authorization: Bearer <token>`
 - **Request Body**:
@@ -226,6 +238,7 @@ See [Common Endpoints - Order Management](common.md#order-management) for detail
 **Physician-Specific Behavior**:
 - Physicians only see orders they created (`created_by_user_id = userId`)
 - Cannot view orders created by other physicians, even in the same organization
+- **🔒 Coding Data Immutable**: All coding fields (CPT/ICD-10) are final and cannot be modified after order creation
 
 
 ## Middleware and Authorization
