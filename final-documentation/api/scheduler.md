@@ -27,7 +27,7 @@ The scheduler role is responsible for managing incoming radiology orders from re
 
 ## Authentication & Common Endpoints
 
-See [Common Endpoints](common-endpoints.md) for:
+See [Common Endpoints](common.md) for:
 - Authentication (login, password management)
 - User profile management
 - Organization information
@@ -164,10 +164,10 @@ Retrieves complete details of a specific order including all patient information
     "bodyPart": "Chest",
     "laterality": "bilateral",
     "clinicalIndication": "Chest pain, rule out PE",
-    "cptCode": "71250",
-    "cptCodeDescription": "CT Chest without contrast",
-    "icd10Codes": ["R07.9", "I26.99"],
-    "icd10CodeDescriptions": ["Chest pain, unspecified", "Other pulmonary embolism without acute cor pulmonale"],
+    "final_cpt_code": "71250",
+    "final_cpt_code_description": "CT Chest without contrast",
+    "final_icd10_codes": "[\"R07.9\", \"I26.99\"]",
+    "final_icd10_code_descriptions": "[\"Chest pain, unspecified\", \"Other pulmonary embolism without acute cor pulmonale\"]",
     "dictationText": "Patient with acute onset chest pain...",
     "validationResult": {
       "complianceScore": 95,

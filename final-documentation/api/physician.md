@@ -47,11 +47,11 @@ The physician workflow follows these key steps:
 
 ## Authentication & Session Management
 
-See [Common Endpoints - Authentication](common-endpoints.md#authentication) for login and password management endpoints available to all users.
+See [Common Endpoints - Authentication](common.md#authentication) for login and password management endpoints available to all users.
 
 ## User Profile Management
 
-See [Common Endpoints - User Profile Management](common-endpoints.md#user-profile-management) for profile endpoints.
+See [Common Endpoints - User Profile](common.md#user-profile) for profile endpoints.
 
 **Note for Physicians**: The profile endpoints include physician-specific fields like `specialty` and `npi`.
 
@@ -221,7 +221,7 @@ See [Common Endpoints - File Management](common-endpoints.md#file-management) fo
 
 ## Order Management
 
-See [Common Endpoints - Order Management](common-endpoints.md#order-management-shared) for listing and viewing orders.
+See [Common Endpoints - Order Management](common.md#order-management) for detailed documentation on listing and viewing orders, including the complete response format with coding fields.
 
 **Physician-Specific Behavior**:
 - Physicians only see orders they created (`created_by_user_id = userId`)
@@ -279,7 +279,7 @@ Orders are automatically tagged with the physician's current location when creat
 
 ## Additional Resources
 
-- See [Common Endpoints](common-endpoints.md) for authentication, profile management, and file operations
+- See [Common Endpoints](common.md) for authentication, profile management, and file operations
 - See [Endpoint Access Matrix](endpoint-access-matrix.md) for a complete list of accessible endpoints
 
 ## Integration Notes

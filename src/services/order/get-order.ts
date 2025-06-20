@@ -23,6 +23,12 @@ export async function getOrderById(orderId: number, userId: number): Promise<Ord
     const orderResult = await queryPhiDb(`
       SELECT 
         o.*,
+        -- Explicit coding fields to ensure they're returned
+        o.final_cpt_code,
+        o.final_cpt_code_description,
+        o.final_icd10_codes,
+        o.final_icd10_code_descriptions,
+        
         -- Patient info from patients table
         p.first_name as patient_first_name,
         p.last_name as patient_last_name,
