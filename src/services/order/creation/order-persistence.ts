@@ -75,7 +75,7 @@ export async function persistOrder(
         created_at,
         updated_at
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW(), NOW(), NOW()
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, NOW(), NOW()
       ) RETURNING id`,
       [
         orderNumber,
@@ -99,6 +99,7 @@ export async function persistOrder(
         payload.finalValidationResult.feedback,
         payload.isOverride,
         payload.overrideJustification || null,
+        new Date(), // signature_date
       ]
     );
     
