@@ -29,13 +29,6 @@ export async function persistOrder(
   referringOrganizationId: number
 ): Promise<number> {
   try {
-    // DEBUG: Log what we receive from frontend
-    enhancedLogger.info('DEBUG: Frontend payload validation result:', {
-      suggestedCPTCodes: payload.finalValidationResult.suggestedCPTCodes,
-      suggestedICD10Codes: payload.finalValidationResult.suggestedICD10Codes,
-      validationStatus: payload.finalValidationResult.validationStatus
-    });
-    
     // Extract primary CPT code
     const primaryCptCode = payload.finalValidationResult.suggestedCPTCodes.find(code => code.isPrimary)?.code || 
                           payload.finalValidationResult.suggestedCPTCodes[0]?.code;
@@ -46,16 +39,6 @@ export async function persistOrder(
     // Format ICD10 codes for storage
     const icd10Codes = payload.finalValidationResult.suggestedICD10Codes.map(code => code.code);
     const icd10Descriptions = payload.finalValidationResult.suggestedICD10Codes.map(code => code.description);
-    
-    // DEBUG: Log what we extracted for database storage
-    enhancedLogger.info('DEBUG: Extracted coding data for database:', {
-      primaryCptCode,
-      primaryCptDescription,
-      icd10Codes,
-      icd10Descriptions,
-      icd10CodesJSON: JSON.stringify(icd10Codes),
-      icd10DescriptionsJSON: JSON.stringify(icd10Descriptions)
-    });
     
     // Extract modality from dictation text
     const modalityKeywords = extractKeywordsByCategory(payload.dictationText, MedicalKeywordCategory.MODALITY);
