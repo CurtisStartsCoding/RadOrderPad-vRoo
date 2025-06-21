@@ -86,8 +86,10 @@ If validation still fails after 3 attempts:
 
 1. Physician reviews the final validation result
 2. Physician signs the order
-3. System creates order record with final validation state, codes, and signature
-4. This is the first time an actual order record is created in the database
+3. Frontend preserves `suggestedCPTCodes` and `suggestedICD10Codes` from validation in the `finalValidationResult`
+4. System creates order record with final validation state, codes, and signature
+5. CPT and ICD-10 codes are automatically saved to the database (`final_cpt_code`, `final_icd10_codes` fields)
+6. This is the first time an actual order record is created in the database
 
 ## API Endpoints
 

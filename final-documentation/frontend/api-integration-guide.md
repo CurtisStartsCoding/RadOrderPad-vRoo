@@ -44,10 +44,10 @@ This guide focuses on implementing the remaining API integrations.
 ### 🎯 Priority Integration Tasks (Backend Ready)
 All these endpoints are tested and working in the backend:
 
-1. **Complete Physician Order Flow**
-   - Patient search (`/api/patients/search`) - Natural language date parsing
-   - Signature upload (`/api/uploads/presigned-url` + S3)
-   - Final order creation (`/api/orders`)
+1. **Complete Physician Order Flow** ✅ **COMPLETED JUNE 2025**
+   - Patient search (`/api/patients/search`) - Natural language date parsing ✅
+   - Signature upload (`/api/uploads/presigned-url` + S3) ✅
+   - Final order creation (`/api/orders`) ✅ **WITH PROPER CODING DATA PERSISTENCE**
 
 2. **Admin Staff Finalization Flow**
    - EMR parsing (`/api/admin/orders/:id/paste-summary`) - 90%+ accuracy

@@ -1,5 +1,5 @@
 import { ValidationResult, ValidationStatus } from '../../models';
-import { normalizeResponseFields, normalizeCodeArray } from './normalizer';
+import { normalizeResponseFields } from './normalizer';
 import { validateRequiredFields, validateValidationStatus } from './validator';
 import { extractPartialInformation } from './extractor';
 
@@ -49,17 +49,13 @@ export function processLLMResponse(responseContent: string): ValidationResult {
     // Ensure validationStatus is a valid enum value
     validateValidationStatus(normalizedResponse.validationStatus as string);
     
-    // Normalize ICD-10 and CPT code arrays
-    const normalizedICD10Codes = normalizeCodeArray(normalizedResponse.suggestedICD10Codes as string[]);
-    const normalizedCPTCodes = normalizeCodeArray(normalizedResponse.suggestedCPTCodes as string[]);
-    
-    // Return the validation result
+    // Return the validation result with simple array handling
     return {
       validationStatus: normalizedResponse.validationStatus as ValidationStatus,
       complianceScore: Number(normalizedResponse.complianceScore),
       feedback: String(normalizedResponse.feedback),
-      suggestedICD10Codes: normalizedICD10Codes,
-      suggestedCPTCodes: normalizedCPTCodes,
+      suggestedICD10Codes: Array.isArray(normalizedResponse.suggestedICD10Codes) ? normalizedResponse.suggestedICD10Codes : [],
+      suggestedCPTCodes: Array.isArray(normalizedResponse.suggestedCPTCodes) ? normalizedResponse.suggestedCPTCodes : [],
       internalReasoning: normalizedResponse.internalReasoning ? String(normalizedResponse.internalReasoning) : 'No internal reasoning provided'
     };
   } catch (error) {

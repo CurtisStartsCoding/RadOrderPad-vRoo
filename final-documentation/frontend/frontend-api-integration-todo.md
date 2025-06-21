@@ -148,25 +148,25 @@
   - [x] Full location management implemented
   - [x] Update AdminOrderFinalization to use real location IDs ✅ COMPLETED
 
-## Phase 2: Complete Order Creation (Week 1-2)
+## Phase 2: Complete Order Creation (Week 1-2) ✅ COMPLETED (June 2025)
 **Goal: Enable physicians to create orders end-to-end**
 
-### 2.1 Patient Search Implementation [PRIORITY: HIGH]
+### 2.1 Patient Search Implementation [PRIORITY: HIGH] ✅ COMPLETED
 
-- [ ] **Create PatientSearch component**
-  - [ ] Add to NewOrder page before validation step
-  - [ ] Design search form with name and DOB fields
+- [x] **Create PatientSearch component**
+  - [x] Add to NewOrder page before validation step
+  - [x] Design search form with name and DOB fields
   
-- [ ] **Implement search API**
-  - [ ] Use endpoint: `POST /api/patients/search`
-  - [ ] Support natural language date parsing
-  - [ ] Handle empty results (offer to create new patient)
-  - [ ] Handle multiple results (show selection list)
-  - [ ] Store selected patient in component state
+- [x] **Implement search API**
+  - [x] Use endpoint: `POST /api/patients/search`
+  - [x] Support natural language date parsing
+  - [x] Handle empty results (offer to create new patient)
+  - [x] Handle multiple results (show selection list)
+  - [x] Store selected patient in component state
 
-### 2.2 Fix Signature Upload [PRIORITY: HIGH]
+### 2.2 Fix Signature Upload [PRIORITY: HIGH] ✅ COMPLETED
 
-- [ ] **Create reusable FileUploadService**
+- [x] **Create reusable FileUploadService**
   ```typescript
   class FileUploadService {
     async uploadSignature(signatureDataUrl: string, orderId?: number)
@@ -174,23 +174,24 @@
   }
   ```
   
-- [ ] **Implement presigned URL flow**
-  - [ ] Call `POST /api/uploads/presigned-url` with file metadata
-  - [ ] Upload to S3 using returned `uploadUrl`
-  - [ ] Call `POST /api/uploads/confirm` to confirm upload
-  - [ ] Return S3 key for order creation
+- [x] **Implement presigned URL flow**
+  - [x] Call `POST /api/uploads/presigned-url` with file metadata
+  - [x] Upload to S3 using returned `uploadUrl`
+  - [x] Call `POST /api/uploads/confirm` to confirm upload
+  - [x] Return S3 key for order creation
 
-### 2.3 Fix Order Creation API [PRIORITY: HIGH]
+### 2.3 Fix Order Creation API [PRIORITY: HIGH] ✅ COMPLETED
 
-- [ ] **Update NewOrder final submission**
-  - [ ] Use endpoint: `POST /api/orders`
-  - [ ] Include all required fields:
-    - patientId (from search or creation)
-    - dictationText
-    - validationResult (from validation step)
-    - signatureS3Key (from upload)
-  - [ ] Handle success response with orderId
-  - [ ] Navigate to success page or order list
+- [x] **Update NewOrder final submission** ✅ COMPLETED (June 2025)
+  - [x] Use endpoint: `POST /api/orders`
+  - [x] Include all required fields:
+    - [x] patientId (from search or creation)
+    - [x] dictationText
+    - [x] validationResult (from validation step) with proper coding data preservation
+    - [x] signatureS3Key (from upload)
+  - [x] Handle success response with orderId
+  - [x] Navigate to success page or order list
+  - [x] **CRITICAL FIX**: Ensure CPT/ICD-10 codes from validation are properly saved to database
 
 ### 2.4 Order Validation Flow [PRIORITY: MEDIUM]
 

@@ -20,7 +20,11 @@
       "mcp__github-server__search_repositories",
       "Bash(export API_BASE_URL=https://api.radorderpad.com)",
       "Bash(export API_URL=https://api.radorderpad.com)",
-      "Bash(export JWT_SECRET=radorderpad-secure-jwt-secret-f8a72c1e9b5d3e7f4a6b2c8d9e0f1a2b3c4d5e6f)"
+      "Bash(export JWT_SECRET=radorderpad-secure-jwt-secret-f8a72c1e9b5d3e7f4a6b2c8d9e0f1a2b3c4d5e6f)",
+      "Bash(timeout:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   },
